@@ -1,0 +1,20 @@
+import bali.Console;
+import bali.Number;
+
+interface Doer {
+ 	declare goDo();
+}
+
+class WhileDoer() implements Doer {
+
+ 	method goDo(){
+
+		Number flag = 1;
+
+	    while (flag.greaterThan(4)){
+	        CONSOLE.printLine("Print $i");
+	        flag.increment();
+	    }
+ 	}
+
+}
