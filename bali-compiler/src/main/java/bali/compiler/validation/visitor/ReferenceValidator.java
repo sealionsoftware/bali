@@ -157,7 +157,7 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 				return;
 			}
 
-			value.setTypeName(declaration.getType().getQualifiedClassName());
+			value.setType(declaration.getType());
 			value.setHostClass(declarationScope.getClassName());
 			value.setScope(declarationScope.getScope());
 		}

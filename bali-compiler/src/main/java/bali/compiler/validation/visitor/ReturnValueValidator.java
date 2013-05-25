@@ -60,8 +60,8 @@ public class ReturnValueValidator implements Validator<Method> {
 					if (value == null){
 						failures.add(new ValidationFailure(node, "Method requires a return value of type " + type));
 					} else {
-						if (!value.getValueTypeName().equals(type.getQualifiedClassName())){
-							failures.add(new ValidationFailure(node, "Return value is of incorrect type: " + value.getValueTypeName() + ", should be: " + type));
+						if (!value.getType().equals(type.getQualifiedClassName())){
+							failures.add(new ValidationFailure(node, "Return value is of incorrect type: " + value.getType() + ", should be: " + type));
 						}
 					}
 				}
