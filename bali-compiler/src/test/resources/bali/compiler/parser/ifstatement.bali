@@ -1,0 +1,20 @@
+{
+	if(booleanStatement){
+		// Do something
+	}
+
+	if(booleanStatement){
+		// Do something
+    } else {
+    	// Do the last thing
+    }
+
+	if(booleanStatement){
+		// Do something
+	} else (booleanStatement) {
+		// Do something else
+	} else {
+		// Do the last thing
+	}
+
+}

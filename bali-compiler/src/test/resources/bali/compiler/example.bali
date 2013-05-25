@@ -1,0 +1,47 @@
+// Imports
+
+import bali.Number;
+import bali.Boolean;
+
+// Constants
+
+constant Number GLOBAL_CONSTANT = 2;
+
+// Functions
+
+//function Number aFunction(Number argument){
+//	return GLOBAL_CONSTANT.add(argument);
+//}
+
+// Interfaces
+
+interface ASuperInterface {
+	declare Number aMethod(Number anArgument);
+}
+
+interface AnInterface extends ASuperInterface {
+	declare Number aMethod(Number anArgument);
+}
+
+// Classes
+
+class AnImplementation(Number aField) implements AnInterface {
+
+ 	field Number aField;
+
+ 	method Number aMethod(Number anArgument){
+
+ 	    anArgument = anArgument.add(GLOBAL_CONSTANT);
+ 	    Boolean continue = true;
+
+ 	    while(continue){
+	        for (Number number : [3,4,5]){
+	            anArgument = anArgument.add(number);
+	        }
+	        if (number.greaterThan(100)){
+	            continue = false;
+	        }
+ 	    }
+		return anArgument;
+ 	}
+}

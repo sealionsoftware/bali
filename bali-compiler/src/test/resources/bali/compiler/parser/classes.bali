@@ -1,0 +1,25 @@
+// Class Declarations
+
+class AClass() {
+
+	field Number aField = 1;
+	field String aString = "Hello World";
+
+	method aVoidMethod(){
+		// Do something
+	}
+
+	method String aStringMethod(String input){
+		// Do something
+		return "Hello World";
+	}
+
+}
+
+class AnotherClass(String constructionArgument) implements AnInterface {
+
+	method aVoidAnotherMethod(){
+		// Do something
+	}
+
+}

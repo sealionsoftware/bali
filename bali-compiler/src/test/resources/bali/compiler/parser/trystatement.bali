@@ -1,0 +1,10 @@
+{
+	try {
+		// Do something
+    } catch (TypedException e) {
+        // Handle Exception
+    } catch (Exception e){
+
+    }
+
+}
