@@ -13,18 +13,18 @@ public class Invocation extends Value {
 	private String method;
 	private List<Value> arguments = new ArrayList<>();
 
-	private String valueTypeName;
+	private Type returnType;
 
 	public Invocation(Integer line, Integer character) {
 		super(line, character);
 	}
 
-	public void setValueTypeName(String valueTypeName) {
-		this.valueTypeName = valueTypeName;
+	public Type getType() {
+		return returnType;
 	}
 
-	public String getValueTypeName() {
-		return valueTypeName;
+	public void setReturnType(Type returnType) {
+		this.returnType = returnType;
 	}
 
 	public void setTarget(Value target) {
@@ -35,7 +35,7 @@ public class Invocation extends Value {
 		this.method = method;
 	}
 
-	public void addArgument(Value argument){
+	public void addArgument(Value argument) {
 		arguments.add(argument);
 	}
 

@@ -1,9 +1,6 @@
 package bali.compiler.parser.tree;
 
-import bali.compiler.Array;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -18,8 +15,10 @@ public class ListLiteralValue extends Value {
 		super(line, character);
 	}
 
-	public String getValueTypeName() {
-		return bali.List.class.getName();
+	public Type getType() {
+		Type t = new Type();
+		t.setQualifiedClassName(bali.List.class.getName());
+		return t;
 	}
 
 	public void addValue(Value v) {

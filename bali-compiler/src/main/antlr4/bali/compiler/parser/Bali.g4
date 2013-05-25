@@ -48,7 +48,7 @@ lineStatement:          (variableDeclaration | invocation | assignment | returnS
 
 controlStatement:       conditionalStatement | tryStatement | whileStatement | forStatement ;
 
-conditionalStatement:   'if' '(' value ')' codeBlock ('else' '(' value ')' codeBlock)* ('else' codeBlock)? ;
+conditionalStatement:   'if' '(' value ')' codeBlock ('else if' '(' value ')' codeBlock)* ('else' codeBlock)? ;
 
 tryStatement:           'try' codeBlock ('catch' '(' argumentDeclaration ')' codeBlock)+  ;
 

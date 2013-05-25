@@ -16,15 +16,11 @@ public class ConstructionValue extends Value {
 		super(line, character);
 	}
 
-	public String getValueTypeName() {
-		return type.getQualifiedClassName();
-	}
-
 	public void setType(Type type) {
 		this.type = type;
 	}
 
-	public void addArgument(Value argument){
+	public void addArgument(Value argument) {
 		arguments.add(argument);
 	}
 

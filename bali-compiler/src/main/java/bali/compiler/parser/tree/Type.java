@@ -13,7 +13,8 @@ public class Type extends Node {
 	private String qualifiedClassName;
 	private List<Type> parameters = new ArrayList<>();
 
-	public Type() {}
+	public Type() {
+	}
 
 	public Type(Integer line, Integer character) {
 		super(line, character);
@@ -47,12 +48,12 @@ public class Type extends Node {
 		return new ArrayList<Node>(parameters);
 	}
 
-//	public Boolean isAssignableTo(Type site){
-//		String ths = qualifiedClassName;
-//		String tht = site.qualifiedClassName;
-//		return ths != null && tht != null && ths.equals(tht);
-//	}
-
+	//TODO: sub/super etc
+	public Boolean isAssignableTo(Type site) {
+		String ths = qualifiedClassName;
+		String tht = site.qualifiedClassName;
+		return ths != null && tht != null && ths.equals(tht);
+	}
 
 	public String toString() {
 		return qualifiedClassName;

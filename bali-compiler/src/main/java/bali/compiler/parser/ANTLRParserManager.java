@@ -2,6 +2,7 @@ package bali.compiler.parser;
 
 import bali.compiler.parser.tree.Assignment;
 import bali.compiler.parser.tree.BooleanLiteralValue;
+import bali.compiler.parser.tree.Class;
 import bali.compiler.parser.tree.CodeBlock;
 import bali.compiler.parser.tree.CompilationUnit;
 import bali.compiler.parser.tree.ConditionalBlock;
@@ -15,15 +16,14 @@ import bali.compiler.parser.tree.Import;
 import bali.compiler.parser.tree.Interface;
 import bali.compiler.parser.tree.Invocation;
 import bali.compiler.parser.tree.ListLiteralValue;
-import bali.compiler.parser.tree.NumberLiteralValue;
-import bali.compiler.parser.tree.Statement;
-import bali.compiler.parser.tree.StringLiteralValue;
 import bali.compiler.parser.tree.Method;
 import bali.compiler.parser.tree.MethodDeclaration;
+import bali.compiler.parser.tree.NumberLiteralValue;
 import bali.compiler.parser.tree.ReferenceValue;
 import bali.compiler.parser.tree.Return;
+import bali.compiler.parser.tree.Statement;
+import bali.compiler.parser.tree.StringLiteralValue;
 import bali.compiler.parser.tree.Type;
-import bali.compiler.parser.tree.Class;
 import bali.compiler.parser.tree.Value;
 import bali.compiler.parser.tree.Variable;
 import bali.compiler.parser.tree.WhileStatement;
@@ -40,7 +40,7 @@ import java.util.Iterator;
 
 /**
  * Parser manager that uses a generated ANTLR Parser to construct an AST
- *
+ * <p/>
  * User: Richard
  * Date: 30/04/13
  */
@@ -55,8 +55,14 @@ public class ANTLRParserManager implements ParserManager {
 		BaliParser parser = new BaliParser(tokens);
 		parser.setErrorHandler(new DefaultErrorStrategy());
 
+		BaliParser.PackageDeclarationContext context = parser.packageDeclaration();
 
-		return build(parser.packageDeclaration(), name);
+		int errors = parser.getNumberOfSyntaxErrors();
+		if (errors > 0) {
+			throw new Exception("Could not compile " + compilationUnit.getName() + " [" + errors + " errors]");
+		}
+
+		return build(context, name);
 	}
 
 	private CompilationUnit build(BaliParser.PackageDeclarationContext context, String name) throws Exception {
@@ -64,38 +70,38 @@ public class ANTLRParserManager implements ParserManager {
 		CompilationUnit cu = new CompilationUnit(l(context), c(context));
 		cu.setName(name);
 
-		for (BaliParser.ImportDeclarationContext idc : context.importDeclaration()){
+		for (BaliParser.ImportDeclarationContext idc : context.importDeclaration()) {
 			cu.addImport(buildImport(idc));
 		}
-		for (BaliParser.ConstantDeclarationContext cdc : context.constantDeclaration()){
+		for (BaliParser.ConstantDeclarationContext cdc : context.constantDeclaration()) {
 			cu.addConstant(buildConstant(cdc));
 		}
-		for (BaliParser.InterfaceDeclarationContext idc : context.interfaceDeclaration()){
+		for (BaliParser.InterfaceDeclarationContext idc : context.interfaceDeclaration()) {
 			cu.addInterface(buildInterface(idc));
 		}
-		for (BaliParser.ClassDeclarationContext cdc : context.classDeclaration()){
+		for (BaliParser.ClassDeclarationContext cdc : context.classDeclaration()) {
 			cu.addClass(buildClassDeclaration(cdc));
 		}
 
 		return cu;
 	}
 
-	private Integer l(ParserRuleContext context){
+	private Integer l(ParserRuleContext context) {
 		return context.getStart().getLine();
 	}
 
-	private Integer c(ParserRuleContext context){
+	private Integer c(ParserRuleContext context) {
 		return context.getStart().getCharPositionInLine();
 	}
 
 
-	private Import buildImport(BaliParser.ImportDeclarationContext context){
+	private Import buildImport(BaliParser.ImportDeclarationContext context) {
 		Import iport = new Import(l(context), c(context));
 		iport.setName(context.TYPE_IDENTIFIER().getText());
 		return iport;
 	}
 
-	private Constant buildConstant(BaliParser.ConstantDeclarationContext context){
+	private Constant buildConstant(BaliParser.ConstantDeclarationContext context) {
 		Constant constant = new Constant(l(context), c(context));
 		constant.setName(context.CONSTANT_IDENTIFIER().getText());
 		constant.setType(getType(context.TYPE_IDENTIFIER()));
@@ -103,7 +109,7 @@ public class ANTLRParserManager implements ParserManager {
 		return constant;
 	}
 
-	private Interface buildInterface(BaliParser.InterfaceDeclarationContext context){
+	private Interface buildInterface(BaliParser.InterfaceDeclarationContext context) {
 		Interface iface = new Interface(l(context), c(context));
 
 		iface.setClassName(context.TYPE_IDENTIFIER().getText());
@@ -111,12 +117,12 @@ public class ANTLRParserManager implements ParserManager {
 //		for (TerminalNode typeIdentifier : context.typeDeclarationList().TYPE_IDENTIFIER()){
 //			iface.addParameter(getType(typeIdentifier));
 //		}
-		if (context.typeDeclarationList() != null){
-			for (TerminalNode typeIdentifier : context.typeDeclarationList().TYPE_IDENTIFIER()){
+		if (context.typeDeclarationList() != null) {
+			for (TerminalNode typeIdentifier : context.typeDeclarationList().TYPE_IDENTIFIER()) {
 				iface.addSuperInterface(getType(typeIdentifier));
 			}
 		}
-		for (BaliParser.DeclarationDeclarationContext ddc : context.declarationDeclaration()){
+		for (BaliParser.DeclarationDeclarationContext ddc : context.declarationDeclaration()) {
 			iface.addMethodDeclaration(buildMethodDeclaration(ddc));
 		}
 
@@ -131,31 +137,31 @@ public class ANTLRParserManager implements ParserManager {
 //		for (TerminalNode typeIdentifier : context.typeDeclarationList().TYPE_IDENTIFIER()){
 //			clazz.addParameter(getType(typeIdentifier));
 //		}
-		if (context.typeDeclarationList() != null){
-			for (TerminalNode typeIdentifier : context.typeDeclarationList().TYPE_IDENTIFIER()){
+		if (context.typeDeclarationList() != null) {
+			for (TerminalNode typeIdentifier : context.typeDeclarationList().TYPE_IDENTIFIER()) {
 				clazz.addInterface(getType(typeIdentifier));
 			}
 		}
-		for (BaliParser.ArgumentDeclarationContext adc : context.argumentDeclarationList().argumentDeclaration()){
+		for (BaliParser.ArgumentDeclarationContext adc : context.argumentDeclarationList().argumentDeclaration()) {
 			clazz.addArgument(buildArgument(adc));
 		}
-		for (BaliParser.FieldDeclarationContext fdc : context.fieldDeclaration()){
+		for (BaliParser.FieldDeclarationContext fdc : context.fieldDeclaration()) {
 			clazz.addField(buildField(fdc));
 		}
-		for (BaliParser.MethodDeclarationContext mdc : context.methodDeclaration()){
+		for (BaliParser.MethodDeclarationContext mdc : context.methodDeclaration()) {
 			clazz.addMethod(buildMethod(mdc));
 		}
 
 		return clazz;
 	}
 
-	private Method buildMethod(BaliParser.MethodDeclarationContext context) throws Exception{
+	private Method buildMethod(BaliParser.MethodDeclarationContext context) throws Exception {
 		Method method = new Method(l(context), c(context));
 		method.setName(context.STANDARD_IDENTIFIER().getText());
-		if (context.TYPE_IDENTIFIER() != null){
+		if (context.TYPE_IDENTIFIER() != null) {
 			method.setType(getType(context.TYPE_IDENTIFIER()));
 		}
-		for (BaliParser.ArgumentDeclarationContext adc : context.argumentDeclarationList().argumentDeclaration()){
+		for (BaliParser.ArgumentDeclarationContext adc : context.argumentDeclarationList().argumentDeclaration()) {
 			method.addArgument(buildArgument(adc));
 		}
 		method.setBody(buildCodeBlock(context.codeBlock()));
@@ -166,16 +172,16 @@ public class ANTLRParserManager implements ParserManager {
 
 		CodeBlock codeBlock = new CodeBlock(l(context), c(context));
 
-		for (BaliParser.StatementContext statementContext : context.statement()){
+		for (BaliParser.StatementContext statementContext : context.statement()) {
 
-			if (statementContext.controlStatement() != null){
+			if (statementContext.controlStatement() != null) {
 
 				BaliParser.ControlStatementContext csc = statementContext.controlStatement();
-				if (csc.conditionalStatement() != null){
+				if (csc.conditionalStatement() != null) {
 					codeBlock.addStatement(buildConditionalStatement(csc.conditionalStatement()));
-				} else if (csc.forStatement() != null){
+				} else if (csc.forStatement() != null) {
 					codeBlock.addStatement(buildForStatement(csc.forStatement()));
-				} else if (csc.whileStatement() != null){
+				} else if (csc.whileStatement() != null) {
 					codeBlock.addStatement(buildWhileStatement(csc.whileStatement()));
 				} else {
 					throw new Exception("Unrecognised control statement type: " + statementContext.getText());
@@ -183,16 +189,16 @@ public class ANTLRParserManager implements ParserManager {
 
 //				TODO: switch, try
 
-			} else if (statementContext.lineStatement() != null){
+			} else if (statementContext.lineStatement() != null) {
 
 				BaliParser.LineStatementContext lsc = statementContext.lineStatement();
-				if (lsc.variableDeclaration() != null){
+				if (lsc.variableDeclaration() != null) {
 					codeBlock.addStatement(buildVariableDeclaration(lsc.variableDeclaration()));
-				} else if (lsc.returnStatement() != null){
+				} else if (lsc.returnStatement() != null) {
 					codeBlock.addStatement(buildReturnStatement(lsc.returnStatement()));
-				} else if (lsc.assignment() != null){
+				} else if (lsc.assignment() != null) {
 					codeBlock.addStatement(buildAssignmentStatement(lsc.assignment()));
-				} else if (lsc.invocation() != null){
+				} else if (lsc.invocation() != null) {
 					codeBlock.addStatement(buildInvocationStatement(lsc.invocation()));
 				} else {
 					throw new Exception("Unrecognised line statement type: " + statementContext.getText());
@@ -232,7 +238,7 @@ public class ANTLRParserManager implements ParserManager {
 
 	private Return buildReturnStatement(BaliParser.ReturnStatementContext context) {
 		Return ret = new Return(l(context), c(context));
-		if (context.value() != null){
+		if (context.value() != null) {
 			ret.setValue(getValue(context.value()));
 		}
 		return ret;
@@ -253,13 +259,13 @@ public class ANTLRParserManager implements ParserManager {
 
 		ConditionalStatement conditionalStatement = new ConditionalStatement(l(context), c(context));
 
-		while(i.hasNext()){
+		while (i.hasNext()) {
 			ConditionalBlock cb = new ConditionalBlock(l(context), c(context));
 			cb.setCondition(getValue(i.next()));
 			cb.setBody(buildCodeBlock(j.next()));
 			conditionalStatement.addConditionalBlock(cb);
 		}
-		if(j.hasNext()){
+		if (j.hasNext()) {
 			conditionalStatement.setAlternate(buildCodeBlock(j.next()));
 		}
 
@@ -270,7 +276,7 @@ public class ANTLRParserManager implements ParserManager {
 		Field field = new Field(l(context), c(context));
 		field.setName(context.STANDARD_IDENTIFIER().getText());
 		field.setType(getType(context.TYPE_IDENTIFIER()));
-		if (context.value() != null){
+		if (context.value() != null) {
 			field.setValue(getValue(context.value()));
 		}
 		return field;
@@ -283,19 +289,19 @@ public class ANTLRParserManager implements ParserManager {
 		return argument;
 	}
 
-	private MethodDeclaration buildMethodDeclaration(BaliParser.DeclarationDeclarationContext context){
+	private MethodDeclaration buildMethodDeclaration(BaliParser.DeclarationDeclarationContext context) {
 		MethodDeclaration method = new MethodDeclaration(l(context), c(context));
 		method.setName(context.STANDARD_IDENTIFIER().getText());
-		if (context.TYPE_IDENTIFIER() != null){
+		if (context.TYPE_IDENTIFIER() != null) {
 			method.setType(getType(context.TYPE_IDENTIFIER()));
 		}
-		for (BaliParser.ArgumentDeclarationContext adc : context.argumentDeclarationList().argumentDeclaration()){
+		for (BaliParser.ArgumentDeclarationContext adc : context.argumentDeclarationList().argumentDeclaration()) {
 			method.addArgument(buildDeclaration(adc));
 		}
 		return method;
 	}
 
-	private Declaration buildDeclaration(BaliParser.ArgumentDeclarationContext context){
+	private Declaration buildDeclaration(BaliParser.ArgumentDeclarationContext context) {
 		Declaration declaration = new Declaration(l(context), c(context));
 		declaration.setName(context.STANDARD_IDENTIFIER().getText());
 		declaration.setType(getType(context.TYPE_IDENTIFIER()));
@@ -304,17 +310,17 @@ public class ANTLRParserManager implements ParserManager {
 
 	private Value getValue(BaliParser.ValueContext context) {
 
-		if(context.constantValue() != null){
+		if (context.constantValue() != null) {
 			return getConstantValue(context.constantValue());
 		}
 
-		if (context.identifier() != null){
+		if (context.identifier() != null) {
 			ReferenceValue v = new ReferenceValue(l(context), c(context));
 			v.setName(getIdentifier(context.identifier()));
 			return v;
 		}
 
-		if(context.invocation() != null){
+		if (context.invocation() != null) {
 			BaliParser.InvocationContext ic = context.invocation();
 			return buildInvocationStatement(ic);
 		}
@@ -322,9 +328,9 @@ public class ANTLRParserManager implements ParserManager {
 		throw new RuntimeException("Could not get value for expression " + context.getText());
 	}
 
-	private Invocation buildInvocationStatement(BaliParser.InvocationContext context){
+	private Invocation buildInvocationStatement(BaliParser.InvocationContext context) {
 		Invocation value = new Invocation(l(context), c(context));
-		if (context.identifier().size() == 1){
+		if (context.identifier().size() == 1) {
 
 			value.setMethod(context.identifier(0).getText());
 		} else {
@@ -335,53 +341,53 @@ public class ANTLRParserManager implements ParserManager {
 			value.setMethod(context.identifier(1).getText());
 		}
 
-		for (BaliParser.ValueContext vc : context.argumentList().value()){
+		for (BaliParser.ValueContext vc : context.argumentList().value()) {
 			value.addArgument(getValue(vc));
 		}
 
 		return value;
 	}
 
-	private String getIdentifier(BaliParser.IdentifierContext context){
-		if (context.STANDARD_IDENTIFIER() != null){
+	private String getIdentifier(BaliParser.IdentifierContext context) {
+		if (context.STANDARD_IDENTIFIER() != null) {
 			return context.STANDARD_IDENTIFIER().getText();
 		}
-		if (context.CONSTANT_IDENTIFIER() != null){
+		if (context.CONSTANT_IDENTIFIER() != null) {
 			return context.CONSTANT_IDENTIFIER().getText();
 		}
 		throw new RuntimeException("Unrecognised Identifier Type: " + context.getText());
 	}
 
 	private Value getConstantValue(BaliParser.ConstantValueContext context) {
-		if(context.literal() != null){
+		if (context.literal() != null) {
 			BaliParser.LiteralContext lc = context.literal();
-			if (lc.booleanLiteral() != null){
+			if (lc.booleanLiteral() != null) {
 				BooleanLiteralValue blv = new BooleanLiteralValue(l(context), c(context));
 				blv.setSerialization(lc.booleanLiteral().getText());
 				return blv;
 			}
-			if (lc.STRING_LITERAL() != null){
+			if (lc.STRING_LITERAL() != null) {
 				StringLiteralValue slv = new StringLiteralValue(l(context), c(context));
 				slv.setSerialization(lc.STRING_LITERAL().getText());
 				return slv;
 			}
-			if (lc.NUMBER_LITERAL() != null){
+			if (lc.NUMBER_LITERAL() != null) {
 				NumberLiteralValue nlv = new NumberLiteralValue(l(context), c(context));
 				nlv.setSerialization(lc.NUMBER_LITERAL().getText());
 				return nlv;
 			}
-			if (lc.listLiteral() != null){
+			if (lc.listLiteral() != null) {
 				ListLiteralValue llv = new ListLiteralValue(l(context), c(context));
-				for (BaliParser.ValueContext v : lc.listLiteral().value()){
+				for (BaliParser.ValueContext v : lc.listLiteral().value()) {
 					llv.addValue(getValue(v));
 				}
 				return llv;
 			}
-		} else if (context.construction() != null){
+		} else if (context.construction() != null) {
 			BaliParser.ConstructionContext cc = context.construction();
 			ConstructionValue value = new ConstructionValue(l(context), c(context));
 			value.setType(getType(cc.TYPE_IDENTIFIER()));
-			for (BaliParser.ValueContext vc : cc.argumentList().value()){
+			for (BaliParser.ValueContext vc : cc.argumentList().value()) {
 				value.addArgument(getValue(vc));
 			}
 			return value;

@@ -11,7 +11,7 @@ public class ReferenceValue extends Value {
 
 	private String name;
 
-	private String typeName;
+	private Type type;
 	private ReferenceScope scope;
 	private String hostClass;
 
@@ -19,12 +19,12 @@ public class ReferenceValue extends Value {
 		super(line, character);
 	}
 
-	public void setTypeName(String typeName) {
-		this.typeName = typeName;
+	public Type getType() {
+		return type;
 	}
 
-	public String getValueTypeName() {
-		return typeName;
+	public void setType(Type type) {
+		this.type = type;
 	}
 
 	public void setName(String name) {

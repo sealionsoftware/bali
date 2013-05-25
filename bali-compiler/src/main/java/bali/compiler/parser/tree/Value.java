@@ -13,5 +13,5 @@ public abstract class Value extends Statement {
 		super(line, character);
 	}
 
-	public abstract String getValueTypeName();
+	public abstract Type getType();
 }

@@ -1,6 +1,7 @@
 package bali.compiler.parser.tree;
 
 import bali.Boolean;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -16,8 +17,10 @@ public class BooleanLiteralValue extends Value {
 		super(line, character);
 	}
 
-	public String getValueTypeName() {
-		return Boolean.class.getName();
+	public Type getType() {
+		Type t = new Type();
+		t.setQualifiedClassName(Boolean.class.getName());
+		return t;
 	}
 
 	public void setSerialization(String serialization) {

@@ -15,8 +15,10 @@ public class StringLiteralValue extends Value {
 		super(line, character);
 	}
 
-	public String getValueTypeName() {
-		return bali.String.class.getName();
+	public Type getType() {
+		Type t = new Type();
+		t.setQualifiedClassName(bali.String.class.getName());
+		return t;
 	}
 
 	public void setSerialization(String serialization) {

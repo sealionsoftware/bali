@@ -11,7 +11,7 @@
 
 	if(booleanStatement){
 		// Do something
-	} else (booleanStatement) {
+	} else if (booleanStatement) {
 		// Do something else
 	} else {
 		// Do the last thing

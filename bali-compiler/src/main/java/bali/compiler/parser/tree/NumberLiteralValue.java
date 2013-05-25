@@ -1,6 +1,7 @@
 package bali.compiler.parser.tree;
 
 import bali.Number;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -12,14 +13,17 @@ public class NumberLiteralValue extends Value {
 
 	private String serialization;
 
-	public NumberLiteralValue() {}
+	public NumberLiteralValue() {
+	}
 
 	public NumberLiteralValue(Integer line, Integer character) {
 		super(line, character);
 	}
 
-	public String getValueTypeName() {
-		return Number.class.getName();
+	public Type getType() {
+		Type t = new Type();
+		t.setQualifiedClassName(Number.class.getName());
+		return t;
 	}
 
 	public void setSerialization(String serialization) {
