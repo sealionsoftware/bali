@@ -5,7 +5,6 @@ import bali.compiler.GeneratedModule;
 import bali.compiler.GeneratedPackage;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.HashSet;
 import java.util.List;
@@ -14,8 +13,6 @@ import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 /**
  * User: Richard
@@ -23,9 +20,9 @@ import java.util.zip.ZipOutputStream;
  */
 public class JarPackager implements ModuleWriter {
 
-	public GeneratedModule writeModule(String name, List<GeneratedPackage> packages) throws Exception {
+	public GeneratedModule writeModule(String name, List<GeneratedPackage> packages, File directory) throws Exception {
 
-		File out = new File(name + ".jar");
+		File out = new File(directory, name + ".jar");
 		GeneratedModule module = new GeneratedModule(name);
 
 		out.createNewFile();
@@ -39,12 +36,12 @@ public class JarPackager implements ModuleWriter {
 			jos = new JarOutputStream(new FileOutputStream(out), manifest);
 			Set<String> createdDirectories = new HashSet<>();
 
-			for (GeneratedPackage generatedPackage : packages){
+			for (GeneratedPackage generatedPackage : packages) {
 				StringBuilder completePath = new StringBuilder();
-				for (String pathElement : generatedPackage.getName().split("\\.")){
+				for (String pathElement : generatedPackage.getName().split("\\.")) {
 					completePath.append(pathElement).append("/");
 					String currentPath = completePath.toString();
-					if (!createdDirectories.contains(currentPath)){
+					if (!createdDirectories.contains(currentPath)) {
 						createdDirectories.add(currentPath);
 						JarEntry entry = new JarEntry(currentPath);
 						entry.setTime(System.currentTimeMillis());
@@ -52,7 +49,7 @@ public class JarPackager implements ModuleWriter {
 						jos.closeEntry();
 					}
 				}
-				for (GeneratedClass clazz : generatedPackage.getClasses()){
+				for (GeneratedClass clazz : generatedPackage.getClasses()) {
 					byte[] code = clazz.getCode();
 					JarEntry entry = new JarEntry(completePath.toString() + clazz.getName() + ".class");
 					entry.setTime(System.currentTimeMillis());

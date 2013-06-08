@@ -3,7 +3,7 @@ package bali.compiler.bytecode;
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.CompilationUnit;
 import bali.compiler.parser.tree.Constant;
-import bali.compiler.parser.tree.Value;
+import bali.compiler.parser.tree.Expression;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
@@ -32,7 +32,7 @@ public class ASMPackageClassGenerator implements Generator<CompilationUnit, Gene
 				"java/lang/Object",
 				null);
 
-		Map<String, Value> constantValues = new HashMap<>();
+		Map<String, Expression> constantValues = new HashMap<>();
 		for (Constant constant : input.getConstants()) {
 			cw.visitField(ACC_PUBLIC + ACC_FINAL + ACC_STATIC,
 					constant.getName(),
@@ -51,8 +51,8 @@ public class ASMPackageClassGenerator implements Generator<CompilationUnit, Gene
 		);
 
 		clinitv.visitCode();
-		for (Map.Entry<String, Value> constantValueEntry : constantValues.entrySet()) {
-			Value value = constantValueEntry.getValue();
+		for (Map.Entry<String, Expression> constantValueEntry : constantValues.entrySet()) {
+			Expression value = constantValueEntry.getValue();
 			manager.push(value, clinitv);
 			clinitv.visitFieldInsn(PUTSTATIC, qualified, constantValueEntry.getKey(), converter.getTypeDescriptor(value.getType()));
 		}

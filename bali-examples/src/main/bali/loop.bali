@@ -9,11 +9,11 @@ class WhileDoer() implements Doer {
 
  	method goDo(){
 
-		Number flag = 1;
+		Number flag = 0;
 
-	    while (flag.greaterThan(4)){
-	        CONSOLE.printLine("Print $i");
-	        flag.increment();
+	    while (flag.lessThan(4)){
+	        CONSOLE.printLine("Hello");
+	        flag = flag.add(1);
 	    }
  	}
 

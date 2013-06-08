@@ -9,18 +9,18 @@ import java.util.List;
  */
 public class WhileStatement extends Statement {
 
-	private Value condition;
+	private Expression condition;
 	private CodeBlock body;
 
 	public WhileStatement(Integer line, Integer character) {
 		super(line, character);
 	}
 
-	public Value getCondition() {
+	public Expression getCondition() {
 		return condition;
 	}
 
-	public void setCondition(Value condition) {
+	public void setCondition(Expression condition) {
 		this.condition = condition;
 	}
 

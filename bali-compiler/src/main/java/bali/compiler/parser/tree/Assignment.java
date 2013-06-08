@@ -7,34 +7,35 @@ import java.util.List;
  * User: Richard
  * Date: 29/04/13
  */
-public class Assignment extends Statement  {
+public class Assignment extends Statement {
 
-	private String name;
-	private Value value;
+	private Reference reference;
+	private Expression value;
 
 	public Assignment(Integer line, Integer character) {
 		super(line, character);
 	}
 
-	public String getName() {
-		return name;
+	public Reference getReference() {
+		return reference;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setReference(Reference reference) {
+		this.reference = reference;
 	}
 
-	public Value getValue() {
+	public Expression getValue() {
 		return value;
 	}
 
-	public void setValue(Value value) {
+	public void setValue(Expression value) {
 		this.value = value;
 	}
 
 	public List<Node> getChildren() {
 		List<Node> children = new ArrayList<>();
 		children.add(value);
+		children.add(reference);
 		return children;
 	}
 }

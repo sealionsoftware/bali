@@ -10,19 +10,20 @@ import java.util.List;
  */
 public class Return extends Statement {
 
-	private Value value;
+	private Expression value;
 
-	public Return() {}
+	public Return() {
+	}
 
 	public Return(Integer line, Integer character) {
 		super(line, character);
 	}
 
-	public void setValue(Value value) {
+	public void setValue(Expression value) {
 		this.value = value;
 	}
 
-	public Value getValue() {
+	public Expression getValue() {
 		return value;
 	}
 

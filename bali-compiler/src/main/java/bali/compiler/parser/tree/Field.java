@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class Field extends Declaration {
 
-	private Value value;
+	private Expression value;
 
 	public Field() {
 	}
@@ -17,17 +17,17 @@ public class Field extends Declaration {
 		super(line, character);
 	}
 
-	public Value getValue() {
+	public Expression getValue() {
 		return value;
 	}
 
-	public void setValue(Value value) {
+	public void setValue(Expression value) {
 		this.value = value;
 	}
 
 	public List<Node> getChildren() {
 		List<Node> children = super.getChildren();
-		if (value != null){
+		if (value != null) {
 			children.add(value);
 		}
 		return children;

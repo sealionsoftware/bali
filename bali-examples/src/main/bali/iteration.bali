@@ -1,0 +1,25 @@
+import bali.Console;
+import bali.Number;
+import bali.List;
+import bali.String;
+
+constant List<String> NAMES = ["K00l"];
+
+interface Doer {
+ 	declare goDo();
+}
+
+class IterationDoer() implements Doer {
+
+ 	method goDo(){
+
+		Number length = 3;
+		Number i = 0;
+
+	    while (i.lessThan(length)){
+	        CONSOLE.printLine(NAMES.get(i));
+	        i = i.add(1);
+	    }
+ 	}
+
+}

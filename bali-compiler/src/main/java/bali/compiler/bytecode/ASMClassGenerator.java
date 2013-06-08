@@ -2,9 +2,9 @@ package bali.compiler.bytecode;
 
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.Class;
+import bali.compiler.parser.tree.Expression;
 import bali.compiler.parser.tree.Field;
 import bali.compiler.parser.tree.Method;
-import bali.compiler.parser.tree.Value;
 import bali.compiler.parser.tree.Variable;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
@@ -36,7 +36,7 @@ public class ASMClassGenerator implements Generator<Class, GeneratedClass> {
 				"java/lang/Object",
 				interfaceNames);
 
-		Map<String, Value> values = new HashMap<>();
+		Map<String, Expression> values = new HashMap<>();
 		for (Field field : input.getFields()) {
 			cw.visitField(ACC_PRIVATE,
 					field.getName(),
@@ -60,7 +60,7 @@ public class ASMClassGenerator implements Generator<Class, GeneratedClass> {
 		return new GeneratedClass(input.getClassName(), cw.toByteArray());
 	}
 
-	private void buildConstructor(Map<String, Value> values, ClassWriter cw, Class input) {
+	private void buildConstructor(Map<String, Expression> values, ClassWriter cw, Class input) {
 
 		ASMStackManager manager = new ASMStackManager(converter);
 
@@ -75,9 +75,9 @@ public class ASMClassGenerator implements Generator<Class, GeneratedClass> {
 		initv.visitVarInsn(ALOAD, 0);
 		initv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V");
 
-		for (Map.Entry<String, Value> valueEntry : values.entrySet()) {
+		for (Map.Entry<String, Expression> valueEntry : values.entrySet()) {
 			initv.visitVarInsn(ALOAD, 0);
-			Value value = valueEntry.getValue();
+			Expression value = valueEntry.getValue();
 			manager.push(value, initv);
 			initv.visitFieldInsn(PUTFIELD,
 					converter.getInternalName(input.getQualifiedClassName()),
@@ -102,14 +102,12 @@ public class ASMClassGenerator implements Generator<Class, GeneratedClass> {
 		);
 
 		methodVisitor.visitCode();
-		methodVisitor.visitVarInsn(ALOAD, method.getArguments().size());
-
 		manager.execute(method.getBody(), methodVisitor);
 
 		for (VariableInfo variable : manager.getDeclaredVariables()) {
 			Variable declaration = variable.getDeclaration();
 			methodVisitor.visitLocalVariable(
-					declaration.getName(),
+					declaration.getReference().getName(),
 					converter.getTypeDescriptor(declaration.getType()),
 					null,
 					variable.getStart(),

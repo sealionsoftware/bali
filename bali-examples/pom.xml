@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.sealionsoftware</groupId>
-    <artifactId>bali-examples</artifactId>
-    <version>1.0</version>
+	<groupId>com.sealionsoftware</groupId>
+	<artifactId>bali-examples</artifactId>
+	<version>1.0</version>
 
 	<description>Bali Language</description>
 
@@ -19,6 +19,49 @@
 		</dependency>
 	</dependencies>
 
-
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<executions>
+					<execution>
+						<id>compile-bali</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<classpathScope>compile</classpathScope>
+							<mainClass>bali.compiler.BaliCompiler</mainClass>
+							<arguments>
+								<argument>${project.basedir}/src/main/bali</argument>
+								<argument>${project.build.directory}</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<configuration>
+							<target>
+								<unzip src="${project.build.directory}/bali.jar"
+									   dest="${project.build.outputDirectory}"/>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

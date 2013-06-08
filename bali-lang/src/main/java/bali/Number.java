@@ -1,11 +1,10 @@
 package bali;
 
-import java.lang.*;
 import java.util.Arrays;
 
 /**
  * Class representing the integer numbers
- *
+ * <p/>
  * User: Richard
  * Date: 04/05/13
  */
@@ -21,11 +20,11 @@ public class Number {
 	}
 
 	public Number(int value) {
-		byte[] computedValue = new byte[1+ (value / MAX_BYTE_SIZE)];
+		byte[] computedValue = new byte[1 + (value / MAX_BYTE_SIZE)];
 
 		int rem = value;
 		int i = 0;
-		while (rem >= MAX_BYTE_SIZE){
+		while (rem >= MAX_BYTE_SIZE) {
 			computedValue[i++] = (byte) (rem % MAX_BYTE_SIZE);
 			rem /= MAX_BYTE_SIZE;
 		}
@@ -33,9 +32,9 @@ public class Number {
 		this.value = compact(computedValue);
 	}
 
-	int toInt(){
+	int toInt() {
 		int ret = 0;
-		for (int i = 0 ; i < value.length ; i++){
+		for (int i = 0; i < value.length; i++) {
 			ret += value[i] * Math.pow(MAX_BYTE_SIZE, i);
 		}
 		return ret;
@@ -43,16 +42,16 @@ public class Number {
 
 	public Number add(Number o) {
 
-		if (o.isZero().value){
+		if (o.isZero().value) {
 			return this;
 		}
-		if (isZero().value){
+		if (isZero().value) {
 			return o;
 		}
 
-		if (isPositive().and(o.isNegative()).value){
+		if (isPositive().and(o.isNegative()).value) {
 			return this.subtract(o.inverse());
-		} else if (o.isPositive().and(isNegative()).value){
+		} else if (o.isPositive().and(isNegative()).value) {
 			return o.subtract(this.inverse());
 		}
 
@@ -60,11 +59,11 @@ public class Number {
 		byte[] one;
 		byte[] two;
 
-		if (value.length == o.value.length ){
+		if (value.length == o.value.length) {
 			length = value.length;
 			one = value;
 			two = o.value;
-		} else if (value.length > o.value.length){
+		} else if (value.length > o.value.length) {
 			length = value.length;
 			one = value;
 			two = Arrays.copyOf(o.value, length);
@@ -77,9 +76,9 @@ public class Number {
 		byte carry = 0;
 		byte[] computedValue = new byte[length];
 
-		for (int i = 0; i < length ; i++){
+		for (int i = 0; i < length; i++) {
 			int sum = one[i] + two[i] + carry;
-			if(sum == 0){
+			if (sum == 0) {
 				computedValue[i] = 0;
 				carry = (byte) 0;
 			} else {
@@ -88,7 +87,7 @@ public class Number {
 			}
 		}
 
-		if(carry != 0){
+		if (carry != 0) {
 			computedValue = Arrays.copyOf(computedValue, computedValue.length + 1);
 			computedValue[computedValue.length - 1] = carry;
 		} else {
@@ -98,10 +97,10 @@ public class Number {
 		return new Number(computedValue);
 	}
 
-	private byte[] compact(byte[] array){
+	private byte[] compact(byte[] array) {
 		int lastIndex = array.length - 1;
-		if (array[lastIndex] == 0){
-			while(lastIndex > 0 && array[lastIndex] == 0){
+		if (array[lastIndex] == 0) {
+			while (lastIndex > 0 && array[lastIndex] == 0) {
 				lastIndex--;
 			}
 			return Arrays.copyOf(array, lastIndex + 1);
@@ -111,16 +110,16 @@ public class Number {
 
 	public Number subtract(Number o) {
 
-		if (o.isZero().value){
+		if (o.isZero().value) {
 			return this;
 		}
-		if (isZero().value){
+		if (isZero().value) {
 			return o;
 		}
-		if (isNegative().and(o.isPositive()).value || isPositive().and(o.isNegative()).value){
+		if (isNegative().and(o.isPositive()).value || isPositive().and(o.isNegative()).value) {
 			return this.add(o.inverse());
 		}
-		if (equals(o).value){
+		if (equals(o).value) {
 			return ZERO;
 		}
 
@@ -129,7 +128,7 @@ public class Number {
 		byte[] one;
 		byte[] two;
 
-		if (magnitude().greaterThan(o.magnitude()).value){
+		if (magnitude().greaterThan(o.magnitude()).value) {
 			flip = false;
 			length = value.length;
 			one = Arrays.copyOf(value, length);
@@ -141,7 +140,7 @@ public class Number {
 			two = o.value.length > value.length ? Arrays.copyOf(value, length) : value;
 		}
 
-		if (isNegative().and(o.isNegative()).value){
+		if (isNegative().and(o.isNegative()).value) {
 			flip = !flip;
 			invert(one);
 			invert(two);
@@ -149,12 +148,12 @@ public class Number {
 
 		byte[] computedValue = new byte[length];
 
-		for (int i = 0 ; i < length ; i++){
+		for (int i = 0; i < length; i++) {
 			byte diff = (byte) (one[i] - two[i]);
-			if (diff < 0){
+			if (diff < 0) {
 				int j = i;
-				while(true){
-					if (one[j] == 0){
+				while (true) {
+					if (one[j] == 0) {
 						one[j] = 127;
 					} else {
 						one[j]--;
@@ -170,7 +169,7 @@ public class Number {
 
 		computedValue = compact(computedValue);
 
-		if (flip){
+		if (flip) {
 			invert(computedValue);
 		}
 
@@ -178,11 +177,11 @@ public class Number {
 	}
 
 	public Boolean isPositive() {
-		return Boolean.forPrimitive(value[value.length -1] > 0);
+		return Boolean.forPrimitive(value[value.length - 1] > 0);
 	}
 
 	public Boolean isNegative() {
-		return Boolean.forPrimitive(value[value.length -1] < 0);
+		return Boolean.forPrimitive(value[value.length - 1] < 0);
 	}
 
 	public Boolean isZero() {
@@ -200,7 +199,7 @@ public class Number {
 	}
 
 	private void invert(byte[] in) {
-		for (int i = 0 ; i < in.length ; i++){
+		for (int i = 0; i < in.length; i++) {
 			in[i] = (byte) -in[i];
 		}
 	}
@@ -210,17 +209,35 @@ public class Number {
 	}
 
 	public Boolean greaterThan(Number o) {
-		if (value.length > o.value.length){
+		if (value.length > o.value.length) {
 			return Boolean.TRUE;
 		}
-		if (o.value.length > value.length){
+		if (o.value.length > value.length) {
 			return Boolean.FALSE;
 		}
-		for (int i = value.length -1 ; i >= 0 ; i--){
-			if (value[i] > o.value[i]){
+		for (int i = value.length - 1; i >= 0; i--) {
+			if (value[i] > o.value[i]) {
 				return Boolean.TRUE;
 			}
-			if (o.value[i] < value[i]){
+			if (o.value[i] > value[i]) {
+				return Boolean.FALSE;
+			}
+		}
+		return Boolean.FALSE;
+	}
+
+	public Boolean lessThan(Number o) {
+		if (value.length < o.value.length) {
+			return Boolean.TRUE;
+		}
+		if (o.value.length < value.length) {
+			return Boolean.FALSE;
+		}
+		for (int i = value.length - 1; i >= 0; i--) {
+			if (value[i] < o.value[i]) {
+				return Boolean.TRUE;
+			}
+			if (o.value[i] < value[i]) {
 				return Boolean.FALSE;
 			}
 		}
@@ -228,21 +245,21 @@ public class Number {
 	}
 
 	// TODO: replace with formatters
-	public java.lang.String binaryString(){
+	public java.lang.String binaryString() {
 		return stringInBase(2);
 	}
 
-	public java.lang.String decimalString(){
+	public java.lang.String decimalString() {
 		return stringInBase(10);
 	}
 
-	public java.lang.String stringInBase(int base){
-		long out =0;
-		for (int i = 0 ; i < value.length ; i++){
+	public java.lang.String stringInBase(int base) {
+		long out = 0;
+		for (int i = 0; i < value.length; i++) {
 			out += value[i] * Math.pow(MAX_BYTE_SIZE, i);
 		}
 		StringBuilder sb = new StringBuilder();
-		while (out > 0){
+		while (out > 0) {
 			sb.append(out % base);
 			out = out / base;
 		}
@@ -250,14 +267,14 @@ public class Number {
 	}
 
 	//TODO: Remove java methods
-	public boolean equals(Object o){
-		if (o instanceof Number){
+	public boolean equals(Object o) {
+		if (o instanceof Number) {
 			return equals((Number) o) == Boolean.TRUE;
 		}
 		return false;
 	}
 
-	public java.lang.String toString(){
+	public java.lang.String toString() {
 		return decimalString();
 	}
 }

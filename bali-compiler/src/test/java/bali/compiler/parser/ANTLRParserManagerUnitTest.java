@@ -1,7 +1,7 @@
 package bali.compiler.parser;
 
 import bali.compiler.parser.tree.Assignment;
-import bali.compiler.parser.tree.BooleanLiteralValue;
+import bali.compiler.parser.tree.BooleanLiteralExpression;
 import bali.compiler.parser.tree.Class;
 import bali.compiler.parser.tree.CodeBlock;
 import bali.compiler.parser.tree.CompilationUnit;
@@ -14,8 +14,8 @@ import bali.compiler.parser.tree.Import;
 import bali.compiler.parser.tree.Interface;
 import bali.compiler.parser.tree.Invocation;
 import bali.compiler.parser.tree.Method;
-import bali.compiler.parser.tree.NumberLiteralValue;
-import bali.compiler.parser.tree.ReferenceValue;
+import bali.compiler.parser.tree.NumberLiteralExpression;
+import bali.compiler.parser.tree.Reference;
 import bali.compiler.parser.tree.Return;
 import bali.compiler.parser.tree.Variable;
 import bali.compiler.parser.tree.WhileStatement;
@@ -41,7 +41,7 @@ public class ANTLRParserManagerUnitTest {
 	}
 
 	@Test
-	public void testCompilationUnit(){
+	public void testCompilationUnit() {
 		Assert.assertEquals("Package name", "example", unit.getName());
 		Assert.assertEquals("Imports", 2, unit.getImports().size());
 		Assert.assertEquals("Constants", 1, unit.getConstants().size());
@@ -51,34 +51,34 @@ public class ANTLRParserManagerUnitTest {
 	}
 
 	@Test
-	public void testImport(){
+	public void testImport() {
 		Import iport = unit.getImports().get(0);
 		Assert.assertEquals("Import name", "bali.Number", iport.getName());
 		Assert.assertEquals("Children", 0, iport.getChildren().size());
 	}
 
 	@Test
-	public void testConstant(){
+	public void testConstant() {
 		Constant constant = unit.getConstants().get(0);
 		Assert.assertEquals("Constant name", "GLOBAL_CONSTANT", constant.getName());
 		Assert.assertEquals("Type", "Number", constant.getType().getClassName());
-		Assert.assertEquals("Value Type", NumberLiteralValue.class, constant.getValue().getClass());
-		Assert.assertEquals("Value", "2", ((NumberLiteralValue) constant.getValue()).getSerialization());
+		Assert.assertEquals("Value Type", NumberLiteralExpression.class, constant.getValue().getClass());
+		Assert.assertEquals("Value", "2", ((NumberLiteralExpression) constant.getValue()).getSerialization());
 		Assert.assertEquals("Children", 2, constant.getChildren().size());
 	}
 
 	@Test
-	public void testInterface(){
+	public void testInterface() {
 		Interface iface = unit.getInterfaces().get(1);
 		Assert.assertEquals("Name", "AnInterface", iface.getClassName());
 		Assert.assertEquals("Super Interfaces", 1, iface.getSuperInterfaces().size());
 		Assert.assertEquals("Super Interface Name", "ASuperInterface", iface.getSuperInterfaces().get(0).getClassName());
-		Assert.assertEquals("Method Declarations", 1, iface.getMethodDeclarations().size());
+		Assert.assertEquals("Method Declarations", 1, iface.getMethods().size());
 		Assert.assertEquals("Children", 2, iface.getChildren().size());
 	}
 
 	@Test
-	public void testClass(){
+	public void testClass() {
 		Class clazz = unit.getClasses().get(0);
 		Assert.assertEquals("Name", "AnImplementation", clazz.getClassName());
 		Assert.assertEquals("Arguments", 1, clazz.getArguments().size());
@@ -90,7 +90,7 @@ public class ANTLRParserManagerUnitTest {
 	}
 
 	@Test
-	public void testConstructionArguments(){
+	public void testConstructionArguments() {
 		Declaration declaration = unit.getClasses().get(0).getArguments().get(0);
 		Assert.assertEquals("Name", "aField", declaration.getName());
 		Assert.assertEquals("Type", "Number", declaration.getType().getClassName());
@@ -98,7 +98,7 @@ public class ANTLRParserManagerUnitTest {
 	}
 
 	@Test
-	public void testField(){
+	public void testField() {
 		Field field = unit.getClasses().get(0).getFields().get(0);
 		Assert.assertEquals("Name", "aField", field.getName());
 		Assert.assertEquals("Type", "Number", field.getType().getClassName());
@@ -106,7 +106,7 @@ public class ANTLRParserManagerUnitTest {
 	}
 
 	@Test
-	public void testMethod(){
+	public void testMethod() {
 		Method method = unit.getClasses().get(0).getMethods().get(0);
 		Assert.assertEquals("Name", "aMethod", method.getName());
 		Assert.assertEquals("Type", "Number", method.getType().getClassName());
@@ -115,7 +115,7 @@ public class ANTLRParserManagerUnitTest {
 	}
 
 	@Test
-	public void testMethodArgument(){
+	public void testMethodArgument() {
 		Declaration declaration = unit.getClasses().get(0).getMethods().get(0).getArguments().get(0);
 		Assert.assertEquals("Name", "anArgument", declaration.getName());
 		Assert.assertEquals("Type", "Number", declaration.getType().getClassName());
@@ -123,15 +123,15 @@ public class ANTLRParserManagerUnitTest {
 	}
 
 	@Test
-	public void testCodeBlock(){
+	public void testCodeBlock() {
 		CodeBlock body = unit.getClasses().get(0).getMethods().get(0).getBody();
 		Assert.assertEquals("Statements", 4, body.getStatements().size());
 		Assert.assertEquals("Assignment", 1, ((Invocation) ((Assignment) body.getStatements().get(0)).getValue()).getArguments().size());
-		Assert.assertEquals("Variable", "true", ((BooleanLiteralValue) ((Variable) body.getStatements().get(1)).getValue()).getSerialization());
+		Assert.assertEquals("Variable", "true", ((BooleanLiteralExpression) ((Variable) body.getStatements().get(1)).getValue()).getSerialization());
 		Assert.assertEquals("While", 2, (((WhileStatement) body.getStatements().get(2)).getBody().getChildren().size()));
-		Assert.assertEquals("For", 1, ((ForStatement)((WhileStatement) body.getStatements().get(2)).getBody().getStatements().get(0)).getBody().getChildren().size());
+		Assert.assertEquals("For", 1, ((ForStatement) ((WhileStatement) body.getStatements().get(2)).getBody().getStatements().get(0)).getBody().getChildren().size());
 		Assert.assertEquals("If", 1, ((ConditionalStatement) ((WhileStatement) body.getStatements().get(2)).getBody().getStatements().get(1)).getConditionalBlocks().get(0).getBody().getChildren().size());
-		Assert.assertEquals("Return Statement", "anArgument", ((ReferenceValue) ((Return) body.getStatements().get(3)).getValue()).getName());
+		Assert.assertEquals("Return Statement", "anArgument", ((Reference) ((Return) body.getStatements().get(3)).getValue()).getName());
 	}
 
 

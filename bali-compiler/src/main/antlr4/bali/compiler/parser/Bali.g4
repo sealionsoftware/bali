@@ -1,4 +1,5 @@
 // Grammar of the Bali Language
+
 grammar Bali;
 
 // Token Definition
@@ -24,66 +25,78 @@ packageDeclaration:
 	EOF
 ;
 
-importDeclaration:   'import' TYPE_IDENTIFIER ';' ;
+importDeclaration:          'import' TYPE_IDENTIFIER ';' ;
 
-constantDeclaration: 'constant' TYPE_IDENTIFIER CONSTANT_IDENTIFIER '=' constantValue ';' ;
+constantDeclaration:        'constant' typeDeclaration CONSTANT_IDENTIFIER '=' constantValue ';' ;
 
-// functionDeclaration: 'function' TYPE_IDENTIFIER? STANDARD_IDENTIFIER argumentDeclarationList codeBlock ;
+// functionDeclaration:     'function' typeDeclaration? STANDARD_IDENTIFIER argumentDeclarationList codeBlock ;
 
-interfaceDeclaration: 'interface' TYPE_IDENTIFIER ('extends' typeDeclarationList)? '{' (declarationDeclaration)* '}' ;
+interfaceDeclaration:       'interface' typeDeclaration ('extends' typeDeclarationList)? '{' (declarationDeclaration)* '}' ;
 
-classDeclaration: 'class' TYPE_IDENTIFIER argumentDeclarationList ( 'implements' typeDeclarationList )? '{' fieldDeclaration* methodDeclaration* '}' ;
+classDeclaration:           'class' typeDeclaration argumentDeclarationList ( 'implements' typeDeclarationList )? '{' fieldDeclaration* methodDeclaration* '}' ;
 
-fieldDeclaration: 'field' TYPE_IDENTIFIER STANDARD_IDENTIFIER ('=' value )? ';' ;
+fieldDeclaration:           'field' typeDeclaration STANDARD_IDENTIFIER ('=' expression )? ';' ;
 
-methodDeclaration: 'method' TYPE_IDENTIFIER? STANDARD_IDENTIFIER argumentDeclarationList codeBlock ;
+methodDeclaration:          'method' typeDeclaration? STANDARD_IDENTIFIER argumentDeclarationList codeBlock ;
 
-declarationDeclaration: 'declare' TYPE_IDENTIFIER? STANDARD_IDENTIFIER argumentDeclarationList ';' ;
+declarationDeclaration:     'declare' typeDeclaration? STANDARD_IDENTIFIER argumentDeclarationList ';' ;
 
-codeBlock:              '{' statement* '}' ;
+codeBlock:                  '{' statement* '}' ;
 
-statement:              lineStatement | controlStatement ;
+statement:                  lineStatement | controlStatement ;
 
-lineStatement:          (variableDeclaration | invocation | assignment | returnStatement) ';' ;
+lineStatement:              (variableDeclaration | invocation | assignment | returnStatement) ';' ;
 
-controlStatement:       conditionalStatement | tryStatement | whileStatement | forStatement ;
+controlStatement:           conditionalStatement | tryStatement | whileStatement | forStatement ;
 
-conditionalStatement:   'if' '(' value ')' codeBlock ('else if' '(' value ')' codeBlock)* ('else' codeBlock)? ;
+conditionalStatement:       'if' '(' expression ')' codeBlock ('else if' '(' expression ')' codeBlock)* ('else' codeBlock)? ;
 
-tryStatement:           'try' codeBlock ('catch' '(' argumentDeclaration ')' codeBlock)+  ;
+tryStatement:               'try' codeBlock ('catch' '(' argumentDeclaration ')' codeBlock)+ ;
 
-whileStatement:         'while' '(' value ')' codeBlock;
+whileStatement:             'while' '(' expression ')' codeBlock ;
 
-forStatement:           'for' '(' argumentDeclaration ':' value ')' codeBlock;
+forStatement:               'for' '(' argumentDeclaration ':' expression ')' codeBlock ;
 
-variableDeclaration:    TYPE_IDENTIFIER assignment ;
+switchStatement:            'switch' '(' expression ')' '{' caseStatement+ '}' ;
 
-assignment:             STANDARD_IDENTIFIER '=' value ;
+caseStatement:              'case'  expression ':' codeBlock ;
 
-identifier:             STANDARD_IDENTIFIER | CONSTANT_IDENTIFIER;
+variableDeclaration:        typeDeclaration assignment ;
 
-invocation:             (identifier '.')? identifier argumentList  ;
+assignment:                 identifier '=' expression ;
 
-construction:           'new' TYPE_IDENTIFIER argumentList ;
+identifier:                 STANDARD_IDENTIFIER | CONSTANT_IDENTIFIER ;
 
-returnStatement:        'return' value?;
+//invocation:                 ((constantValue | identifier) '.')? identifier argumentList
+//							|  invocation '.' identifier argumentList
+//							;
 
-argumentDeclarationList: '(' (argumentDeclaration ( ',' argumentDeclaration)*)? ')' ;
+// Changed due to left recursion
+// invocation:                 (expression '.')? identifier argumentList;
 
-typeDeclarationList:    TYPE_IDENTIFIER (',' TYPE_IDENTIFIER)*  ;
+invocation:                 ((constantValue | identifier) '.')? identifier argumentList
+							|  invocation '.' identifier argumentList ;
 
-argumentDeclaration:    TYPE_IDENTIFIER STANDARD_IDENTIFIER;
+construction:               'new' typeDeclaration argumentList ;
 
-argumentList:           '(' ( value ( ',' value)*)? ')' ;
+returnStatement:            'return' expression? ;
 
-constantValue:          literal | construction ;
+argumentDeclarationList:    '(' (argumentDeclaration ( ',' argumentDeclaration)*)? ')' ;
 
-value:                  constantValue |
-						identifier |
-						invocation;
+typeDeclaration:            TYPE_IDENTIFIER ('<'  typeDeclarationList '>')? ;
 
-literal:                STRING_LITERAL | NUMBER_LITERAL | booleanLiteral | listLiteral ;
+typeDeclarationList:        typeDeclaration (',' typeDeclaration)* ;
 
-booleanLiteral:         'true' | 'false' ;
+argumentDeclaration:        typeDeclaration STANDARD_IDENTIFIER ;
 
-listLiteral:            '[' value (',' value)+ ']' ;
+argumentList:               '(' ( expression ( ',' expression)*)? ')' ;
+
+constantValue:              literal | construction ;
+
+expression:                 constantValue | identifier | invocation ;
+
+literal:                    STRING_LITERAL | NUMBER_LITERAL | booleanLiteral | listLiteral ;
+
+listLiteral:                '[' (expression (',' expression)*)? ']' ;
+
+booleanLiteral:             'true' | 'false' ;

@@ -3,6 +3,7 @@ package bali.compiler.module;
 import bali.compiler.GeneratedModule;
 import bali.compiler.GeneratedPackage;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -11,6 +12,6 @@ import java.util.List;
  */
 public interface ModuleWriter {
 
-	public GeneratedModule writeModule(String name, List<GeneratedPackage> packages) throws Exception;
+	public GeneratedModule writeModule(String name, List<GeneratedPackage> packages, File directory) throws Exception;
 
 }

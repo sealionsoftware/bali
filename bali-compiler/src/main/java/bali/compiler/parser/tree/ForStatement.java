@@ -10,7 +10,7 @@ import java.util.List;
 public class ForStatement extends Statement {
 
 	private Declaration element;
-	private Value collection;
+	private Expression collection;
 	private CodeBlock body;
 
 	public ForStatement(Integer line, Integer character) {
@@ -25,11 +25,11 @@ public class ForStatement extends Statement {
 		this.element = element;
 	}
 
-	public Value getCollection() {
+	public Expression getCollection() {
 		return collection;
 	}
 
-	public void setCollection(Value collection) {
+	public void setCollection(Expression collection) {
 		this.collection = collection;
 	}
 

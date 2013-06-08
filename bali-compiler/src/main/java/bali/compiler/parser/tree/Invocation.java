@@ -7,11 +7,11 @@ import java.util.List;
  * User: Richard
  * Date: 02/05/13
  */
-public class Invocation extends Value {
+public class Invocation extends Expression {
 
-	private Value target;
+	private Expression target;
 	private String method;
-	private List<Value> arguments = new ArrayList<>();
+	private List<Expression> arguments = new ArrayList<>();
 
 	private Type returnType;
 
@@ -27,7 +27,7 @@ public class Invocation extends Value {
 		this.returnType = returnType;
 	}
 
-	public void setTarget(Value target) {
+	public void setTarget(Expression target) {
 		this.target = target;
 	}
 
@@ -35,11 +35,11 @@ public class Invocation extends Value {
 		this.method = method;
 	}
 
-	public void addArgument(Value argument) {
+	public void addArgument(Expression argument) {
 		arguments.add(argument);
 	}
 
-	public Value getTarget() {
+	public Expression getTarget() {
 		return target;
 	}
 
@@ -47,13 +47,15 @@ public class Invocation extends Value {
 		return method;
 	}
 
-	public List<Value> getArguments() {
+	public List<Expression> getArguments() {
 		return arguments;
 	}
 
 	public List<Node> getChildren() {
 		List<Node> children = new ArrayList<>();
-		children.add(target);
+		if (target != null) {
+			children.add(target);
+		}
 		children.addAll(arguments);
 		return children;
 	}

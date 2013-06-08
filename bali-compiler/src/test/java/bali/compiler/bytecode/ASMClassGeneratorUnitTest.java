@@ -2,13 +2,13 @@ package bali.compiler.bytecode;
 
 import bali.Number;
 import bali.compiler.GeneratedClass;
+import bali.compiler.parser.tree.Class;
 import bali.compiler.parser.tree.CodeBlock;
 import bali.compiler.parser.tree.Declaration;
 import bali.compiler.parser.tree.Field;
 import bali.compiler.parser.tree.Interface;
 import bali.compiler.parser.tree.Method;
-import bali.compiler.parser.tree.Class;
-import bali.compiler.parser.tree.NumberLiteralValue;
+import bali.compiler.parser.tree.NumberLiteralExpression;
 import bali.compiler.parser.tree.Return;
 import bali.compiler.parser.tree.Type;
 import junit.framework.Assert;
@@ -19,10 +19,10 @@ import java.lang.reflect.Modifier;
 
 /**
  * TODO: tests for constructors
- *
-* User: Richard
-* Date: 08/05/13
-*/
+ * <p/>
+ * User: Richard
+ * Date: 08/05/13
+ */
 public class ASMClassGeneratorUnitTest {
 
 	private static ASMClassGenerator generator = new ASMClassGenerator();
@@ -30,7 +30,7 @@ public class ASMClassGeneratorUnitTest {
 	private Class clazz;
 
 	@Before
-	public void setUp(){
+	public void setUp() {
 		clazz = new Class();
 		clazz.setQualifiedClassName("bali.test.AClass");
 	}
@@ -41,7 +41,7 @@ public class ASMClassGeneratorUnitTest {
 		java.lang.Class loadedClass = build();
 
 		Assert.assertEquals("Number of fields", 0, loadedClass.getFields().length);
-		Assert.assertEquals("Number of methods",0, loadedClass.getDeclaredMethods().length);
+		Assert.assertEquals("Number of methods", 0, loadedClass.getDeclaredMethods().length);
 		Assert.assertEquals("Number of constructors", 1, loadedClass.getConstructors().length);
 		Assert.assertEquals("Number of interfaces", 0, loadedClass.getInterfaces().length);
 
@@ -53,7 +53,7 @@ public class ASMClassGeneratorUnitTest {
 		Type number = new Type();
 		number.setQualifiedClassName("bali.Number");
 
-		NumberLiteralValue value = new NumberLiteralValue();
+		NumberLiteralExpression value = new NumberLiteralExpression();
 		value.setSerialization("1");
 
 		Field declaration = new Field();
@@ -103,7 +103,7 @@ public class ASMClassGeneratorUnitTest {
 		type.setClassName("Number");
 		type.setQualifiedClassName("bali.Number");
 
-		NumberLiteralValue nlv = new NumberLiteralValue();
+		NumberLiteralExpression nlv = new NumberLiteralExpression();
 		nlv.setSerialization("1");
 
 		Return ret = new Return();
@@ -155,7 +155,7 @@ public class ASMClassGeneratorUnitTest {
 	}
 
 	@Test
-	public void testGenerateImplementation() throws Exception{
+	public void testGenerateImplementation() throws Exception {
 
 		Type type = new Type();
 		type.setClassName("Number");
@@ -176,7 +176,7 @@ public class ASMClassGeneratorUnitTest {
 
 		Interface iface = new Interface();
 		iface.setQualifiedClassName("bali.compiler.bytecode.ASuperInterface");
-		iface.addMethodDeclaration(declaration);
+		iface.addMethod(declaration);
 
 		clazz.addMethod(declaration);
 		clazz.addInterface(iface);
@@ -189,11 +189,10 @@ public class ASMClassGeneratorUnitTest {
 
 	}
 
-	private java.lang.Class build() throws Exception{
+	private java.lang.Class build() throws Exception {
 		GeneratedClass generated = generator.build(clazz);
 		return new ByteArrayClassLoader(generated.getCode()).findClass("bali.test.AClass");
 	}
-
 
 
 }

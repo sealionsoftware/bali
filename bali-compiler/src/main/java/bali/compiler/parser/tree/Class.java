@@ -7,14 +7,15 @@ import java.util.List;
  * User: Richard
  * Date: 29/04/13
  */
-public class Class extends Type {
+public class Class extends MethodDeclaringType<Method> {
 
 	private List<Declaration> arguments = new ArrayList<>();
 	private List<Type> interfaces = new ArrayList<>();
 	private List<Field> fields = new ArrayList<>();
 	private List<Method> methods = new ArrayList<>();
 
-	public Class() {}
+	public Class() {
+	}
 
 	public Class(Integer line, Integer character) {
 		super(line, character);
@@ -24,7 +25,7 @@ public class Class extends Type {
 		return arguments;
 	}
 
-	public void addArgument(Declaration argument){
+	public void addArgument(Declaration argument) {
 		this.arguments.add(argument);
 	}
 
@@ -32,7 +33,7 @@ public class Class extends Type {
 		return methods;
 	}
 
-	public void addMethod(Method method){
+	public void addMethod(Method method) {
 		this.methods.add(method);
 	}
 
@@ -40,7 +41,7 @@ public class Class extends Type {
 		return interfaces;
 	}
 
-	public void addInterface(Type iface){
+	public void addInterface(Type iface) {
 		this.interfaces.add(iface);
 	}
 
@@ -48,7 +49,7 @@ public class Class extends Type {
 		return fields;
 	}
 
-	public void addField(Field field){
+	public void addField(Field field) {
 		this.fields.add(field);
 	}
 

@@ -1,7 +1,6 @@
 package bali.compiler.bytecode;
 
 import bali.compiler.GeneratedClass;
-import bali.compiler.parser.tree.CompilationUnit;
 import bali.compiler.parser.tree.Interface;
 import bali.compiler.parser.tree.MethodDeclaration;
 import bali.compiler.parser.tree.Type;
@@ -19,7 +18,7 @@ public class ASMInterfaceGenerator implements Generator<Interface, GeneratedClas
 
 		String[] extensions = new String[input.getSuperInterfaces().size()];
 		int i = 0;
-		for (Type superInterface : input.getSuperInterfaces()){
+		for (Type superInterface : input.getSuperInterfaces()) {
 			extensions[i++] = converter.getInternalName(superInterface.getQualifiedClassName());
 		}
 
@@ -34,7 +33,7 @@ public class ASMInterfaceGenerator implements Generator<Interface, GeneratedClas
 
 		cw.visitEnd();
 
-		for (MethodDeclaration method : input.getMethodDeclarations()) {
+		for (MethodDeclaration method : input.getMethods()) {
 			cw.visitMethod(ACC_PUBLIC + ACC_ABSTRACT,
 					method.getName(),
 					converter.getMethodDescriptor(method),

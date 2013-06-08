@@ -1,6 +1,7 @@
 package bali.compiler.parser.tree;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -12,6 +13,7 @@ public class Type extends Node {
 	private String className;
 	private String qualifiedClassName;
 	private List<Type> parameters = new ArrayList<>();
+	private Boolean erase = false;
 
 	public Type() {
 	}
@@ -50,12 +52,47 @@ public class Type extends Node {
 
 	//TODO: sub/super etc
 	public Boolean isAssignableTo(Type site) {
+
 		String ths = qualifiedClassName;
 		String tht = site.qualifiedClassName;
-		return ths != null && tht != null && ths.equals(tht);
+
+		if (ths == null || tht == null || !ths.equals(tht) || parameters.size() != site.parameters.size()) {
+			return false;
+		}
+
+		Iterator<Type> i = parameters.iterator();
+		Iterator<Type> j = site.parameters.iterator();
+
+		while (i.hasNext()) {
+			Type next = i.next();
+			if (next == null || (next != this && !next.isAssignableTo(j.next()))) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	public Boolean getErase() {
+		return erase;
+	}
+
+	public void setErase(Boolean erase) {
+		this.erase = erase;
 	}
 
 	public String toString() {
-		return qualifiedClassName;
+
+		StringBuilder sb = new StringBuilder(qualifiedClassName);
+		if (parameters.size() > 0) {
+			sb.append("<");
+			Iterator<Type> i = parameters.iterator();
+			sb.append(i.next());
+			while (i.hasNext()) {
+				sb.append(",").append(i.next());
+			}
+			sb.append(">");
+		}
+		return sb.toString();
 	}
 }

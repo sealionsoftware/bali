@@ -5,23 +5,23 @@ import bali.List;
 import bali.Number;
 import bali.String;
 import bali.compiler.GeneratedClass;
-import bali.compiler.parser.tree.BooleanLiteralValue;
+import bali.compiler.parser.tree.BooleanLiteralExpression;
 import bali.compiler.parser.tree.CompilationUnit;
 import bali.compiler.parser.tree.Constant;
-import bali.compiler.parser.tree.ConstructionValue;
-import bali.compiler.parser.tree.ListLiteralValue;
-import bali.compiler.parser.tree.NumberLiteralValue;
-import bali.compiler.parser.tree.StringLiteralValue;
+import bali.compiler.parser.tree.ConstructionExpression;
+import bali.compiler.parser.tree.Expression;
+import bali.compiler.parser.tree.ListLiteralExpression;
+import bali.compiler.parser.tree.NumberLiteralExpression;
+import bali.compiler.parser.tree.StringLiteralExpression;
 import bali.compiler.parser.tree.Type;
-import bali.compiler.parser.tree.Value;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
-* User: Richard
-* Date: 08/05/13
-*/
+ * User: Richard
+ * Date: 08/05/13
+ */
 public class ASMPackageClassGeneratorUnitTest {
 
 	private static ASMPackageClassGenerator generator = new ASMPackageClassGenerator();
@@ -29,28 +29,28 @@ public class ASMPackageClassGeneratorUnitTest {
 	private CompilationUnit unit;
 
 	@Before
-	public void setUp(){
-		unit = new CompilationUnit(0,0);
+	public void setUp() {
+		unit = new CompilationUnit(0, 0);
 		unit.setName("bali.test");
 	}
 
 	@Test
 	public void testNumberConstant() throws Exception {
-		NumberLiteralValue nlv = new NumberLiteralValue(0,0);
+		NumberLiteralExpression nlv = new NumberLiteralExpression(0, 0);
 		nlv.setSerialization("1");
 		testGenerateConstant(Number.class, nlv, new Number(1));
 	}
 
 	@Test
 	public void testStringConstant() throws Exception {
-		StringLiteralValue slv = new StringLiteralValue(0,0);
+		StringLiteralExpression slv = new StringLiteralExpression(0, 0);
 		slv.setSerialization("Hello World");
 		testGenerateConstant(String.class, slv, new String("Hello World".toCharArray()));
 	}
 
 	@Test
 	public void testBooleanConstant() throws Exception {
-		BooleanLiteralValue blv = new BooleanLiteralValue(0,0);
+		BooleanLiteralExpression blv = new BooleanLiteralExpression(0, 0);
 		blv.setSerialization("true");
 		testGenerateConstant(Boolean.class, blv, Boolean.TRUE);
 	}
@@ -58,14 +58,18 @@ public class ASMPackageClassGeneratorUnitTest {
 	@Test
 	public void testListConstant() throws Exception {
 
-		NumberLiteralValue one = new NumberLiteralValue(0,0);
+		NumberLiteralExpression one = new NumberLiteralExpression(0, 0);
 		one.setSerialization("1");
-		NumberLiteralValue two = new NumberLiteralValue(0,0);
+		NumberLiteralExpression two = new NumberLiteralExpression(0, 0);
 		two.setSerialization("2");
-		NumberLiteralValue three = new NumberLiteralValue(0,0);
+		NumberLiteralExpression three = new NumberLiteralExpression(0, 0);
 		three.setSerialization("3");
 
-		ListLiteralValue llv = new ListLiteralValue(0,0);
+		Type t = new Type(0, 0);
+		t.setQualifiedClassName(Number.class.getName());
+
+		ListLiteralExpression llv = new ListLiteralExpression(0, 0);
+		llv.setListType(t);
 		llv.addValue(one);
 		llv.addValue(two);
 		llv.addValue(three);
@@ -75,19 +79,19 @@ public class ASMPackageClassGeneratorUnitTest {
 
 	@Test
 	public void testNewObjectConstant() throws Exception {
-		Type t = new Type(0,0);
+		Type t = new Type(0, 0);
 		t.setQualifiedClassName(Instantiatable.class.getName());
-		ConstructionValue cv = new ConstructionValue(0,0);
+		ConstructionExpression cv = new ConstructionExpression(0, 0);
 		cv.setType(t);
 		testGenerateConstant(Instantiatable.class, cv, new Instantiatable());
 	}
 
-	public <T> void testGenerateConstant(java.lang.Class<T> clazz, Value value, T expectation) throws Exception {
+	public <T> void testGenerateConstant(java.lang.Class<T> clazz, Expression value, T expectation) throws Exception {
 
-		Type type = new Type(0,0);
+		Type type = new Type(0, 0);
 		type.setQualifiedClassName(clazz.getName());
 
-		Constant constant = new Constant(0,0);
+		Constant constant = new Constant(0, 0);
 		constant.setName("aConstant");
 		constant.setValue(value);
 		constant.setType(type);
@@ -105,7 +109,7 @@ public class ASMPackageClassGeneratorUnitTest {
 
 	public static class Instantiatable {
 
-		public boolean equals(Object o){
+		public boolean equals(Object o) {
 			return o instanceof Instantiatable;
 		}
 	}

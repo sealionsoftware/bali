@@ -9,14 +9,14 @@ import java.util.List;
  */
 public class ConditionalBlock extends Node {
 
-	private Value condition;
+	private Expression condition;
 	private CodeBlock body;
 
 	public ConditionalBlock(Integer line, Integer character) {
 		super(line, character);
 	}
 
-	public void setCondition(Value condition) {
+	public void setCondition(Expression condition) {
 		this.condition = condition;
 	}
 
@@ -24,7 +24,7 @@ public class ConditionalBlock extends Node {
 		this.body = body;
 	}
 
-	public Value getCondition() {
+	public Expression getCondition() {
 		return condition;
 	}
 

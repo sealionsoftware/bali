@@ -1,6 +1,7 @@
 package bali.compiler.bytecode;
 
-import bali.compiler.parser.tree.NumberLiteralValue;
+import bali.compiler.parser.tree.NumberLiteralExpression;
+import bali.compiler.parser.tree.Reference;
 import bali.compiler.parser.tree.Return;
 import bali.compiler.parser.tree.Statement;
 import bali.compiler.parser.tree.Type;
@@ -32,7 +33,7 @@ public class ASMStackManagerUnitTest implements Opcodes {
 	@Test
 	public void testExecuteReturnValueStatement() {
 
-		NumberLiteralValue value = new NumberLiteralValue(0, 0);
+		NumberLiteralExpression value = new NumberLiteralExpression(0, 0);
 		value.setSerialization("0");
 
 		Return statement = new Return(0, 0);
@@ -78,11 +79,14 @@ public class ASMStackManagerUnitTest implements Opcodes {
 		Type type = new Type(0, 0);
 		type.setQualifiedClassName("bali/Number");
 
-		NumberLiteralValue value = new NumberLiteralValue(0, 0);
+		NumberLiteralExpression value = new NumberLiteralExpression(0, 0);
 		value.setSerialization("0");
 
+		Reference ref = new Reference();
+		ref.setName("aVariable");
+
 		Variable statement = new Variable(0, 0);
-		statement.setName("aVariable");
+		statement.setReference(ref);
 		statement.setType(type);
 		statement.setValue(value);
 

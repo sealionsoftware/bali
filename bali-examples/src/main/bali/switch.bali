@@ -1,0 +1,26 @@
+import bali.Console;
+import bali.Number;
+import bali.List;
+import bali.String;
+
+interface Doer {
+ 	declare goDo();
+}
+
+class SwitchDoer() implements Doer {
+
+ 	method goDo(){
+
+//		Number operand = 4;
+//
+//		switch (operand){
+//
+//			case 4: {
+//
+//			}
+//
+//		}
+
+ 	}
+
+}

@@ -5,7 +5,7 @@ import bali.compiler.parser.tree.CodeBlock;
 import bali.compiler.parser.tree.CompilationUnit;
 import bali.compiler.parser.tree.Declaration;
 import bali.compiler.parser.tree.Node;
-import bali.compiler.parser.tree.ReferenceValue;
+import bali.compiler.parser.tree.Reference;
 import bali.compiler.parser.tree.Type;
 import bali.compiler.parser.tree.Variable;
 import bali.compiler.validation.ValidationFailure;
@@ -33,7 +33,7 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 
 		Class<_> langClass = _.class;
 		List<Declaration> langDeclarations = new ArrayList<>();
-		for (Field f : langClass.getDeclaredFields()){
+		for (Field f : langClass.getDeclaredFields()) {
 			Type type = new Type();
 			type.setQualifiedClassName(f.getType().getName());
 			Declaration d = new Declaration();
@@ -42,7 +42,7 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 			langDeclarations.add(d);
 		}
 		unitLevelScopes.add(new Scope(
-				ReferenceValue.ReferenceScope.STATIC,
+				Reference.ReferenceScope.STATIC,
 				langClass.getName(),
 				langDeclarations
 		));
@@ -52,7 +52,7 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 		// Package Level Constants
 
 		unitLevelScopes.add(new Scope(
-				ReferenceValue.ReferenceScope.STATIC,
+				Reference.ReferenceScope.STATIC,
 				unit.getName() + "._",
 				unit.getConstants()
 		));
@@ -62,57 +62,55 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 		return agent.getFailures();
 	}
 
-	private void validate(Node node, ReferenceValidatorTypeAgent agent){
-		if (node instanceof bali.compiler.parser.tree.Class){
+	private void validate(Node node, ReferenceValidatorTypeAgent agent) {
+		if (node instanceof bali.compiler.parser.tree.Class) {
 			validate((bali.compiler.parser.tree.Class) node, agent);
-		} else if (node instanceof CodeBlock){
+		} else if (node instanceof CodeBlock) {
 			validate((CodeBlock) node, agent);
-		} else if (node instanceof Variable){
+		} else if (node instanceof Variable) {
 			validate((Variable) node, agent);
-		} else if (node instanceof ReferenceValue){
-			agent.validate((ReferenceValue) node);
+		} else if (node instanceof Reference) {
+			agent.validate((Reference) node);
 		} else {
 			walkAgentOverChildren(node, agent);
 		}
 	}
 
-	private void validate(bali.compiler.parser.tree.Class clazz, ReferenceValidatorTypeAgent agent){
+	private void validate(bali.compiler.parser.tree.Class clazz, ReferenceValidatorTypeAgent agent) {
 		pushAndWalk(clazz, agent, new Scope(
-				ReferenceValue.ReferenceScope.FIELD,
+				Reference.ReferenceScope.FIELD,
 				clazz.getQualifiedClassName(),
 				clazz.getFields()
 		));
 	}
 
-	private void validate(CodeBlock codeBlock, ReferenceValidatorTypeAgent agent){
+	private void validate(CodeBlock codeBlock, ReferenceValidatorTypeAgent agent) {
 		pushAndWalk(codeBlock, agent, new Scope(
-				ReferenceValue.ReferenceScope.VARIABLE,
+				Reference.ReferenceScope.VARIABLE,
 				null,
 				new ArrayList<Declaration>()
 		));
 	}
 
-	private void validate(Variable variable, ReferenceValidatorTypeAgent agent){
+	private void validate(Variable variable, ReferenceValidatorTypeAgent agent) {
 		Declaration declaration = new Declaration();
-		declaration.setName(variable.getName());
+		declaration.setName(variable.getReference().getName());
 		declaration.setType(variable.getType());
 		agent.peek().add(declaration);
 		walkAgentOverChildren(variable, agent);
 	}
 
-	private void pushAndWalk(Node node, ReferenceValidatorTypeAgent agent, Scope scope){
+	private void pushAndWalk(Node node, ReferenceValidatorTypeAgent agent, Scope scope) {
 		agent.push(scope);
 		walkAgentOverChildren(node, agent);
 		agent.pop();
 	}
 
-	private void walkAgentOverChildren(Node node, ReferenceValidatorTypeAgent agent){
-		for (Node child : node.getChildren()){
+	private void walkAgentOverChildren(Node node, ReferenceValidatorTypeAgent agent) {
+		for (Node child : node.getChildren()) {
 			validate(child, agent);
 		}
 	}
-
-
 
 	public static class ReferenceValidatorTypeAgent {
 
@@ -139,20 +137,20 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 			scopeStack.pop();
 		}
 
-		public void validate(ReferenceValue value) {
+		public void validate(Reference value) {
 
 			Declaration declaration = null;
 			Scope declarationScope = null;
 
-			for (Scope scope : scopeStack){
+			for (Scope scope : scopeStack) {
 				declaration = scope.find(value.getName());
-				if (declaration != null){
+				if (declaration != null) {
 					declarationScope = scope;
 					break;
 				}
 			}
 
-			if (declaration == null){
+			if (declaration == null) {
 				failures.add(new ValidationFailure(value, "Could not resolve reference " + value.getName()));
 				return;
 			}
@@ -165,20 +163,20 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 
 	public static class Scope {
 
-		private ReferenceValue.ReferenceScope scope;
+		private Reference.ReferenceScope scope;
 		private String className;
 		private Map<String, Declaration> declarations;
 
-		public Scope(ReferenceValue.ReferenceScope scope, String className, List<? extends Declaration> declarationsList) {
+		public Scope(Reference.ReferenceScope scope, String className, List<? extends Declaration> declarationsList) {
 			this.scope = scope;
 			this.className = className;
 			this.declarations = new HashMap<>();
-			for (Declaration declaration : declarationsList){
+			for (Declaration declaration : declarationsList) {
 				add(declaration);
 			}
 		}
 
-		public ReferenceValue.ReferenceScope getScope() {
+		public Reference.ReferenceScope getScope() {
 			return scope;
 		}
 
@@ -186,11 +184,11 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 			return className;
 		}
 
-		public void add(Declaration declaration){
+		public void add(Declaration declaration) {
 			declarations.put(declaration.getName(), declaration);
 		}
 
-		public Declaration find(String name){
+		public Declaration find(String name) {
 			return declarations.get(name);
 		}
 	}
