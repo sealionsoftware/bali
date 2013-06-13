@@ -1,6 +1,6 @@
 package example;
 
-import bali.Number;
+import bali.BigInteger;
 
 /**
  * package asm.example;
@@ -52,9 +52,9 @@ import bali.Number;
  */
 public class CalculatorObject implements Calculator {
 
-	public Number afield;
+	public BigInteger afield;
 
-	public Number calculate(Number argument) {
+	public BigInteger calculate(Numbument) {
 		return argument.add(_.NUMBER_CONSTANT);
 	}
 

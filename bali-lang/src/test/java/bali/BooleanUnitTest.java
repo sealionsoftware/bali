@@ -3,8 +3,6 @@ package bali;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.lang.*;
-
 /**
  * User: Richard
  * Date: 05/05/13
@@ -16,40 +14,40 @@ public class BooleanUnitTest {
 
 	@Test
 	public void testEquality(){
-		Assert.assertTrue(FALSE.equals(FALSE).value);
-		Assert.assertTrue(TRUE.equals(TRUE).value);
-		Assert.assertFalse(TRUE.equals(FALSE).value);
-		Assert.assertFalse(FALSE.equals(TRUE).value);
+		Assert.assertEquals("FALSE equalTo FALSE", FALSE.equalTo(FALSE), TRUE);
+		Assert.assertEquals("TRUE equalTo TRUE", TRUE.equalTo(TRUE), TRUE);
+		Assert.assertEquals("TRUE equalTo FALSE", TRUE.equalTo(FALSE), FALSE);
+		Assert.assertEquals("FALSE equalTo TRUE", FALSE.equalTo(TRUE), FALSE);
 	}
 
 	@Test
 	public void testInversion(){
-		Assert.assertTrue(FALSE.not().value);
-		Assert.assertFalse(TRUE.not().value);
+		Assert.assertEquals("not FALSE", FALSE.not(), TRUE);
+		Assert.assertEquals("not TRUE", TRUE.not(), FALSE);
 	}
 
 	@Test
 	public void testConjunction(){
-		Assert.assertTrue(TRUE.and(TRUE).value);
-		Assert.assertFalse(TRUE.and(FALSE).value);
-		Assert.assertFalse(FALSE.and(TRUE).value);
-		Assert.assertFalse(FALSE.and(FALSE).value);
+		Assert.assertEquals("TRUE and TRUE", TRUE.and(TRUE), TRUE);
+		Assert.assertEquals("TRUE and FALSE", TRUE.and(FALSE), FALSE);
+		Assert.assertEquals("FALSE and TRUE", FALSE.and(TRUE), FALSE);
+		Assert.assertEquals("FALSE and FALSE", FALSE.and(FALSE), FALSE);
 	}
 
 	@Test
 	public void testDisjunction(){
-		Assert.assertTrue(TRUE.or(TRUE).value);
-		Assert.assertTrue(TRUE.or(FALSE).value);
-		Assert.assertTrue(FALSE.or(TRUE).value);
-		Assert.assertFalse(FALSE.or(FALSE).value);
+		Assert.assertEquals("TRUE or TRUE", TRUE.or(TRUE), TRUE);
+		Assert.assertEquals("TRUE or FALSE", TRUE.or(FALSE), TRUE);
+		Assert.assertEquals("FALSE or TRUE", FALSE.or(TRUE), TRUE);
+		Assert.assertEquals("FALSE or FALSE", FALSE.or(FALSE), FALSE);
 	}
 
 	@Test
 	public void testExclusiveDisjunction(){
-		Assert.assertFalse(TRUE.xor(TRUE).value);
-		Assert.assertTrue(TRUE.xor(FALSE).value);
-		Assert.assertTrue(FALSE.xor(TRUE).value);
-		Assert.assertFalse(FALSE.xor(FALSE).value);
+		Assert.assertEquals("TRUE xor TRUE", TRUE.xor(TRUE), FALSE);
+		Assert.assertEquals("TRUE xor FALSE", TRUE.xor(FALSE), TRUE);
+		Assert.assertEquals("FALSE xor TRUE", FALSE.xor(TRUE), TRUE);
+		Assert.assertEquals("FALSE xor FALSE", FALSE.xor(FALSE), FALSE);
 	}
 
 

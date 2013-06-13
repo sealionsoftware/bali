@@ -1,5 +1,7 @@
 package bali.compiler.parser.tree;
 
+import bali.Array;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +32,7 @@ public class ListLiteralExpression extends Expression {
 
 	public void setListType(Type listType) {
 		Type newType = new Type();
-		newType.setQualifiedClassName(bali.List.class.getName());
+		newType.setQualifiedClassName(Array.class.getName());
 		newType.addParameter(listType);
 		type = newType;
 	}

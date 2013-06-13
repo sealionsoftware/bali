@@ -1,7 +1,5 @@
 package bali.compiler.parser.tree;
 
-import bali.Boolean;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -19,7 +17,7 @@ public class BooleanLiteralExpression extends Expression {
 
 	public Type getType() {
 		Type t = new Type();
-		t.setQualifiedClassName(Boolean.class.getName());
+		t.setQualifiedClassName(bali.Boolean.class.getName());
 		return t;
 	}
 

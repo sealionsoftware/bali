@@ -1,11 +1,11 @@
 package example;
 
-import bali.Number;
+import bali.BigInteger;
 
 import java.io.Serializable;
 
 public interface Calculator extends Serializable {
 
-	public Number calculate(Number argument);
+	public BigInteger calculate(Numbument);
 
 }

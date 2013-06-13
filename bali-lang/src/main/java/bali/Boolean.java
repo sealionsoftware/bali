@@ -4,38 +4,36 @@ package bali;
  * User: Richard
  * Date: 02/05/13
  */
-public enum Boolean {
+public enum Boolean implements Value<Boolean> {
 
-	FALSE(false), TRUE(true);
-
-	public final boolean value;
-
-	Boolean(boolean value) {
-		this.value = value;
-	}
+	FALSE, TRUE;
 
 	public Boolean not() {
-		return forPrimitive(!value);
+		return this == TRUE ? FALSE : TRUE;
 	}
 
 	public Boolean and(Boolean operand) {
-		return forPrimitive(value && operand.value);
+		if (this == FALSE){
+			return FALSE;
+		} else if (operand == FALSE) {
+			return FALSE;
+		}
+		return TRUE;
 	}
 
 	public Boolean or(Boolean operand) {
-		return forPrimitive(value || operand.value);
+		if (this == FALSE && operand == FALSE){
+			return FALSE;
+		}
+		return TRUE;
 	}
 
-	public Boolean xor(Boolean operand) {
-		return forPrimitive((value || operand.value) && !(value && operand.value));
+	public Boolean xor(Boolean that) {
+		return this.or(that).and(this.and(that).not());
 	}
 
-	public Boolean equals(Boolean operand) {
-		return forPrimitive(value == operand.value);
-	}
-
-	static Boolean forPrimitive(boolean in) {
-		return in ? Boolean.TRUE : Boolean.FALSE;
+	public Boolean equalTo(Boolean operand) {
+		return this == operand ? TRUE : FALSE;
 	}
 
 }

@@ -6,7 +6,7 @@ public class WhileObject {
 
 	public void goDo() {
 
-		Boolean flag = Boolean.TRUE;
+		Boolean flag = bali.Boolean.TRUE;
 
 		while (flag.value) {
 			flag = flag.not();

@@ -1,8 +1,8 @@
 package bali.compiler.bytecode;
 
+import bali.*;
 import bali.Boolean;
 import bali.Number;
-import bali.String;
 import bali.compiler.parser.tree.Declaration;
 import bali.compiler.parser.tree.MethodDeclaration;
 import bali.compiler.parser.tree.Type;
@@ -22,18 +22,18 @@ public class ASMConverterUnitTest {
 
 	@Test
 	public void testInternalName() throws Exception {
-		Assert.assertEquals("bali/String", converter.getInternalName(String.class.getName()));
+		Assert.assertEquals("bali/String", converter.getInternalName(CharArrayString.class.getName()));
 	}
 
 	@Test
 	public void testTypeDescriptorString() throws Exception {
-		Assert.assertEquals("Lbali/String;", converter.getTypeDescriptor(String.class.getName()));
+		Assert.assertEquals("Lbali/String;", converter.getTypeDescriptor(CharArrayString.class.getName()));
 	}
 
 	@Test
 	public void testTypeDescriptorDeclaration() throws Exception {
 		Type declaration = new Type(0, 0);
-		declaration.setQualifiedClassName(String.class.getName());
+		declaration.setQualifiedClassName(CharArrayString.class.getName());
 		Assert.assertEquals("Lbali/String;", converter.getTypeDescriptor(declaration));
 	}
 
@@ -41,7 +41,7 @@ public class ASMConverterUnitTest {
 	public void testMethodDescriptorString() throws Exception {
 		Assert.assertEquals("()V", converter.getMethodDescriptor(null, new ArrayList<Type>()));
 		List<Type> argumentTypes = new ArrayList<>();
-		argumentTypes.add(getType(String.class));
+		argumentTypes.add(getType(CharArrayString.class));
 		argumentTypes.add(getType(Number.class));
 		Assert.assertEquals("(Lbali/String;Lbali/Number;)Lbali/Boolean;", converter.getMethodDescriptor(getType(Boolean.class), argumentTypes));
 	}
@@ -57,11 +57,11 @@ public class ASMConverterUnitTest {
 		MethodDeclaration declaration = new MethodDeclaration(0, 0);
 		Assert.assertEquals("()V", converter.getMethodDescriptor(declaration));
 		Type b = new Type(0, 0);
-		b.setQualifiedClassName(Boolean.class.getName());
+		b.setQualifiedClassName(bali.Boolean.class.getName());
 		declaration.setType(b);
 		Type s = new Type(0, 0);
 		Type n = new Type(0, 0);
-		s.setQualifiedClassName(String.class.getName());
+		s.setQualifiedClassName(CharArrayString.class.getName());
 		n.setQualifiedClassName(Number.class.getName());
 		Declaration argument1 = new Declaration(0, 0);
 		Declaration argument2 = new Declaration(0, 0);

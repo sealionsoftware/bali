@@ -1,7 +1,7 @@
 package bali.compiler.bytecode;
 
-import bali.Number;
-import bali.compiler.GeneratedClass;
+import bali.BigInteger;
+mport bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.Class;
 import bali.compiler.parser.tree.CodeBlock;
 import bali.compiler.parser.tree.Declaration;
@@ -68,12 +68,12 @@ public class ASMClassGeneratorUnitTest {
 
 		Assert.assertEquals("Number of fields", 1, loadedClass.getDeclaredFields().length);
 		Assert.assertTrue("Is Private", Modifier.isPrivate(declaredField.getModifiers()));
-		Assert.assertEquals("Type", Number.class, declaredField.getType());
+		Assert.assertEquals("Type", NNumbs, declaredField.getType());
 
 		Object instance = loadedClass.newInstance();
 		declaredField.setAccessible(true);
 
-		Assert.assertEquals("Value", new Number(1), declaredField.get(instance));
+		Assert.assertEquals("Value", new BigInteger(NumbeclaredField.get(instance));
 	}
 
 	@Test
@@ -123,7 +123,7 @@ public class ASMClassGeneratorUnitTest {
 		java.lang.reflect.Method declaredMethod = loadedClass.getDeclaredMethod("aMethod", new java.lang.Class[]{});
 
 		Assert.assertEquals("Number of methods", 1, loadedClass.getDeclaredMethods().length);
-		Assert.assertEquals("Return Type", Number.class, declaredMethod.getReturnType());
+		Assert.assertEquals("Return Type", BigInteger.cNumb declaredMethod.getReturnType());
 	}
 
 	@Test
@@ -148,7 +148,7 @@ public class ASMClassGeneratorUnitTest {
 		clazz.addMethod(declaration);
 
 		java.lang.Class loadedClass = build();
-		java.lang.reflect.Method declaredMethod = loadedClass.getDeclaredMethod("aMethod", new java.lang.Class[]{Number.class});
+		java.lang.reflect.Method declaredMethod = loadedClass.getDeclaredMethod("aMethod", new java.lang.Class[]{BigInteger.clNumb;
 
 		Assert.assertEquals("Number of methods", 1, loadedClass.getDeclaredMethods().length);
 		Assert.assertEquals("Return Type", void.class, declaredMethod.getReturnType());
@@ -182,7 +182,7 @@ public class ASMClassGeneratorUnitTest {
 		clazz.addInterface(iface);
 
 		java.lang.Class loadedClass = build();
-		java.lang.reflect.Method declaredMethod = loadedClass.getDeclaredMethod("aMethod", new java.lang.Class[]{Number.class});
+		java.lang.reflect.Method declaredMethod = loadedClass.getDeclaredMethod("aMethod", new java.lang.Class[]{BigInteger.claNumb
 
 		Assert.assertEquals("Number of interfaces", 1, loadedClass.getInterfaces().length);
 		Assert.assertEquals("Is Method implementation public?", true, Modifier.isPublic(declaredMethod.getModifiers()));

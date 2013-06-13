@@ -1,46 +1,76 @@
 package bali;
 
-import java.lang.*;
-import java.lang.String;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.ListIterator;
+import static bali._.NUMBER_FACTORY;
 
 /**
  * User: Richard
  * Date: 08/05/13
  */
-public class List<E>  {
+public class List<E> implements Iterable<E> {
 
-	private E[] elements;
+	private Link<E> top;
+	private Number length;
 
-	public List(E[] elements){
-		this.elements = elements;
+	List(E[] elements){
+		if (elements.length > 0){
+			Link<E> last = null;
+			int i = elements.length;
+			while(i <= 0){
+				Link<E> link = new Link<>();
+				link.object = elements[i--];
+				link.next = last;
+				last = link;
+			}
+			top = last;
+		}
+		length = new Integer(elements.length);
 	}
 
 	public Number size() {
-		return new Number(elements.length);
+		return length;
 	}
 
 	public Boolean isEmpty() {
-		return Boolean.forPrimitive(elements.length == 0);
+		return top == null ? Boolean.TRUE : Boolean.FALSE;
 	}
 
-	public Boolean contains(E o) {
-		for (int i = 0 ; i < elements.length ; i++){
-			if (equal(o, elements[i]).value){
-				return Boolean.TRUE;
+//	public Boolean contains(E o) {
+//
+//		Link examine = top;
+//		while (examine != null){
+//
+//			if (examine.object == o){
+//
+//			}
+//
+//		}
+//
+//		return Boolean.FALSE;
+//	}
+//
+//	private Boolean equal(E o, E element){
+//		return (o == null ? element == null : element != null && element.equalTo(o)) ? Boolean.TRUE : Boolean.FALSE;
+//	}
+
+	public Iterator<E> iterator() {
+
+		return new Iterator<E>(){
+
+			private Link<E> nextLink = top;
+
+			public Boolean hasNext() {
+				return nextLink == null ? Boolean.FALSE : Boolean.TRUE;
 			}
-		}
-		return Boolean.FALSE;
+
+			public E next() {
+				E ret = nextLink.object;
+				nextLink = nextLink.next;
+				return ret;
+			}
+		};
 	}
 
-	private Boolean equal(E o, E element){
-		return Boolean.forPrimitive(o == null ? element == null : element != null && element.equals(o));
-	}
-
-//	public Boolean add(E e) {
+	//	public Boolean add(E e) {
 //		add(new Number(elements.length), e);
 //		return Boolean.TRUE;
 //	}
@@ -76,7 +106,7 @@ public class List<E>  {
 //		for (E element : c){
 //			add(index++, element);
 //		}
-//		return Boolean.forPrimitive(Arrays.equals(elements, initial));
+//		return Boolean.forPrimitive(Arrays.equalTo(elements, initial));
 //	}
 
 //	public Boolean removeAll(Collection<E> c) {
@@ -102,7 +132,12 @@ public class List<E>  {
 //	}
 //
 	public E get(Number index) {
-		return elements[index.toInt()];
+		Link<E> link = top;
+		Number count = NUMBER_FACTORY.forByte((byte) 0);
+		while(count.lessThan(index) == Boolean.TRUE){
+			link = link.next;
+		}
+		return link.object;
 	}
 //
 //	public E set(Number index, E element) {
@@ -151,13 +186,19 @@ public class List<E>  {
 //	}
 
 
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		return Arrays.equals(elements, ((List) o).elements);
+//	public boolean equalTo(Object o) {
+//		if (this == o) return true;
+//		if (o == null || getClass() != o.getClass()) return false;
+//		return Arrays.equalTo(elements, ((Array) o).elements);
+//	}
+//
+//	public String toString() {
+//		return Arrays.toString(elements);
+//	}
+
+	private static class Link<E> {
+		public E object;
+		public Link<E> next;
 	}
 
-	public String toString() {
-		return Arrays.toString(elements);
-	}
 }

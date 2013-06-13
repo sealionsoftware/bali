@@ -1,11 +1,11 @@
 package example;
 
-import bali.Number;
+import bali.BigInteger;
 
 public class VariableObject {
 
 	public void declareVariable() {
-		Number number = new Number(1);
+		BigInteger number = new Numb
 	}
 
 }

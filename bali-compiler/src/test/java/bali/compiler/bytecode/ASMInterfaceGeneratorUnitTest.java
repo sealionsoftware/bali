@@ -1,7 +1,8 @@
 package bali.compiler.bytecode;
 
-import bali.Number;
-import bali.compiler.GeneratedClass;
+import bali.BigInteger;
+
+mport bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.Declaration;
 import bali.compiler.parser.tree.Interface;
 import bali.compiler.parser.tree.MethodDeclaration;
@@ -83,7 +84,7 @@ public class ASMInterfaceGeneratorUnitTest {
 		java.lang.reflect.Method declaredMethod = loadedClass.getMethod("aMethod", new java.lang.Class[]{});
 
 		Assert.assertEquals("Number of methods", 1, loadedClass.getMethods().length);
-		Assert.assertEquals("Return Type", Number.class, declaredMethod.getReturnType());
+		Assert.assertEquals("Return Type", NNumbs, declaredMethod.getReturnType());
 	}
 
 	@Test
@@ -104,7 +105,7 @@ public class ASMInterfaceGeneratorUnitTest {
 		iface.addMethod(declaration);
 
 		java.lang.Class loadedClass = build();
-		java.lang.reflect.Method declaredMethod = loadedClass.getMethod("aMethod", new java.lang.Class[]{Number.class});
+		java.lang.reflect.Method declaredMethod = loadedClass.getMethod("aMethod", new java.lang.Class[]{BigInteger.Numb});
 
 		Assert.assertEquals("Number of methods", 1, loadedClass.getMethods().length);
 		Assert.assertEquals("Return Type", void.class, declaredMethod.getReturnType());

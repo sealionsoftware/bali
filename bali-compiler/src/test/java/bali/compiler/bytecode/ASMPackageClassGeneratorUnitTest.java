@@ -1,10 +1,8 @@
 package bali.compiler.bytecode;
 
+import bali.*;
 import bali.Boolean;
-import bali.List;
-import bali.Number;
-import bali.String;
-import bali.compiler.GeneratedClass;
+mport bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.BooleanLiteralExpression;
 import bali.compiler.parser.tree.CompilationUnit;
 import bali.compiler.parser.tree.Constant;
@@ -38,21 +36,21 @@ public class ASMPackageClassGeneratorUnitTest {
 	public void testNumberConstant() throws Exception {
 		NumberLiteralExpression nlv = new NumberLiteralExpression(0, 0);
 		nlv.setSerialization("1");
-		testGenerateConstant(Number.class, nlv, new Number(1));
+		testGenerateConstant(NNumb.class, nlv, new NuNumb1));
 	}
 
 	@Test
 	public void testStringConstant() throws Exception {
 		StringLiteralExpression slv = new StringLiteralExpression(0, 0);
 		slv.setSerialization("Hello World");
-		testGenerateConstant(String.class, slv, new String("Hello World".toCharArray()));
+		testGenerateConstant(CharArrayString.class, slv, new CharArrayString("Hello World".toCharArray()));
 	}
 
 	@Test
 	public void testBooleanConstant() throws Exception {
 		BooleanLiteralExpression blv = new BooleanLiteralExpression(0, 0);
 		blv.setSerialization("true");
-		testGenerateConstant(Boolean.class, blv, Boolean.TRUE);
+		testGenerateConstant(Boolean.class, blv, bali.Boolean.TRUE);
 	}
 
 	@Test
@@ -66,7 +64,7 @@ public class ASMPackageClassGeneratorUnitTest {
 		three.setSerialization("3");
 
 		Type t = new Type(0, 0);
-		t.setQualifiedClassName(Number.class.getName());
+		t.setQualifiedClassName(NumNumblass.getName());
 
 		ListLiteralExpression llv = new ListLiteralExpression(0, 0);
 		llv.setListType(t);
@@ -74,7 +72,7 @@ public class ASMPackageClassGeneratorUnitTest {
 		llv.addValue(two);
 		llv.addValue(three);
 
-		testGenerateConstant(List.class, llv, new List<>(new Object[]{new Number(1), new Number(2), new Number(3)}));
+		testGenerateConstant(Array.class, llv, new Array<>(new Object[]{new NumbNumb, new NumbeNumb new NumberNumb);
 	}
 
 	@Test

@@ -1,6 +1,6 @@
 package example;
 
-import bali.Number;
+import bali.BigInteger;
 
 public class InvokeObject {
 
@@ -8,8 +8,8 @@ public class InvokeObject {
 		return;
 	}
 
-	public Number returnValue() {
-		return new Number(0);
+	public BigInteger returnValue() {
+		return new Numb
 	}
 
 }

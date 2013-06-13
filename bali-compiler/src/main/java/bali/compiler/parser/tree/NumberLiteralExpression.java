@@ -1,6 +1,6 @@
 package bali.compiler.parser.tree;
 
-import bali.Number;
+import bali.BigInteger;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,7 +16,7 @@ public class NumberLiteralExpression extends Expression {
 	public NumberLiteralExpression() {
 	}
 
-	public NumberLiteralExpression(Integer line, Integer character) {
+	public NumberLiteralExpression(java.lang.Integer line, java.lang.Integer character) {
 		super(line, character);
 	}
 

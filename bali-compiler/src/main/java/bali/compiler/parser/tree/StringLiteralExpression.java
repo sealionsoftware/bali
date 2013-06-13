@@ -1,5 +1,7 @@
 package bali.compiler.parser.tree;
 
+import bali.CharArrayString;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -17,7 +19,7 @@ public class StringLiteralExpression extends Expression {
 
 	public Type getType() {
 		Type t = new Type();
-		t.setQualifiedClassName(bali.String.class.getName());
+		t.setQualifiedClassName(CharArrayString.class.getName());
 		return t;
 	}
 

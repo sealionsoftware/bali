@@ -7,7 +7,7 @@ public class CastObject {
 	public void goDo() {
 
 		Object a = Boolean.TRUE;
-		Boolean b = (Boolean) a;
+		java.lang.Boolean b = (java.lang.Boolean) a;
 
 	}
 
