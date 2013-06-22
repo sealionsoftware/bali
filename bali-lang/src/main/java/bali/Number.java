@@ -15,7 +15,7 @@ public interface Number extends Value<Number> {
 
 	public Number magnitude();
 
-	public Number inverse();
+	public Number negative();
 
 	public Boolean greaterThan(Number o);
 

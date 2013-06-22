@@ -1,7 +1,5 @@
 package bali;
 
-import java.lang.*;
-
 import static bali.Boolean.FALSE;
 import static bali.Boolean.TRUE;
 import static bali._.NUMBER_FACTORY;
@@ -10,15 +8,15 @@ import static bali._.NUMBER_FACTORY;
  * User: Richard
  * Date: 11/06/13
  */
-class Integer implements Number {
-
-	private static final java.lang.String INVALID_NUMBER_TYPE = "Invalid Number Type";
+public class Integer implements Number {
 
 	final int value;
 
-	Integer(int value) {
+	public Integer(int value) {
 		this.value = value;
 	}
+
+	// Unary Operations
 
 	public Boolean isPositive() {
 		return value > 0 ? TRUE : FALSE;
@@ -33,74 +31,119 @@ class Integer implements Number {
 	}
 
 	public Number magnitude() {
-		return value < 0 ? inverse() : this;
+		return value < 0 ? negative() : this;
 	}
 
-	public Number inverse() {
-		return new Integer((short) -value);
+	public Number negative() {
+		return new Integer(-value);
 	}
 
-	public Boolean greaterThan(Number o) {
-		if (o instanceof Integer){
-			return greaterThan((Integer) o);
-		}
-		throw new RuntimeException(INVALID_NUMBER_TYPE);
-	}
-
-	public Boolean lessThan(Number o) {
-		if (o instanceof Integer){
-			return lessThan((Integer) o);
-		}
-		throw new RuntimeException(INVALID_NUMBER_TYPE);
-	}
-
-	public Number add(Number o) {
-		if (o instanceof Integer){
-			return add((Integer) o);
-		}
-		if (o instanceof Short){
-			return add((Short) o);
-		}
-		if (o instanceof Byte){
-			return add((Byte) o);
-		}
-		throw new RuntimeException(INVALID_NUMBER_TYPE);
-	}
-
-	public Number subtract(Number o) {
-		if (o instanceof Integer){
-			return subtract((Integer) o);
-		}
-		throw new RuntimeException(INVALID_NUMBER_TYPE);
-	}
-
-	public Number multiply(Number o) {
-		if (o instanceof Integer){
-			return multiply((Integer) o);
-		}
-		throw new RuntimeException(INVALID_NUMBER_TYPE);
-	}
-
-	public Number divide(Number o) {
-		if (o instanceof Integer){
-			return divide((Integer) o);
-		}
-		throw new RuntimeException(INVALID_NUMBER_TYPE);
-	}
+	// Equality
 
 	public Boolean equalTo(Number o) {
-		if (o instanceof Integer){
+		if (o instanceof Integer) {
 			return equalTo((Integer) o);
 		}
-		throw new RuntimeException(INVALID_NUMBER_TYPE);
+		if (o instanceof Short) {
+			return equalTo((Short) o);
+		}
+		if (o instanceof Byte) {
+			return equalTo((Byte) o);
+		}
+		return o.equalTo(this);
+	}
+
+	public Boolean equalTo(Integer operand) {
+		return equalTo(operand.value);
+	}
+
+	public Boolean equalTo(Short operand) {
+		return equalTo(operand.value);
+	}
+
+	public Boolean equalTo(Byte operand) {
+		return equalTo(operand.value);
+	}
+
+	public Boolean equalTo(int operand) {
+		return value == operand ? TRUE : FALSE;
+	}
+
+	// Greater Than
+
+	public Boolean greaterThan(Number o) {
+		if (o instanceof Integer) {
+			return greaterThan((Integer) o);
+		}
+		if (o instanceof Short) {
+			return greaterThan((Short) o);
+		}
+		if (o instanceof Byte) {
+			return greaterThan((Byte) o);
+		}
+		return o.lessThan(this).and(equalTo(o).not());
 	}
 
 	public Boolean greaterThan(Integer o) {
-		return value > o.value ? TRUE : FALSE;
+		return greaterThan(o.value);
+	}
+
+	public Boolean greaterThan(Short o) {
+		return greaterThan(o.value);
+	}
+
+	public Boolean greaterThan(Byte o) {
+		return greaterThan(o.value);
+	}
+
+	public Boolean greaterThan(int o) {
+		return value > o ? TRUE : FALSE;
+	}
+
+	// Less Than
+
+	public Boolean lessThan(Number o) {
+		if (o instanceof Integer) {
+			return lessThan((Integer) o);
+		}
+		if (o instanceof Short) {
+			return lessThan((Short) o);
+		}
+		if (o instanceof Byte) {
+			return lessThan((Byte) o);
+		}
+		return o.greaterThan(this).and(equalTo(o).not());
 	}
 
 	public Boolean lessThan(Integer o) {
-		return value < o.value ? TRUE : FALSE;
+		return lessThan(o.value);
+	}
+
+	public Boolean lessThan(Short o) {
+		return lessThan(o.value);
+	}
+
+	public Boolean lessThan(Byte o) {
+		return lessThan(o.value);
+	}
+
+	public Boolean lessThan(int o) {
+		return value < o ? TRUE : FALSE;
+	}
+
+	// Addition
+
+	public Number add(Number o) {
+		if (o instanceof Integer) {
+			return add((Integer) o);
+		}
+		if (o instanceof Short) {
+			return add((Short) o);
+		}
+		if (o instanceof Byte) {
+			return add((Byte) o);
+		}
+		return o.add(this);
 	}
 
 	public Number add(Integer o) {
@@ -120,22 +163,100 @@ class Integer implements Number {
 		return NUMBER_FACTORY.forLong(ret);
 	}
 
+	// Subtraction
+
+	public Number subtract(Number o) {
+		if (o instanceof Integer) {
+			return subtract((Integer) o);
+		}
+		if (o instanceof Short) {
+			return subtract((Short) o);
+		}
+		if (o instanceof Byte) {
+			return subtract((Byte) o);
+		}
+		return o.subtract(this).negative();
+	}
+
 	public Number subtract(Integer o) {
-		long ret = (long) value - o.value;
+		return subtract(o.value);
+	}
+
+	public Number subtract(Short o) {
+		return subtract(o.value);
+	}
+
+	public Number subtract(Byte o) {
+		return subtract(o.value);
+	}
+
+	private Number subtract(int o) {
+		long ret = (long) value - o;
 		return NUMBER_FACTORY.forLong(ret);
+	}
+
+	// Multiplication
+
+	public Number multiply(Number o) {
+		if (o instanceof Integer) {
+			return multiply((Integer) o);
+		}
+		if (o instanceof Short) {
+			return multiply((Short) o);
+		}
+		if (o instanceof Byte) {
+			return multiply((Byte) o);
+		}
+		return o.multiply(this).negative();
 	}
 
 	public Number multiply(Integer o) {
-		long ret = (long) value * o.value;
+		return multiply(o.value);
+	}
+
+	public Number multiply(Short o) {
+		return multiply(o.value);
+	}
+
+	public Number multiply(Byte o) {
+		return multiply(o.value);
+	}
+
+	private Number multiply(int o) {
+		long ret = (long) value * o;
 		return NUMBER_FACTORY.forLong(ret);
+	}
+
+	// Division
+
+	public Number divide(Number o) {
+		if (o instanceof Integer) {
+			return divide((Integer) o);
+		}
+		if (o instanceof Short) {
+			return divide((Short) o);
+		}
+		if (o instanceof Byte) {
+			return divide((Byte) o);
+		}
+		return o.divide(this);
 	}
 
 	public Number divide(Integer o) {
-		long ret = (long) value / o.value;
-		return NUMBER_FACTORY.forLong(ret);
+		return divide(o.value);
 	}
 
-	public Boolean equalTo(Integer operand) {
-		return value == operand.value ? TRUE : FALSE;
+	public Number divide(Short o) {
+		return divide(o.value);
 	}
+
+	public Number divide(Byte o) {
+		return divide(o.value);
+	}
+
+	private Number divide(int o) {
+		int ret = value / o;
+		return NUMBER_FACTORY.forInt(ret);
+	}
+
 }

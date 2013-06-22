@@ -7,7 +7,9 @@ import bali.compiler.parser.tree.Declaration;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.Reference;
 import bali.compiler.parser.tree.Type;
+import bali.compiler.parser.tree.TypeDeclaration;
 import bali.compiler.parser.tree.Variable;
+import bali.compiler.validation.TypeDeclarationLibrary;
 import bali.compiler.validation.ValidationFailure;
 
 import java.lang.reflect.Field;
@@ -24,10 +26,9 @@ import java.util.Map;
  */
 public class ReferenceValidator implements Validator<CompilationUnit> {
 
-	// Engages at the root of the AST, constructs a lookup table
-	public List<ValidationFailure> validate(CompilationUnit unit) {
+	private Scope langScope;
 
-		Deque<Scope> unitLevelScopes = new ArrayDeque<>();
+	public ReferenceValidator(TypeDeclarationLibrary library) {
 
 		// Lang level constants
 
@@ -35,17 +36,29 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 		List<Declaration> langDeclarations = new ArrayList<>();
 		for (Field f : langClass.getDeclaredFields()) {
 			Type type = new Type();
-			type.setQualifiedClassName(f.getType().getName());
+			type.setClassName(f.getType().getSimpleName());
+			try {
+				type.setDeclaration(library.getTypeDeclaration(f.getType().getName()));
+			} catch (ClassNotFoundException e) {
+			}
 			Declaration d = new Declaration();
 			d.setName(f.getName());
 			d.setType(type);
 			langDeclarations.add(d);
 		}
-		unitLevelScopes.add(new Scope(
+
+		langScope = new Scope(
 				Reference.ReferenceScope.STATIC,
 				langClass.getName(),
 				langDeclarations
-		));
+		);
+	}
+
+	// Engages at the root of the AST, constructs a lookup table
+	public List<ValidationFailure> validate(CompilationUnit unit) {
+
+		Deque<Scope> unitLevelScopes = new ArrayDeque<>();
+		unitLevelScopes.add(langScope);
 
 		// TODO: Higher Packages?
 

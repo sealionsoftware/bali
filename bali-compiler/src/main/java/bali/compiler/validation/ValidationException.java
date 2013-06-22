@@ -1,6 +1,8 @@
 package bali.compiler.validation;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: Richard
@@ -8,13 +10,17 @@ import java.util.List;
  */
 public class ValidationException extends Exception {
 
-	private List<ValidationFailure> failures;
+	private Map<String, List<ValidationFailure>> failures;
 
-	public ValidationException(List<ValidationFailure> failures) {
+	public ValidationException(Map<String, List<ValidationFailure>> failures) {
 		this.failures = failures;
 	}
 
-	public List<ValidationFailure> getFailures() {
-		return failures;
+	public List<String> getFailedFiles() {
+		return new ArrayList<>(failures.keySet());
+	}
+
+	public List<ValidationFailure> getFailures(String packageName) {
+		return new ArrayList<>(failures.get(packageName));
 	}
 }

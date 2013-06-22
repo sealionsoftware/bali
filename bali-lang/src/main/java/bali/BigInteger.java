@@ -2,159 +2,463 @@ package bali;
 
 import java.util.Arrays;
 
+import static bali.Boolean.FALSE;
+import static bali.Boolean.TRUE;
+import static bali._.NUMBER_FACTORY;
+
 /**
- * Class representing the integer numbers
+ * Class representing the integer numbers in base 256
  * <p/>
  * User: Richard
  * Date: 04/05/13
  */
-public class BigInteger implements Number  {
+public class BigInteger implements Number {
 
-	private static final short MAX_BYTE_SIZE = 0b10000000;
-	private static final BigInteger ZERO = new BigInteger(new byte[]{0});
+	private static final java.lang.String INVALID_NUMBER_TYPE = "Invalid Number Type";
 
+	static final byte MIN = -128;
+	static final byte MAX = 127;
+	static final short SIZE = MAX - MIN + 1;
+	static final short MIN_2 = 2 * MIN;
+	static final Number ZERO = NUMBER_FACTORY.forByte((byte) 0);
+
+	final boolean positive;
 	final byte[] value;
 
 	BigInteger(byte[] value) {
-		this.value = value;
+		this(value, true);
 	}
 
-//	BigInteger(int value) {
-//		byte[] computedValue = new byte[1 + (value / MAX_BYTE_SIZE)];
-//
-//		int rem = value;
-//		int i = 0;
-//		while (rem >= MAX_BYTE_SIZE) {
-//			computedValue[i++] = (byte) (rem % MAX_BYTE_SIZE);
-//			rem /= MAX_BYTE_SIZE;
-//		}
-//		computedValue[i] = (byte) rem;
-//		this.value = compact(computedValue);
-//	}
+	BigInteger(byte[] value, boolean positive) {
+		this.value = value;
+		this.positive = positive;
+	}
 
-//	int toInt() {
-//		int ret = 0;
-//		for (int i = 0; i < value.length; i++) {
-//			ret += value[i] * Math.pow(MAX_BYTE_SIZE, i);
-//		}
-//		return ret;
-//	}
+	// Unary
+
+	public Boolean isPositive() {
+		return positive ? TRUE : FALSE;
+	}
+
+	public Boolean isNegative() {
+		return positive ? FALSE : TRUE;
+	}
+
+	public Boolean isZero() {
+		return (value.length == 1 && value[0] == 0) ? TRUE : Boolean.FALSE;
+	}
+
+	public BigInteger magnitude() {
+		return isPositive() == TRUE ? this : negative();
+	}
+
+	public BigInteger negative() {
+		return new BigInteger(value, !positive);
+	}
+
+	// Equality
+
+	public Boolean equalTo(Number number) {
+		if (number instanceof BigInteger) {
+			return equalTo((BigInteger) number);
+		}
+		if (number instanceof Long) {
+			return equalTo((Long) number);
+		}
+		if (number instanceof Integer) {
+			return equalTo((Integer) number);
+		}
+		if (number instanceof Short) {
+			return equalTo((Short) number);
+		}
+		if (number instanceof Byte) {
+			return equalTo((Byte) number);
+		}
+		throw new RuntimeException(INVALID_NUMBER_TYPE);
+	}
+
+	public Boolean equalTo(BigInteger o) {
+		return Arrays.equals(o.value, value) ? TRUE : Boolean.FALSE;
+	}
+
+	public Boolean equalTo(Long o) {
+		return equalTo(o.value);
+	}
+
+	public Boolean equalTo(Integer o) {
+		return equalTo(o.value);
+	}
+
+	public Boolean equalTo(Short o) {
+		return equalTo(o.value);
+	}
+
+	public Boolean equalTo(Byte o) {
+		return equalTo(o.value);
+	}
+
+	public Boolean equalTo(long o) {
+		try {
+			return toLong() == o ? TRUE : FALSE;
+		} catch (TooBigException e) {
+			return FALSE;
+		}
+	}
+
+	// Greater Than
+
+	public Boolean greaterThan(Number number) {
+		if (number instanceof BigInteger) {
+			return greaterThan((BigInteger) number);
+		}
+		if (number instanceof Long) {
+			return greaterThan((Long) number);
+		}
+		if (number instanceof Integer) {
+			return greaterThan((Integer) number);
+		}
+		if (number instanceof Short) {
+			return greaterThan((Short) number);
+		}
+		if (number instanceof Byte) {
+			return greaterThan((Byte) number);
+		}
+		throw new RuntimeException(INVALID_NUMBER_TYPE);
+	}
+
+	public Boolean greaterThan(BigInteger o) {
+		if (value.length > o.value.length) {
+			return TRUE;
+		}
+		if (o.value.length > value.length) {
+			return Boolean.FALSE;
+		}
+		for (int i = value.length - 1; i >= 0; i--) {
+			if (value[i] > o.value[i]) {
+				return TRUE;
+			}
+			if (o.value[i] > value[i]) {
+				return Boolean.FALSE;
+			}
+		}
+		return Boolean.FALSE;
+	}
+
+	public Boolean greaterThan(Long o) {
+		try {
+			return toLong() > o.value ? TRUE : FALSE;
+		} catch (TooBigException e) {
+			return FALSE;
+		}
+	}
+
+	public Boolean greaterThan(Integer o) {
+		try {
+			return toInt() > o.value ? TRUE : FALSE;
+		} catch (TooBigException e) {
+			return FALSE;
+		}
+	}
+
+	public Boolean greaterThan(Short o) {
+		try {
+			return toShort() > o.value ? TRUE : FALSE;
+		} catch (TooBigException e) {
+			return FALSE;
+		}
+	}
+
+	public Boolean greaterThan(Byte o) {
+		try {
+			return toByte() > o.value ? TRUE : FALSE;
+		} catch (TooBigException e) {
+			return FALSE;
+		}
+	}
+
+	// Less Than
+
+	public Boolean lessThan(Number number) {
+		if (number instanceof BigInteger) {
+			return lessThan((BigInteger) number);
+		}
+		if (number instanceof Long) {
+			return lessThan((Long) number);
+		}
+		if (number instanceof Integer) {
+			return lessThan((Integer) number);
+		}
+		if (number instanceof Short) {
+			return lessThan((Short) number);
+		}
+		if (number instanceof Byte) {
+			return lessThan((Byte) number);
+		}
+		throw new RuntimeException(INVALID_NUMBER_TYPE);
+	}
+
+	public Boolean lessThan(BigInteger o) {
+		if (value.length < o.value.length) {
+			return TRUE;
+		}
+		if (o.value.length < value.length) {
+			return Boolean.FALSE;
+		}
+		for (int i = value.length - 1; i >= 0; i--) {
+			if (value[i] < o.value[i]) {
+				return TRUE;
+			}
+			if (o.value[i] < value[i]) {
+				return Boolean.FALSE;
+			}
+		}
+		return Boolean.FALSE;
+	}
+
+	public Boolean lessThan(Long o) {
+		try {
+			return toLong() < o.value ? TRUE : FALSE;
+		} catch (TooBigException e) {
+			return FALSE;
+		}
+	}
+
+	public Boolean lessThan(Integer o) {
+		try {
+			return toInt() < o.value ? TRUE : FALSE;
+		} catch (TooBigException e) {
+			return FALSE;
+		}
+	}
+
+	public Boolean lessThan(Short o) {
+		try {
+			return toShort() < o.value ? TRUE : FALSE;
+		} catch (TooBigException e) {
+			return FALSE;
+		}
+	}
+
+	public Boolean lessThan(Byte o) {
+		try {
+			return toByte() < o.value ? TRUE : FALSE;
+		} catch (TooBigException e) {
+			return FALSE;
+		}
+	}
+
+	// Addition
 
 	public Number add(Number o) {
-		if (o instanceof BigInteger){
+		if (o instanceof BigInteger) {
 			return add((BigInteger) o);
 		}
-		if (o instanceof Long){
+		if (o instanceof Long) {
 			return add((Long) o);
 		}
-		if (o instanceof Integer){
+		if (o instanceof Integer) {
 			return add((Integer) o);
 		}
-		if (o instanceof Short){
+		if (o instanceof Short) {
 			return add((Short) o);
 		}
-		if (o instanceof Byte){
+		if (o instanceof Byte) {
 			return add((Byte) o);
 		}
-		throw new RuntimeException("Cannot add Number of type " + o.getClass());
+		throw new RuntimeException(INVALID_NUMBER_TYPE);
 	}
 
-	public Number subtract(Number o) {
-		if (o instanceof BigInteger){
-			return subtract((BigInteger) o);
-		}
-		throw new RuntimeException("Cannot subtract Number of type " + o.getClass());
-	}
+	public Number add(BigInteger o) {
 
-	public Boolean greaterThan(Number o) {
-		if (o instanceof BigInteger){
-			return greaterThan((BigInteger) o);
-		}
-		throw new RuntimeException("Cannot compare Number of type " + o.getClass());
-	}
-
-	public Boolean lessThan(Number o) {
-		if (o instanceof BigInteger){
-			return lessThan((BigInteger) o);
-		}
-		throw new RuntimeException("Cannot compare Number of type " + o.getClass());
-	}
-
-	public BigInteger add(BigInteger o) {
-
-		if (o.isZero() == Boolean.TRUE) {
+		if (o.isZero() == TRUE) {
 			return this;
 		}
-		if (isZero() == Boolean.TRUE) {
+		if (isZero() == TRUE) {
 			return o;
 		}
 
-		if (isPositive().and(o.isNegative()) == Boolean.TRUE) {
-			return this.subtract(o.inverse());
-		} else if (o.isPositive().and(isNegative()) == Boolean.TRUE) {
-			return o.subtract(this.inverse());
+		if (o.greaterThan(this) == TRUE) {
+			return o.add(this);
 		}
 
-		int length;
-		byte[] one;
-		byte[] two;
-
-		if (value.length == o.value.length) {
-			length = value.length;
-			one = value;
-			two = o.value;
-		} else if (value.length > o.value.length) {
-			length = value.length;
-			one = value;
-			two = Arrays.copyOf(o.value, length);
-		} else {
-			length = o.value.length;
-			one = Arrays.copyOf(value, length);
-			two = o.value;
+		if (positive && !o.positive) {
+			return new BigInteger(subtract(o.value));
 		}
+		if (!positive && o.positive) {
+			return new BigInteger(subtract(o.value), false);
+		}
+
+		return new BigInteger(add(o.value), positive);
+	}
+
+	public Number add(Long o) {
+		return add(o.value);
+	}
+
+	public Number add(Integer o) {
+		return add(o.value);
+	}
+
+	public Number add(Short o) {
+		return add(o.value);
+	}
+
+	public Number add(Byte o) {
+		return add(o.value);
+	}
+
+	private byte[] add(byte[] o) {
 
 		byte carry = 0;
-		byte[] computedValue = new byte[length];
+		byte[] computedValue = new byte[value.length];
 
-		for (int i = 0; i < length; i++) {
-			int sum = one[i] + two[i] + carry;
-			if (sum == 0) {
-				computedValue[i] = 0;
-				carry = (byte) 0;
-			} else {
-				computedValue[i] = (byte) (sum % MAX_BYTE_SIZE);
-				carry = (byte) (sum / MAX_BYTE_SIZE);
-			}
+		for (int i = 0; i < o.length; i++) {
+			int sum = value[i] + o[i] + carry - MIN_2;
+			computedValue[i] = (byte) ((sum % SIZE) - MIN);
+			carry = (byte) (sum / SIZE);
+		}
+		for (int i = o.length; i < value.length; i++) {
+			int sum = value[i] + carry - MIN;
+			computedValue[i] = (byte) ((sum % SIZE) - MIN);
+			carry = (byte) (sum / SIZE);
+		}
+		if (carry > 0) {
+			int newLength = value.length + 1;
+			computedValue = Arrays.copyOf(computedValue, newLength);
+			computedValue[newLength - 1] = carry;
 		}
 
-		if (carry != 0) {
-			computedValue = Arrays.copyOf(computedValue, computedValue.length + 1);
-			computedValue[computedValue.length - 1] = carry;
-		} else {
-			computedValue = compact(computedValue);
+		return computedValue;
+	}
+
+	private Number add(long o) {
+
+		if (isPositive() == TRUE && o < 0) {
+			return subtract(-o); // TODO check Long.MIN
+		}
+		if (isPositive() == FALSE && o > 0) {
+			return subtract(o).negative();
+		}
+
+		byte[] computedValue = new byte[value.length];
+
+		for (int i = 0; i < value.length; i++) {
+			long sum = value[i] + o - MIN;
+			computedValue[i] = (byte) ((sum % MAX) - MIN);
+			o = (sum / SIZE);
 		}
 
 		return new BigInteger(computedValue);
 	}
 
-	public BigInteger add(Long o) {
-		return add(o.value);
+	// Subtraction
+
+	public Number subtract(Number o) {
+		if (o instanceof BigInteger) {
+			return subtract((BigInteger) o);
+		}
+		if (o instanceof Long) {
+			return subtract((Long) o);
+		}
+		if (o instanceof Integer) {
+			return subtract((Integer) o);
+		}
+		if (o instanceof Short) {
+			return subtract((Short) o);
+		}
+		if (o instanceof Byte) {
+			return subtract((Byte) o);
+		}
+		throw new RuntimeException(INVALID_NUMBER_TYPE);
 	}
 
-	public BigInteger add(Integer o) {
-		return add(o.value);
+	public Number subtract(BigInteger o) {
+
+		if (o.isZero() == TRUE) {
+			return this;
+		}
+		if (isZero() == TRUE) {
+			return o.negative();
+		}
+
+		if (o.greaterThan(this) == TRUE) {
+			return o.subtract(this).negative();
+		}
+
+		if (positive && !o.positive) {
+			return new BigInteger(add(o.value));
+		}
+		if (!positive && o.positive) {
+			return new BigInteger(add(o.value), false);
+		}
+
+		return new BigInteger(subtract(o.value), positive);
 	}
 
-	public BigInteger add(Short o) {
-		return add(o.value);
+	public Number subtract(Long o) {
+		return subtract(o.value);
 	}
 
-	public BigInteger add(Byte o) {
-		return add(o.value);
+	public Number subtract(Integer o) {
+		return subtract(o.value);
 	}
 
-	private BigInteger add(long o) {
-		return null;
+	public Number subtract(Short o) {
+		return subtract(o.value);
+	}
+
+	public Number subtract(Byte o) {
+		return subtract(o.value);
+	}
+
+	private byte[] subtract(byte[] o) {
+
+		byte[] computedValue = Arrays.copyOf(value, value.length);
+		for (int i = 0; i < o.length; i++) {
+			int sum = computedValue[i] - o[i];
+			if (sum < 0) {
+				sum += SIZE;
+				for (int j = i + 1; ; j++) {
+					if (computedValue[j] > 0) {
+						computedValue[j]--;
+						break;
+					} else {
+						computedValue[j] = MAX;
+					}
+				}
+			}
+			computedValue[i] = (byte) (sum + MIN);
+		}
+
+		return compact(computedValue);
+	}
+
+	private Number subtract(long o) {
+
+		if (o == 0) {
+			return this;
+		}
+		if (isZero() == TRUE && o != java.lang.Long.MIN_VALUE) {
+			return NUMBER_FACTORY.forLong(-o);
+		}
+
+//		if (positive && o > 0){
+//			return add(-o);
+//		}
+//		if (!positive && o.positive){
+//			return new BigInteger(add(o.value) , false);
+//		}
+
+		byte[] computedValue = new byte[value.length];
+		for (int i = 0; i < value.length; i++) {
+			long sum = value[i] - o;
+			if (sum > SIZE) {
+//				computedValue[i] = sum % SIZE;
+//				carry sum / SIZE;
+			}
+		}
+
+		return new BigInteger(compact(computedValue));
 	}
 
 	private byte[] compact(byte[] array) {
@@ -168,151 +472,8 @@ public class BigInteger implements Number  {
 		return array;
 	}
 
-	public BigInteger subtract(BigInteger o) {
-
-		if (o.isZero() == Boolean.TRUE) {
-			return this;
-		}
-		if (isZero() == Boolean.TRUE) {
-			return o;
-		}
-		if (isNegative().and(o.isPositive()) == Boolean.TRUE || isPositive().and(o.isNegative()) == Boolean.TRUE) {
-			return this.add(o.inverse());
-		}
-		if (equals(o) == Boolean.TRUE) {
-			return ZERO;
-		}
-
-		boolean flip;
-		int length;
-		byte[] one;
-		byte[] two;
-
-		if (magnitude().greaterThan(o.magnitude()) == Boolean.TRUE) {
-			flip = false;
-			length = value.length;
-			one = Arrays.copyOf(value, length);
-			two = value.length > o.value.length ? Arrays.copyOf(o.value, length) : o.value;
-		} else {
-			flip = true;
-			length = o.value.length;
-			one = Arrays.copyOf(o.value, length);
-			two = o.value.length > value.length ? Arrays.copyOf(value, length) : value;
-		}
-
-		if (isNegative().and(o.isNegative()) == Boolean.TRUE) {
-			flip = !flip;
-			invert(one);
-			invert(two);
-		}
-
-		byte[] computedValue = new byte[length];
-
-		for (int i = 0; i < length; i++) {
-			byte diff = (byte) (one[i] - two[i]);
-			if (diff < 0) {
-				int j = i;
-				while (true) {
-					if (one[j] == 0) {
-						one[j] = 127;
-					} else {
-						one[j]--;
-						break;
-					}
-					j++;
-				}
-				computedValue[i] = (byte) (128 + diff);
-			} else {
-				computedValue[i] = diff;
-			}
-		}
-
-		computedValue = compact(computedValue);
-
-		if (flip) {
-			invert(computedValue);
-		}
-
-		return new BigInteger(computedValue);
-	}
-
-	public Boolean isPositive() {
-		return (value[value.length - 1] > 0) ? Boolean.TRUE : Boolean.FALSE;
-	}
-
-	public Boolean isNegative() {
-		return (value[value.length - 1] < 0) ? Boolean.TRUE : Boolean.FALSE;
-	}
-
-	public Boolean isZero() {
-		return (value.length == 1 && value[0] == 0) ? Boolean.TRUE : Boolean.FALSE;
-	}
-
-	public BigInteger magnitude() {
-		return isPositive() == Boolean.TRUE ? this : inverse();
-	}
-
-	public BigInteger inverse() {
-		byte[] ret = Arrays.copyOf(value, value.length);
-		invert(ret);
-		return new BigInteger(ret);
-	}
-
-	private void invert(byte[] in) {
-		for (int i = 0; i < in.length; i++) {
-			in[i] = (byte) -in[i];
-		}
-	}
-
-	public Boolean equals(BigInteger o) {
-		return Arrays.equals(o.value, value) ? Boolean.TRUE : Boolean.FALSE;
-	}
-
-	public Boolean equalTo(Number number) {
-		if (number instanceof BigInteger){
-			return equals((BigInteger) number);
-		}
-		return Boolean.FALSE;
-	}
-
-	public Boolean greaterThan(BigInteger o) {
-		if (value.length > o.value.length) {
-			return Boolean.TRUE;
-		}
-		if (o.value.length > value.length) {
-			return Boolean.FALSE;
-		}
-		for (int i = value.length - 1; i >= 0; i--) {
-			if (value[i] > o.value[i]) {
-				return Boolean.TRUE;
-			}
-			if (o.value[i] > value[i]) {
-				return Boolean.FALSE;
-			}
-		}
-		return Boolean.FALSE;
-	}
-
-	public Boolean lessThan(BigInteger o) {
-		if (value.length < o.value.length) {
-			return Boolean.TRUE;
-		}
-		if (o.value.length < value.length) {
-			return Boolean.FALSE;
-		}
-		for (int i = value.length - 1; i >= 0; i--) {
-			if (value[i] < o.value[i]) {
-				return Boolean.TRUE;
-			}
-			if (o.value[i] < value[i]) {
-				return Boolean.FALSE;
-			}
-		}
-		return Boolean.FALSE;
-	}
-
 	public Number multiply(Number o) {
-		if (o instanceof BigInteger){
+		if (o instanceof BigInteger) {
 			return multiply((BigInteger) o);
 		}
 		throw new RuntimeException("Cannot add Number of type " + o.getClass());
@@ -321,7 +482,7 @@ public class BigInteger implements Number  {
 	public Number multiply(BigInteger o) {
 		int i = 0;
 		Number out = this;
-		while (new Integer(++i).lessThan(o) == Boolean.TRUE){
+		while (new Integer(++i).lessThan(o) == TRUE) {
 			out = out.add(this);
 		}
 		return out;
@@ -330,52 +491,51 @@ public class BigInteger implements Number  {
 	public Number divide(Number o) {
 		int i = 0;
 		Number out = this;
-		if (o.equalTo(ZERO) == Boolean.TRUE){
-			if (this.equalTo(ZERO) == Boolean.TRUE){
+		if (o.equalTo(ZERO) == TRUE) {
+			if (this.equalTo(ZERO) == TRUE) {
 				return ZERO;
 			}
-			return o.isNegative() == Boolean.TRUE ? Infinity.NEGATIVE_INFINITY : Infinity.POSITIVE_INFINITY;
+			return o.isNegative() == TRUE ? Infinity.NEGATIVE_INFINITY : Infinity.POSITIVE_INFINITY;
 		}
-		while (new Integer(++i).lessThan(o) == Boolean.TRUE){
+		while (new Integer(++i).lessThan(o) == TRUE) {
 			out = out.subtract(this);
 		}
-		if (out.equalTo(ZERO) == Boolean.TRUE){
+		if (out.equalTo(ZERO) == TRUE) {
 			return new Integer(i);
 		}
 		return new Fraction(this, o);
 	}
 
-	// TODO: replace with formatters
-//	public java.lang.String binaryString() {
-//		return stringInBase(2);
-//	}
-//
-//	public java.lang.String decimalString() {
-//		return stringInBase(10);
-//	}
-//
-//	public java.lang.String stringInBase(int base) {
-//		long out = 0;
-//		for (int i = 0; i < value.length; i++) {
-//			out += value[i] * Math.pow(MAX_BYTE_SIZE, i);
-//		}
-//		StringBuilder sb = new StringBuilder();
-//		while (out > 0) {
-//			sb.append(out % base);
-//			out = out / base;
-//		}
-//		return sb.reverse().toString();
-//	}
+	private long toLong() throws TooBigException {
+		return toPrimitive(java.lang.Long.MAX_VALUE);
+	}
 
-	//TODO: Remove java methods
-//	public boolean equalTo(Object o) {
-//		if (o instanceof Number) {
-//			return equalTo((Number) o) == Boolean.TRUE;
-//		}
-//		return false;
-//	}
-//
-//	public java.lang.String toString() {
-//		return decimalString();
-//	}
+	private int toInt() throws TooBigException {
+		return (int) toPrimitive(java.lang.Integer.MAX_VALUE);
+	}
+
+	private short toShort() throws TooBigException {
+		return (short) toPrimitive(java.lang.Short.MAX_VALUE);
+	}
+
+	private byte toByte() throws TooBigException {
+		return (byte) toPrimitive(java.lang.Byte.MAX_VALUE);
+	}
+
+	private long toPrimitive(long max) throws TooBigException {
+
+		long ret = max;
+		for (int i = 0; i < value.length; i++) {
+			int next = (value[i] - MIN) * (int) Math.pow(SIZE, i);
+			if (next > ret) {
+				throw new TooBigException();
+			}
+			ret -= next;
+		}
+		return max - ret;
+	}
+
+	private class TooBigException extends Exception {
+	}
+
 }

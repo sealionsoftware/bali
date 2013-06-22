@@ -6,13 +6,10 @@ import bali.compiler.parser.tree.Expression;
 import bali.compiler.parser.tree.Interface;
 import bali.compiler.parser.tree.Invocation;
 import bali.compiler.parser.tree.MethodDeclaration;
-import bali.compiler.parser.tree.MethodDeclaringType;
+import bali.compiler.parser.tree.TypeDeclaration;
 import bali.compiler.parser.tree.Node;
-import bali.compiler.parser.tree.Type;
 import bali.compiler.validation.ValidationFailure;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,14 +24,14 @@ public class InvocationValidator implements Validator<CompilationUnit> {
 
 	public List<ValidationFailure> validate(CompilationUnit node) {
 
-		Map<String, MethodDeclaringType<MethodDeclaration>> internalTypes = new HashMap<>();
+		Map<String, TypeDeclaration<MethodDeclaration>> internalTypes = new HashMap<>();
 
 		for (Interface iface : node.getInterfaces()) {
 			internalTypes.put(iface.getQualifiedClassName(), iface);
 		}
 
 		for (bali.compiler.parser.tree.Class clazz : node.getClasses()) {
-			internalTypes.put(clazz.getQualifiedClassName(), (MethodDeclaringType) clazz);
+			internalTypes.put(clazz.getQualifiedClassName(), (TypeDeclaration) clazz);
 		}
 
 		InvocationValidatorAgent agent = new InvocationValidatorAgent(internalTypes);
@@ -56,9 +53,9 @@ public class InvocationValidator implements Validator<CompilationUnit> {
 
 	public static class InvocationValidatorAgent implements Validator<Invocation> {
 
-		private Map<String, MethodDeclaringType<MethodDeclaration>> internalTypes;
+		private Map<String, TypeDeclaration<MethodDeclaration>> internalTypes;
 
-		public InvocationValidatorAgent(Map<String, MethodDeclaringType<MethodDeclaration>> internalTypes) {
+		public InvocationValidatorAgent(Map<String, TypeDeclaration<MethodDeclaration>> internalTypes) {
 			this.internalTypes = internalTypes;
 		}
 
@@ -68,7 +65,7 @@ public class InvocationValidator implements Validator<CompilationUnit> {
 
 			try {
 
-				MethodDeclaringType targetType = getMethodDeclaringType(invocation.getTarget().getType());
+				TypeDeclaration targetType = invocation.getTarget().getType().getDeclaration();
 				MethodDeclaration declaration = getDeclarationForInvocation(invocation, targetType);
 
 				if (declaration != null) {
@@ -85,8 +82,6 @@ public class InvocationValidator implements Validator<CompilationUnit> {
 					ret.add(new ValidationFailure(invocation, "Could not resolve method with signiture of invocation " + invocation.getTarget().getType() + "." + invocation.getMethod() + "(" + sb + ")"));
 				}
 
-			} catch (ClassNotFoundException e) {
-				ret.add(new ValidationFailure(invocation, "Could not resolve class: " + e.getMessage()));
 			} catch (Exception e) {
 				ret.add(new ValidationFailure(invocation, "Could not validate invocation: " + e.getMessage()));
 			}
@@ -94,84 +89,38 @@ public class InvocationValidator implements Validator<CompilationUnit> {
 			return ret;
 		}
 
-		private MethodDeclaringType getMethodDeclaringType(Type valueType) throws Exception {
-			String className = valueType.getQualifiedClassName();
-			MethodDeclaringType<MethodDeclaration> ret = internalTypes.get(className);
-			if (ret != null) {
-				return ret;
-			}
-
-			Class clazz = Class.forName(className);
-			ret = new ClasspathType();
-			for (Method method : clazz.getDeclaredMethods()) {
-				MethodDeclaration declaration = new MethodDeclaration();
-				for (Class argumentClass : method.getParameterTypes()) {
-					Declaration argumentDeclaration = new Declaration();
-					Type argumentType = new Type();
-					argumentType.setQualifiedClassName(argumentClass.getName());
-					argumentDeclaration.setType(argumentType);
-					declaration.addArgument(argumentDeclaration);
-				}
-				declaration.setName(method.getName());
-
-				java.lang.reflect.Type returnType = method.getGenericReturnType();
-
-				if (returnType instanceof TypeVariable) {
-					TypeVariable genericReturnType = (TypeVariable) returnType;
-					int i = 0;
-					for (TypeVariable tv : clazz.getTypeParameters()) {
-						if (tv.equals(genericReturnType)) {
-							declaration.setType(valueType.getParameters().get(i));
-							break;
-						}
-						i++;
-					}
-				} else if (returnType != void.class) {
-					Type methodReturnType = new Type();
-					methodReturnType.setQualifiedClassName(((Class) returnType).getName());
-					declaration.setType(methodReturnType);
-				}
-
-				ret.addMethod(declaration);
-			}
-
-			return ret;
-		}
-
-
-		private MethodDeclaration getDeclarationForInvocation(Invocation invocation, MethodDeclaringType<?> type) {
+		private MethodDeclaration getDeclarationForInvocation(Invocation invocation, TypeDeclaration<?> type) {
 			List<Expression> arguments = invocation.getArguments();
-			method:
 			for (MethodDeclaration declaration : type.getMethods()) {
 				if (declaration.getName().equals(invocation.getMethod())) {
-					List<Declaration> argumentDeclarations = declaration.getArguments();
-					if (argumentDeclarations.size() == arguments.size()) {
-						int i = 0;
-						for (Expression argument : arguments) {
-							if (!argument.getType().isAssignableTo(argumentDeclarations.get(i++).getType())) {
-								continue method;
-							}
-						}
-						return declaration;
+					if (!argumentsMatch(declaration.getArguments(), arguments)){
+						continue;
 					}
+					return declaration;
 				}
 			}
 			return null;
 		}
-	}
 
-	private static class ClasspathType extends MethodDeclaringType<MethodDeclaration> {
-
-		private List<MethodDeclaration> declarations = new ArrayList<>();
-
-		public List<MethodDeclaration> getMethods() {
-			return declarations;
+		private boolean argumentsMatch(List<Declaration> declarations, List<Expression> arguments){
+			if (declarations.size() != arguments.size()) {
+				return false;
+			}
+			Iterator<Declaration> i = declarations.iterator();
+			Iterator<Expression> j = arguments.iterator();
+			while (i.hasNext()){
+				Declaration argumentDeclaration = i.next();
+				Expression argument = j.next();
+				if (!argument.getType().isAssignableTo(argumentDeclaration.getType())) {
+					return false;
+				}
+			}
+			return true;
 		}
 
-		public void addMethod(MethodDeclaration method) {
-			declarations.add(method);
-		}
 	}
+
+
 
 
 }

@@ -1,5 +1,6 @@
 package bali.compiler.parser.tree;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,15 +11,19 @@ import java.util.List;
 public class BooleanLiteralExpression extends Expression {
 
 	private String serialization;
+	private Type type; {
+		Type t = new Type();
+		t.setClassName(bali.Boolean.class.getName());
+		type = t;
+	}
 
 	public BooleanLiteralExpression(Integer line, Integer character) {
 		super(line, character);
+
 	}
 
 	public Type getType() {
-		Type t = new Type();
-		t.setQualifiedClassName(bali.Boolean.class.getName());
-		return t;
+		return type;
 	}
 
 	public void setSerialization(String serialization) {
@@ -30,6 +35,8 @@ public class BooleanLiteralExpression extends Expression {
 	}
 
 	public List<Node> getChildren() {
-		return Collections.emptyList();
+		List<Node> ret = new ArrayList<>();
+		ret.add(type);
+		return ret;
 	}
 }

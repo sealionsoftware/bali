@@ -1,7 +1,8 @@
 package bali.compiler.parser.tree;
 
-import bali.BigInteger;
+import bali.Number;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,6 +13,11 @@ import java.util.List;
 public class NumberLiteralExpression extends Expression {
 
 	private String serialization;
+	private Type type; {
+		Type t = new Type();
+		t.setClassName(Number.class.getName());
+		type = t;
+	}
 
 	public NumberLiteralExpression() {
 	}
@@ -21,9 +27,7 @@ public class NumberLiteralExpression extends Expression {
 	}
 
 	public Type getType() {
-		Type t = new Type();
-		t.setQualifiedClassName(Number.class.getName());
-		return t;
+		return type;
 	}
 
 	public void setSerialization(String serialization) {
@@ -35,6 +39,8 @@ public class NumberLiteralExpression extends Expression {
 	}
 
 	public List<Node> getChildren() {
-		return Collections.emptyList();
+		List<Node> ret = new ArrayList<>();
+		ret.add(type);
+		return ret;
 	}
 }

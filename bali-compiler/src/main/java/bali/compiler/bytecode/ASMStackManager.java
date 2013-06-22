@@ -9,12 +9,14 @@ import bali.compiler.parser.tree.ConstructionExpression;
 import bali.compiler.parser.tree.Expression;
 import bali.compiler.parser.tree.Invocation;
 import bali.compiler.parser.tree.ListLiteralExpression;
+import bali.compiler.parser.tree.MethodDeclaration;
 import bali.compiler.parser.tree.NumberLiteralExpression;
 import bali.compiler.parser.tree.Reference;
 import bali.compiler.parser.tree.Return;
 import bali.compiler.parser.tree.Statement;
 import bali.compiler.parser.tree.StringLiteralExpression;
 import bali.compiler.parser.tree.Type;
+import bali.compiler.parser.tree.TypeDeclaration;
 import bali.compiler.parser.tree.Variable;
 import bali.compiler.parser.tree.WhileStatement;
 import org.objectweb.asm.Label;
@@ -45,7 +47,9 @@ public class ASMStackManager implements Opcodes {
 	public ASMStackManager(ASMConverter converter) {
 		this.converter = converter;
 		this.erasedType = new Type();
-		erasedType.setQualifiedClassName(Object.class.getName());
+		TypeDeclaration t = new bali.compiler.parser.tree.Class();
+		t.setQualifiedClassName(Object.class.getName());
+		erasedType.setDeclaration(t);
 	}
 
 
@@ -116,7 +120,7 @@ public class ASMStackManager implements Opcodes {
 			push(value, v);
 			argumentTypes.add(value.getType());
 		}
-		v.visitMethodInsn(INVOKEVIRTUAL,
+		v.visitMethodInsn(statement.getTarget().getType().getDeclaration().getAbstract() ? INVOKEINTERFACE : INVOKEVIRTUAL,
 				converter.getInternalName(statement.getTarget().getType()),
 				statement.getMethod(),
 				converter.getMethodDescriptor(statement.getType(), argumentTypes));
@@ -182,12 +186,9 @@ public class ASMStackManager implements Opcodes {
 	}
 
 	public void push(NumberLiteralExpression value, MethodVisitor v) {
-		Integer number = Integer.parseInt(value.getSerialization()); //TODO need to parse directly from java.lang.String to bali.Number via byte[]
-		String internalName = converter.getInternalName(value.getType());
-		v.visitTypeInsn(NEW, internalName);
-		v.visitInsn(DUP);
-		push(number, v);
-		v.visitMethodInsn(INVOKESPECIAL, internalName, "<init>", "(I)V");
+		v.visitFieldInsn(GETSTATIC, "bali/_", "NUMBER_FACTORY", "Lbali/NumberFactory;");
+		push(value.getSerialization().toCharArray(), v);
+		v.visitMethodInsn(INVOKEVIRTUAL, "bali/NumberFactory", "forDecimalString", "([C)Lbali/Number;");
 	}
 
 	public void push(BooleanLiteralExpression value, MethodVisitor v) {
@@ -200,16 +201,19 @@ public class ASMStackManager implements Opcodes {
 		String internalName = converter.getInternalName(value.getType());
 		v.visitTypeInsn(NEW, internalName);
 		v.visitInsn(DUP);
-		push(string.length(), v);
+		push(string.toCharArray(), v);
+		v.visitMethodInsn(INVOKESPECIAL, internalName, "<init>", "([C)V");
+	}
+
+	public void push(char[] value, MethodVisitor v) {
+		push(value.length, v);
 		v.visitIntInsn(NEWARRAY, T_CHAR);
-		char[] chars = string.toCharArray();
-		for (int i = 0; i < chars.length; i++) {
+		for (int i = 0; i < value.length; i++) {
 			v.visitInsn(DUP);
 			push(i, v);
-			push(chars[i], v);
+			push(value[i], v);
 			v.visitInsn(CASTORE);
 		}
-		v.visitMethodInsn(INVOKESPECIAL, internalName, "<init>", "([C)V");
 	}
 
 	public void push(ListLiteralExpression value, MethodVisitor v) {
@@ -264,13 +268,14 @@ public class ASMStackManager implements Opcodes {
 			argumentClasses.add(argumentValue.getType());
 		}
 		Type valueType = value.getType();
+		Type targetType = value.getTarget().getType();
 		Boolean erased = valueType.getErase();
-		v.visitMethodInsn(INVOKEVIRTUAL,
-				converter.getInternalName(value.getTarget().getType()),
+		v.visitMethodInsn(targetType.getDeclaration().getAbstract() ? INVOKEINTERFACE : INVOKEVIRTUAL,
+				converter.getInternalName(targetType),
 				value.getMethod(),
 				converter.getMethodDescriptor(erased ? erasedType : valueType, argumentClasses));
 		if (erased) {
-			v.visitTypeInsn(CHECKCAST, converter.getInternalName(valueType.getQualifiedClassName()));
+			v.visitTypeInsn(CHECKCAST, converter.getInternalName(valueType.getDeclaration().getQualifiedClassName()));
 		}
 	}
 

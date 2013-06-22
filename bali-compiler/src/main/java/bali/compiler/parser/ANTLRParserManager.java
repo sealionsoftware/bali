@@ -139,7 +139,7 @@ public class ANTLRParserManager implements ParserManager {
 //		}
 		if (context.typeDeclarationList() != null) {
 			for (BaliParser.TypeDeclarationContext typeDeclaration : context.typeDeclarationList().typeDeclaration()) {
-				clazz.addInterface(getType(typeDeclaration));
+				clazz.addImplementation(getType(typeDeclaration));
 			}
 		}
 		for (BaliParser.ArgumentDeclarationContext adc : context.argumentDeclarationList().argumentDeclaration()) {

@@ -35,11 +35,11 @@ public class Fraction implements Number {
 	}
 
 	public Number magnitude() {
-		return isNegative() == Boolean.TRUE ? inverse() : this;
+		return isNegative() == Boolean.TRUE ? negative() : this;
 	}
 
-	public Number inverse() {
-		return new Fraction(numerator.inverse(), divisor);
+	public Number negative() {
+		return new Fraction(numerator.negative(), divisor);
 	}
 
 	public Boolean greaterThan(Number o) {

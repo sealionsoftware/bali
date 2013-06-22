@@ -3,8 +3,6 @@ package bali;
 import junit.framework.Assert;
 import org.junit.Test;
 
-import java.lang.*;
-
 /**
  * User: Richard
  * Date: 13/06/13
@@ -12,37 +10,37 @@ import java.lang.*;
 public class ByteUnitTest {
 
 	@Test
-	public void testConstruction(){
+	public void testConstruction() {
 		Byte b = new Byte((byte) 0);
 		Assert.assertEquals(b.value, 0);
 	}
 
 	@Test
-	public void testAddSelf(){
+	public void testAddSelf() {
 		Byte b = new Byte((byte) 1);
 		Number result = b.add(b);
 		Assert.assertEquals("result is not a Byte", Byte.class, result.getClass());
-		Assert.assertEquals("result is not correct value", 2, ((Byte)result).value);
+		Assert.assertEquals("result is not correct value", 2, ((Byte) result).value);
 	}
 
 	@Test
-	public void testAddAnother(){
+	public void testAddAnother() {
 		Byte b = new Byte((byte) 1);
-		Number result = b.add( new Byte((byte) 1));
+		Number result = b.add(new Byte((byte) 1));
 		Assert.assertEquals("result is not a Byte", Byte.class, result.getClass());
-		Assert.assertEquals("result is not correct value", 2, ((Byte)result).value);
+		Assert.assertEquals("result is not correct value", 2, ((Byte) result).value);
 	}
 
 	@Test
-	public void testAddToShort(){
+	public void testAddToShort() {
 		Byte b = new Byte((byte) 127);
 		Number result = b.add(new Byte((byte) 1));
 		Assert.assertEquals("result is not a Short", Short.class, result.getClass());
-		Assert.assertEquals("result is not correct value", 128, ((Short) result).value);
+		Assert.assertEquals("result is not correct value", java.lang.Byte.MAX_VALUE + 1, ((Short) result).value);
 	}
 
 	@Test
-	public void testAddToInteger(){
+	public void testAddToInteger() {
 		Byte b = new Byte((byte) 1);
 		Number result = b.add(new Short(java.lang.Short.MAX_VALUE));
 		Assert.assertEquals("result is not a Integer", Integer.class, result.getClass());
@@ -50,7 +48,7 @@ public class ByteUnitTest {
 	}
 
 	@Test
-	public void testAddToLong(){
+	public void testAddToLong() {
 		Byte b = new Byte((byte) 1);
 		Number result = b.add(new Integer(java.lang.Integer.MAX_VALUE));
 		Assert.assertEquals("result is not a Long", Long.class, result.getClass());
@@ -58,11 +56,11 @@ public class ByteUnitTest {
 	}
 
 	@Test
-	public void testAddToBigInteger(){
+	public void testAddToBigInteger() {
 		Byte b = new Byte((byte) 1);
 		Number result = b.add(new Long(java.lang.Long.MAX_VALUE));
 		Assert.assertEquals("result is not a BigInteger", BigInteger.class, result.getClass());
-		Assert.assertEquals("result is not correct value", Long.POSITIVE_HORIZON, ((BigInteger) result).value);
+		Assert.assertTrue("result is not correct value", Long.POSITIVE_HORIZON.equalTo(result) == Boolean.TRUE);
 	}
 
 

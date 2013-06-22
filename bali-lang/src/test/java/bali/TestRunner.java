@@ -1,8 +1,6 @@
 package bali;
 
-import java.lang.*;
-
-import static bali._.NUMBER_FACTORY;
+import java.lang.Long;
 
 /**
  * User: Richard
@@ -10,19 +8,19 @@ import static bali._.NUMBER_FACTORY;
  */
 public class TestRunner {
 
-	public static void main(java.lang.String[] args){
+	public static void main(java.lang.String[] args) {
 
-		long one = java.lang.Long.MAX_VALUE;
-		long two = java.lang.Long.MAX_VALUE;
-		long three = one + two;
+		long one = Long.MIN_VALUE;
+		long two = -one;
 
-		System.out.println(three);
+		System.out.println(one);
+		System.out.println(two);
 
-		Number baliOne = NUMBER_FACTORY.forLong(java.lang.Long.MAX_VALUE);
-		Number baliTwo = NUMBER_FACTORY.forLong(java.lang.Long.MAX_VALUE);
-		Number baliThree = baliOne.add(baliTwo);
+//		Number baliOne = NUMBER_FACTORY.forLong(java.lang.Long.MAX_VALUE);
+//		Number baliTwo = NUMBER_FACTORY.forLong(java.lang.Long.MAX_VALUE);
+//		Number baliThree = baliOne.add(baliTwo);
 
-		System.out.println(baliThree);
+//		System.out.println(baliThree);
 
 
 	}

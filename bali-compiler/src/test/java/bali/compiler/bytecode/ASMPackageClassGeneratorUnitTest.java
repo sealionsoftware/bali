@@ -1,20 +1,20 @@
 package bali.compiler.bytecode;
 
-import bali.*;
 import bali.Boolean;
-mport bali.compiler.GeneratedClass;
-import bali.compiler.parser.tree.BooleanLiteralExpression;
-import bali.compiler.parser.tree.CompilationUnit;
-import bali.compiler.parser.tree.Constant;
-import bali.compiler.parser.tree.ConstructionExpression;
-import bali.compiler.parser.tree.Expression;
-import bali.compiler.parser.tree.ListLiteralExpression;
-import bali.compiler.parser.tree.NumberLiteralExpression;
-import bali.compiler.parser.tree.StringLiteralExpression;
-import bali.compiler.parser.tree.Type;
+import bali.Byte;
+import bali.List;
+import bali.Number;
+import bali.String;
+import bali.Array;
+import bali.Value;
+import bali.compiler.GeneratedClass;
+import bali.compiler.parser.tree.*;
+import bali.compiler.parser.tree.Class;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import static bali._.NUMBER_FACTORY;
 
 /**
  * User: Richard
@@ -36,20 +36,23 @@ public class ASMPackageClassGeneratorUnitTest {
 	public void testNumberConstant() throws Exception {
 		NumberLiteralExpression nlv = new NumberLiteralExpression(0, 0);
 		nlv.setSerialization("1");
-		testGenerateConstant(NNumb.class, nlv, new NuNumb1));
+		nlv.getType().setDeclaration(new TestDeclaration(Number.class.getName()));
+		testGenerateConstant(Number.class, nlv, new Byte((byte) 1));
 	}
 
 	@Test
 	public void testStringConstant() throws Exception {
 		StringLiteralExpression slv = new StringLiteralExpression(0, 0);
 		slv.setSerialization("Hello World");
-		testGenerateConstant(CharArrayString.class, slv, new CharArrayString("Hello World".toCharArray()));
+		slv.getType().setDeclaration(new TestDeclaration(String.class.getName()));
+		testGenerateConstant(String.class, slv, new String("Hello World".toCharArray()));
 	}
 
 	@Test
 	public void testBooleanConstant() throws Exception {
 		BooleanLiteralExpression blv = new BooleanLiteralExpression(0, 0);
 		blv.setSerialization("true");
+		blv.getType().setDeclaration(new TestDeclaration(Boolean.class.getName()));
 		testGenerateConstant(Boolean.class, blv, bali.Boolean.TRUE);
 	}
 
@@ -64,7 +67,7 @@ public class ASMPackageClassGeneratorUnitTest {
 		three.setSerialization("3");
 
 		Type t = new Type(0, 0);
-		t.setQualifiedClassName(NumNumblass.getName());
+		t.setDeclaration(new TestDeclaration(Number.class.getName()));
 
 		ListLiteralExpression llv = new ListLiteralExpression(0, 0);
 		llv.setListType(t);
@@ -72,22 +75,29 @@ public class ASMPackageClassGeneratorUnitTest {
 		llv.addValue(two);
 		llv.addValue(three);
 
-		testGenerateConstant(Array.class, llv, new Array<>(new Object[]{new NumbNumb, new NumbeNumb new NumberNumb);
+		llv.setListType(t);
+		llv.getType().setDeclaration(new TestDeclaration(Array.class.getName()));
+
+		testGenerateConstant(Array.class, llv, new Array<>(new Object[]{
+				NUMBER_FACTORY.forDecimalString("1".toCharArray()),
+				NUMBER_FACTORY.forDecimalString("2".toCharArray()),
+				NUMBER_FACTORY.forDecimalString("3".toCharArray())
+		}));
 	}
 
 	@Test
 	public void testNewObjectConstant() throws Exception {
-		Type t = new Type(0, 0);
-		t.setQualifiedClassName(Instantiatable.class.getName());
+		Type type = new Type(0, 0);
+		type.setDeclaration(new TestDeclaration(Instantiatable.class.getName()));
 		ConstructionExpression cv = new ConstructionExpression(0, 0);
-		cv.setType(t);
+		cv.setType(type);
 		testGenerateConstant(Instantiatable.class, cv, new Instantiatable());
 	}
 
-	public <T> void testGenerateConstant(java.lang.Class<T> clazz, Expression value, T expectation) throws Exception {
+	public <T extends Value<T>> void testGenerateConstant(java.lang.Class<T> clazz, Expression value, T expectation) throws Exception {
 
 		Type type = new Type(0, 0);
-		type.setQualifiedClassName(clazz.getName());
+		type.setDeclaration(new TestDeclaration(clazz.getName()));
 
 		Constant constant = new Constant(0, 0);
 		constant.setName("aConstant");
@@ -102,13 +112,12 @@ public class ASMPackageClassGeneratorUnitTest {
 		Assert.assertEquals("Number of methods", 0, loadedClass.getDeclaredMethods().length);
 		java.lang.reflect.Field constantField = loadedClass.getField("aConstant");
 		Assert.assertEquals("Constant Type", clazz, constantField.getType());
-		Assert.assertEquals("Constant Value", expectation, constantField.get(null));
+		Assert.assertTrue("Constant Value", expectation.equalTo((T) constantField.get(null)) == Boolean.TRUE);
 	}
 
-	public static class Instantiatable {
-
-		public boolean equals(Object o) {
-			return o instanceof Instantiatable;
+	public static class Instantiatable implements Value<Instantiatable> {
+		public Boolean equalTo(Instantiatable o) {
+			return o instanceof Instantiatable ? Boolean.TRUE : Boolean.FALSE;
 		}
 	}
 

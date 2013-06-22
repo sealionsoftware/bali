@@ -1,16 +1,18 @@
 package bali;
 
+import java.util.Arrays;
+
 import static bali._.NUMBER_FACTORY;
 
 /**
  * User: Richard
  * Date: 08/05/13
  */
-public class Array<E> implements Iterable<E> {
+public class Array<E> implements Iterable<E>, Value<Array> {
 
 	private E[] elements;
 
-	Array(E[] elements){
+	public Array(E[] elements){
 		this.elements = elements;
 	}
 
@@ -43,4 +45,7 @@ public class Array<E> implements Iterable<E> {
 		return elements[NUMBER_FACTORY.valueOf(index)];
 	}
 
+	public Boolean equalTo(Array operand) {
+		return Arrays.equals(elements, operand.elements) ? Boolean.TRUE : Boolean.FALSE;
+	}
 }

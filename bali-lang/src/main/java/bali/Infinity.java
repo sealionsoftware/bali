@@ -1,7 +1,7 @@
 package bali;
 
-import static bali.Boolean.TRUE;
 import static bali.Boolean.FALSE;
+import static bali.Boolean.TRUE;
 
 /**
  * User: Richard
@@ -16,7 +16,7 @@ public enum Infinity implements Number {
 	}
 
 	public Boolean isNegative() {
-		return  this == NEGATIVE_INFINITY ? TRUE : FALSE;
+		return this == NEGATIVE_INFINITY ? TRUE : FALSE;
 	}
 
 	public Boolean isZero() {
@@ -27,7 +27,7 @@ public enum Infinity implements Number {
 		return POSITIVE_INFINITY;
 	}
 
-	public Number inverse() {
+	public Number negative() {
 		return this == POSITIVE_INFINITY ? NEGATIVE_INFINITY : POSITIVE_INFINITY;
 	}
 

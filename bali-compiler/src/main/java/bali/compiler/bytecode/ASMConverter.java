@@ -35,7 +35,7 @@ public class ASMConverter {
 	}
 
 	public String getTypeDescriptor(bali.compiler.parser.tree.Type type) {
-		return (type == null ? Type.VOID_TYPE : Type.getObjectType(getInternalName(type.getQualifiedClassName()))).getDescriptor();
+		return (type == null ? Type.VOID_TYPE : Type.getObjectType(getInternalName(type.getDeclaration().getQualifiedClassName()))).getDescriptor();
 	}
 
 	public String getInternalName(String className) {
@@ -43,7 +43,7 @@ public class ASMConverter {
 	}
 
 	public String getInternalName(bali.compiler.parser.tree.Type type) {
-		return getInternalName(type.getQualifiedClassName());
+		return getInternalName(type.getDeclaration().getQualifiedClassName());
 	}
 
 }

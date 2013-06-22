@@ -19,7 +19,7 @@ public class ASMInterfaceGenerator implements Generator<Interface, GeneratedClas
 		String[] extensions = new String[input.getSuperInterfaces().size()];
 		int i = 0;
 		for (Type superInterface : input.getSuperInterfaces()) {
-			extensions[i++] = converter.getInternalName(superInterface.getQualifiedClassName());
+			extensions[i++] = converter.getInternalName(superInterface.getDeclaration().getQualifiedClassName());
 		}
 
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);

@@ -1,8 +1,8 @@
 package bali.compiler.bytecode;
 
-import bali.BigInteger;
+import bali.Number;
 
-mport bali.compiler.GeneratedClass;
+import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.Declaration;
 import bali.compiler.parser.tree.Interface;
 import bali.compiler.parser.tree.MethodDeclaration;
@@ -41,7 +41,7 @@ public class ASMInterfaceGeneratorUnitTest {
 	public void testGenerateInterfaceExtension() throws Exception {
 
 		Type type = new Type(0, 0);
-		type.setQualifiedClassName("bali.compiler.bytecode.ASuperInterface");
+		type.setDeclaration(new TestDeclaration("bali.compiler.bytecode.ASuperInterface"));
 
 		iface.addSuperInterface(type);
 
@@ -72,7 +72,7 @@ public class ASMInterfaceGeneratorUnitTest {
 
 		Type type = new Type(0, 0);
 		type.setClassName("Number");
-		type.setQualifiedClassName("bali.Number");
+		type.setDeclaration(new TestDeclaration("bali.Number"));
 
 		MethodDeclaration declaration = new MethodDeclaration(0, 0);
 		declaration.setName("aMethod");
@@ -84,7 +84,7 @@ public class ASMInterfaceGeneratorUnitTest {
 		java.lang.reflect.Method declaredMethod = loadedClass.getMethod("aMethod", new java.lang.Class[]{});
 
 		Assert.assertEquals("Number of methods", 1, loadedClass.getMethods().length);
-		Assert.assertEquals("Return Type", NNumbs, declaredMethod.getReturnType());
+		Assert.assertEquals("Return Type", Number.class, declaredMethod.getReturnType());
 	}
 
 	@Test
@@ -92,7 +92,7 @@ public class ASMInterfaceGeneratorUnitTest {
 
 		Type type = new Type(0, 0);
 		type.setClassName("Number");
-		type.setQualifiedClassName("bali.Number");
+		type.setDeclaration(new TestDeclaration("bali.Number"));
 
 		Declaration argument = new Declaration(0, 0);
 		argument.setType(type);
@@ -105,7 +105,7 @@ public class ASMInterfaceGeneratorUnitTest {
 		iface.addMethod(declaration);
 
 		java.lang.Class loadedClass = build();
-		java.lang.reflect.Method declaredMethod = loadedClass.getMethod("aMethod", new java.lang.Class[]{BigInteger.Numb});
+		java.lang.reflect.Method declaredMethod = loadedClass.getMethod("aMethod", new java.lang.Class[]{Number.class});
 
 		Assert.assertEquals("Number of methods", 1, loadedClass.getMethods().length);
 		Assert.assertEquals("Return Type", void.class, declaredMethod.getReturnType());

@@ -11,13 +11,16 @@ import bali.compiler.parser.ANTLRParserManager;
 import bali.compiler.parser.ParserManager;
 import bali.compiler.parser.tree.CompilationUnit;
 import bali.compiler.validation.ConfigurableValidationEngine;
+import bali.compiler.validation.TypeDeclarationLibrary;
 import bali.compiler.validation.ValidationEngine;
 import bali.compiler.validation.ValidationException;
 import bali.compiler.validation.ValidationFailure;
 import bali.compiler.validation.visitor.AssignmentValidator;
-import bali.compiler.validation.visitor.ClassNameValidator;
+import bali.compiler.validation.visitor.TypeResolvingValidator;
+import bali.compiler.validation.visitor.ClassValidator;
+import bali.compiler.validation.visitor.ConstructionValidator;
 import bali.compiler.validation.visitor.ImplementationValidator;
-import bali.compiler.validation.visitor.ImportsValidator;
+import bali.compiler.validation.visitor.InterfaceValidator;
 import bali.compiler.validation.visitor.InvocationValidator;
 import bali.compiler.validation.visitor.ListLiteralValidator;
 import bali.compiler.validation.visitor.ReferenceValidator;
@@ -29,6 +32,7 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -44,7 +48,7 @@ public class BaliCompiler {
 	private Generator<CompilationUnit, GeneratedPackage> packageBuilder;
 	private ModuleWriter moduleWriter;
 
-	public BaliCompiler(ParserManager parser, ValidationEngine validator, Generator packageBuilder, ModuleWriter moduleWriter) {
+	public BaliCompiler(ParserManager parser, ValidationEngine validator, Generator<CompilationUnit, GeneratedPackage> packageBuilder, ModuleWriter moduleWriter) {
 		this.parserManager = parser;
 		this.validator = validator;
 		this.packageBuilder = packageBuilder;
@@ -53,27 +57,32 @@ public class BaliCompiler {
 
 	public void compile(File in, File out) throws Exception {
 
-		List<File> compilationUnits = Arrays.asList(in.listFiles(new FilenameFilter() {
+		List<File> sourceFiles = Arrays.asList(in.listFiles(new FilenameFilter() {
 			public boolean accept(File dir, String name) {
 				return name.endsWith(BALI_SOURCE_FILE_EXTENSION);
 			}
 		}));
 
-		if (compilationUnits.isEmpty()) {
+		if (sourceFiles.isEmpty()) {
 			throw new Exception("No Bali Source files found in directory " + in);
 		}
 
-		List<GeneratedPackage> packages = new ArrayList<>();
+		List<CompilationUnit> compilationUnits = new ArrayList<>();
 
-		for (File compilationUnitFile : compilationUnits) {
-			String fileName = compilationUnitFile.getName();
+		for (File sourceFile : sourceFiles) {
+			String fileName = sourceFile.getName();
 			String packageName = fileName.substring(0, fileName.length() - BALI_SOURCE_FILE_EXTENSION.length());
-			CompilationUnit compilationUnit = parserManager.parse(compilationUnitFile, packageName);
+			CompilationUnit compilationUnit = parserManager.parse(sourceFile, packageName);
+			compilationUnits.add(compilationUnit);
+		}
 
-			List<ValidationFailure> failures = validator.validate(compilationUnit);
-			if (failures.size() > 0) {
-				throw new ValidationException(failures);
-			}
+		Map<String, List<ValidationFailure>> packageFailures = validator.validate(compilationUnits);
+		if (packageFailures.size() > 0){
+			throw new ValidationException(packageFailures);
+		}
+
+		List<GeneratedPackage> packages = new ArrayList<>();
+		for (CompilationUnit compilationUnit : compilationUnits) {
 			GeneratedPackage pkg = packageBuilder.build(compilationUnit);
 			packages.add(pkg);
 		}
@@ -106,17 +115,22 @@ public class BaliCompiler {
 				throw new Exception("Usage: bali.compiler.BaliCompiler (in directory) (out directory)");
 		}
 
+		TypeDeclarationLibrary library = new TypeDeclarationLibrary(Thread.currentThread().getContextClassLoader());
+
 		BaliCompiler compiler = new BaliCompiler(
 				new ANTLRParserManager(),
 				new ConfigurableValidationEngine(new Array<Validator<CompilationUnit>>(new Validator[]{
-						new ImportsValidator(),
-						new ClassNameValidator(),
-						new ImplementationValidator(),
-						new ReferenceValidator(),
-						new ReturnValueValidator(),
+//						new ImportsValidator(),
 						new ListLiteralValidator(),
+						new InterfaceValidator(library),
+						new ClassValidator(library),
+						new TypeResolvingValidator(library),
+						new ImplementationValidator(),
+						new ReferenceValidator(library),
+						new ReturnValueValidator(),
 						new InvocationValidator(),
-						new AssignmentValidator()
+						new AssignmentValidator(),
+						new ConstructionValidator()
 				})),
 				new ConfigurablePackageGenerator(
 						new ASMPackageClassGenerator(),
@@ -129,10 +143,17 @@ public class BaliCompiler {
 		try {
 			compiler.compile(in, out);
 		} catch (ValidationException e) {
-			List<ValidationFailure> failures = e.getFailures();
-			System.err.println("Compilation failed (" + failures.size() + " errors)");
-			for (ValidationFailure failure : failures) {
-				System.err.println("Error on line " + failure.getNode().getLine() + ": " + failure.getMessage());
+			List<String> failedFiles = e.getFailedFiles();
+			System.err.println("Compilation failed");
+			System.err.println();
+			for (String failedFile : failedFiles) {
+				List<ValidationFailure> failures = e.getFailures(failedFile);
+				if (failures.size() > 0){
+					System.err.println("Unit " + failedFile + " failed with " + failures.size() + " errors");
+					for (ValidationFailure failure : failures){
+						System.err.println("\t" + failure.getNode().getLine() + ": " + failure.getMessage());
+					}
+				}
 			}
 		}
 

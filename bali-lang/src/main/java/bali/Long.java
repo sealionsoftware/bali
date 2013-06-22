@@ -10,16 +10,16 @@ import static bali._.NUMBER_FACTORY;
  */
 class Long implements Number {
 
-	private static final java.lang.String INVALID_NUMBER_TYPE = "Invalid Number Type";
-
-	static final BigInteger POSITIVE_HORIZON = new BigInteger(new byte[]{127,127,127});
-	static final BigInteger NEGATIVE_HORIZON = new BigInteger(new byte[]{-127,-127,-127});
+	static final BigInteger POSITIVE_HORIZON = new BigInteger(new byte[]{-128, -128, -128, -128, -128, -128, -128, -128, -128, -127});
+	static final BigInteger NEGATIVE_HORIZON = new BigInteger(new byte[]{-127, -128, -128, -128, -128, -128, -128, -128, -128, -127}, false);
 
 	final long value;
 
 	Long(long value) {
 		this.value = value;
 	}
+
+	// Unary
 
 	public Boolean isPositive() {
 		return value > 0 ? TRUE : FALSE;
@@ -34,77 +34,143 @@ class Long implements Number {
 	}
 
 	public Number magnitude() {
-		return value < 0 ? inverse() : this;
+		return value < 0 ? negative() : this;
 	}
 
-	public Number inverse() {
-		return new Long((short) -value);
+	public Number negative() {
+		return new Long(-value);
 	}
 
-	public Boolean greaterThan(Number o) {
-		if (o instanceof Long){
-			return greaterThan((Long) o);
-		}
-		throw new RuntimeException(INVALID_NUMBER_TYPE);
-	}
-
-	public Boolean lessThan(Number o) {
-		if (o instanceof Long){
-			return lessThan((Long) o);
-		}
-		throw new RuntimeException(INVALID_NUMBER_TYPE);
-	}
-
-	public Number add(Number o) {
-		if (o instanceof Long){
-			return add((Long) o);
-		}
-		if (o instanceof Integer){
-			return add((Integer) o);
-		}
-		if (o instanceof Short){
-			return add((Short) o);
-		}
-		if (o instanceof Byte){
-			return add((Byte) o);
-		}
-		throw new RuntimeException(INVALID_NUMBER_TYPE);
-	}
-
-	public Number subtract(Number o) {
-		if (o instanceof Long){
-			return subtract((Long) o);
-		}
-		throw new RuntimeException(INVALID_NUMBER_TYPE);
-	}
-
-	public Number multiply(Number o) {
-		if (o instanceof Long){
-			return multiply((Long) o);
-		}
-		throw new RuntimeException(INVALID_NUMBER_TYPE);
-	}
-
-	public Number divide(Number o) {
-		if (o instanceof Long){
-			return divide((Long) o);
-		}
-		throw new RuntimeException(INVALID_NUMBER_TYPE);
-	}
+	// Equality
 
 	public Boolean equalTo(Number o) {
-		if (o instanceof Long){
+		if (o instanceof Long) {
 			return equalTo((Long) o);
 		}
-		throw new RuntimeException(INVALID_NUMBER_TYPE);
+		if (o instanceof Integer) {
+			return equalTo((Integer) o);
+		}
+		if (o instanceof Short) {
+			return equalTo((Short) o);
+		}
+		if (o instanceof Byte) {
+			return equalTo((Byte) o);
+		}
+		return o.equalTo(this);
+	}
+
+	public Boolean equalTo(Long operand) {
+		return equalTo(operand.value);
+	}
+
+	public Boolean equalTo(Integer operand) {
+		return equalTo(operand.value);
+	}
+
+	public Boolean equalTo(Short operand) {
+		return equalTo(operand.value);
+	}
+
+	public Boolean equalTo(Byte operand) {
+		return equalTo(operand.value);
+	}
+
+	public Boolean equalTo(long operand) {
+		return value == operand ? TRUE : FALSE;
+	}
+
+	// Greater Than
+
+	public Boolean greaterThan(Number o) {
+		if (o instanceof Long) {
+			return greaterThan((Long) o);
+		}
+		if (o instanceof Integer) {
+			return greaterThan((Integer) o);
+		}
+		if (o instanceof Short) {
+			return greaterThan((Short) o);
+		}
+		if (o instanceof Byte) {
+			return greaterThan((Byte) o);
+		}
+		return o.lessThan(this).and(equalTo(o).not());
 	}
 
 	public Boolean greaterThan(Long o) {
-		return value > o.value ? TRUE : FALSE;
+		return greaterThan(o.value);
+	}
+
+	public Boolean greaterThan(Integer o) {
+		return greaterThan(o.value);
+	}
+
+	public Boolean greaterThan(Short o) {
+		return greaterThan(o.value);
+	}
+
+	public Boolean greaterThan(Byte o) {
+		return greaterThan(o.value);
+	}
+
+	public Boolean greaterThan(long o) {
+		return value > o ? TRUE : FALSE;
+	}
+
+	// Less Than
+
+	public Boolean lessThan(Number o) {
+		if (o instanceof Long) {
+			return lessThan((Long) o);
+		}
+		if (o instanceof Integer) {
+			return lessThan((Integer) o);
+		}
+		if (o instanceof Short) {
+			return lessThan((Short) o);
+		}
+		if (o instanceof Byte) {
+			return lessThan((Byte) o);
+		}
+		return o.greaterThan(this).and(equalTo(o).not());
 	}
 
 	public Boolean lessThan(Long o) {
-		return value < o.value ? TRUE : FALSE;
+		return lessThan(o.value);
+	}
+
+	public Boolean lessThan(Integer o) {
+		return lessThan(o.value);
+	}
+
+	public Boolean lessThan(Short o) {
+		return lessThan(o.value);
+	}
+
+	public Boolean lessThan(Byte o) {
+		return lessThan(o.value);
+	}
+
+	public Boolean lessThan(long o) {
+		return value < o ? TRUE : FALSE;
+	}
+
+	// Addition
+
+	public Number add(Number o) {
+		if (o instanceof Long) {
+			return add((Long) o);
+		}
+		if (o instanceof Integer) {
+			return add((Integer) o);
+		}
+		if (o instanceof Short) {
+			return add((Short) o);
+		}
+		if (o instanceof Byte) {
+			return add((Byte) o);
+		}
+		return o.add(this);
 	}
 
 	public Number add(Long o) {
@@ -125,35 +191,164 @@ class Long implements Number {
 
 	private Number add(long o) {
 		long rem = java.lang.Long.MAX_VALUE - value;
-		if (rem < o){
-			return POSITIVE_HORIZON.add(new Long(o - rem));
+		if (rem < o) {
+			return POSITIVE_HORIZON.add(new Long(o - rem - 1));
 		}
 
-		rem = java.lang.Long.MIN_VALUE - value;
-		if (rem < o){
-			return NEGATIVE_HORIZON.add(new Long(o - rem));
+		rem = java.lang.Long.MIN_VALUE + value;
+		if (rem < o) {
+			return NEGATIVE_HORIZON.subtract(new Long(o - rem));
 		}
 
 		long ret = value + o;
 		return NUMBER_FACTORY.forLong(ret);
 	}
 
+
+	// Subtraction
+
+	public Number subtract(Number o) {
+		if (o instanceof Long) {
+			return subtract((Long) o);
+		}
+		if (o instanceof Integer) {
+			return subtract((Integer) o);
+		}
+		if (o instanceof Short) {
+			return subtract((Short) o);
+		}
+		if (o instanceof Byte) {
+			return subtract((Byte) o);
+		}
+		return o.subtract(this).negative();
+	}
+
 	public Number subtract(Long o) {
-		long ret = value - o.value;
+		return subtract(o.value);
+	}
+
+	public Number subtract(Integer o) {
+		return subtract(o.value);
+	}
+
+	public Number subtract(Short o) {
+		return subtract(o.value);
+	}
+
+	public Number subtract(Byte o) {
+		return subtract(o.value);
+	}
+
+	private Number subtract(long o) {
+		long rem = java.lang.Long.MIN_VALUE - value;
+		if (rem < o) {
+			return NEGATIVE_HORIZON.subtract(new Long(o - rem));
+		}
+
+		rem = java.lang.Long.MAX_VALUE - value;
+		if (rem < o) {
+			return POSITIVE_HORIZON.add(new Long(o - rem));
+		}
+
+		long ret = value - o;
 		return NUMBER_FACTORY.forLong(ret);
+	}
+
+	// Multiplication
+
+	public Number multiply(Number o) {
+		if (o instanceof Long) {
+			return multiply((Long) o);
+		}
+		if (o instanceof Integer) {
+			return multiply((Integer) o);
+		}
+		if (o instanceof Short) {
+			return multiply((Short) o);
+		}
+		if (o instanceof Byte) {
+			return multiply((Byte) o);
+		}
+		return o.multiply(this);
 	}
 
 	public Number multiply(Long o) {
-		long ret = value * o.value;
+		return multiply(o.value);
+	}
+
+	public Number multiply(Integer o) {
+		return multiply(o.value);
+	}
+
+	public Number multiply(Short o) {
+		return multiply(o.value);
+	}
+
+	public Number multiply(Byte o) {
+		return multiply(o.value);
+	}
+
+	private Number multiply(long o) {
+		long rem = java.lang.Long.MAX_VALUE - value;
+		if (rem < o) {
+			return POSITIVE_HORIZON.add(new Long(o - rem));
+		}
+
+		rem = java.lang.Long.MIN_VALUE + value;
+		if (rem < o) {
+			return NEGATIVE_HORIZON.add(new Long(o - rem));
+		}
+
+		long ret = value * o;
 		return NUMBER_FACTORY.forLong(ret);
+	}
+
+	// Division
+
+	public Number divide(Number o) {
+		if (o instanceof Long) {
+			return divide((Long) o);
+		}
+		if (o instanceof Integer) {
+			return divide((Integer) o);
+		}
+		if (o instanceof Short) {
+			return divide((Short) o);
+		}
+		if (o instanceof Byte) {
+			return divide((Byte) o);
+		}
+		return o.divide(this);
 	}
 
 	public Number divide(Long o) {
-		long ret = value / o.value;
-		return NUMBER_FACTORY.forLong(ret);
+		return divide(o.value);
 	}
 
-	public Boolean equalTo(Long operand) {
-		return value == operand.value ? TRUE : FALSE;
+	public Number divide(Integer o) {
+		return divide(o.value);
+	}
+
+	public Number divide(Short o) {
+		return divide(o.value);
+	}
+
+	public Number divide(Byte o) {
+		return divide(o.value);
+	}
+
+	private Number divide(long o) {
+		long rem = java.lang.Long.MAX_VALUE - value;
+		if (rem < o) {
+			return POSITIVE_HORIZON.add(new Long(o - rem));
+		}
+
+		rem = java.lang.Long.MIN_VALUE + value;
+		if (rem < o) {
+			return NEGATIVE_HORIZON.add(new Long(o - rem));
+		}
+
+		long ret = value / o;
+		return NUMBER_FACTORY.forLong(ret);
 	}
 }

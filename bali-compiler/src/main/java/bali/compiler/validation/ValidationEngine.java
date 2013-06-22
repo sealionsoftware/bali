@@ -1,11 +1,16 @@
 package bali.compiler.validation;
 
 import bali.compiler.parser.tree.CompilationUnit;
-import bali.compiler.validation.visitor.Validator;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * User: Richard
  * Date: 30/04/13
  */
-public interface ValidationEngine extends Validator<CompilationUnit> {
+public interface ValidationEngine {
+
+	public Map<String, List<ValidationFailure>> validate(List<CompilationUnit> node);
+
 }

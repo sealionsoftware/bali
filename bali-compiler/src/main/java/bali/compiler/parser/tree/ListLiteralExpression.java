@@ -32,12 +32,15 @@ public class ListLiteralExpression extends Expression {
 
 	public void setListType(Type listType) {
 		Type newType = new Type();
-		newType.setQualifiedClassName(Array.class.getName());
+		newType.setClassName(Array.class.getName());
 		newType.addParameter(listType);
 		type = newType;
 	}
 
 	public List<Node> getChildren() {
-		return new ArrayList<Node>(values);
+		List<Node> ret = new ArrayList<>();
+		ret.add(type);
+		ret.addAll(values);
+		return ret;
 	}
 }

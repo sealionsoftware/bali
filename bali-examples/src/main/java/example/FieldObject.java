@@ -1,11 +1,10 @@
 package example;
 
-import bali.CharArrayString;
+import bali.String;
 
 public class FieldObject {
 
-	private CharArrayString one = new CharArrayString(new char[]{'A'});
-//	private Number two = new Number(2);
+	private String one = new String(new char[]{'A'});
 
 	private void print() {
 		_.CONSOLE.printLine(one);

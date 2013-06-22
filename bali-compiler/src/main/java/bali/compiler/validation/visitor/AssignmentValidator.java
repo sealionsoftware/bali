@@ -46,7 +46,7 @@ public class AssignmentValidator implements Validator<CompilationUnit> {
 			Type site = statement.getReference().getType();
 			Type value = statement.getValue().getType();
 
-			if (!value.isAssignableTo(site)) {
+			if (value == null || !value.isAssignableTo(site)) {
 				failures.add(new ValidationFailure(statement, "Cannot assign expression of type " + value + " to reference of type " + site));
 			}
 

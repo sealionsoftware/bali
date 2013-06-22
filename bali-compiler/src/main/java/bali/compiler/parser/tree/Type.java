@@ -11,8 +11,8 @@ import java.util.List;
 public class Type extends Node {
 
 	private String className;
-	private String qualifiedClassName;
 	private List<Type> parameters = new ArrayList<>();
+	private TypeDeclaration declaration;
 	private Boolean erase = false;
 
 	public Type() {
@@ -30,14 +30,6 @@ public class Type extends Node {
 		return className;
 	}
 
-	public String getQualifiedClassName() {
-		return qualifiedClassName;
-	}
-
-	public void setQualifiedClassName(String qualifiedClassName) {
-		this.qualifiedClassName = qualifiedClassName;
-	}
-
 	public List<Type> getParameters() {
 		return parameters;
 	}
@@ -50,14 +42,33 @@ public class Type extends Node {
 		return new ArrayList<Node>(parameters);
 	}
 
-	//TODO: sub/super etc
+	public TypeDeclaration getDeclaration() {
+		return declaration;
+	}
+
+	public void setDeclaration(TypeDeclaration declaration) {
+		this.declaration = declaration;
+	}
+
 	public Boolean isAssignableTo(Type site) {
 
-		String ths = qualifiedClassName;
-		String tht = site.qualifiedClassName;
-
-		if (ths == null || tht == null || !ths.equals(tht) || parameters.size() != site.parameters.size()) {
+		if (declaration == null || site.getDeclaration() == null){
 			return false;
+		}
+
+		String ths = declaration.getQualifiedClassName();
+		String tht = site.getDeclaration().getQualifiedClassName();
+
+		if (ths == null || tht == null || parameters.size() != site.parameters.size()) {
+			return false;
+		}
+
+		if (!ths.equals(tht)){
+			for (Type iface : new ArrayList<Type>(site.getDeclaration().getImplementations())){ //TODO: why does this need wrapping?
+				if (isAssignableTo(iface)){
+					break;
+				}
+			}
 		}
 
 		Iterator<Type> i = parameters.iterator();
@@ -83,7 +94,8 @@ public class Type extends Node {
 
 	public String toString() {
 
-		StringBuilder sb = new StringBuilder(qualifiedClassName);
+		String declarationClassName = declaration != null ? declaration.getQualifiedClassName() : "null";
+		StringBuilder sb = new StringBuilder(declarationClassName);
 		if (parameters.size() > 0) {
 			sb.append("<");
 			Iterator<Type> i = parameters.iterator();

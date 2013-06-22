@@ -57,14 +57,14 @@ public class ImplementationValidator implements Validator<CompilationUnit> {
 		MethodDeclaration ret = new MethodDeclaration();
 
 		Type returnType = new Type();
-		returnType.setQualifiedClassName(method.getReturnType().getName());
+		returnType.setClassName(method.getReturnType().getName());
 
 		ret.setName(method.getName());
 		ret.setType(returnType);
 
 		for (java.lang.Class clazz : method.getParameterTypes()) {
 			Type argumentType = new Type();
-			argumentType.setQualifiedClassName(clazz.getName());
+			argumentType.setClassName(clazz.getName());
 			Declaration declaration = new Declaration();
 			declaration.setType(argumentType);
 			ret.addArgument(declaration);
@@ -77,8 +77,8 @@ public class ImplementationValidator implements Validator<CompilationUnit> {
 
 		List<ValidationFailure> failures = new ArrayList<>();
 
-		for (Type type : clazz.getInterfaces()) {
-			if (!interfaces.containsKey(type.getQualifiedClassName())) {
+		for (Type type : clazz.getImplementations()) {
+			if (!interfaces.containsKey(type.getDeclaration().getQualifiedClassName())) {
 				failures.add(
 						new ValidationFailure(clazz, "Implementation declaration " + type.getClassName() + " is not a recognised interface")
 				);

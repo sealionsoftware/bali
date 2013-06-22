@@ -1,11 +1,12 @@
 package example;
 
-import bali.BigInteger;
+import bali.Integer;
+import bali.Number;
 
 public class SimpleObject {
 
-	public BigInteger calculate() {
-		return new Numb
+	public Number calculate() {
+		return new Integer(5);
 	}
 
 }

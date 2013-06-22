@@ -7,7 +7,7 @@ import java.util.List;
  * User: Richard
  * Date: 29/04/13
  */
-public class Interface extends MethodDeclaringType<MethodDeclaration> {
+public class Interface extends TypeDeclaration<MethodDeclaration> {
 
 	private List<Type> superInterfaces = new ArrayList<>();
 	private List<MethodDeclaration> methodDeclarations = new ArrayList<>();
@@ -35,6 +35,7 @@ public class Interface extends MethodDeclaringType<MethodDeclaration> {
 		this.methodDeclarations.add(methodDeclaration);
 	}
 
+	// TODO: This doesn't allow for overloading;
 	public MethodDeclaration getDeclaration(String name) {
 		for (MethodDeclaration declaration : getMethods()) {
 			if (declaration.getName().equals(name)) {
@@ -42,6 +43,10 @@ public class Interface extends MethodDeclaringType<MethodDeclaration> {
 			}
 		}
 		return null;
+	}
+
+	public Boolean getAbstract() {
+		return true;
 	}
 
 	public List<Node> getChildren() {

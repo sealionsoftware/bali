@@ -70,7 +70,7 @@ public class ReturnValueValidator implements Validator<CompilationUnit> {
 					if (value == null) {
 						failures.add(new ValidationFailure(node, "Method requires a return value of type " + type));
 					} else {
-						if (!value.getType().equals(type.getQualifiedClassName())) {
+						if (!value.getType().equals(type)) {
 							failures.add(new ValidationFailure(node, "Return value is of incorrect type: " + value.getType() + ", should be: " + type));
 						}
 					}

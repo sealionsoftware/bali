@@ -1,7 +1,6 @@
 package bali.compiler.parser.tree;
 
-import bali.CharArrayString;
-
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,15 +11,21 @@ import java.util.List;
 public class StringLiteralExpression extends Expression {
 
 	private String serialization;
+	private Type type;{
+		Type t = new Type();
+		t.setClassName(bali.String.class.getName());
+		type = t;
+	}
+
+	public StringLiteralExpression() {
+	}
 
 	public StringLiteralExpression(Integer line, Integer character) {
 		super(line, character);
 	}
 
 	public Type getType() {
-		Type t = new Type();
-		t.setQualifiedClassName(CharArrayString.class.getName());
-		return t;
+		return type;
 	}
 
 	public void setSerialization(String serialization) {
@@ -32,6 +37,8 @@ public class StringLiteralExpression extends Expression {
 	}
 
 	public List<Node> getChildren() {
-		return Collections.emptyList();
+		List<Node> ret = new ArrayList<>();
+		ret.add(type);
+		return ret;
 	}
 }

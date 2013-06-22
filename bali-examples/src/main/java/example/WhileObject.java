@@ -2,16 +2,16 @@ package example;
 
 import bali.Boolean;
 
+import static bali.Boolean.TRUE;
+
 public class WhileObject {
 
 	public void goDo() {
 
-		Boolean flag = bali.Boolean.TRUE;
+		Boolean flag = TRUE;
 
-		while (flag.value) {
+		while (flag == TRUE) {
 			flag = flag.not();
-
-			WhileObject[] strings = {new WhileObject(), new WhileObject()};
 		}
 
 	}

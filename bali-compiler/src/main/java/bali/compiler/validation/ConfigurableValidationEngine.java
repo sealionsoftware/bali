@@ -4,7 +4,9 @@ import bali.compiler.parser.tree.CompilationUnit;
 import bali.compiler.validation.visitor.Validator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: Richard
@@ -18,17 +20,23 @@ public class ConfigurableValidationEngine implements ValidationEngine {
 		this.validators = validators;
 	}
 
-	public List<ValidationFailure> validate(CompilationUnit node) {
+	public Map<String, List<ValidationFailure>> validate(List<CompilationUnit> units) {
 
-		List<ValidationFailure> failures = new ArrayList<>();
+		Map<String, List<ValidationFailure>> failures = new HashMap<>();
 
 		for (Validator<CompilationUnit> validator : validators) {
-			try {
-				failures.addAll(validator.validate(node));
-			} catch (Exception e) {
-				System.err.println("Error running validator: " + validator + " [" + e.getClass() + "]");
-				e.printStackTrace(System.err);
+			for (CompilationUnit unit : units){
+				try {
+					List<ValidationFailure> unitFailures = validator.validate(unit);
+					if (unitFailures.size() > 0){
+						failures.put(unit.getName(), unitFailures);
+					}
+				} catch (Exception e) {
+					System.err.println("Error running validator: " + validator + " [" + e.getClass() + "]");
+					e.printStackTrace(System.err);
+				}
 			}
+
 		}
 
 		return failures;

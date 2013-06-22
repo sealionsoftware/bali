@@ -29,17 +29,16 @@ public class ScaledNumber implements Number {
 	}
 
 	public Number magnitude() {
-		return isNegative() == Boolean.TRUE ? inverse() : this;
+		return isNegative() == Boolean.TRUE ? negative() : this;
 	}
 
-	public Number inverse() {
-		return new ScaledNumber(number.inverse(), scalePlace, scalePower);
+	public Number negative() {
+		return new ScaledNumber(number.negative(), scalePlace, scalePower);
 	}
 
 	public Boolean greaterThan(Number o) {
 
-		if (o instanceof ScaledNumber){
-
+		if (o instanceof ScaledNumber) {
 
 
 		}

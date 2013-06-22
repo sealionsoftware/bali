@@ -23,10 +23,10 @@ public class ASMClassGenerator implements Generator<Class, GeneratedClass> {
 	public GeneratedClass build(Class input) throws Exception {
 
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
-		String[] interfaceNames = new String[input.getInterfaces().size()];
+		String[] interfaceNames = new String[input.getImplementations().size()];
 		int i = 0;
-		for (bali.compiler.parser.tree.Type iface : input.getInterfaces()) {
-			interfaceNames[i++] = converter.getInternalName(iface.getQualifiedClassName());
+		for (bali.compiler.parser.tree.Type iface : input.getImplementations()) {
+			interfaceNames[i++] = converter.getInternalName(iface.getDeclaration().getQualifiedClassName());
 		}
 
 		cw.visit(V1_7,

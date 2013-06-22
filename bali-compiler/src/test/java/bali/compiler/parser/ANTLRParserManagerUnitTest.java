@@ -82,8 +82,8 @@ public class ANTLRParserManagerUnitTest {
 		Class clazz = unit.getClasses().get(0);
 		Assert.assertEquals("Name", "AnImplementation", clazz.getClassName());
 		Assert.assertEquals("Arguments", 1, clazz.getArguments().size());
-		Assert.assertEquals("Interfaces", 1, clazz.getInterfaces().size());
-		Assert.assertEquals("Interface Name", "AnInterface", clazz.getInterfaces().get(0).getClassName());
+		Assert.assertEquals("Interfaces", 1, clazz.getImplementations().size());
+		Assert.assertEquals("Interface Name", "AnInterface", clazz.getImplementations().get(0).getClassName());
 		Assert.assertEquals("Fields", 1, clazz.getFields().size());
 		Assert.assertEquals("Methods", 1, clazz.getMethods().size());
 		Assert.assertEquals("Children", 4, clazz.getChildren().size());

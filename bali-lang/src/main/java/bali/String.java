@@ -12,7 +12,7 @@ public class String implements Value<String> {
 
 	final char[] characters;
 
-	String(char[] characters) {
+	public String(char[] characters) {
 		this.characters = characters;
 	}
 
