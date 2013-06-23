@@ -24,22 +24,24 @@ public class ListLiteralExpression extends Expression {
 
 	public void addValue(Expression v) {
 		values.add(v);
+		if (type == null){
+			Type newType = new Type();
+			newType.setClassName(Array.class.getName());
+			newType.addParameter(v.getType());
+			newType.setErase(true);
+			type = newType;
+		}
 	}
 
 	public List<Expression> getValues() {
 		return values;
 	}
 
-	public void setListType(Type listType) {
-		Type newType = new Type();
-		newType.setClassName(Array.class.getName());
-		newType.addParameter(listType);
-		type = newType;
-	}
-
 	public List<Node> getChildren() {
 		List<Node> ret = new ArrayList<>();
-		ret.add(type);
+		if(type != null){
+			ret.add(type);
+		}
 		ret.addAll(values);
 		return ret;
 	}

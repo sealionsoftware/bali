@@ -66,16 +66,11 @@ public class ASMPackageClassGeneratorUnitTest {
 		NumberLiteralExpression three = new NumberLiteralExpression(0, 0);
 		three.setSerialization("3");
 
-		Type t = new Type(0, 0);
-		t.setDeclaration(new TestDeclaration(Number.class.getName()));
-
 		ListLiteralExpression llv = new ListLiteralExpression(0, 0);
-		llv.setListType(t);
 		llv.addValue(one);
 		llv.addValue(two);
 		llv.addValue(three);
 
-		llv.setListType(t);
 		llv.getType().setDeclaration(new TestDeclaration(Array.class.getName()));
 
 		testGenerateConstant(Array.class, llv, new Array<>(new Object[]{

@@ -121,10 +121,10 @@ public class BaliCompiler {
 				new ANTLRParserManager(),
 				new ConfigurableValidationEngine(new Array<Validator<CompilationUnit>>(new Validator[]{
 //						new ImportsValidator(),
-						new ListLiteralValidator(),
 						new InterfaceValidator(library),
 						new ClassValidator(library),
 						new TypeResolvingValidator(library),
+						new ListLiteralValidator(),
 						new ImplementationValidator(),
 						new ReferenceValidator(library),
 						new ReturnValueValidator(),
@@ -149,7 +149,7 @@ public class BaliCompiler {
 			for (String failedFile : failedFiles) {
 				List<ValidationFailure> failures = e.getFailures(failedFile);
 				if (failures.size() > 0){
-					System.err.println("Unit " + failedFile + " failed with " + failures.size() + " errors");
+					System.err.println("Unit " + failedFile + BALI_SOURCE_FILE_EXTENSION + " failed with " + failures.size() + " errors");
 					for (ValidationFailure failure : failures){
 						System.err.println("\t" + failure.getNode().getLine() + ": " + failure.getMessage());
 					}

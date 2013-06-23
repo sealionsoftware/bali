@@ -61,11 +61,11 @@ public class AssignmentValidator implements Validator<CompilationUnit> {
 
 			List<ValidationFailure> failures = new ArrayList<>();
 
-			Type site = field.getType();
-			Type value = field.getValue().getType();
+			Type siteType = field.getType();
+			Type valueType = field.getValue().getType();
 
-			if (!value.isAssignableTo(site)) {
-				failures.add(new ValidationFailure(field, "Cannot assign expression of type " + value + " to reference of type " + site));
+			if (!valueType.isAssignableTo(siteType)) {
+				failures.add(new ValidationFailure(field, "Cannot assign expression of type " + valueType + " to reference of type " + siteType));
 			}
 
 			return failures;

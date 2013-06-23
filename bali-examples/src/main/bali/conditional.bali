@@ -10,7 +10,7 @@ class ConditionalDoer() implements Doer {
  	method goDo(){
 
  	    Boolean one = false;
- 	    Boolean two = false;
+ 	    Boolean two = true;
 
 	    if (one){
 	        CONSOLE.printLine("First Block");

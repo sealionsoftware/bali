@@ -8,6 +8,8 @@ import bali.compiler.parser.tree.TypeDeclaration;
 import java.lang.String;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,21 +55,29 @@ public class TypeDeclarationLibrary {
 
 	private TypeDeclaration buildTypeDeclarationForClass(Class clazz){
 
-		ClasspathType classpathType = new ClasspathType();
+		ClasspathTypeDeclaration classpathType = new ClasspathTypeDeclaration();
 		classpathType.setAbstract(Modifier.isAbstract(clazz.getModifiers()));
 		classpathType.setClassName(clazz.getSimpleName());
 		classpathType.setQualifiedClassName(clazz.getName());
 
 		declarations.put(clazz.getName(), classpathType);
 
+		for (java.lang.reflect.Type iface : clazz.getGenericInterfaces()){
+			classpathType.addImplementation(getType(iface));
+		}
+
+		for (TypeVariable parameter : clazz.getTypeParameters()){
+			classpathType.addParameter(getTypeForVariable(parameter));
+		}
+
 		for (java.lang.reflect.Method method : clazz.getMethods()){
 
 			MethodDeclaration methodDeclaration = new MethodDeclaration();
 			methodDeclaration.setName(method.getName());
-			methodDeclaration.setType(getTypeForClass(method.getReturnType()));
-			for (Class argumentClass : method.getParameterTypes()){
+			methodDeclaration.setType(getType(method.getGenericReturnType()));
+			for (java.lang.reflect.Type argumentType : method.getGenericParameterTypes()){
 				Declaration declaration = new Declaration();
-				declaration.setType(getTypeForClass(argumentClass));
+				declaration.setType(getType(argumentType));
 				methodDeclaration.addArgument(declaration);
 			}
 
@@ -84,7 +94,13 @@ public class TypeDeclarationLibrary {
 		if (type instanceof ParameterizedType){
 			return getTypeForParameterizedType((ParameterizedType) type);
 		}
-		throw new RuntimeException();
+		if (type instanceof TypeVariable){
+			return getTypeForVariable((TypeVariable) type);
+		}
+		if (type instanceof WildcardType || type instanceof TypeVariable){
+			return getTypeForClass((Class) Object.class);
+		}
+		return null;
 	}
 
 	private Type getTypeForClass(Class clazz){
@@ -105,14 +121,20 @@ public class TypeDeclarationLibrary {
 		return raw;
 	}
 
+	private Type getTypeForVariable(TypeVariable type){
+		Type ret = new Type();
+		ret.setClassName(type.getName());
+		ret.setErase(true);
+		return ret;
+	}
 
-	private static class ClasspathType extends TypeDeclaration<MethodDeclaration> {
+	private static class ClasspathTypeDeclaration extends TypeDeclaration<MethodDeclaration> {
 
-		private List<MethodDeclaration> declarations = new ArrayList<>();
+		private List<MethodDeclaration> methodDeclarations = new ArrayList<>();
 		private Boolean isAbstract;
 
 		public List<MethodDeclaration> getMethods() {
-			return declarations;
+			return methodDeclarations;
 		}
 
 		private void setAbstract(Boolean anAbstract) {
@@ -120,7 +142,7 @@ public class TypeDeclarationLibrary {
 		}
 
 		public void addMethod(MethodDeclaration method) {
-			declarations.add(method);
+			methodDeclarations.add(method);
 		}
 
 		public Boolean getAbstract() {

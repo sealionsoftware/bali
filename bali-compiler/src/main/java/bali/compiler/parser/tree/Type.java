@@ -63,25 +63,36 @@ public class Type extends Node {
 			return false;
 		}
 
-		if (!ths.equals(tht)){
-			for (Type iface : new ArrayList<Type>(site.getDeclaration().getImplementations())){ //TODO: why does this need wrapping?
-				if (isAssignableTo(iface)){
-					break;
-				}
-			}
+		if (!ths.equals(tht) && !site.getDeclaration().getAbstract() && !isImplementation(site)){
+			return false;
 		}
 
 		Iterator<Type> i = parameters.iterator();
 		Iterator<Type> j = site.parameters.iterator();
 
 		while (i.hasNext()) {
-			Type next = i.next();
-			if (next == null || (next != this && !next.isAssignableTo(j.next()))) {
+			Type nextParameter = i.next();
+			Type nextSiteParameter = j.next();
+			if (nextParameter == null || (nextParameter != this && !nextParameter.isAssignableTo(nextSiteParameter))) {
 				return false;
 			}
 		}
 
 		return true;
+	}
+
+	private boolean isImplementation(Type site){
+		for (Type iface : (List<Type>) declaration.getImplementations()){
+			try {
+				iface = iface.getResolvedType(this);
+			} catch (CouldNotResolveException e) {
+				return false;
+			}
+			if (iface.isAssignableTo(site)){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public Boolean getErase() {
@@ -92,9 +103,41 @@ public class Type extends Node {
 		this.erase = erase;
 	}
 
+	public Type getResolvedType(Type top) throws CouldNotResolveException {
+
+		Type possiblyParameterized = this;
+		Type ret = new Type();
+
+		if (possiblyParameterized.getErase()){
+			String parameterName = possiblyParameterized.getClassName();
+			possiblyParameterized = top.getParameters().get(getParameterIndexForName(parameterName, top.getDeclaration()));
+		}
+
+		ret.setClassName(possiblyParameterized.getClassName());
+		ret.setDeclaration(possiblyParameterized.getDeclaration());
+		ret.setErase(possiblyParameterized.getErase());
+
+		for (Type parameterType : possiblyParameterized.getParameters()){
+			ret.addParameter(parameterType.getResolvedType(top));
+		}
+
+		return ret;
+	}
+
+	private int getParameterIndexForName(String parameterName, TypeDeclaration declaringType) throws CouldNotResolveException {
+		List<Type> parameters = declaringType.getParameters();
+		int i = 0;
+		for (Type parameter : parameters){
+			if (parameter.getClassName().equals(parameterName)){
+				return i;
+			}
+		}
+		throw new CouldNotResolveException();
+	}
+
 	public String toString() {
 
-		String declarationClassName = declaration != null ? declaration.getQualifiedClassName() : "null";
+		String declarationClassName = declaration != null ? declaration.getQualifiedClassName() : className;
 		StringBuilder sb = new StringBuilder(declarationClassName);
 		if (parameters.size() > 0) {
 			sb.append("<");
@@ -106,5 +149,8 @@ public class Type extends Node {
 			sb.append(">");
 		}
 		return sb.toString();
+	}
+
+	public static class CouldNotResolveException extends Throwable {
 	}
 }

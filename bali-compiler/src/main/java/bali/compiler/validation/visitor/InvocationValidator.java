@@ -6,6 +6,7 @@ import bali.compiler.parser.tree.Expression;
 import bali.compiler.parser.tree.Interface;
 import bali.compiler.parser.tree.Invocation;
 import bali.compiler.parser.tree.MethodDeclaration;
+import bali.compiler.parser.tree.Type;
 import bali.compiler.parser.tree.TypeDeclaration;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.validation.ValidationFailure;
@@ -65,23 +66,20 @@ public class InvocationValidator implements Validator<CompilationUnit> {
 
 			try {
 
-				TypeDeclaration targetType = invocation.getTarget().getType().getDeclaration();
-				MethodDeclaration declaration = getDeclarationForInvocation(invocation, targetType);
+				Type targetType = invocation.getTarget().getType();
+				Type methodDeclarationType = getTypeForInvocation(invocation, targetType);
+				invocation.setReturnType(methodDeclarationType);
 
-				if (declaration != null) {
-					invocation.setReturnType(declaration.getType());
-				} else {
-					StringBuilder sb = new StringBuilder();
-					Iterator<Expression> i = invocation.getArguments().iterator();
-					if (i.hasNext()) {
-						sb.append(i.next().getType());
-						while (i.hasNext()) {
-							sb.append(",").append(i.next().getType());
-						}
+			} catch (Type.CouldNotResolveException e) {
+				StringBuilder sb = new StringBuilder();
+				Iterator<Expression> i = invocation.getArguments().iterator();
+				if (i.hasNext()) {
+					sb.append(i.next().getType());
+					while (i.hasNext()) {
+						sb.append(",").append(i.next().getType());
 					}
-					ret.add(new ValidationFailure(invocation, "Could not resolve method with signiture of invocation " + invocation.getTarget().getType() + "." + invocation.getMethod() + "(" + sb + ")"));
 				}
-
+				ret.add(new ValidationFailure(invocation, "Could not resolve method with signiture of invocation " + invocation.getTarget().getType() + "." + invocation.getMethod() + "(" + sb + ")"));
 			} catch (Exception e) {
 				ret.add(new ValidationFailure(invocation, "Could not validate invocation: " + e.getMessage()));
 			}
@@ -89,18 +87,24 @@ public class InvocationValidator implements Validator<CompilationUnit> {
 			return ret;
 		}
 
-		private MethodDeclaration getDeclarationForInvocation(Invocation invocation, TypeDeclaration<?> type) {
+		private Type getTypeForInvocation(Invocation invocation, Type type) throws Type.CouldNotResolveException {
 			List<Expression> arguments = invocation.getArguments();
-			for (MethodDeclaration declaration : type.getMethods()) {
-				if (declaration.getName().equals(invocation.getMethod())) {
-					if (!argumentsMatch(declaration.getArguments(), arguments)){
+			TypeDeclaration<MethodDeclaration> typeDeclaration = type.getDeclaration();
+			for (MethodDeclaration methodDeclaration : typeDeclaration.getMethods()) {
+				if (methodDeclaration.getName().equals(invocation.getMethod())) {
+					if (!argumentsMatch(methodDeclaration.getArguments(), arguments)){
 						continue;
 					}
-					return declaration;
+
+					Type methodReturnType =  methodDeclaration.getType();
+
+					return methodReturnType == null ? null : methodReturnType.getResolvedType(type);
 				}
 			}
-			return null;
+			throw new Type.CouldNotResolveException();
 		}
+
+
 
 		private boolean argumentsMatch(List<Declaration> declarations, List<Expression> arguments){
 			if (declarations.size() != arguments.size()) {
@@ -117,6 +121,7 @@ public class InvocationValidator implements Validator<CompilationUnit> {
 			}
 			return true;
 		}
+
 
 	}
 

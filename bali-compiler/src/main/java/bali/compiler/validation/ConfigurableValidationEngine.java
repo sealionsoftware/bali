@@ -27,9 +27,14 @@ public class ConfigurableValidationEngine implements ValidationEngine {
 		for (Validator<CompilationUnit> validator : validators) {
 			for (CompilationUnit unit : units){
 				try {
-					List<ValidationFailure> unitFailures = validator.validate(unit);
-					if (unitFailures.size() > 0){
-						failures.put(unit.getName(), unitFailures);
+					List<ValidationFailure> validatorFailures = validator.validate(unit);
+					if (validatorFailures.size() > 0){
+						List<ValidationFailure> unitFailures = failures.get(unit.getName());
+						if (unitFailures == null){
+							unitFailures = new ArrayList<>();
+							failures.put(unit.getName(), unitFailures);
+						}
+						unitFailures.addAll(validatorFailures);
 					}
 				} catch (Exception e) {
 					System.err.println("Error running validator: " + validator + " [" + e.getClass() + "]");

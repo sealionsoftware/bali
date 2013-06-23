@@ -31,7 +31,7 @@ public abstract class TypeDeclaration<T extends MethodDeclaration> extends Node 
 	}
 
 	public List<Type> getParameters() {
-		return implementations;
+		return parameters;
 	}
 
 	public void addParameter(Type parameter) {

@@ -39,29 +39,21 @@ public class ListLiteralValidator implements Validator<CompilationUnit> {
 
 			List<ValidationFailure> failures = new ArrayList<>();
 
-			Type listType = null;
 			List<Expression> values = literal.getValues();
 			if (values.isEmpty()) {
 				failures.add(new ValidationFailure(literal, "List literals must have at least one entry"));
 			}
 
+			Type listType = literal.getType().getParameters().get(0);
+
 			for (Expression listElement : literal.getValues()) {
 				Type listElementType = listElement.getType();
-				if (listElementType != null) {
-					if (listType == null || !listElementType.isAssignableTo(listType)) {
-						if (listType == null || listType.isAssignableTo(listElementType)) {
-							listType = listElementType;
-							listType.setErase(true);
-						} else {
-							failures.add(new ValidationFailure(listElement, "Element is not of a compatible type for the list"));
-						}
-					}
+				if (!listElementType.isAssignableTo(listType)) {
+					failures.add(new ValidationFailure(listElement, "Element is not of a compatible type for the list"));
 				}
 			}
 
-			literal.setListType(listType);
-
-			return failures; //TODO: validate list literals
+			return failures;
 		}
 
 	}

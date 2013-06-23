@@ -1,9 +1,10 @@
 import bali.Console;
 import bali.Number;
-import bali.List;
+import bali.Iterable;
 import bali.String;
+import bali.Iterator;
 
-constant List<String> NAMES = ["K00l"];
+constant Iterable<String> NAMES = ["Tom", "Dick", "Harry", "George"];
 
 interface Doer {
  	declare goDo();
@@ -12,13 +13,9 @@ interface Doer {
 class IterationDoer() implements Doer {
 
  	method goDo(){
-
-		Number length = 3;
-		Number i = 0;
-
-	    while (i.lessThan(length)){
-	        CONSOLE.printLine(NAMES.get(i));
-	        i = i.add(1);
+		Iterator<String> i = NAMES.iterator();
+	    while (i.hasNext()){
+	        CONSOLE.printLine(i.next());
 	    }
  	}
 

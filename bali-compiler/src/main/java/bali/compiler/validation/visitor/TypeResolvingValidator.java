@@ -50,32 +50,9 @@ public class TypeResolvingValidator implements Validator<CompilationUnit> {
 		}
 
 		Agent agent = new Agent(resolvables, library);
-		walkAgentOverChildren(unit, agent);
+		ret.addAll(walkAgentOverChildren(unit, agent));
 		return ret;
 	}
-
-//	private TypeDeclaration getTypeDeclaration(java.lang.reflect.Type type){
-//
-//		if (type instanceof Class){
-//			return getTypeDeclarationForClass((Class) type);
-//		}
-//		if (type instanceof ParameterizedType){
-//			return getTypeDeclarationForParameterizedType((ParameterizedType) type);
-//		}
-//		throw new RuntimeException();
-//	}
-//
-//	private TypeDeclaration getTypeDeclarationForParameterizedType(ParameterizedType type){
-//		TypeDeclaration raw = getTypeDeclaration(type.getRawType());
-//		for (java.lang.reflect.Type argumentType : type.getActualTypeArguments()){
-//			raw.addParameter(getType(argumentType));
-//		}
-//		return raw;
-//	}
-
-
-
-
 
 	private List<ValidationFailure> walkAgentOverChildren(Node node, Agent agent){
 		List<ValidationFailure> ret = new ArrayList<>();

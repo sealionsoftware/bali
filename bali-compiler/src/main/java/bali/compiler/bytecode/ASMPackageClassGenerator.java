@@ -32,7 +32,7 @@ public class ASMPackageClassGenerator implements Generator<CompilationUnit, Gene
 				"java/lang/Object",
 				null);
 
-		Map<String, Expression> constantValues = new HashMap<>();
+		Map<Constant, Expression> constantValues = new HashMap<>();
 		for (Constant constant : input.getConstants()) {
 			cw.visitField(ACC_PUBLIC + ACC_FINAL + ACC_STATIC,
 					constant.getName(),
@@ -40,7 +40,7 @@ public class ASMPackageClassGenerator implements Generator<CompilationUnit, Gene
 					null,
 					null
 			).visitEnd();
-			constantValues.put(constant.getName(), constant.getValue());
+			constantValues.put(constant, constant.getValue());
 		}
 
 		MethodVisitor clinitv = cw.visitMethod(ACC_STATIC,
@@ -51,10 +51,11 @@ public class ASMPackageClassGenerator implements Generator<CompilationUnit, Gene
 		);
 
 		clinitv.visitCode();
-		for (Map.Entry<String, Expression> constantValueEntry : constantValues.entrySet()) {
+		for (Map.Entry<Constant, Expression> constantValueEntry : constantValues.entrySet()) {
+			Constant constant = constantValueEntry.getKey();
 			Expression value = constantValueEntry.getValue();
 			manager.push(value, clinitv);
-			clinitv.visitFieldInsn(PUTSTATIC, qualified, constantValueEntry.getKey(), converter.getTypeDescriptor(value.getType()));
+			clinitv.visitFieldInsn(PUTSTATIC, qualified, constant.getName(), converter.getTypeDescriptor(constant.getType()));
 		}
 		clinitv.visitInsn(RETURN);
 		clinitv.visitMaxs(1, 1);
