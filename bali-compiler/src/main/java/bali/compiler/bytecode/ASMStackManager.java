@@ -2,6 +2,7 @@ package bali.compiler.bytecode;
 
 import bali.compiler.parser.tree.Assignment;
 import bali.compiler.parser.tree.BooleanLiteralExpression;
+import bali.compiler.parser.tree.CaseStatement;
 import bali.compiler.parser.tree.CodeBlock;
 import bali.compiler.parser.tree.ConditionalBlock;
 import bali.compiler.parser.tree.ConditionalStatement;
@@ -15,6 +16,7 @@ import bali.compiler.parser.tree.Reference;
 import bali.compiler.parser.tree.Return;
 import bali.compiler.parser.tree.Statement;
 import bali.compiler.parser.tree.StringLiteralExpression;
+import bali.compiler.parser.tree.SwitchStatement;
 import bali.compiler.parser.tree.Type;
 import bali.compiler.parser.tree.TypeDeclaration;
 import bali.compiler.parser.tree.Variable;
@@ -100,6 +102,8 @@ public class ASMStackManager implements Opcodes {
 			execute((ConditionalStatement) statement, v);
 		} else if (statement instanceof WhileStatement) {
 			execute((WhileStatement) statement, v);
+		} else if (statement instanceof SwitchStatement) {
+			execute((SwitchStatement) statement, v);
 		} else {
 			throw new RuntimeException("Cannot handle Statement type: " + statement);
 		}
@@ -163,6 +167,32 @@ public class ASMStackManager implements Opcodes {
 		execute(statement.getBody(), v);
 		v.visitJumpInsn(GOTO, start);
 		v.visitLabel(end);
+	}
+
+	//TODO: Add support for constant switch values
+	public void execute(SwitchStatement statement, MethodVisitor v) {
+
+		Label end = new Label();
+		Label next = new Label();
+		push(statement.getValue(), v);
+		Type statementType = statement.getValue().getType();
+		for (CaseStatement caseStatement : statement.getCaseStatements()){
+			v.visitInsn(DUP);
+			push(caseStatement.getCondition(), v);
+			v.visitMethodInsn(INVOKEINTERFACE, converter.getInternalName(statementType), "equalTo", "(Ljava/lang/Object;)Lbali/Boolean;");
+			v.visitFieldInsn(GETSTATIC, "bali/Boolean", "TRUE", "Lbali/Boolean;");
+			v.visitJumpInsn(IF_ACMPNE, next);
+			execute(caseStatement.getBody(), v);
+			v.visitJumpInsn(GOTO, end);
+			v.visitLabel(next);
+			next = new Label();
+		}
+		if (statement.getDefaultStatement() != null){
+			execute(statement.getDefaultStatement(), v);
+		}
+		v.visitLabel(end);
+		v.visitInsn(POP);
+
 	}
 
 	// Push Methods

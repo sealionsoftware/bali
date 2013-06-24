@@ -8,6 +8,7 @@ import bali.compiler.parser.tree.Interface;
 import bali.compiler.parser.tree.Method;
 import bali.compiler.parser.tree.MethodDeclaration;
 import bali.compiler.parser.tree.Type;
+import bali.compiler.parser.tree.TypeDeclaration;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -24,15 +25,15 @@ public class ImplementationValidator implements Validator<CompilationUnit> {
 	// Engages at the root of the AST, constructs a lookup table
 	public List<ValidationFailure> validate(CompilationUnit unit) {
 
-		Map<String, Interface> interfaces = new HashMap<>();
+		Map<String, TypeDeclaration> interfaces = new HashMap<>();
 
 		for (Interface iface : unit.getInterfaces()) {
 			interfaces.put(iface.getQualifiedClassName(), iface);
 		}
 		for (Import iport : unit.getImports()) {
-			java.lang.Class clazz = iport.getResolvedClass();
-			if (clazz != null && clazz.isInterface()) {
-				interfaces.put(clazz.getName(), map(clazz));
+			TypeDeclaration<MethodDeclaration> typeDeclaration = iport.getDeclaration();
+			if (typeDeclaration != null && typeDeclaration.getAbstract()) {
+				interfaces.put(typeDeclaration.getQualifiedClassName(), typeDeclaration);
 			}
 		}
 
@@ -73,7 +74,7 @@ public class ImplementationValidator implements Validator<CompilationUnit> {
 		return ret;
 	}
 
-	private List<ValidationFailure> validate(Class clazz, Map<String, Interface> interfaces) {
+	private List<ValidationFailure> validate(Class clazz, Map<String, TypeDeclaration> interfaces) {
 
 		List<ValidationFailure> failures = new ArrayList<>();
 
@@ -86,8 +87,8 @@ public class ImplementationValidator implements Validator<CompilationUnit> {
 			}
 
 			for (Method method : clazz.getMethods()) {
-				for (Interface iface : interfaces.values()) {
-					MethodDeclaration declaration = iface.getDeclaration(method.getName());
+				for (TypeDeclaration iface : interfaces.values()) {
+					MethodDeclaration declaration = iface.getDeclaration(method.getName(), method.getDeclaredVariables());
 					if (declaration != null) {
 						method.setDeclared(true);
 						break;

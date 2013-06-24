@@ -11,8 +11,7 @@ import java.util.List;
 public class Import extends Node {
 
 	private String name;
-
-	private Class resolvedClass;
+	private TypeDeclaration declaration;
 
 	public Import() {
 	}
@@ -29,12 +28,12 @@ public class Import extends Node {
 		return name;
 	}
 
-	public Class getResolvedClass() {
-		return resolvedClass;
+	public TypeDeclaration getDeclaration() {
+		return declaration;
 	}
 
-	public void setResolvedClass(Class resolvedClass) {
-		this.resolvedClass = resolvedClass;
+	public void setDeclaration(TypeDeclaration declaration) {
+		this.declaration = declaration;
 	}
 
 	public List<Node> getChildren() {

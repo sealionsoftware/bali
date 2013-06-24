@@ -115,7 +115,9 @@ public class InvocationValidator implements Validator<CompilationUnit> {
 			while (i.hasNext()){
 				Declaration argumentDeclaration = i.next();
 				Expression argument = j.next();
-				if (!argument.getType().isAssignableTo(argumentDeclaration.getType())) {
+				Type argumentType = argument.getType();
+				Type argumentDeclarationType = argumentDeclaration.getType();
+				if (argumentType == null || !argumentType.isAssignableTo(argumentDeclarationType)) {
 					return false;
 				}
 			}

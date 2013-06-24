@@ -47,7 +47,7 @@ statement:                  lineStatement | controlStatement ;
 
 lineStatement:              (variableDeclaration | invocation | assignment | returnStatement) ';' ;
 
-controlStatement:           conditionalStatement | tryStatement | whileStatement | forStatement ;
+controlStatement:           conditionalStatement | tryStatement | whileStatement | forStatement | switchStatement ;
 
 conditionalStatement:       'if' '(' expression ')' codeBlock ('else if' '(' expression ')' codeBlock)* ('else' codeBlock)? ;
 
@@ -57,19 +57,17 @@ whileStatement:             'while' '(' expression ')' codeBlock ;
 
 forStatement:               'for' '(' argumentDeclaration ':' expression ')' codeBlock ;
 
-switchStatement:            'switch' '(' expression ')' '{' caseStatement+ '}' ;
+switchStatement:            'switch' '(' expression ')' '{' caseStatement+ defaultStatement? '}' ;
 
-caseStatement:              'case'  expression ':' codeBlock ;
+caseStatement:              'case' expression ':' codeBlock ;
+
+defaultStatement:           'default' ':' codeBlock ;
 
 variableDeclaration:        typeDeclaration assignment ;
 
 assignment:                 identifier '=' expression ;
 
 identifier:                 STANDARD_IDENTIFIER | CONSTANT_IDENTIFIER ;
-
-//invocation:                 ((constantValue | identifier) '.')? identifier argumentList
-//							|  invocation '.' identifier argumentList
-//							;
 
 // Changed due to left recursion
 // invocation:                 (expression '.')? identifier argumentList;

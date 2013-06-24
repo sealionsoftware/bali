@@ -2,6 +2,7 @@ package bali.compiler.parser;
 
 import bali.compiler.parser.tree.Assignment;
 import bali.compiler.parser.tree.BooleanLiteralExpression;
+import bali.compiler.parser.tree.CaseStatement;
 import bali.compiler.parser.tree.Class;
 import bali.compiler.parser.tree.CodeBlock;
 import bali.compiler.parser.tree.CompilationUnit;
@@ -24,6 +25,7 @@ import bali.compiler.parser.tree.Reference;
 import bali.compiler.parser.tree.Return;
 import bali.compiler.parser.tree.Statement;
 import bali.compiler.parser.tree.StringLiteralExpression;
+import bali.compiler.parser.tree.SwitchStatement;
 import bali.compiler.parser.tree.Type;
 import bali.compiler.parser.tree.Variable;
 import bali.compiler.parser.tree.WhileStatement;
@@ -184,11 +186,13 @@ public class ANTLRParserManager implements ParserManager {
 					codeBlock.addStatement(buildForStatement(csc.forStatement()));
 				} else if (csc.whileStatement() != null) {
 					codeBlock.addStatement(buildWhileStatement(csc.whileStatement()));
+				} else if (csc.switchStatement() != null) {
+					codeBlock.addStatement(buildSwitchStatement(csc.switchStatement()));
 				} else {
 					throw new Exception("Unrecognised control statement type: " + statementContext.getText());
 				}
 
-//				TODO: switch, try
+//				TODO: try
 
 			} else if (statementContext.lineStatement() != null) {
 
@@ -228,6 +232,29 @@ public class ANTLRParserManager implements ParserManager {
 		forStatement.setCollection(getExpression(context.expression()));
 		forStatement.setBody(buildCodeBlock(context.codeBlock()));
 		return forStatement;
+	}
+
+	private Statement buildSwitchStatement(BaliParser.SwitchStatementContext context) throws Exception {
+		SwitchStatement switchStatement = new SwitchStatement(l(context), c(context));
+		switchStatement.setValue(getExpression(context.expression()));
+		for (BaliParser.CaseStatementContext caseStatementContext : context.caseStatement()){
+			switchStatement.addCaseStatement(buildCaseStatement(caseStatementContext));
+		}
+		if (context.defaultStatement() != null){
+			switchStatement.setDefaultStatement(buildDefaultStatement(context.defaultStatement()));
+		}
+		return switchStatement;
+	}
+
+	private CaseStatement buildCaseStatement(BaliParser.CaseStatementContext context) throws Exception {
+		CaseStatement caseStatement = new CaseStatement(l(context), c(context));
+		caseStatement.setCondition(getExpression(context.expression()));
+		caseStatement.setBody(buildCodeBlock(context.codeBlock()));
+		return caseStatement;
+	}
+
+	private CodeBlock buildDefaultStatement(BaliParser.DefaultStatementContext context) throws Exception {
+		return buildCodeBlock(context.codeBlock());
 	}
 
 	private Statement buildAssignmentStatement(BaliParser.AssignmentContext context) {

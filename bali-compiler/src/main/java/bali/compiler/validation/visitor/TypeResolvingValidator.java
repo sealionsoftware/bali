@@ -40,13 +40,8 @@ public class TypeResolvingValidator implements Validator<CompilationUnit> {
 			resolvables.put(clazz.getClassName(), clazz);
 		}
 		for (Import iport: unit.getImports()){
-
-			try {
-				TypeDeclaration typeDeclaration = library.getTypeDeclaration(iport.getName());
-				resolvables.put(typeDeclaration.getClassName(), typeDeclaration);
-			} catch (Exception e) {
-				ret.add(new ValidationFailure(iport, "Could not resolve imported class"));
-			}
+			String name = iport.getName();
+			resolvables.put(name.substring(name.lastIndexOf(".") + 1), iport.getDeclaration());
 		}
 
 		Agent agent = new Agent(resolvables, library);

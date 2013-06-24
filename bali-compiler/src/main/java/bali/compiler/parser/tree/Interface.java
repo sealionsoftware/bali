@@ -35,16 +35,6 @@ public class Interface extends TypeDeclaration<MethodDeclaration> {
 		this.methodDeclarations.add(methodDeclaration);
 	}
 
-	// TODO: This doesn't allow for overloading;
-	public MethodDeclaration getDeclaration(String name) {
-		for (MethodDeclaration declaration : getMethods()) {
-			if (declaration.getName().equals(name)) {
-				return declaration;
-			}
-		}
-		return null;
-	}
-
 	public Boolean getAbstract() {
 		return true;
 	}

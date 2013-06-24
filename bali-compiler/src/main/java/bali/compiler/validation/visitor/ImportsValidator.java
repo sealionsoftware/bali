@@ -2,6 +2,8 @@ package bali.compiler.validation.visitor;
 
 import bali.compiler.parser.tree.CompilationUnit;
 import bali.compiler.parser.tree.Import;
+import bali.compiler.parser.tree.TypeDeclaration;
+import bali.compiler.validation.TypeDeclarationLibrary;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -14,6 +16,11 @@ import java.util.List;
 public class ImportsValidator implements Validator<CompilationUnit> {
 
 	private ImportValidator importValidator = new ImportValidator(ImportValidator.class.getClassLoader());
+	private TypeDeclarationLibrary library;
+
+	public ImportsValidator(TypeDeclarationLibrary library) {
+		this.library = library;
+	}
 
 	public List<ValidationFailure> validate(CompilationUnit unit) {
 		List<ValidationFailure> failures = new ArrayList<>();
@@ -23,7 +30,7 @@ public class ImportsValidator implements Validator<CompilationUnit> {
 		return failures;
 	}
 
-	public static class ImportValidator implements Validator<Import> {
+	public class ImportValidator implements Validator<Import> {
 
 		private ClassLoader loader;
 
@@ -35,8 +42,8 @@ public class ImportsValidator implements Validator<CompilationUnit> {
 		public List<ValidationFailure> validate(Import iport) {
 			List<ValidationFailure> failures = new ArrayList<>();
 			try {
-				Class resolved = loader.loadClass(iport.getName());
-				iport.setResolvedClass(resolved);
+				TypeDeclaration declaration = library.getTypeDeclaration(iport.getName());
+				iport.setDeclaration(declaration);
 			} catch (ClassNotFoundException cnfe) {
 				failures.add(new ValidationFailure(
 						iport,

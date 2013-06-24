@@ -16,6 +16,7 @@ import bali.compiler.validation.ValidationEngine;
 import bali.compiler.validation.ValidationException;
 import bali.compiler.validation.ValidationFailure;
 import bali.compiler.validation.visitor.AssignmentValidator;
+import bali.compiler.validation.visitor.ImportsValidator;
 import bali.compiler.validation.visitor.TypeResolvingValidator;
 import bali.compiler.validation.visitor.ClassValidator;
 import bali.compiler.validation.visitor.ConstructionValidator;
@@ -120,7 +121,7 @@ public class BaliCompiler {
 		BaliCompiler compiler = new BaliCompiler(
 				new ANTLRParserManager(),
 				new ConfigurableValidationEngine(new Array<Validator<CompilationUnit>>(new Validator[]{
-//						new ImportsValidator(),
+						new ImportsValidator(library),
 						new InterfaceValidator(library),
 						new ClassValidator(library),
 						new TypeResolvingValidator(library),

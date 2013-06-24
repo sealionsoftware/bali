@@ -13,9 +13,8 @@ interface Doer {
 class IterationDoer() implements Doer {
 
  	method goDo(){
-		Iterator<String> i = NAMES.iterator();
-	    while (i.hasNext()){
-	        CONSOLE.printLine(i.next());
+	    for (String name : NAMES){
+	        CONSOLE.printLine(name);
 	    }
  	}
 

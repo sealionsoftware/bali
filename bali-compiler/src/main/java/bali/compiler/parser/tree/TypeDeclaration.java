@@ -1,6 +1,7 @@
 package bali.compiler.parser.tree;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -59,6 +60,31 @@ public abstract class TypeDeclaration<T extends MethodDeclaration> extends Node 
 	public abstract List<T> getMethods();
 
 	public abstract void addMethod(T method);
+
+	public MethodDeclaration getDeclaration(String name, List<Type> suppliedArgumentTypes) {
+		for (MethodDeclaration declaration : getMethods()) {
+			List<Declaration> argumentDeclarations = declaration.getArguments();
+			if (declaration.getName().equals(name)
+					&& suppliedArgumentTypes.size() == argumentDeclarations.size()
+					&& typesCompatible(argumentDeclarations, suppliedArgumentTypes)) {
+				return declaration;
+			}
+		}
+		return null;
+	}
+
+	public boolean typesCompatible(List<Declaration> argumentDeclarations, List<Type> suppliedArgumentTypes){
+		Iterator<Type> i = suppliedArgumentTypes.iterator();
+		Iterator<Declaration> j = argumentDeclarations.iterator();
+		while(i.hasNext()){
+			Type suppliedArgumentType = i.next();
+			Declaration argumentDeclaration = j.next();
+			if (!suppliedArgumentType.isAssignableTo(argumentDeclaration.getType())){
+				return false;
+			}
+		}
+		return true;
+	}
 
 	public List<Node> getChildren(){
 		List<Node> ret =  new ArrayList<>();
