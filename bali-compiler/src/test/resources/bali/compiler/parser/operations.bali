@@ -1,0 +1,5 @@
+{
+	value = a + b ;
+	value = a / b * c ;
+	//value = a & (b | c) ;
+}

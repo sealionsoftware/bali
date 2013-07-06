@@ -127,7 +127,7 @@ public class ANTLRParserManagerUnitTest {
 		CodeBlock body = unit.getClasses().get(0).getMethods().get(0).getBody();
 		Assert.assertEquals("Statements", 4, body.getStatements().size());
 		Assert.assertEquals("Assignment", 1, ((Invocation) ((Assignment) body.getStatements().get(0)).getValue()).getArguments().size());
-		Assert.assertEquals("Variable", "true", ((BooleanLiteralExpression) ((Variable) body.getStatements().get(1)).getValue()).getSerialization());
+		Assert.assertEquals("Variable", "false", ((BooleanLiteralExpression) ((Variable) body.getStatements().get(1)).getValue()).getSerialization());
 		Assert.assertEquals("While", 2, (((WhileStatement) body.getStatements().get(2)).getBody().getChildren().size()));
 		Assert.assertEquals("For", 1, ((ForStatement) ((WhileStatement) body.getStatements().get(2)).getBody().getStatements().get(0)).getBody().getChildren().size());
 		Assert.assertEquals("If", 1, ((ConditionalStatement) ((WhileStatement) body.getStatements().get(2)).getBody().getStatements().get(1)).getConditionalBlocks().get(0).getBody().getChildren().size());

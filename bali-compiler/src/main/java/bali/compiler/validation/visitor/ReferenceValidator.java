@@ -1,9 +1,12 @@
 package bali.compiler.validation.visitor;
 
 import bali._;
+import bali.compiler.parser.tree.CatchStatement;
 import bali.compiler.parser.tree.CodeBlock;
 import bali.compiler.parser.tree.CompilationUnit;
 import bali.compiler.parser.tree.Declaration;
+import bali.compiler.parser.tree.ForStatement;
+import bali.compiler.parser.tree.Method;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.Reference;
 import bali.compiler.parser.tree.Type;
@@ -78,6 +81,12 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 	private void validate(Node node, ReferenceValidatorTypeAgent agent) {
 		if (node instanceof bali.compiler.parser.tree.Class) {
 			validate((bali.compiler.parser.tree.Class) node, agent);
+		} else if (node instanceof Method) {
+			validate((Method) node, agent);
+		} else if (node instanceof ForStatement) {
+			validate((ForStatement) node, agent);
+		} else if (node instanceof CatchStatement) {
+			validate((CatchStatement) node, agent);
 		} else if (node instanceof CodeBlock) {
 			validate((CodeBlock) node, agent);
 		} else if (node instanceof Variable) {
@@ -97,6 +106,38 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 		));
 	}
 
+	private void validate(Method method, ReferenceValidatorTypeAgent agent) {
+		List<Declaration> declarations = new ArrayList<>();
+		for (Declaration declaration : method.getArguments()){
+			declarations.add(declaration);
+		}
+		pushAndWalk(method, agent, new Scope(
+				Reference.ReferenceScope.VARIABLE,
+				null,
+				declarations
+		));
+	}
+
+	private void validate(ForStatement statement, ReferenceValidatorTypeAgent agent) {
+		List<Declaration> declarations = new ArrayList<>();
+		declarations.add(statement.getElement());
+		pushAndWalk(statement, agent, new Scope(
+				Reference.ReferenceScope.VARIABLE,
+				null,
+				declarations
+		));
+	}
+
+	private void validate(CatchStatement statement, ReferenceValidatorTypeAgent agent) {
+		List<Declaration> declarations = new ArrayList<>();
+		declarations.add(statement.getDeclaration());
+		pushAndWalk(statement, agent, new Scope(
+				Reference.ReferenceScope.VARIABLE,
+				null,
+				declarations
+		));
+	}
+
 	private void validate(CodeBlock codeBlock, ReferenceValidatorTypeAgent agent) {
 		pushAndWalk(codeBlock, agent, new Scope(
 				Reference.ReferenceScope.VARIABLE,
@@ -106,10 +147,7 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 	}
 
 	private void validate(Variable variable, ReferenceValidatorTypeAgent agent) {
-		Declaration declaration = new Declaration();
-		declaration.setName(variable.getReference().getName());
-		declaration.setType(variable.getType());
-		agent.peek().add(declaration);
+		agent.peek().add(variable.getDeclaration());
 		walkAgentOverChildren(variable, agent);
 	}
 

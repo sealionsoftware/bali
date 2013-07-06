@@ -32,14 +32,14 @@ class AnImplementation(Number aField) implements AnInterface {
  	method Number aMethod(Number anArgument){
 
  	    anArgument = anArgument.add(GLOBAL_CONSTANT);
- 	    Boolean continue = true;
+ 	    Boolean stop = false;
 
- 	    while(continue){
+ 	    while(!stop){
 	        for (Number number : [3,4,5]){
-	            anArgument = anArgument.add(number);
+	            anArgument = anArgument + number;
 	        }
 	        if (number.greaterThan(100)){
-	            continue = false;
+	            stop = true;
 	        }
  	    }
 		return anArgument;

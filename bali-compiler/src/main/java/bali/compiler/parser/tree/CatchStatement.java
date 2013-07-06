@@ -1,21 +1,22 @@
 package bali.compiler.parser.tree;
 
-import org.objectweb.asm.Label;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * User: Richard
- * Date: 29/04/13
+ * Date: 25/06/13
  */
-public class Variable extends Statement  {
+public class CatchStatement extends Statement {
 
 	private Declaration declaration;
-	private Expression value;
+	private CodeBlock codeBlock;
 
-	public Variable() {
-		super();
+	public CatchStatement() {
+	}
+
+	public CatchStatement(Integer line, Integer character) {
+		super(line, character);
 	}
 
 	public Declaration getDeclaration() {
@@ -26,25 +27,18 @@ public class Variable extends Statement  {
 		this.declaration = declaration;
 	}
 
-	public Expression getValue() {
-		return value;
+	public CodeBlock getCodeBlock() {
+		return codeBlock;
 	}
 
-	public void setValue(Expression value) {
-		this.value = value;
-	}
-
-	public Variable(Integer line, Integer character) {
-		super(line, character);
+	public void setCodeBlock(CodeBlock codeBlock) {
+		this.codeBlock = codeBlock;
 	}
 
 	public List<Node> getChildren() {
 		List<Node> children = new ArrayList<>();
 		children.add(declaration);
-		if (value != null){
-			children.add(value);
-		}
+		children.add(codeBlock);
 		return children;
 	}
-
 }

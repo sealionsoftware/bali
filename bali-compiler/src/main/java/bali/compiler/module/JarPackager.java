@@ -25,6 +25,7 @@ public class JarPackager implements ModuleWriter {
 		File out = new File(directory, name + ".jar");
 		GeneratedModule module = new GeneratedModule(name);
 
+		out.delete();
 		out.createNewFile();
 		JarOutputStream jos = null;
 

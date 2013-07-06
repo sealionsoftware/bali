@@ -9,6 +9,7 @@ import java.util.List;
  */
 public class MethodDeclaration extends Declaration {
 
+	private String operator;
 	private List<Declaration> arguments = new ArrayList<>();
 
 	public MethodDeclaration() {}
@@ -23,6 +24,14 @@ public class MethodDeclaration extends Declaration {
 
 	public void addArgument(Declaration argument) {
 		this.arguments.add(argument);
+	}
+
+	public String getOperator() {
+		return operator;
+	}
+
+	public void setOperator(String operator) {
+		this.operator = operator;
 	}
 
 	public List<Node> getChildren() {

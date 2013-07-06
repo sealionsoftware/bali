@@ -48,6 +48,16 @@ public class BaliParserUnitTest {
 	}
 
 	@Test
+	public void testUnary() throws Exception {
+		parseCodeBlock("unary.bali");
+	}
+
+	@Test
+	public void testOperations() throws Exception {
+		parseCodeBlock("operations.bali");
+	}
+
+	@Test
 	public void testIfStatement() throws Exception {
 		parseCodeBlock("ifstatement.bali");
 	}

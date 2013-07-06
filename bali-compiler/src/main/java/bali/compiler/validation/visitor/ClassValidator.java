@@ -25,7 +25,7 @@ public class ClassValidator implements Validator<CompilationUnit> {
 		for (bali.compiler.parser.tree.Class clazz : node.getClasses()){
 
 			clazz.setQualifiedClassName(node.getName() + "." + clazz.getClassName());
-
+			clazz.setSourceFile(node.getName() + ".bali");
 			// TODO: validations
 
 			library.addDeclaration(clazz);

@@ -13,6 +13,8 @@ public class Class extends TypeDeclaration<Method> {
 	private List<Field> fields = new ArrayList<>();
 	private List<Method> methods = new ArrayList<>();
 
+	private String sourceFile;
+
 	public Class() {
 		this(null, null);
 	}
@@ -47,6 +49,14 @@ public class Class extends TypeDeclaration<Method> {
 
 	public Boolean getAbstract() {
 		return false;
+	}
+
+	public void setSourceFile(String sourceFile) {
+		this.sourceFile = sourceFile;
+	}
+
+	public String getSourceFile() {
+		return sourceFile;
 	}
 
 	public List<Node> getChildren() {

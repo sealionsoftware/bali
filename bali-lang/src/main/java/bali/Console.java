@@ -15,10 +15,12 @@ public class Console {
 
 	public Console() {}
 
+	@Operator("<<")
 	public void printLine(String in){
 		ps.println(in.characters);
 	}
 
+	@Operator("<<")
 	public String readLine(){
 		char[] in = new char[256];
 		try {

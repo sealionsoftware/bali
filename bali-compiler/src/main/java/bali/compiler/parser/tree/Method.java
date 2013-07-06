@@ -10,9 +10,7 @@ import java.util.List;
 public class Method extends MethodDeclaration {
 
 	private CodeBlock body;
-
 	private Boolean isDeclared = Boolean.FALSE;
-	private List<Variable> declaredVariables = new ArrayList<>();
 
 	public Method() {}
 
@@ -34,14 +32,6 @@ public class Method extends MethodDeclaration {
 
 	public void setDeclared(Boolean declared) {
 		isDeclared = declared;
-	}
-
-	public void addDeclaredVariable(Variable v){
-		declaredVariables.add(v);
-	}
-
-	public List<Variable> getDeclaredVariables() {
-		return declaredVariables;
 	}
 
 	public List<Node> getChildren() {

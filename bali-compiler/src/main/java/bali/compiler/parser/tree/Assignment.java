@@ -12,6 +12,9 @@ public class Assignment extends Statement {
 	private Reference reference;
 	private Expression value;
 
+	public Assignment() {
+	}
+
 	public Assignment(Integer line, Integer character) {
 		super(line, character);
 	}

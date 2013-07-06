@@ -2,6 +2,7 @@ package bali.compiler.bytecode;
 
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.Class;
+import bali.compiler.parser.tree.Declaration;
 import bali.compiler.parser.tree.Expression;
 import bali.compiler.parser.tree.Field;
 import bali.compiler.parser.tree.Method;
@@ -35,6 +36,8 @@ public class ASMClassGenerator implements Generator<Class, GeneratedClass> {
 				null,
 				"java/lang/Object",
 				interfaceNames);
+
+		cw.visitSource(input.getSourceFile(), null);
 
 		Map<String, Expression> values = new HashMap<>();
 		for (Field field : input.getFields()) {
@@ -105,9 +108,9 @@ public class ASMClassGenerator implements Generator<Class, GeneratedClass> {
 		manager.execute(method.getBody(), methodVisitor);
 
 		for (VariableInfo variable : manager.getDeclaredVariables()) {
-			Variable declaration = variable.getDeclaration();
+			Declaration declaration = variable.getDeclaration();
 			methodVisitor.visitLocalVariable(
-					declaration.getReference().getName(),
+					declaration.getName(),
 					converter.getTypeDescriptor(declaration.getType()),
 					null,
 					variable.getStart(),

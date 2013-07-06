@@ -29,6 +29,15 @@ public class String implements Value<String> {
 		return NUMBER_FACTORY.forInt(characters.length);
 	}
 
+	@Operator("+")
+	public String join(String operand){
+		int thisLength = this.characters.length;
+		int thatLength = operand.characters.length;
+		char[] characters = Arrays.copyOf(this.characters, thisLength + thatLength);
+		System.arraycopy(operand.characters, 0, characters, thisLength, thatLength);
+		return new String(characters);
+	}
+
 	public Boolean equalTo(String operand) {
 		return Arrays.equals(characters, operand.characters) ? Boolean.TRUE : Boolean.FALSE;
 	}

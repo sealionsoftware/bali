@@ -1,5 +1,6 @@
 package bali.compiler.validation;
 
+import bali.Operator;
 import bali.compiler.parser.tree.Declaration;
 import bali.compiler.parser.tree.MethodDeclaration;
 import bali.compiler.parser.tree.Type;
@@ -81,6 +82,11 @@ public class TypeDeclarationLibrary {
 				methodDeclaration.addArgument(declaration);
 			}
 
+			if (method.isAnnotationPresent(Operator.class)){
+				Operator operator = method.getAnnotation(Operator.class);
+				methodDeclaration.setOperator(operator.value());
+			}
+
 			classpathType.addMethod(methodDeclaration);
 		}
 
@@ -97,7 +103,7 @@ public class TypeDeclarationLibrary {
 		if (type instanceof TypeVariable){
 			return getTypeForVariable((TypeVariable) type);
 		}
-		if (type instanceof WildcardType || type instanceof TypeVariable){
+		if (type instanceof WildcardType){
 			return getTypeForClass((Class) Object.class);
 		}
 		return null;
@@ -147,6 +153,10 @@ public class TypeDeclarationLibrary {
 
 		public Boolean getAbstract() {
 			return isAbstract;
+		}
+
+		public String toString(){
+			return getClassName() ;
 		}
 	}
 }

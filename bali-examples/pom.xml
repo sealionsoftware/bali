@@ -52,7 +52,7 @@
 						<configuration>
 							<target>
 								<unzip src="${project.build.directory}/bali.jar"
-									   dest="${project.build.outputDirectory}"/>
+									   dest="${project.build.outputDirectory}" overwrite="true"/>
 							</target>
 						</configuration>
 						<goals>

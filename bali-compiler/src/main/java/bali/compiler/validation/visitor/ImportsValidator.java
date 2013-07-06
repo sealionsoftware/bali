@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class ImportsValidator implements Validator<CompilationUnit> {
 
-	private ImportValidator importValidator = new ImportValidator(ImportValidator.class.getClassLoader());
+	private ImportValidator importValidator = new ImportValidator();
 	private TypeDeclarationLibrary library;
 
 	public ImportsValidator(TypeDeclarationLibrary library) {
@@ -31,12 +31,6 @@ public class ImportsValidator implements Validator<CompilationUnit> {
 	}
 
 	public class ImportValidator implements Validator<Import> {
-
-		private ClassLoader loader;
-
-		public ImportValidator(ClassLoader loader) {
-			this.loader = loader;
-		}
 
 		// Engages imports, uses the base classloader to load the imported class (to check that it exists!)
 		public List<ValidationFailure> validate(Import iport) {

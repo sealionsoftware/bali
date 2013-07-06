@@ -83,7 +83,7 @@ public class TypeResolvingValidator implements Validator<CompilationUnit> {
 			}
 
 			if (declaration == null){
-				ret.add(new ValidationFailure(type, "Cannot resolve type of declaration"));
+				ret.add(new ValidationFailure(type, "Cannot resolve type " + type));
 			}
 			type.setDeclaration(declaration);
 			return ret;

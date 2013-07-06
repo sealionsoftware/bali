@@ -5,7 +5,7 @@ package bali;
  * User: Richard
  * Date: 11/06/13
  */
-public class NumberFactory {
+public class NumberFactory implements Serializer<Number> {
 
 	private static final byte BYTE_CEILING = java.lang.Byte.MAX_VALUE;
 	private static final byte BYTE_FLOOR = java.lang.Byte.MIN_VALUE;
@@ -120,5 +120,42 @@ public class NumberFactory {
 		}
 		throw new RuntimeException("Cannot get int value of Number " + n);
 	}
+
+	public Number parse(String in) {
+		throw new RuntimeException("Cannot parse Number " + in);
+	}
+
+	public String format(Number in) {
+		if (in instanceof Byte) {
+			return format((Byte) in);
+		}
+		if (in instanceof Short) {
+			return format((Short) in);
+		}
+		if (in instanceof Integer) {
+			return format((Integer) in);
+		}
+		if (in instanceof Long) {
+			return format((Long) in);
+		}
+		throw new RuntimeException("Cannot format Number " + in);
+	}
+
+	public String format(Byte in) {
+		return new String(java.lang.Byte.toString(in.value).toCharArray());
+	}
+
+	public String format(Short in) {
+		return new String(java.lang.Short.toString(in.value).toCharArray());
+	}
+
+	public String format(Integer in) {
+		return new String(java.lang.Integer.toString(in.value).toCharArray());
+	}
+
+	public String format(Long in) {
+		return new String(java.lang.Long.toString(in.value).toCharArray());
+	}
+
 
 }

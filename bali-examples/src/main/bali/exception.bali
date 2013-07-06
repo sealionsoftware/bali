@@ -1,0 +1,24 @@
+import bali.Console;
+import bali.Boolean;
+import bali.String;
+import bali.NullReferenceException;
+
+interface Doer {
+ 	declare goDo();
+}
+
+class TryDoer() implements Doer {
+
+ 	method goDo(){
+
+		Boolean aNull;
+
+		try {
+			aNull.not();
+		} catch (NullReferenceException e){
+          	CONSOLE.printLine("Attempt to invoke ".join(e.getMethod()).join("() on null reference"));
+        }
+
+ 	}
+
+}

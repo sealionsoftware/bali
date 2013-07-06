@@ -15,6 +15,9 @@ public class Invocation extends Expression {
 
 	private Type returnType;
 
+	public Invocation() {
+	}
+
 	public Invocation(Integer line, Integer character) {
 		super(line, character);
 	}

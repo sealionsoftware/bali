@@ -1,4 +1,4 @@
-package bali.compiler;
+  package bali.compiler;
 
 import bali.compiler.bytecode.ASMClassGenerator;
 import bali.compiler.bytecode.ASMInterfaceGenerator;
@@ -17,6 +17,7 @@ import bali.compiler.validation.ValidationException;
 import bali.compiler.validation.ValidationFailure;
 import bali.compiler.validation.visitor.AssignmentValidator;
 import bali.compiler.validation.visitor.ImportsValidator;
+import bali.compiler.validation.visitor.OperationValidator;
 import bali.compiler.validation.visitor.TypeResolvingValidator;
 import bali.compiler.validation.visitor.ClassValidator;
 import bali.compiler.validation.visitor.ConstructionValidator;
@@ -26,6 +27,7 @@ import bali.compiler.validation.visitor.InvocationValidator;
 import bali.compiler.validation.visitor.ListLiteralValidator;
 import bali.compiler.validation.visitor.ReferenceValidator;
 import bali.compiler.validation.visitor.ReturnValueValidator;
+import bali.compiler.validation.visitor.UnaryOperationValidator;
 import bali.compiler.validation.visitor.Validator;
 
 import java.io.File;
@@ -130,6 +132,8 @@ public class BaliCompiler {
 						new ReferenceValidator(library),
 						new ReturnValueValidator(),
 						new InvocationValidator(),
+						new UnaryOperationValidator(),
+						new OperationValidator(),
 						new AssignmentValidator(),
 						new ConstructionValidator()
 				})),

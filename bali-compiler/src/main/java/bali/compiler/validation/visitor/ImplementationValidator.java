@@ -45,40 +45,12 @@ public class ImplementationValidator implements Validator<CompilationUnit> {
 
 	}
 
-	private Interface map(java.lang.Class clazz) {
-		Interface iface = new Interface();
-		iface.setQualifiedClassName(clazz.getName());
-		for (java.lang.reflect.Method method : clazz.getDeclaredMethods()) {
-			iface.addMethod(map(method));
-		}
-		return iface;
-	}
-
-	private MethodDeclaration map(java.lang.reflect.Method method) {
-		MethodDeclaration ret = new MethodDeclaration();
-
-		Type returnType = new Type();
-		returnType.setClassName(method.getReturnType().getName());
-
-		ret.setName(method.getName());
-		ret.setType(returnType);
-
-		for (java.lang.Class clazz : method.getParameterTypes()) {
-			Type argumentType = new Type();
-			argumentType.setClassName(clazz.getName());
-			Declaration declaration = new Declaration();
-			declaration.setType(argumentType);
-			ret.addArgument(declaration);
-		}
-
-		return ret;
-	}
-
 	private List<ValidationFailure> validate(Class clazz, Map<String, TypeDeclaration> interfaces) {
 
 		List<ValidationFailure> failures = new ArrayList<>();
 
 		for (Type type : clazz.getImplementations()) {
+
 			if (!interfaces.containsKey(type.getDeclaration().getQualifiedClassName())) {
 				failures.add(
 						new ValidationFailure(clazz, "Implementation declaration " + type.getClassName() + " is not a recognised interface")
@@ -88,7 +60,7 @@ public class ImplementationValidator implements Validator<CompilationUnit> {
 
 			for (Method method : clazz.getMethods()) {
 				for (TypeDeclaration iface : interfaces.values()) {
-					MethodDeclaration declaration = iface.getDeclaration(method.getName(), method.getDeclaredVariables());
+					MethodDeclaration declaration = iface.getDeclaration(method.getName(), method.getArguments());
 					if (declaration != null) {
 						method.setDeclared(true);
 						break;

@@ -12,7 +12,10 @@ CONSTANT_IDENTIFIER:        [A-Z][A-Z_]* ;
 TYPE_IDENTIFIER:            ([a-z]+ '.')*[A-Z][a-zA-Z]* ;
 
 STRING_LITERAL:             '"' ~[^"]* '"' ;
+
 NUMBER_LITERAL:             [0-9]+ ('.' [0-9]+)? ;
+
+OPERATOR:                   [\+\-!£$%^&\*#\~@\?/\\\><|¬`¦\:]+ ;
 
 // Grammar Definition
 
@@ -45,13 +48,15 @@ codeBlock:                  '{' statement* '}' ;
 
 statement:                  lineStatement | controlStatement ;
 
-lineStatement:              (variableDeclaration | invocation | assignment | returnStatement) ';' ;
+lineStatement:              (variableDeclaration | assignment | returnStatement | expression) ';' ;
 
 controlStatement:           conditionalStatement | tryStatement | whileStatement | forStatement | switchStatement ;
 
 conditionalStatement:       'if' '(' expression ')' codeBlock ('else if' '(' expression ')' codeBlock)* ('else' codeBlock)? ;
 
-tryStatement:               'try' codeBlock ('catch' '(' argumentDeclaration ')' codeBlock)+ ;
+tryStatement:               'try' codeBlock catchStatement+ ;
+
+catchStatement:             'catch' '(' argumentDeclaration ')' codeBlock ;
 
 whileStatement:             'while' '(' expression ')' codeBlock ;
 
@@ -63,17 +68,22 @@ caseStatement:              'case' expression ':' codeBlock ;
 
 defaultStatement:           'default' ':' codeBlock ;
 
-variableDeclaration:        typeDeclaration assignment ;
+variableDeclaration:        typeDeclaration identifier ('=' expression)? ;
 
 assignment:                 identifier '=' expression ;
 
 identifier:                 STANDARD_IDENTIFIER | CONSTANT_IDENTIFIER ;
 
 // Changed due to left recursion
-// invocation:                 (expression '.')? identifier argumentList;
+//invocation:                 (expressionForInvocation '.')? identifier argumentList;
 
 invocation:                 ((constantValue | identifier) '.')? identifier argumentList
 							|  invocation '.' identifier argumentList ;
+
+unaryOperation:             OPERATOR expressionForOperation ;
+
+// Changed due to left recursion
+operation:                  (expressionForOperation OPERATOR)+ expressionForOperation ;
 
 construction:               'new' typeDeclaration argumentList ;
 
@@ -91,7 +101,9 @@ argumentList:               '(' ( expression ( ',' expression)*)? ')' ;
 
 constantValue:              literal | construction ;
 
-expression:                 constantValue | identifier | invocation ;
+expressionForOperation:     constantValue | identifier | invocation ;
+
+expression:                 expressionForOperation | unaryOperation | operation ;
 
 literal:                    STRING_LITERAL | NUMBER_LITERAL | booleanLiteral | listLiteral ;
 
