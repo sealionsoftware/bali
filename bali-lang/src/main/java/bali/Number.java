@@ -5,7 +5,7 @@ package bali;
  * User: Richard
  * Date: 09/06/13
  */
-public interface Number extends Value<Number> {
+public interface Number extends Quantified<Number> {
 
 	public Boolean isPositive();
 
@@ -18,12 +18,6 @@ public interface Number extends Value<Number> {
 
 	@Operator("-")
 	public Number negative();
-
-	@Operator(">")
-	public Boolean greaterThan(Number o);
-
-	@Operator("<")
-	public Boolean lessThan(Number o);
 
 	@Operator("+")
 	public Number add(Number o);

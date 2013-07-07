@@ -8,19 +8,17 @@ import java.io.PrintStream;
  * User: Richard
  * Date: 05/05/13
  */
-public class Console {
+public class Console implements ReaderWriter {
 
 	private PrintStream ps = System.out;
 	private InputStream is = System.in;
 
 	public Console() {}
 
-	@Operator("<<")
-	public void printLine(String in){
+	public void writeLine(String in){
 		ps.println(in.characters);
 	}
 
-	@Operator("<<")
 	public String readLine(){
 		char[] in = new char[256];
 		try {

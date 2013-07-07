@@ -101,7 +101,7 @@ argumentList:               '(' ( expression ( ',' expression)*)? ')' ;
 
 constantValue:              literal | construction ;
 
-expressionForOperation:     constantValue | identifier | invocation ;
+expressionForOperation:     constantValue | identifier | invocation | '(' operation ')' ;
 
 expression:                 expressionForOperation | unaryOperation | operation ;
 

@@ -13,11 +13,11 @@ class ConditionalDoer() implements Doer {
  	    Boolean two = true;
 
 	    if (one){
-	        CONSOLE.printLine("First Block");
+	        CONSOLE.writeLine("First Block");
 	    } else if (two){
-	        CONSOLE.printLine("Second Block");
+	        CONSOLE.writeLine("Second Block");
 	    } else {
-	        CONSOLE.printLine("Third Block");
+	        CONSOLE.writeLine("Third Block");
 	    }
  	}
 

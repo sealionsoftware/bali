@@ -1,5 +1,5 @@
 {
-	value = a + b ;
-	value = a / b * c ;
-	//value = a & (b | c) ;
+	a + b ;
+	a / b * c ;
+	a & (b | c) ;
 }

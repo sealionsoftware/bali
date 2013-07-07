@@ -31,7 +31,7 @@ public enum Boolean implements Value<Boolean> {
 		return TRUE;
 	}
 
-	@Operator("x|")
+	@Operator("^")
 	public Boolean xor(Boolean that) {
 		return this.or(that).and(this.and(that).not());
 	}

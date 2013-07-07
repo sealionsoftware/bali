@@ -14,7 +14,7 @@ class IterationDoer() implements Doer {
 
  	method goDo(){
 	    for (String name : NAMES){
-	        CONSOLE.printLine(name);
+	        CONSOLE.writeLine(name);
 	    }
  	}
 

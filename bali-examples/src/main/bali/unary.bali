@@ -11,7 +11,7 @@ class UnaryDoer() implements Executable {
  	    n = -n; // Now -1
  	    n = |n; // Now 1
 
- 	    CONSOLE.printLine("Calc: ".join(NUMBER_FACTORY.format(n)));
+ 	    CONSOLE.writeLine("Calc: ".join(NUMBER_FACTORY.format(n)));
 
  	}
 

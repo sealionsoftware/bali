@@ -14,7 +14,7 @@ class ConsoleGreeter() implements Greeter {
  	method greet(){
 	    String greetingTwo = "Variable Greeting";
 //	    greetingTwo = GREETING;
-		CONSOLE.printLine(greeting);
+		CONSOLE.writeLine(greeting);
  	}
 
 }

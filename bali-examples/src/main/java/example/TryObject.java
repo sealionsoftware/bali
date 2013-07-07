@@ -18,7 +18,7 @@ public class TryObject {
 		try {
 			isNull.not();
 		} catch (Exception e){
-			bali._.CONSOLE.printLine(new String(e.getMessage().toCharArray()));
+			bali._.CONSOLE.writeLine(new String(e.getMessage().toCharArray()));
 		}
 
 	}

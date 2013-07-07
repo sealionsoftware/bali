@@ -14,7 +14,7 @@ public class StaticFieldObject {
 //		Number i = 0;
 //
 //		while (i < length){
-//			_.CONSOLE.printLine(NAMES.get(i));
+//			_.CONSOLE.writeLine(NAMES.get(i));
 //			i = i.add(1);
 //		}
 	}

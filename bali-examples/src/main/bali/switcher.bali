@@ -15,13 +15,13 @@ class SwitchDoer() implements Doer {
 
 		switch (operand){
 			case 0: {
-				CONSOLE.printLine("Operand was 0");
+				CONSOLE.writeLine("Operand was 0");
 			}
 			case 1: {
-            	CONSOLE.printLine("Operand was 1");
+            	CONSOLE.writeLine("Operand was 1");
             }
 			default: {
-				CONSOLE.printLine("?");
+				CONSOLE.writeLine("?");
 			}
 		}
 

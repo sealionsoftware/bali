@@ -9,6 +9,10 @@ class OperationDoer() implements Executable {
  	    Number n = 1 + 2;
  	    String s = NUMBER_FACTORY.format(n) + "!";
  	    CONSOLE << s;
+
+ 	    if (true & (false | (true ^ false))){
+ 	        CONSOLE << "evaluated compound expression to true";
+ 	    }
  	}
 
 

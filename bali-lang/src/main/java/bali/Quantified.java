@@ -6,12 +6,11 @@ package bali;
  */
 public interface Quantified<T extends Value> extends Value<T> {
 
-	public Compared compareTo(T value);
+	@Operator(">")
+	public Boolean greaterThan(Number o);
 
-	public enum Compared {
-		GREATER_THAN,
-		EQUAL,
-		LESS_THAN
-	}
+	@Operator("<")
+	public Boolean lessThan(Number o);
+
 
 }

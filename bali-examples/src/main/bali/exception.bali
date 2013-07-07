@@ -16,7 +16,7 @@ class TryDoer() implements Doer {
 		try {
 			aNull.not();
 		} catch (NullReferenceException e){
-          	CONSOLE.printLine("Attempt to invoke ".join(e.getMethod()).join("() on null reference"));
+          	CONSOLE.writeLine("Attempt to invoke ".join(e.getMethod()).join("() on null reference"));
         }
 
  	}

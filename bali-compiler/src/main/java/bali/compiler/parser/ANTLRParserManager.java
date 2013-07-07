@@ -414,6 +414,9 @@ public class ANTLRParserManager implements ParserManager {
 		if (context.invocation() != null) {
 			return buildInvocationStatement(context.invocation());
 		}
+		if (context.operation() != null) {
+			return buildOperation(context.operation());
+		}
 
 		throw new RuntimeException("Could not get value for expression " + context.getText());
 	}
