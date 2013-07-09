@@ -2,6 +2,7 @@ package bali.compiler.parser;
 
 import bali.compiler.parser.tree.Assignment;
 import bali.compiler.parser.tree.BooleanLiteralExpression;
+import bali.compiler.parser.tree.BreakStatement;
 import bali.compiler.parser.tree.CaseStatement;
 import bali.compiler.parser.tree.CatchStatement;
 import bali.compiler.parser.tree.Class;
@@ -11,6 +12,7 @@ import bali.compiler.parser.tree.ConditionalBlock;
 import bali.compiler.parser.tree.ConditionalStatement;
 import bali.compiler.parser.tree.Constant;
 import bali.compiler.parser.tree.ConstructionExpression;
+import bali.compiler.parser.tree.ContinueStatement;
 import bali.compiler.parser.tree.Declaration;
 import bali.compiler.parser.tree.Expression;
 import bali.compiler.parser.tree.Field;
@@ -24,10 +26,11 @@ import bali.compiler.parser.tree.MethodDeclaration;
 import bali.compiler.parser.tree.NumberLiteralExpression;
 import bali.compiler.parser.tree.Operation;
 import bali.compiler.parser.tree.Reference;
-import bali.compiler.parser.tree.Return;
+import bali.compiler.parser.tree.ReturnStatement;
 import bali.compiler.parser.tree.Statement;
 import bali.compiler.parser.tree.StringLiteralExpression;
 import bali.compiler.parser.tree.SwitchStatement;
+import bali.compiler.parser.tree.ThrowStatement;
 import bali.compiler.parser.tree.TryStatement;
 import bali.compiler.parser.tree.Type;
 import bali.compiler.parser.tree.UnaryOperation;
@@ -209,6 +212,12 @@ public class ANTLRParserManager implements ParserManager {
 					codeBlock.addStatement(buildVariableDeclaration(lsc.variableDeclaration()));
 				} else if (lsc.returnStatement() != null) {
 					codeBlock.addStatement(buildReturnStatement(lsc.returnStatement()));
+				} else if (lsc.throwStatement() != null) {
+					codeBlock.addStatement(buildThrowStatement(lsc.throwStatement()));
+				} else if (lsc.breakStatement() != null) {
+					codeBlock.addStatement(buildBreakStatement(lsc.breakStatement()));
+				} else if (lsc.continueStatement() != null) {
+					codeBlock.addStatement(buildContinueStatement(lsc.continueStatement()));
 				} else if (lsc.assignment() != null) {
 					codeBlock.addStatement(buildAssignmentStatement(lsc.assignment()));
 				} else if (lsc.expression() != null) {
@@ -217,7 +226,7 @@ public class ANTLRParserManager implements ParserManager {
 					throw new Exception("Unrecognised line statement type: " + statementContext.getText());
 				}
 
-//				TODO: throw, break, continue, run, sleep, wait, release
+//				TODO: break, continue, run, sleep, wait, release
 
 			} else {
 				throw new Exception("Unrecognised statement type: " + statementContext.getText());
@@ -245,10 +254,10 @@ public class ANTLRParserManager implements ParserManager {
 	private Statement buildSwitchStatement(BaliParser.SwitchStatementContext context) throws Exception {
 		SwitchStatement switchStatement = new SwitchStatement(l(context), c(context));
 		switchStatement.setValue(buildExpression(context.expression()));
-		for (BaliParser.CaseStatementContext caseStatementContext : context.caseStatement()){
+		for (BaliParser.CaseStatementContext caseStatementContext : context.caseStatement()) {
 			switchStatement.addCaseStatement(buildCaseStatement(caseStatementContext));
 		}
-		if (context.defaultStatement() != null){
+		if (context.defaultStatement() != null) {
 			switchStatement.setDefaultStatement(buildDefaultStatement(context.defaultStatement()));
 		}
 		return switchStatement;
@@ -257,7 +266,7 @@ public class ANTLRParserManager implements ParserManager {
 	private Statement buildTryStatement(BaliParser.TryStatementContext context) throws Exception {
 		TryStatement tryStatement = new TryStatement(l(context), c(context));
 		tryStatement.setMain(buildCodeBlock(context.codeBlock()));
-		for (BaliParser.CatchStatementContext catchContext : context.catchStatement()){
+		for (BaliParser.CatchStatementContext catchContext : context.catchStatement()) {
 			tryStatement.addCatchStatement(buildCatchStatement(catchContext));
 		}
 		return tryStatement;
@@ -288,12 +297,28 @@ public class ANTLRParserManager implements ParserManager {
 		return assignment;
 	}
 
-	private Return buildReturnStatement(BaliParser.ReturnStatementContext context) {
-		Return ret = new Return(l(context), c(context));
+	private ReturnStatement buildReturnStatement(BaliParser.ReturnStatementContext context) {
+		ReturnStatement ret = new ReturnStatement(l(context), c(context));
 		if (context.expression() != null) {
 			ret.setValue(buildExpression(context.expression()));
 		}
 		return ret;
+	}
+
+	private ThrowStatement buildThrowStatement(BaliParser.ThrowStatementContext context) {
+		ThrowStatement ret = new ThrowStatement(l(context), c(context));
+		if (context.expression() != null) {
+			ret.setValue(buildExpression(context.expression()));
+		}
+		return ret;
+	}
+
+	private BreakStatement buildBreakStatement(BaliParser.BreakStatementContext context) {
+		return new BreakStatement(l(context), c(context));
+	}
+
+	private ContinueStatement buildContinueStatement(BaliParser.ContinueStatementContext context) {
+		return new ContinueStatement(l(context), c(context));
 	}
 
 	private Variable buildVariableDeclaration(BaliParser.VariableDeclarationContext context) {
@@ -302,7 +327,7 @@ public class ANTLRParserManager implements ParserManager {
 		declaration.setName(getIdentifier(context.identifier()));
 		declaration.setType(getType(context.typeDeclaration()));
 		variable.setDeclaration(declaration);
-		if (context.expression() != null){
+		if (context.expression() != null) {
 			variable.setValue(buildExpression(context.expression()));
 		}
 		return variable;
@@ -365,7 +390,7 @@ public class ANTLRParserManager implements ParserManager {
 		return declaration;
 	}
 
-	private Operation buildOperation(BaliParser.OperationContext context){
+	private Operation buildOperation(BaliParser.OperationContext context) {
 
 		Operation operation = new Operation(l(context), c(context));
 		List<BaliParser.ExpressionForOperationContext> operands = new ArrayList<>(context.expressionForOperation());
@@ -377,13 +402,13 @@ public class ANTLRParserManager implements ParserManager {
 
 		operation.setTwo(buildExpression(i.next()));
 		Operation currentOperation = operation;
-		
-		while (i.hasNext()){
+
+		while (i.hasNext()) {
 			BaliParser.ExpressionForOperationContext expressionForOperationContext = i.next();
 			Expression next = buildExpression(expressionForOperationContext);
 			currentOperation.setOperator(j.next().getText());
 
-			if (i.hasNext()){
+			if (i.hasNext()) {
 				Operation newOperation = new Operation(l(expressionForOperationContext), c(expressionForOperationContext));
 				newOperation.setTwo(next);
 				currentOperation.setOne(newOperation);
@@ -392,11 +417,11 @@ public class ANTLRParserManager implements ParserManager {
 				currentOperation.setOne(next);
 			}
 		}
-		
+
 		return operation;
 	}
 
-	private UnaryOperation buildUnaryOperation(BaliParser.UnaryOperationContext context){
+	private UnaryOperation buildUnaryOperation(BaliParser.UnaryOperationContext context) {
 		UnaryOperation operation = new UnaryOperation(l(context), c(context));
 		operation.setOperator(context.OPERATOR().getText());
 		operation.setTarget(buildExpression(context.expressionForOperation()));
@@ -423,14 +448,14 @@ public class ANTLRParserManager implements ParserManager {
 
 	private Expression buildExpression(BaliParser.ExpressionContext context) {
 
-		if (context.expressionForOperation() != null){
+		if (context.expressionForOperation() != null) {
 			return buildExpression(context.expressionForOperation());
 		}
 
-		if (context.unaryOperation() != null){
+		if (context.unaryOperation() != null) {
 			return buildUnaryOperation(context.unaryOperation());
 		}
-		if (context.operation() != null){
+		if (context.operation() != null) {
 			return buildOperation(context.operation());
 		}
 

@@ -1,6 +1,6 @@
 package greetings;
 
-import loop.Doer;
+import bali.Executable;
 import loop.WhileDoer;
 
 /**
@@ -10,8 +10,8 @@ import loop.WhileDoer;
 public class WhileRunner {
 
 	public static void main(String[] args) {
-		Doer doer = new WhileDoer();
-		doer.goDo();
+		Executable doer = new WhileDoer();
+		doer.execute();
 	}
 
 }

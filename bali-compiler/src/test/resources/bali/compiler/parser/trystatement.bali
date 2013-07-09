@@ -1,10 +1,10 @@
 {
 	try {
-		// Do something
+		throw new TypedException();
     } catch (TypedException e) {
-        // Handle Exception
+        throw new Exception(e);
     } catch (Exception e){
-
+		// Do Something!
     }
 
 }

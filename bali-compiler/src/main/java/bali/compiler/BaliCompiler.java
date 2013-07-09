@@ -1,4 +1,4 @@
-  package bali.compiler;
+package bali.compiler;
 
 import bali.compiler.bytecode.ASMClassGenerator;
 import bali.compiler.bytecode.ASMInterfaceGenerator;
@@ -10,23 +10,26 @@ import bali.compiler.module.ModuleWriter;
 import bali.compiler.parser.ANTLRParserManager;
 import bali.compiler.parser.ParserManager;
 import bali.compiler.parser.tree.CompilationUnit;
+import bali.compiler.parser.tree.Node;
 import bali.compiler.validation.ConfigurableValidationEngine;
 import bali.compiler.validation.TypeDeclarationLibrary;
 import bali.compiler.validation.ValidationEngine;
 import bali.compiler.validation.ValidationException;
 import bali.compiler.validation.ValidationFailure;
 import bali.compiler.validation.visitor.AssignmentValidator;
-import bali.compiler.validation.visitor.ImportsValidator;
-import bali.compiler.validation.visitor.OperationValidator;
-import bali.compiler.validation.visitor.TypeResolvingValidator;
+import bali.compiler.validation.visitor.BranchStatementValidator;
 import bali.compiler.validation.visitor.ClassValidator;
 import bali.compiler.validation.visitor.ConstructionValidator;
 import bali.compiler.validation.visitor.ImplementationValidator;
+import bali.compiler.validation.visitor.ImportsValidator;
 import bali.compiler.validation.visitor.InterfaceValidator;
 import bali.compiler.validation.visitor.InvocationValidator;
 import bali.compiler.validation.visitor.ListLiteralValidator;
+import bali.compiler.validation.visitor.OperationValidator;
 import bali.compiler.validation.visitor.ReferenceValidator;
 import bali.compiler.validation.visitor.ReturnValueValidator;
+import bali.compiler.validation.visitor.ThrowStatementValidator;
+import bali.compiler.validation.visitor.TypeResolvingValidator;
 import bali.compiler.validation.visitor.UnaryOperationValidator;
 import bali.compiler.validation.visitor.Validator;
 
@@ -80,7 +83,7 @@ public class BaliCompiler {
 		}
 
 		Map<String, List<ValidationFailure>> packageFailures = validator.validate(compilationUnits);
-		if (packageFailures.size() > 0){
+		if (packageFailures.size() > 0) {
 			throw new ValidationException(packageFailures);
 		}
 
@@ -122,7 +125,7 @@ public class BaliCompiler {
 
 		BaliCompiler compiler = new BaliCompiler(
 				new ANTLRParserManager(),
-				new ConfigurableValidationEngine(new Array<Validator<CompilationUnit>>(new Validator[]{
+				new ConfigurableValidationEngine(new Array<Validator<? extends Node>>(new Validator[]{
 						new ImportsValidator(library),
 						new InterfaceValidator(library),
 						new ClassValidator(library),
@@ -135,7 +138,9 @@ public class BaliCompiler {
 						new UnaryOperationValidator(),
 						new OperationValidator(),
 						new AssignmentValidator(),
-						new ConstructionValidator()
+						new ConstructionValidator(),
+						new ThrowStatementValidator(library),
+						new BranchStatementValidator()
 				})),
 				new ConfigurablePackageGenerator(
 						new ASMPackageClassGenerator(),
@@ -153,9 +158,9 @@ public class BaliCompiler {
 			System.err.println();
 			for (String failedFile : failedFiles) {
 				List<ValidationFailure> failures = e.getFailures(failedFile);
-				if (failures.size() > 0){
+				if (failures.size() > 0) {
 					System.err.println("Unit " + failedFile + BALI_SOURCE_FILE_EXTENSION + " failed with " + failures.size() + " errors");
-					for (ValidationFailure failure : failures){
+					for (ValidationFailure failure : failures) {
 						System.err.println("\t" + failure.getNode().getLine() + ": " + failure.getMessage());
 					}
 				}

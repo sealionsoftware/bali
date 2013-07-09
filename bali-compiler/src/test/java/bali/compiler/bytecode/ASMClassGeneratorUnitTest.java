@@ -1,9 +1,7 @@
 package bali.compiler.bytecode;
 
-import bali.*;
 import bali.Boolean;
 import bali.Byte;
-import bali.Integer;
 import bali.Number;
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.Class;
@@ -13,7 +11,7 @@ import bali.compiler.parser.tree.Field;
 import bali.compiler.parser.tree.Interface;
 import bali.compiler.parser.tree.Method;
 import bali.compiler.parser.tree.NumberLiteralExpression;
-import bali.compiler.parser.tree.Return;
+import bali.compiler.parser.tree.ReturnStatement;
 import bali.compiler.parser.tree.Type;
 import junit.framework.Assert;
 import org.junit.Before;
@@ -85,7 +83,7 @@ public class ASMClassGeneratorUnitTest {
 	public void testGenerateClassWithVoidDeclaration() throws Exception {
 
 		CodeBlock codeBlock = new CodeBlock();
-		codeBlock.addStatement(new Return());
+		codeBlock.addStatement(new ReturnStatement());
 
 		Method declaration = new Method();
 		declaration.setName("aMethod");
@@ -111,7 +109,7 @@ public class ASMClassGeneratorUnitTest {
 		NumberLiteralExpression nlv = new NumberLiteralExpression();
 		nlv.setSerialization("1");
 
-		Return ret = new Return();
+		ReturnStatement ret = new ReturnStatement();
 		ret.setValue(nlv);
 
 		CodeBlock codeBlock = new CodeBlock();
@@ -143,7 +141,7 @@ public class ASMClassGeneratorUnitTest {
 		argument.setName("anArgument");
 
 		CodeBlock codeBlock = new CodeBlock();
-		codeBlock.addStatement(new Return());
+		codeBlock.addStatement(new ReturnStatement());
 
 		Method declaration = new Method();
 		declaration.setName("aMethod");
@@ -171,7 +169,7 @@ public class ASMClassGeneratorUnitTest {
 		argument.setName("anArgument");
 
 		CodeBlock codeBlock = new CodeBlock();
-		codeBlock.addStatement(new Return());
+		codeBlock.addStatement(new ReturnStatement());
 
 		Method declaration = new Method();
 		declaration.setName("aMethod");

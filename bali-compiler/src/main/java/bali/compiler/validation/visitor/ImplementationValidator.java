@@ -17,15 +17,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Checks that classes implement their declared interfaces correctly
+ * <p/>
+ * Supplies method access modifiers
+ * <p/>
  * User: Richard
  * Date: 14/05/13
  */
 public class ImplementationValidator implements Validator<CompilationUnit> {
 
-	// Engages at the root of the AST, constructs a lookup table
 	public List<ValidationFailure> validate(CompilationUnit unit) {
 
-		Map<String, TypeDeclaration> interfaces = new HashMap<>();
+		Map<String, TypeDeclaration<MethodDeclaration>> interfaces = new HashMap<>();
 
 		for (Interface iface : unit.getInterfaces()) {
 			interfaces.put(iface.getQualifiedClassName(), iface);
@@ -45,13 +48,15 @@ public class ImplementationValidator implements Validator<CompilationUnit> {
 
 	}
 
-	private List<ValidationFailure> validate(Class clazz, Map<String, TypeDeclaration> interfaces) {
+	private List<ValidationFailure> validate(Class clazz, Map<String, TypeDeclaration<MethodDeclaration>> interfaces) {
 
 		List<ValidationFailure> failures = new ArrayList<>();
 
 		for (Type type : clazz.getImplementations()) {
 
-			if (!interfaces.containsKey(type.getDeclaration().getQualifiedClassName())) {
+			TypeDeclaration<MethodDeclaration> ifaceDeclaration = type.getDeclaration();
+
+			if (!interfaces.containsKey(ifaceDeclaration.getQualifiedClassName())) {
 				failures.add(
 						new ValidationFailure(clazz, "Implementation declaration " + type.getClassName() + " is not a recognised interface")
 				);
@@ -67,6 +72,19 @@ public class ImplementationValidator implements Validator<CompilationUnit> {
 					}
 				}
 			}
+
+			for (MethodDeclaration method : ifaceDeclaration.getMethods()) {
+				List<Type> types = new ArrayList<>();
+				for (Declaration declaration : method.getArguments()) {
+					types.add(declaration.getType());
+				}
+				if (clazz.getDeclaration(method.getName(), types) == null) {
+					failures.add(
+							new ValidationFailure(clazz, "Class " + clazz.getClassName() + " does not implement method " + method)
+					);
+				}
+			}
+
 		}
 		return failures;
 	}

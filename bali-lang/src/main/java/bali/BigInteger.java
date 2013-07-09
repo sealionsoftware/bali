@@ -535,7 +535,7 @@ public class BigInteger implements Number {
 		return max - ret;
 	}
 
-	private class TooBigException extends Exception {
+	private class TooBigException extends Throwable {
 	}
 
 }

@@ -2,12 +2,14 @@ package bali.compiler.bytecode;
 
 import bali.compiler.parser.tree.Assignment;
 import bali.compiler.parser.tree.BooleanLiteralExpression;
+import bali.compiler.parser.tree.BreakStatement;
 import bali.compiler.parser.tree.CaseStatement;
 import bali.compiler.parser.tree.CatchStatement;
 import bali.compiler.parser.tree.CodeBlock;
 import bali.compiler.parser.tree.ConditionalBlock;
 import bali.compiler.parser.tree.ConditionalStatement;
 import bali.compiler.parser.tree.ConstructionExpression;
+import bali.compiler.parser.tree.ContinueStatement;
 import bali.compiler.parser.tree.Declaration;
 import bali.compiler.parser.tree.Expression;
 import bali.compiler.parser.tree.ForStatement;
@@ -16,10 +18,11 @@ import bali.compiler.parser.tree.ListLiteralExpression;
 import bali.compiler.parser.tree.NumberLiteralExpression;
 import bali.compiler.parser.tree.Operation;
 import bali.compiler.parser.tree.Reference;
-import bali.compiler.parser.tree.Return;
+import bali.compiler.parser.tree.ReturnStatement;
 import bali.compiler.parser.tree.Statement;
 import bali.compiler.parser.tree.StringLiteralExpression;
 import bali.compiler.parser.tree.SwitchStatement;
+import bali.compiler.parser.tree.ThrowStatement;
 import bali.compiler.parser.tree.TryStatement;
 import bali.compiler.parser.tree.Type;
 import bali.compiler.parser.tree.TypeDeclaration;
@@ -40,8 +43,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * TODO: Constant Pooling
- *
  * User: Richard
  * Date: 13/05/13
  */
@@ -52,6 +53,7 @@ public class ASMStackManager implements Opcodes {
 	private ASMConverter converter;
 	private Map<String, VariableInfo> declaredVariables = new HashMap<>();
 	private Deque<Label> scopeHorizonStack = new ArrayDeque<>();
+	private Deque<LoopContext> loopContextStack = new ArrayDeque<>();
 
 	private Type erasedType;
 
@@ -86,8 +88,14 @@ public class ASMStackManager implements Opcodes {
 			v.visitLineNumber(statement.getLine(), label);
 		}
 
-		if (statement instanceof Return) {
-			execute((Return) statement, v);
+		if (statement instanceof ReturnStatement) {
+			execute((ReturnStatement) statement, v);
+		} else if (statement instanceof ThrowStatement) {
+			execute((ThrowStatement) statement, v);
+		} else if (statement instanceof BreakStatement) {
+			execute((BreakStatement) statement, v);
+		} else if (statement instanceof ContinueStatement) {
+			execute((ContinueStatement) statement, v);
 		} else if (statement instanceof Expression) {
 			execute((Expression) statement, v);
 		} else if (statement instanceof Variable) {
@@ -102,14 +110,14 @@ public class ASMStackManager implements Opcodes {
 			execute((ForStatement) statement, v);
 		} else if (statement instanceof SwitchStatement) {
 			execute((SwitchStatement) statement, v);
-		}  else if (statement instanceof TryStatement) {
+		} else if (statement instanceof TryStatement) {
 			execute((TryStatement) statement, v);
 		} else {
 			throw new RuntimeException("Cannot handle Statement type: " + statement);
 		}
 	}
 
-	private void execute(Return statement, MethodVisitor v) {
+	private void execute(ReturnStatement statement, MethodVisitor v) {
 		Expression value = statement.getValue();
 		if (value != null) {
 			push(value, v);
@@ -119,16 +127,29 @@ public class ASMStackManager implements Opcodes {
 		}
 	}
 
+	private void execute(ThrowStatement statement, MethodVisitor v) {
+		push(statement.getValue(), v);
+		v.visitInsn(ATHROW);
+	}
+
+	private void execute(BreakStatement statement, MethodVisitor v) {
+		v.visitJumpInsn(GOTO, loopContextStack.peek().getEnd());
+	}
+
+	private void execute(ContinueStatement statement, MethodVisitor v) {
+		v.visitJumpInsn(GOTO, loopContextStack.peek().getStart());
+	}
+
 	private void execute(Expression statement, MethodVisitor v) {
 		push(statement, v);
-		if (statement.getType() != null){
+		if (statement.getType() != null) {
 			v.visitInsn(POP);
 		}
 	}
 
 	private void execute(Variable variable, MethodVisitor v) {
 		Expression value = variable.getValue();
-		if (value != null){
+		if (value != null) {
 			push(value, v);
 		} else {
 			v.visitInsn(ACONST_NULL);
@@ -169,7 +190,9 @@ public class ASMStackManager implements Opcodes {
 		push(statement.getCondition(), v);
 		v.visitFieldInsn(GETSTATIC, "bali/Boolean", "TRUE", "Lbali/Boolean;");
 		v.visitJumpInsn(IF_ACMPNE, end);
+		loopContextStack.push(new LoopContext(start, end));
 		execute(statement.getBody(), v);
+		loopContextStack.pop();
 		v.visitJumpInsn(GOTO, start);
 		v.visitLabel(end);
 	}
@@ -193,7 +216,9 @@ public class ASMStackManager implements Opcodes {
 		Type variableType = element.getType();
 		v.visitTypeInsn(CHECKCAST, converter.getInternalName(variableType.getDeclaration().getQualifiedClassName()));
 		addToVariables(element, end, v);
+		loopContextStack.push(new LoopContext(start, end));
 		execute(statement.getBody(), v);
+		loopContextStack.pop();
 		v.visitJumpInsn(GOTO, start);
 		v.visitLabel(end);
 		v.visitInsn(POP);
@@ -206,7 +231,7 @@ public class ASMStackManager implements Opcodes {
 		Label next = new Label();
 		push(statement.getValue(), v);
 		Type statementType = statement.getValue().getType();
-		for (CaseStatement caseStatement : statement.getCaseStatements()){
+		for (CaseStatement caseStatement : statement.getCaseStatements()) {
 			v.visitInsn(DUP);
 			push(caseStatement.getCondition(), v);
 			v.visitMethodInsn(invokeInsn(statementType), converter.getInternalName(statementType), "equalTo", "(Ljava/lang/Object;)Lbali/Boolean;");
@@ -217,7 +242,7 @@ public class ASMStackManager implements Opcodes {
 			v.visitLabel(next);
 			next = new Label();
 		}
-		if (statement.getDefaultStatement() != null){
+		if (statement.getDefaultStatement() != null) {
 			execute(statement.getDefaultStatement(), v);
 		}
 		v.visitLabel(end);
@@ -228,7 +253,7 @@ public class ASMStackManager implements Opcodes {
 		Label start = new Label();
 		Label end = new Label();
 		Map<Label, CatchStatement> markers = new LinkedHashMap<>();
-		for (CatchStatement catchStatement : statement.getCatchStatements()){
+		for (CatchStatement catchStatement : statement.getCatchStatements()) {
 			Label catchStart = new Label();
 			markers.put(catchStart, catchStatement);
 			v.visitTryCatchBlock(start, catchStart, catchStart, converter.getInternalName(catchStatement.getDeclaration().getType()));
@@ -237,7 +262,7 @@ public class ASMStackManager implements Opcodes {
 		execute(statement.getMain(), v);
 		v.visitJumpInsn(GOTO, end);
 
-		for (Map.Entry<Label, CatchStatement> entry : markers.entrySet()){
+		for (Map.Entry<Label, CatchStatement> entry : markers.entrySet()) {
 			Label catchEnd = new Label();
 			v.visitLabel(entry.getKey());
 			addToVariables(entry.getValue().getDeclaration(), catchEnd, v);
@@ -249,7 +274,7 @@ public class ASMStackManager implements Opcodes {
 		v.visitLabel(end);
 	}
 
-	private void addToVariables(Declaration declaration, Label end, MethodVisitor v){
+	private void addToVariables(Declaration declaration, Label end, MethodVisitor v) {
 		String variableName = declaration.getName();
 		Integer variableIndex = declaredVariables.size() + 1;
 		Label start = new Label();
@@ -266,7 +291,7 @@ public class ASMStackManager implements Opcodes {
 		v.visitVarInsn(ASTORE, variableIndex);
 	}
 
-	private int invokeInsn(Type t){
+	private int invokeInsn(Type t) {
 		return t.getDeclaration().getAbstract() ? INVOKEINTERFACE : INVOKEVIRTUAL;
 	}
 
@@ -290,7 +315,7 @@ public class ASMStackManager implements Opcodes {
 		} else if (value instanceof UnaryOperation) {
 			push((UnaryOperation) value, v);
 		} else if (value instanceof Operation) {
-			push((Operation ) value, v);
+			push((Operation) value, v);
 		} else {
 			throw new RuntimeException("Cannot push value of type " + value + " onto the stack");
 		}
@@ -298,7 +323,8 @@ public class ASMStackManager implements Opcodes {
 
 	public void push(NumberLiteralExpression value, MethodVisitor v) {
 		v.visitFieldInsn(GETSTATIC, "bali/_", "NUMBER_FACTORY", "Lbali/NumberFactory;");
-		push(value.getSerialization().toCharArray(), v);
+		v.visitLdcInsn(value.getSerialization());
+		v.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "toCharArray", "([C)V;");
 		v.visitMethodInsn(INVOKEVIRTUAL, "bali/NumberFactory", "forDecimalString", "([C)Lbali/Number;");
 	}
 
@@ -312,19 +338,9 @@ public class ASMStackManager implements Opcodes {
 		String internalName = converter.getInternalName(value.getType());
 		v.visitTypeInsn(NEW, internalName);
 		v.visitInsn(DUP);
-		push(string.toCharArray(), v);
+		v.visitLdcInsn(string);
+		v.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "toCharArray", "([C)V;");
 		v.visitMethodInsn(INVOKESPECIAL, internalName, "<init>", "([C)V");
-	}
-
-	public void push(char[] value, MethodVisitor v) {
-		push(value.length, v);
-		v.visitIntInsn(NEWARRAY, T_CHAR);
-		for (int i = 0; i < value.length; i++) {
-			v.visitInsn(DUP);
-			push(i, v);
-			push(value[i], v);
-			v.visitInsn(CASTORE);
-		}
 	}
 
 	public void push(ListLiteralExpression value, MethodVisitor v) {
@@ -404,32 +420,32 @@ public class ASMStackManager implements Opcodes {
 	}
 
 	public void pushInvocation(Expression target, Type valueType, List<Expression> arguments, String methodName, MethodVisitor v) {
-			push(target, v);
-			List<Type> argumentClasses = new ArrayList<>();
-			for (Expression argumentValue : arguments) {
-				push(argumentValue, v);
-				argumentClasses.add(argumentValue.getType());
-			}
-			Type targetType = target.getType();
-			Boolean erased = valueType != null && valueType.getErase();
-			v.visitMethodInsn(invokeInsn(targetType),
-					converter.getInternalName(targetType),
-					methodName,
-					converter.getMethodDescriptor(erased ? erasedType : valueType, argumentClasses));
-			if (erased) {
-				v.visitTypeInsn(CHECKCAST, converter.getInternalName(valueType.getDeclaration().getQualifiedClassName()));
-			}
+		push(target, v);
+		List<Type> argumentClasses = new ArrayList<>();
+		for (Expression argumentValue : arguments) {
+			push(argumentValue, v);
+			argumentClasses.add(argumentValue.getType());
 		}
+		Type targetType = target.getType();
+		Boolean erased = valueType != null && valueType.getErase();
+		v.visitMethodInsn(invokeInsn(targetType),
+				converter.getInternalName(targetType),
+				methodName,
+				converter.getMethodDescriptor(erased ? erasedType : valueType, argumentClasses));
+		if (erased) {
+			v.visitTypeInsn(CHECKCAST, converter.getInternalName(valueType.getDeclaration().getQualifiedClassName()));
+		}
+	}
 
 	public void push(int i, MethodVisitor v) {
 		if (i >= -1 && i <= 5) {
 			v.visitInsn(INTCODES[i + 1]);
-		} else if (i >= -128 || i < 128) {
+		} else if (i >= Byte.MIN_VALUE || i <= Byte.MAX_VALUE) {
 			v.visitIntInsn(BIPUSH, i);
-		} else if (i >= -32768 || i < -32768) {
+		} else if (i >= -Short.MIN_VALUE || i <= Short.MAX_VALUE) {
 			v.visitIntInsn(SIPUSH, i);
 		} else {
-			throw new RuntimeException("Cannot push integer of size" + i);
+			v.visitLdcInsn(i);
 		}
 	}
 

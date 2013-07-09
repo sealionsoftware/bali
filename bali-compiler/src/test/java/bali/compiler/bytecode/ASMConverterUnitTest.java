@@ -1,6 +1,5 @@
 package bali.compiler.bytecode;
 
-import bali.*;
 import bali.Boolean;
 import bali.Number;
 import bali.String;

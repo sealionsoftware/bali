@@ -1,6 +1,6 @@
 package greetings;
 
-import exception.Doer;
+import bali.Executable;
 import exception.TryDoer;
 
 /**
@@ -9,9 +9,9 @@ import exception.TryDoer;
  */
 public class ExceptionRunner {
 
-	public static void main(String[] args) {
-		Doer doer = new TryDoer();
-		doer.goDo();
+	public static void main(String[] args) throws Exception {
+		Executable tryer = new TryDoer();
+		tryer.execute();
 	}
 
 }

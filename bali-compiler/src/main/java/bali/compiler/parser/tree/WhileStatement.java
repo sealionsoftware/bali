@@ -1,16 +1,14 @@
 package bali.compiler.parser.tree;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * User: Richard
  * Date: 09/05/13
  */
-public class WhileStatement extends Statement {
+public class WhileStatement extends LoopStatement {
 
 	private Expression condition;
-	private CodeBlock body;
 
 	public WhileStatement(Integer line, Integer character) {
 		super(line, character);
@@ -24,16 +22,8 @@ public class WhileStatement extends Statement {
 		this.condition = condition;
 	}
 
-	public CodeBlock getBody() {
-		return body;
-	}
-
-	public void setBody(CodeBlock body) {
-		this.body = body;
-	}
-
 	public List<Node> getChildren() {
-		List<Node> children = new ArrayList<>();
+		List<Node> children = super.getChildren();
 		children.add(condition);
 		children.add(body);
 		return children;

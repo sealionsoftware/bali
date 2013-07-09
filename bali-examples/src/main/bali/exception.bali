@@ -1,24 +1,22 @@
 import bali.Console;
 import bali.Boolean;
 import bali.String;
-import bali.NullReferenceException;
+import bali.Executable;
+import bali.Exception;
 
-interface Doer {
- 	declare goDo();
-}
+class TryDoer() implements Executable {
 
-class TryDoer() implements Doer {
-
- 	method goDo(){
-
-		Boolean aNull;
+ 	method execute(){
 
 		try {
-			aNull.not();
-		} catch (NullReferenceException e){
-          	CONSOLE.writeLine("Attempt to invoke ".join(e.getMethod()).join("() on null reference"));
+			throw new Exception("Test");
+		} catch (Exception e){
+            throw new Exception(e.getProblem() + " 2");
+        } catch (Exception e){
+            CONSOLE << e.getProblem();
         }
 
+        throw new Exception("Uncaught");
  	}
 
 }

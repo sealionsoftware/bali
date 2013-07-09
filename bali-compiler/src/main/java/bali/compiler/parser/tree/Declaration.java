@@ -12,7 +12,8 @@ public class Declaration extends Node {
 	private Type type;
 	private String name;
 
-	public Declaration(){}
+	public Declaration() {
+	}
 
 	public Declaration(Integer line, Integer character) {
 		super(line, character);
@@ -36,9 +37,29 @@ public class Declaration extends Node {
 
 	public List<Node> getChildren() {
 		ArrayList<Node> children = new ArrayList<>();
-		if (type != null){
+		if (type != null) {
 			children.add(type);
 		}
 		return children;
+	}
+
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Declaration that = (Declaration) o;
+
+		if (name != null ? !name.equals(that.name) : that.name != null) return false;
+		if (type != null ? !type.equals(that.type) : that.type != null) return false;
+
+		return true;
+	}
+
+	public String toString() {
+		String ret = type.toString();
+		if (name != null) {
+			ret += name;
+		}
+		return ret;
 	}
 }

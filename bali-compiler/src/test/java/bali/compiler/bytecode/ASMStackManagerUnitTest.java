@@ -1,20 +1,12 @@
 package bali.compiler.bytecode;
 
-import bali.compiler.parser.tree.NumberLiteralExpression;
-import bali.compiler.parser.tree.Reference;
-import bali.compiler.parser.tree.Return;
-import bali.compiler.parser.tree.Statement;
-import bali.compiler.parser.tree.Type;
-import bali.compiler.parser.tree.Variable;
-import junit.framework.TestSuite;
-import org.junit.Test;
 import org.mockito.Mockito;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 /**
  * TODO: This sucks
- *
+ * <p/>
  * User: Richard
  * Date: 14/05/13
  */

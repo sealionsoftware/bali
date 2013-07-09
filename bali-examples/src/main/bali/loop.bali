@@ -1,18 +1,18 @@
 import bali.Console;
 import bali.Number;
+import bali.Executable;
 
-interface Doer {
- 	declare goDo();
-}
+class WhileDoer() implements Executable {
 
-class WhileDoer() implements Doer {
-
- 	method goDo(){
+ 	method execute(){
 
 		Number flag = 0;
 
 	    while (flag.lessThan(4)){
 	        CONSOLE.writeLine("Hello");
+	        if (flag.greaterThan(1)){
+	            break;
+	        }
 	        flag = flag.add(1);
 	    }
  	}

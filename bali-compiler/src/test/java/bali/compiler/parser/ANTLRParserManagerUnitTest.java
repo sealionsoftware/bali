@@ -16,7 +16,7 @@ import bali.compiler.parser.tree.Invocation;
 import bali.compiler.parser.tree.Method;
 import bali.compiler.parser.tree.NumberLiteralExpression;
 import bali.compiler.parser.tree.Reference;
-import bali.compiler.parser.tree.Return;
+import bali.compiler.parser.tree.ReturnStatement;
 import bali.compiler.parser.tree.Variable;
 import bali.compiler.parser.tree.WhileStatement;
 import junit.framework.Assert;
@@ -131,7 +131,7 @@ public class ANTLRParserManagerUnitTest {
 		Assert.assertEquals("While", 2, (((WhileStatement) body.getStatements().get(2)).getBody().getChildren().size()));
 		Assert.assertEquals("For", 1, ((ForStatement) ((WhileStatement) body.getStatements().get(2)).getBody().getStatements().get(0)).getBody().getChildren().size());
 		Assert.assertEquals("If", 1, ((ConditionalStatement) ((WhileStatement) body.getStatements().get(2)).getBody().getStatements().get(1)).getConditionalBlocks().get(0).getBody().getChildren().size());
-		Assert.assertEquals("Return Statement", "anArgument", ((Reference) ((Return) body.getStatements().get(3)).getValue()).getName());
+		Assert.assertEquals("Return Statement", "anArgument", ((Reference) ((ReturnStatement) body.getStatements().get(3)).getValue()).getName());
 	}
 
 

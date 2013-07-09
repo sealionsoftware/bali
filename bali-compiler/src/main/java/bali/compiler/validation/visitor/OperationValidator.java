@@ -1,13 +1,8 @@
 package bali.compiler.validation.visitor;
 
-import bali.compiler.parser.tree.CompilationUnit;
 import bali.compiler.parser.tree.MethodDeclaration;
-import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.Operation;
-import bali.compiler.parser.tree.Type;
 import bali.compiler.parser.tree.TypeDeclaration;
-import bali.compiler.parser.tree.UnaryOperation;
-import bali.compiler.validation.TypeDeclarationLibrary;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -17,23 +12,7 @@ import java.util.List;
  * User: Richard
  * Date: 03/07/13
  */
-public class OperationValidator implements Validator<CompilationUnit> {
-
-	public List<ValidationFailure> validate(CompilationUnit node) {
-		return walk(node);
-	}
-
-	private List<ValidationFailure> walk(Node node) {
-		List<ValidationFailure> ret = new ArrayList<>();
-		for (Node child : node.getChildren()) {
-			if (child instanceof Operation) {
-				ret.addAll(validate((Operation) child));
-			}
-			ret.addAll(walk(child));
-		}
-		return ret;
-	}
-
+public class OperationValidator implements Validator<Operation> {
 
 	public List<ValidationFailure> validate(Operation node) {
 

@@ -8,14 +8,14 @@ import java.util.List;
  * User: Richard
  * Date: 05/05/13
  */
-public class Return extends Statement {
+public class ReturnStatement extends Statement {
 
 	private Expression value;
 
-	public Return() {
+	public ReturnStatement() {
 	}
 
-	public Return(Integer line, Integer character) {
+	public ReturnStatement(Integer line, Integer character) {
 		super(line, character);
 	}
 

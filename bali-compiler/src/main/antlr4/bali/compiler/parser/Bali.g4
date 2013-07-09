@@ -48,7 +48,7 @@ codeBlock:                  '{' statement* '}' ;
 
 statement:                  lineStatement | controlStatement ;
 
-lineStatement:              (variableDeclaration | assignment | returnStatement | expression) ';' ;
+lineStatement:              (variableDeclaration | assignment | returnStatement | throwStatement | breakStatement | continueStatement | expression) ';' ;
 
 controlStatement:           conditionalStatement | tryStatement | whileStatement | forStatement | switchStatement ;
 
@@ -88,6 +88,12 @@ operation:                  (expressionForOperation OPERATOR)+ expressionForOper
 construction:               'new' typeDeclaration argumentList ;
 
 returnStatement:            'return' expression? ;
+
+throwStatement:             'throw' expression ;
+
+breakStatement:             'break' ;
+
+continueStatement:          'continue' ;
 
 argumentDeclarationList:    '(' (argumentDeclaration ( ',' argumentDeclaration)*)? ')' ;
 

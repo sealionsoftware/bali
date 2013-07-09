@@ -1,10 +1,9 @@
 package bali.compiler.validation.visitor;
 
-import bali.compiler.parser.tree.CompilationUnit;
 import bali.compiler.parser.tree.Expression;
 import bali.compiler.parser.tree.Method;
 import bali.compiler.parser.tree.Node;
-import bali.compiler.parser.tree.Return;
+import bali.compiler.parser.tree.ReturnStatement;
 import bali.compiler.parser.tree.Statement;
 import bali.compiler.parser.tree.Type;
 import bali.compiler.validation.ValidationFailure;
@@ -16,17 +15,7 @@ import java.util.List;
  * User: Richard
  * Date: 14/05/13
  */
-public class ReturnValueValidator implements Validator<CompilationUnit> {
-
-	public List<ValidationFailure> validate(CompilationUnit node) {
-		List<ValidationFailure> failures = new ArrayList<>();
-		for (bali.compiler.parser.tree.Class clazz : node.getClasses()) {
-			for (Method method : clazz.getMethods()) {
-				failures.addAll(validate(method));
-			}
-		}
-		return failures;
-	}
+public class ReturnValueValidator implements Validator<Method> {
 
 	// Engages methods, ensures that their return values are correct
 	public List<ValidationFailure> validate(Method method) {
@@ -39,11 +28,11 @@ public class ReturnValueValidator implements Validator<CompilationUnit> {
 		Statement lastStatement = statements.size() > 0 ? statements.get(statements.size() - 1) : null;
 
 		if (method.getType() != null) {
-			if (!(lastStatement instanceof Return)) {
+			if (!(lastStatement instanceof ReturnStatement)) {
 				failures.add(new ValidationFailure(lastStatement, "Method does not return a " + method.getType()));
 			}
-		} else if (!(lastStatement instanceof Return)) {
-			statements.add(new Return());
+		} else if (!(lastStatement instanceof ReturnStatement)) {
+			statements.add(new ReturnStatement());
 		}
 
 		return failures;
@@ -59,8 +48,8 @@ public class ReturnValueValidator implements Validator<CompilationUnit> {
 		}
 
 		public void validate(Node node) {
-			if (node instanceof Return) {
-				Return ret = (Return) node;
+			if (node instanceof ReturnStatement) {
+				ReturnStatement ret = (ReturnStatement) node;
 				Expression value = ret.getValue();
 				if (type == null) {
 					if (value != null) {

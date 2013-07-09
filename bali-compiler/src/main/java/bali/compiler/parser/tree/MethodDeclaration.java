@@ -12,7 +12,8 @@ public class MethodDeclaration extends Declaration {
 	private String operator;
 	private List<Declaration> arguments = new ArrayList<>();
 
-	public MethodDeclaration() {}
+	public MethodDeclaration() {
+	}
 
 	public MethodDeclaration(Integer line, Integer character) {
 		super(line, character);
@@ -39,4 +40,20 @@ public class MethodDeclaration extends Declaration {
 		ret.addAll(arguments);
 		return ret;
 	}
+
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass().isAssignableFrom(o.getClass())) return false;
+
+		MethodDeclaration that = (MethodDeclaration) o;
+
+		if (!arguments.equals(that.arguments)) return false;
+
+		return true;
+	}
+
+	public String toString() {
+		return getName() + "(" + arguments + ")";
+	}
+
 }

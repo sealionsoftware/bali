@@ -1,17 +1,15 @@
 package bali.compiler.parser.tree;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * User: Richard
  * Date: 09/05/13
  */
-public class ForStatement extends Statement {
+public class ForStatement extends LoopStatement {
 
 	private Declaration element;
 	private Expression collection;
-	private CodeBlock body;
 
 	public ForStatement(Integer line, Integer character) {
 		super(line, character);
@@ -33,19 +31,10 @@ public class ForStatement extends Statement {
 		this.collection = collection;
 	}
 
-	public CodeBlock getBody() {
-		return body;
-	}
-
-	public void setBody(CodeBlock body) {
-		this.body = body;
-	}
-
 	public List<Node> getChildren() {
-		List<Node> children = new ArrayList<>();
+		List<Node> children = super.getChildren();
 		children.add(element);
 		children.add(collection);
-		children.add(body);
 		return children;
 	}
 }
