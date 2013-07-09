@@ -211,7 +211,7 @@ public class ASMStackManager implements Opcodes {
 		v.visitFieldInsn(GETSTATIC, "bali/Boolean", "TRUE", "Lbali/Boolean;");
 		v.visitJumpInsn(IF_ACMPNE, end);
 		v.visitInsn(DUP);
-		v.visitMethodInsn(INVOKEINTERFACE, "bali/Iterator", "next", "()Ljava/lang/Object;"); // TODO: INVOKE VIRTUAL ON REAL TYPE?
+		v.visitMethodInsn(INVOKEINTERFACE, "bali/Iterator", "next", "()Ljava/lang/Object;");
 		Declaration element = statement.getElement();
 		Type variableType = element.getType();
 		v.visitTypeInsn(CHECKCAST, converter.getInternalName(variableType.getDeclaration().getQualifiedClassName()));
@@ -324,7 +324,7 @@ public class ASMStackManager implements Opcodes {
 	public void push(NumberLiteralExpression value, MethodVisitor v) {
 		v.visitFieldInsn(GETSTATIC, "bali/_", "NUMBER_FACTORY", "Lbali/NumberFactory;");
 		v.visitLdcInsn(value.getSerialization());
-		v.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "toCharArray", "([C)V;");
+		v.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "toCharArray", "()[C");
 		v.visitMethodInsn(INVOKEVIRTUAL, "bali/NumberFactory", "forDecimalString", "([C)Lbali/Number;");
 	}
 
@@ -339,7 +339,7 @@ public class ASMStackManager implements Opcodes {
 		v.visitTypeInsn(NEW, internalName);
 		v.visitInsn(DUP);
 		v.visitLdcInsn(string);
-		v.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "toCharArray", "([C)V;");
+		v.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "toCharArray", "()[C");
 		v.visitMethodInsn(INVOKESPECIAL, internalName, "<init>", "([C)V");
 	}
 
