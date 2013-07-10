@@ -135,6 +135,21 @@ public class Type extends Node {
 		throw new CouldNotResolveException();
 	}
 
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Type other = (Type) o;
+		String thisClassName = declaration != null ? declaration.getQualifiedClassName() : className;
+		String thatClassName = other.declaration != null ? other.declaration.getQualifiedClassName() : other.className;
+
+		if (!thisClassName.equals(thatClassName)){
+			return false;
+		}
+
+		return parameters.equals(other.parameters);
+	}
+
 	public String toString() {
 
 		String declarationClassName = declaration != null ? declaration.getQualifiedClassName() : className;

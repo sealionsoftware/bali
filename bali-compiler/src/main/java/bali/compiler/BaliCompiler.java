@@ -133,12 +133,12 @@ public class BaliCompiler {
 						new ListLiteralValidator(),
 						new ImplementationValidator(),
 						new ReferenceValidator(library),
-						new ReturnValueValidator(),
 						new InvocationValidator(),
 						new UnaryOperationValidator(),
 						new OperationValidator(),
 						new AssignmentValidator(),
 						new ConstructionValidator(),
+						new ReturnValueValidator(),
 						new ThrowStatementValidator(library),
 						new BranchStatementValidator()
 				})),

@@ -5,6 +5,7 @@ import bali.compiler.parser.tree.CompilationUnit;
 import bali.compiler.parser.tree.Expression;
 import bali.compiler.parser.tree.Field;
 import bali.compiler.parser.tree.Node;
+import bali.compiler.parser.tree.Reference;
 import bali.compiler.parser.tree.Type;
 import bali.compiler.validation.ValidationFailure;
 
@@ -44,11 +45,15 @@ public class AssignmentValidator implements Validator<CompilationUnit> {
 
 			List<ValidationFailure> failures = new ArrayList<>();
 
-			Type site = statement.getReference().getType();
+			Reference reference = statement.getReference();
+			Type site = reference.getType();
 			Type value = statement.getValue().getType();
 
 			if (value == null || !value.isAssignableTo(site)) {
 				failures.add(new ValidationFailure(statement, "Cannot assign expression of type " + value + " to reference of type " + site));
+			}
+			if (reference.getDeclaration().getFinal()){
+				failures.add(new ValidationFailure(statement, "Cannot assign an expression to a constant reference"));
 			}
 
 			return failures;

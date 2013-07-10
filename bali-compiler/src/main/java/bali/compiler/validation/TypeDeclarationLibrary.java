@@ -1,6 +1,7 @@
 package bali.compiler.validation;
 
 import bali.Operator;
+import bali.compiler.parser.tree.Argument;
 import bali.compiler.parser.tree.Declaration;
 import bali.compiler.parser.tree.MethodDeclaration;
 import bali.compiler.parser.tree.Type;
@@ -77,7 +78,7 @@ public class TypeDeclarationLibrary {
 			methodDeclaration.setName(method.getName());
 			methodDeclaration.setType(getType(method.getGenericReturnType()));
 			for (java.lang.reflect.Type argumentType : method.getGenericParameterTypes()){
-				Declaration declaration = new Declaration();
+				Declaration declaration = new Argument();
 				declaration.setType(getType(argumentType));
 				methodDeclaration.addArgument(declaration);
 			}

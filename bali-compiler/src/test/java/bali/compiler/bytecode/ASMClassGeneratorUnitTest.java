@@ -4,6 +4,7 @@ import bali.Boolean;
 import bali.Byte;
 import bali.Number;
 import bali.compiler.GeneratedClass;
+import bali.compiler.parser.tree.Argument;
 import bali.compiler.parser.tree.Class;
 import bali.compiler.parser.tree.CodeBlock;
 import bali.compiler.parser.tree.Declaration;
@@ -136,7 +137,7 @@ public class ASMClassGeneratorUnitTest {
 		type.setClassName("Number");
 		type.setDeclaration(new TestDeclaration("bali.Number"));
 
-		Declaration argument = new Declaration();
+		Declaration argument = new Argument();
 		argument.setType(type);
 		argument.setName("anArgument");
 
@@ -164,7 +165,7 @@ public class ASMClassGeneratorUnitTest {
 		type.setClassName("Number");
 		type.setDeclaration(new TestDeclaration("bali.Number"));
 
-		Declaration argument = new Declaration();
+		Declaration argument = new Argument();
 		argument.setType(type);
 		argument.setName("anArgument");
 

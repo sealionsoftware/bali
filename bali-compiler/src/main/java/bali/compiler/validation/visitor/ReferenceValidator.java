@@ -1,6 +1,7 @@
 package bali.compiler.validation.visitor;
 
 import bali._;
+import bali.compiler.parser.tree.Argument;
 import bali.compiler.parser.tree.CatchStatement;
 import bali.compiler.parser.tree.CodeBlock;
 import bali.compiler.parser.tree.CompilationUnit;
@@ -44,7 +45,7 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 				type.setDeclaration(library.getTypeDeclaration(f.getType().getName()));
 			} catch (ClassNotFoundException e) {
 			}
-			Declaration d = new Declaration();
+			Declaration d = new Argument();
 			d.setName(f.getName());
 			d.setType(type);
 			langDeclarations.add(d);
@@ -99,10 +100,13 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 	}
 
 	private void validate(bali.compiler.parser.tree.Class clazz, ReferenceValidatorTypeAgent agent) {
+		List<Declaration> referenceableFields = new ArrayList<>();
+		referenceableFields.addAll(clazz.getArguments());
+		referenceableFields.addAll(clazz.getFields());
 		pushAndWalk(clazz, agent, new Scope(
 				Reference.ReferenceScope.FIELD,
 				clazz.getQualifiedClassName(),
-				clazz.getFields()
+				referenceableFields
 		));
 	}
 
@@ -206,7 +210,7 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 				return;
 			}
 
-			value.setType(declaration.getType());
+			value.setDeclaration(declaration);
 			value.setHostClass(declarationScope.getClassName());
 			value.setScope(declarationScope.getScope());
 		}

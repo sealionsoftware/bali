@@ -1,0 +1,38 @@
+import bali.Boolean;
+import bali.Number;
+import bali.String;
+import bali.Executable;
+
+interface AnInterface {
+
+	declare String getFields(Boolean includeNumber);
+
+}
+
+class AnObject(String aString, Number aNumber) implements AnInterface {
+
+	field String aStringField = aString;
+
+	method String getFields(Boolean includeNumber){
+
+		if (includeNumber){
+			return aString + NUMBER_FACTORY.format(aNumber);
+		}
+
+		return aString;
+	}
+
+}
+
+class ObjectConstructor() implements Executable {
+
+ 	method execute(){
+
+ 	    AnInterface anObject = new AnObject("TEST", 1);
+
+ 	    CONSOLE << anObject.getFields(false);
+ 	    CONSOLE << anObject.getFields(true);
+
+ 	}
+
+}

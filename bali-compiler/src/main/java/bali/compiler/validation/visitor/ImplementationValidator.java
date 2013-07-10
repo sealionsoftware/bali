@@ -65,7 +65,11 @@ public class ImplementationValidator implements Validator<CompilationUnit> {
 
 			for (Method method : clazz.getMethods()) {
 				for (TypeDeclaration iface : interfaces.values()) {
-					MethodDeclaration declaration = iface.getDeclaration(method.getName(), method.getArguments());
+					List<Type> argumentTypes = new ArrayList<>();
+					for (Declaration declaration : method.getArguments()){
+						argumentTypes.add(declaration.getType());
+					}
+					MethodDeclaration declaration = iface.getDeclaration(method.getName(), argumentTypes);
 					if (declaration != null) {
 						method.setDeclared(true);
 						break;

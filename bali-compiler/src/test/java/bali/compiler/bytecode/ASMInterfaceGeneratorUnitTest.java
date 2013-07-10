@@ -3,6 +3,7 @@ package bali.compiler.bytecode;
 import bali.Number;
 
 import bali.compiler.GeneratedClass;
+import bali.compiler.parser.tree.Argument;
 import bali.compiler.parser.tree.Declaration;
 import bali.compiler.parser.tree.Interface;
 import bali.compiler.parser.tree.MethodDeclaration;
@@ -94,7 +95,7 @@ public class ASMInterfaceGeneratorUnitTest {
 		type.setClassName("Number");
 		type.setDeclaration(new TestDeclaration("bali.Number"));
 
-		Declaration argument = new Declaration(0, 0);
+		Declaration argument = new Argument(0, 0);
 		argument.setType(type);
 		argument.setName("anArgument");
 

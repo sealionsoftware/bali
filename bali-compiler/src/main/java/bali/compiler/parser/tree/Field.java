@@ -25,6 +25,10 @@ public class Field extends Declaration {
 		this.value = value;
 	}
 
+	public Boolean getFinal() {
+		return false;
+	}
+
 	public List<Node> getChildren() {
 		List<Node> children = super.getChildren();
 		if (value != null) {

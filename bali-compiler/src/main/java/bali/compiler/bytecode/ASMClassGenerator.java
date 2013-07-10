@@ -6,11 +6,13 @@ import bali.compiler.parser.tree.Declaration;
 import bali.compiler.parser.tree.Expression;
 import bali.compiler.parser.tree.Field;
 import bali.compiler.parser.tree.Method;
-import bali.compiler.parser.tree.Variable;
+import bali.compiler.parser.tree.Type;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,7 +33,7 @@ public class ASMClassGenerator implements Generator<Class, GeneratedClass> {
 		}
 
 		cw.visit(V1_7,
-				ACC_PUBLIC + ACC_SUPER,
+				ACC_PUBLIC + ACC_SUPER + ACC_FINAL,
 				converter.getInternalName(input.getQualifiedClassName()),
 				null,
 				"java/lang/Object",
@@ -52,6 +54,15 @@ public class ASMClassGenerator implements Generator<Class, GeneratedClass> {
 			}
 		}
 
+		for (Declaration argument : input.getArguments()) {
+			cw.visitField(ACC_PRIVATE + ACC_FINAL,
+					argument.getName(),
+					converter.getTypeDescriptor(argument.getType()),
+					null,
+					null
+			).visitEnd();
+		}
+
 		buildConstructor(values, cw, input);
 
 		for (Method method : input.getMethods()) {
@@ -67,19 +78,35 @@ public class ASMClassGenerator implements Generator<Class, GeneratedClass> {
 
 		ASMStackManager manager = new ASMStackManager(converter);
 
+		List<Type> argumentTypes = new ArrayList<>();
+		for (Declaration argument : input.getArguments()){
+			argumentTypes.add(argument.getType());
+		}
+
 		MethodVisitor initv = cw.visitMethod(ACC_PUBLIC,
 				"<init>",
-				"()V",
+				converter.getMethodDescriptor(null, argumentTypes),
 				null,
 				null
 		);
 
 		initv.visitCode();
 		initv.visitVarInsn(ALOAD, 0);
+		initv.visitInsn(DUP);
 		initv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V");
 
+		int i = 1;
+		for (Declaration declaration : input.getArguments()){
+			initv.visitInsn(DUP);
+			initv.visitVarInsn(ALOAD, i++);
+			initv.visitFieldInsn(PUTFIELD,
+					converter.getInternalName(input.getQualifiedClassName()),
+					declaration.getName(),
+					converter.getTypeDescriptor(declaration.getType()));
+		}
+
 		for (Map.Entry<String, Expression> valueEntry : values.entrySet()) {
-			initv.visitVarInsn(ALOAD, 0);
+			initv.visitInsn(DUP);
 			Expression value = valueEntry.getValue();
 			manager.push(value, initv);
 			initv.visitFieldInsn(PUTFIELD,
@@ -87,6 +114,7 @@ public class ASMClassGenerator implements Generator<Class, GeneratedClass> {
 					valueEntry.getKey(),
 					converter.getTypeDescriptor(value.getType()));
 		}
+		initv.visitInsn(POP);
 		initv.visitInsn(RETURN);
 		initv.visitMaxs(1, 1);
 		initv.visitEnd();
@@ -96,8 +124,12 @@ public class ASMClassGenerator implements Generator<Class, GeneratedClass> {
 	private void buildMethod(Method method, ClassWriter cw) {
 
 		ASMStackManager manager = new ASMStackManager(converter);
+		int flags = (method.getDeclared() ? ACC_PUBLIC : ACC_PRIVATE);
+		if (method.getFinal()){
+			flags += ACC_FINAL;
+		}
 
-		MethodVisitor methodVisitor = cw.visitMethod(method.getDeclared() ? ACC_PUBLIC : ACC_PRIVATE,
+		MethodVisitor methodVisitor = cw.visitMethod(flags,
 				method.getName(),
 				converter.getMethodDescriptor(method),
 				null,
@@ -105,7 +137,7 @@ public class ASMClassGenerator implements Generator<Class, GeneratedClass> {
 		);
 
 		methodVisitor.visitCode();
-		manager.execute(method.getBody(), methodVisitor);
+		manager.execute(method, methodVisitor);
 
 		for (VariableInfo variable : manager.getDeclaredVariables()) {
 			Declaration declaration = variable.getDeclaration();

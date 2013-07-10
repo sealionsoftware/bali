@@ -15,6 +15,7 @@ import bali.compiler.parser.tree.Expression;
 import bali.compiler.parser.tree.ForStatement;
 import bali.compiler.parser.tree.Invocation;
 import bali.compiler.parser.tree.ListLiteralExpression;
+import bali.compiler.parser.tree.Method;
 import bali.compiler.parser.tree.NumberLiteralExpression;
 import bali.compiler.parser.tree.Operation;
 import bali.compiler.parser.tree.Reference;
@@ -70,6 +71,26 @@ public class ASMStackManager implements Opcodes {
 	}
 
 	// Execute Methods
+
+	public void execute(Method method, MethodVisitor v) {
+		Label start = new Label();
+		Label end = new Label();
+		v.visitLabel(start);
+		for (Declaration declaration : method.getArguments()){
+			declaredVariables.put(
+					declaration.getName(),
+					new VariableInfo(
+							declaration,
+							start,
+							end,
+							declaredVariables.size() + 1
+					)
+			);
+		}
+		execute(method.getBody(), v);
+		v.visitLabel(end);
+
+	}
 
 	public void execute(CodeBlock codeBlock, MethodVisitor v) {
 		scopeHorizonStack.push(new Label());
@@ -154,8 +175,9 @@ public class ASMStackManager implements Opcodes {
 		} else {
 			v.visitInsn(ACONST_NULL);
 		}
-
-		addToVariables(variable.getDeclaration(), scopeHorizonStack.peek(), v);
+		Label varStart = new Label();
+		v.visitLabel(varStart);
+		addToVariables(variable.getDeclaration(), varStart, scopeHorizonStack.peek(), v);
 	}
 
 	private void execute(Assignment statement, MethodVisitor v) {
@@ -215,7 +237,7 @@ public class ASMStackManager implements Opcodes {
 		Declaration element = statement.getElement();
 		Type variableType = element.getType();
 		v.visitTypeInsn(CHECKCAST, converter.getInternalName(variableType.getDeclaration().getQualifiedClassName()));
-		addToVariables(element, end, v);
+		addToVariables(element, start, end, v);
 		loopContextStack.push(new LoopContext(start, end));
 		execute(statement.getBody(), v);
 		loopContextStack.pop();
@@ -263,9 +285,10 @@ public class ASMStackManager implements Opcodes {
 		v.visitJumpInsn(GOTO, end);
 
 		for (Map.Entry<Label, CatchStatement> entry : markers.entrySet()) {
+			Label catchStart = entry.getKey();
 			Label catchEnd = new Label();
-			v.visitLabel(entry.getKey());
-			addToVariables(entry.getValue().getDeclaration(), catchEnd, v);
+			v.visitLabel(catchStart);
+			addToVariables(entry.getValue().getDeclaration(), catchStart, catchEnd, v);
 			execute(entry.getValue().getCodeBlock(), v);
 			v.visitLabel(catchEnd);
 			v.visitJumpInsn(GOTO, end);
@@ -274,10 +297,9 @@ public class ASMStackManager implements Opcodes {
 		v.visitLabel(end);
 	}
 
-	private void addToVariables(Declaration declaration, Label end, MethodVisitor v) {
+	private void addToVariables(Declaration declaration, Label start, Label end, MethodVisitor v) {
 		String variableName = declaration.getName();
 		Integer variableIndex = declaredVariables.size() + 1;
-		Label start = new Label();
 		declaredVariables.put(
 				variableName,
 				new VariableInfo(
@@ -287,7 +309,6 @@ public class ASMStackManager implements Opcodes {
 						variableIndex
 				)
 		);
-		v.visitLabel(start);
 		v.visitVarInsn(ASTORE, variableIndex);
 	}
 

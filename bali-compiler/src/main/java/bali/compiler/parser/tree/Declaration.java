@@ -7,7 +7,7 @@ import java.util.List;
  * User: Richard
  * Date: 29/04/13
  */
-public class Declaration extends Node {
+public abstract class Declaration extends Node {
 
 	private Type type;
 	private String name;
@@ -34,6 +34,8 @@ public class Declaration extends Node {
 	public void setType(Type type) {
 		this.type = type;
 	}
+
+	public abstract Boolean getFinal();
 
 	public List<Node> getChildren() {
 		ArrayList<Node> children = new ArrayList<>();

@@ -1,5 +1,6 @@
 package bali.compiler.parser;
 
+import bali.compiler.parser.tree.Argument;
 import bali.compiler.parser.tree.Assignment;
 import bali.compiler.parser.tree.BooleanLiteralExpression;
 import bali.compiler.parser.tree.BreakStatement;
@@ -323,7 +324,7 @@ public class ANTLRParserManager implements ParserManager {
 
 	private Variable buildVariableDeclaration(BaliParser.VariableDeclarationContext context) {
 		Variable variable = new Variable(l(context), c(context));
-		Declaration declaration = new Declaration();
+		Declaration declaration = new Field(); // A Variable is not really a field, but it has the same structure
 		declaration.setName(getIdentifier(context.identifier()));
 		declaration.setType(getType(context.typeDeclaration()));
 		variable.setDeclaration(declaration);
@@ -364,7 +365,7 @@ public class ANTLRParserManager implements ParserManager {
 	}
 
 	private Declaration buildArgument(BaliParser.ArgumentDeclarationContext context) {
-		Declaration argument = new Declaration(l(context), c(context));
+		Declaration argument = new Argument(l(context), c(context));
 		argument.setName(context.STANDARD_IDENTIFIER().getText());
 		argument.setType(getType(context.typeDeclaration()));
 		return argument;
@@ -384,7 +385,7 @@ public class ANTLRParserManager implements ParserManager {
 	}
 
 	private Declaration buildDeclaration(BaliParser.ArgumentDeclarationContext context) {
-		Declaration declaration = new Declaration(l(context), c(context));
+		Declaration declaration = new Argument(l(context), c(context));
 		declaration.setName(context.STANDARD_IDENTIFIER().getText());
 		declaration.setType(getType(context.typeDeclaration()));
 		return declaration;

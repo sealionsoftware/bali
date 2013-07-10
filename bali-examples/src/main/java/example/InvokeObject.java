@@ -10,7 +10,12 @@ public class InvokeObject {
 	}
 
 	public Number returnValue() {
-		return new Integer(1);
+		Number i = new Integer(1);
+		return getNumber(i);
+	}
+
+	public Number getNumber(Number number){
+		return number;
 	}
 
 }

@@ -35,6 +35,10 @@ public class MethodDeclaration extends Declaration {
 		this.operator = operator;
 	}
 
+	public Boolean getFinal() {
+		return true;
+	}
+
 	public List<Node> getChildren() {
 		List<Node> ret = super.getChildren();
 		ret.addAll(arguments);

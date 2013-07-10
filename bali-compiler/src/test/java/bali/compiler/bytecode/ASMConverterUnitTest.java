@@ -3,6 +3,7 @@ package bali.compiler.bytecode;
 import bali.Boolean;
 import bali.Number;
 import bali.String;
+import bali.compiler.parser.tree.Argument;
 import bali.compiler.parser.tree.Declaration;
 import bali.compiler.parser.tree.MethodDeclaration;
 import bali.compiler.parser.tree.Type;
@@ -63,8 +64,8 @@ public class ASMConverterUnitTest {
 		Type n = new Type(0, 0);
 		s.setDeclaration(new TestDeclaration(String.class.getName()));
 		n.setDeclaration(new TestDeclaration(Number.class.getName()));
-		Declaration argument1 = new Declaration(0, 0);
-		Declaration argument2 = new Declaration(0, 0);
+		Declaration argument1 = new Argument(0, 0);
+		Declaration argument2 = new Argument(0, 0);
 		argument1.setType(s);
 		argument2.setType(n);
 		declaration.addArgument(argument1);

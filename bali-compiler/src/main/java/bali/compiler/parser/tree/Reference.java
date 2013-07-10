@@ -11,7 +11,7 @@ public class Reference extends Expression {
 
 	private String name;
 
-	private Type type;
+	private Declaration declaration;
 	private ReferenceScope scope;
 	private String hostClass;
 
@@ -23,11 +23,15 @@ public class Reference extends Expression {
 	}
 
 	public Type getType() {
-		return type;
+		return declaration.getType();
 	}
 
-	public void setType(Type type) {
-		this.type = type;
+	public void setDeclaration(Declaration declaration) {
+		this.declaration = declaration;
+	}
+
+	public Declaration getDeclaration() {
+		return declaration;
 	}
 
 	public void setName(String name) {
