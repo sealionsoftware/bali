@@ -1,12 +1,12 @@
 package example;
 
-import bali.Boolean;
+import com.sealionsoftware.bali.IdentityBoolean;
 
 public class CastObject {
 
 	public void goDo() {
 
-		Object a = Boolean.TRUE;
+		Object a = IdentityBoolean.TRUE;
 		java.lang.Boolean b = (java.lang.Boolean) a;
 
 	}

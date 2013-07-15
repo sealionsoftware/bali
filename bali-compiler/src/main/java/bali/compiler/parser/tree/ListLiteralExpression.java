@@ -1,6 +1,6 @@
 package bali.compiler.parser.tree;
 
-import bali.Array;
+import com.sealionsoftware.bali.collections.Array;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,7 @@
 package example;
 
 import bali.Boolean;
-import bali.String;
+import com.sealionsoftware.bali.CharArrayString;
 
 import java.lang.Exception;
 
@@ -18,7 +18,7 @@ public class TryObject {
 		try {
 			isNull.not();
 		} catch (Exception e){
-			bali._.CONSOLE.writeLine(new String(e.getMessage().toCharArray()));
+			bali._.CONSOLE.writeLine(new CharArrayString(e.getMessage().toCharArray()));
 		}
 
 	}

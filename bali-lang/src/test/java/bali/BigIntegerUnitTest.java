@@ -1,10 +1,12 @@
 package bali;
 
+import com.sealionsoftware.bali.IdentityBoolean;
+import com.sealionsoftware.bali.number.BigInteger;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static bali.BigInteger.MAX;
-import static bali.BigInteger.MIN;
+import static com.sealionsoftware.bali.number.BigInteger.MAX;
+import static com.sealionsoftware.bali.number.BigInteger.MIN;
 
 /**
  * User: Richard
@@ -25,7 +27,7 @@ public class BigIntegerUnitTest {
 	private static final Number LARGE_NEGATIVE = new BigInteger(new byte[]{MIN, MIN, MIN, MIN, MIN, MIN, MIN, MIN, MIN, MIN, MIN, MIN, 1}, false); // -256^12
 	private static final Number LARGE_NEGATIVE_PLUS_ONE = new BigInteger(new byte[]{MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX}); // -128^12 + 1
 
-	private static final Boolean TRUE = Boolean.TRUE;
+	private static final Boolean TRUE = IdentityBoolean.TRUE;
 
 	@Test
 	public void testEquality() {

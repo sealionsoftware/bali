@@ -1,15 +1,14 @@
 package bali.compiler.bytecode;
 
 import bali.Boolean;
-import bali.Byte;
-import bali.List;
+import com.sealionsoftware.bali.CharArrayString;
+import com.sealionsoftware.bali.IdentityBoolean;
+import com.sealionsoftware.bali.number.Byte;
 import bali.Number;
-import bali.String;
-import bali.Array;
+import com.sealionsoftware.bali.collections.Array;
 import bali.Value;
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.*;
-import bali.compiler.parser.tree.Class;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,16 +43,16 @@ public class ASMPackageClassGeneratorUnitTest {
 	public void testStringConstant() throws Exception {
 		StringLiteralExpression slv = new StringLiteralExpression(0, 0);
 		slv.setSerialization("Hello World");
-		slv.getType().setDeclaration(new TestDeclaration(String.class.getName()));
-		testGenerateConstant(String.class, slv, new String("Hello World".toCharArray()));
+		slv.getType().setDeclaration(new TestDeclaration(CharArrayString.class.getName()));
+		testGenerateConstant(CharArrayString.class, slv, new CharArrayString("Hello World".toCharArray()));
 	}
 
 	@Test
 	public void testBooleanConstant() throws Exception {
 		BooleanLiteralExpression blv = new BooleanLiteralExpression(0, 0);
 		blv.setSerialization("true");
-		blv.getType().setDeclaration(new TestDeclaration(Boolean.class.getName()));
-		testGenerateConstant(Boolean.class, blv, bali.Boolean.TRUE);
+		blv.getType().setDeclaration(new TestDeclaration(IdentityBoolean.class.getName()));
+		testGenerateConstant(IdentityBoolean.class, blv, IdentityBoolean.TRUE);
 	}
 
 	@Test
@@ -107,12 +106,12 @@ public class ASMPackageClassGeneratorUnitTest {
 		Assert.assertEquals("Number of methods", 0, loadedClass.getDeclaredMethods().length);
 		java.lang.reflect.Field constantField = loadedClass.getField("aConstant");
 		Assert.assertEquals("Constant Type", clazz, constantField.getType());
-		Assert.assertTrue("Constant Value", expectation.equalTo((T) constantField.get(null)) == Boolean.TRUE);
+		Assert.assertTrue("Constant Value", expectation.equalTo((T) constantField.get(null)) == IdentityBoolean.TRUE);
 	}
 
 	public static class Instantiatable implements Value<Instantiatable> {
 		public Boolean equalTo(Instantiatable o) {
-			return o instanceof Instantiatable ? Boolean.TRUE : Boolean.FALSE;
+			return o instanceof Instantiatable ? IdentityBoolean.TRUE : IdentityBoolean.FALSE;
 		}
 	}
 

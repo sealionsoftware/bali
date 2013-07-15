@@ -1,14 +1,17 @@
-package bali;
+package com.sealionsoftware.bali.number;
 
-import static bali.Boolean.FALSE;
-import static bali.Boolean.TRUE;
-import static bali._.NUMBER_FACTORY;
+import bali.Boolean;
+import bali.Number;
+
+import static com.sealionsoftware.bali.IdentityBoolean.FALSE;
+import static com.sealionsoftware.bali.IdentityBoolean.TRUE;
+import static com.sealionsoftware.bali._.NUMBER_FACTORY;
 
 /**
  * User: Richard
  * Date: 11/06/13
  */
-public class Integer implements Number {
+public class Integer implements bali.Number {
 
 	final int value;
 
@@ -44,7 +47,7 @@ public class Integer implements Number {
 		if (o instanceof Integer) {
 			return equalTo((Integer) o);
 		}
-		if (o instanceof Short) {
+		if (o instanceof com.sealionsoftware.bali.number.Short) {
 			return equalTo((Short) o);
 		}
 		if (o instanceof Byte) {

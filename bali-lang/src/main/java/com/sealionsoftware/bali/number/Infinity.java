@@ -1,13 +1,16 @@
-package bali;
+package com.sealionsoftware.bali.number;
 
-import static bali.Boolean.FALSE;
-import static bali.Boolean.TRUE;
+import bali.Boolean;
+import bali.Number;
+
+import static com.sealionsoftware.bali.IdentityBoolean.FALSE;
+import static com.sealionsoftware.bali.IdentityBoolean.TRUE;
 
 /**
  * User: Richard
  * Date: 10/06/13
  */
-public enum Infinity implements Number {
+public enum Infinity implements bali.Number {
 
 	POSITIVE_INFINITY, NEGATIVE_INFINITY;
 

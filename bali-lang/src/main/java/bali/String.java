@@ -1,48 +1,20 @@
 package bali;
 
-import java.util.Arrays;
-
-import static bali._.NUMBER_FACTORY;
+import com.sealionsoftware.bali.collections.Array;
 
 /**
  * User: Richard
- * Date: 02/05/13
+ * Date: 15/07/13
  */
-public class String implements Value<String> {
+public interface String extends Value<String> {
 
-	final char[] characters;
 
-	public String(char[] characters) {
-		this.characters = characters;
-	}
+	Iterable<String> getCharacters();
 
-	public Array<String> getCharacters() {
-		String[] characterStrings = new String[characters.length];
-		int i = 0;
-		for (char character : characters){
-			characterStrings[i++] = new String(new char[]{character});
-		}
-		return new Array<>(characterStrings);
-	}
-
-	public Number length(){
-		return NUMBER_FACTORY.forInt(characters.length);
-	}
+	Number length();
 
 	@Operator("+")
-	public String join(String operand){
-		int thisLength = this.characters.length;
-		int thatLength = operand.characters.length;
-		char[] characters = Arrays.copyOf(this.characters, thisLength + thatLength);
-		System.arraycopy(operand.characters, 0, characters, thisLength, thatLength);
-		return new String(characters);
-	}
+	String join(String operand);
 
-	public Boolean equalTo(String operand) {
-		return Arrays.equals(characters, operand.characters) ? Boolean.TRUE : Boolean.FALSE;
-	}
-
-//	public java.lang.String toString() {
-//		return new java.lang.String(characters);
-//	}
+	Boolean equalTo(String operand);
 }

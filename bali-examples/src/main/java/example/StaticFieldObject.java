@@ -1,12 +1,12 @@
 package example;
 
-import bali.Array;
-import bali.Number;
+import com.sealionsoftware.bali.CharArrayString;
+import com.sealionsoftware.bali.collections.Array;
 import bali.String;
 
 public class StaticFieldObject {
 
-	private static final Array NAMES = new Array(new String[]{new String(new char[]{'A'})});
+	private static final Array NAMES = new Array(new String[]{new CharArrayString(new char[]{'A'})});
 
 	private void print() {
 

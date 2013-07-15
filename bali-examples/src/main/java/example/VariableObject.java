@@ -1,7 +1,7 @@
 package example;
 
 import bali.Number;
-import bali.Integer;
+import com.sealionsoftware.bali.number.Integer;
 
 public class VariableObject {
 

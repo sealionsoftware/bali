@@ -1,5 +1,7 @@
 package bali;
 
+import com.sealionsoftware.bali.CharArrayString;
+
 /**
  * User: Richard
  * Date: 07/07/13
@@ -7,6 +9,6 @@ package bali;
 public interface Writer {
 
 	@Operator("<<")
-	public void writeLine(String in);
+	public void writeLine(CharArrayString in);
 
 }

@@ -1,4 +1,7 @@
-package bali;
+package com.sealionsoftware.bali;
+
+import bali.*;
+import bali.String;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,7 +18,7 @@ public class Console implements ReaderWriter {
 
 	public Console() {}
 
-	public void writeLine(String in){
+	public void writeLine(CharArrayString in){
 		ps.println(in.characters);
 	}
 
@@ -30,6 +33,6 @@ public class Console implements ReaderWriter {
 		} catch (IOException e) {
 			throw new RuntimeException("IOException whilst reading from standard in");
 		}
-		return new String(in);
+		return new CharArrayString(in);
 	}
 }

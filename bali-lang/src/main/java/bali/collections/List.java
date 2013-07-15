@@ -1,4 +1,9 @@
-package bali;
+package bali.collections;
+
+import bali.*;
+import bali.Boolean;
+import bali.Number;
+import com.sealionsoftware.bali.IdentityBoolean;
 
 import static bali._.NUMBER_FACTORY;
 
@@ -6,7 +11,7 @@ import static bali._.NUMBER_FACTORY;
  * User: Richard
  * Date: 08/05/13
  */
-public class List<E> implements Iterable<E> {
+public class List<E> implements bali.Iterable<E> {
 
 	private Link<E> top;
 	private Number length;
@@ -23,7 +28,7 @@ public class List<E> implements Iterable<E> {
 			}
 			top = last;
 		}
-		length = new Integer(elements.length);
+		length = new com.sealionsoftware.bali.number.Integer(elements.length);
 	}
 
 	public Number size() {
@@ -31,7 +36,7 @@ public class List<E> implements Iterable<E> {
 	}
 
 	public Boolean isEmpty() {
-		return top == null ? Boolean.TRUE : Boolean.FALSE;
+		return top == null ? IdentityBoolean.TRUE : IdentityBoolean.FALSE;
 	}
 
 //	public Boolean contains(E o) {
@@ -59,7 +64,7 @@ public class List<E> implements Iterable<E> {
 			private Link<E> nextLink = top;
 
 			public Boolean hasNext() {
-				return nextLink == null ? Boolean.FALSE : Boolean.TRUE;
+				return nextLink == null ? IdentityBoolean.FALSE : IdentityBoolean.TRUE;
 			}
 
 			public E next() {
@@ -134,7 +139,7 @@ public class List<E> implements Iterable<E> {
 	public E get(Number index) {
 		Link<E> link = top;
 		Number count = NUMBER_FACTORY.forByte((byte) 0);
-		while(count.lessThan(index) == Boolean.TRUE){
+		while(count.lessThan(index) == IdentityBoolean.TRUE){
 			link = link.next;
 		}
 		return link.object;

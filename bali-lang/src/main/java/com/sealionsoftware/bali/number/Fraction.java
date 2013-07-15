@@ -1,10 +1,14 @@
-package bali;
+package com.sealionsoftware.bali.number;
+
+import bali.Boolean;
+import bali.Number;
+import com.sealionsoftware.bali.IdentityBoolean;
 
 /**
  * User: Richard
  * Date: 10/06/13
  */
-public class Fraction implements Number {
+public class Fraction implements bali.Number {
 
 	final Number numerator;
 	final Number divisor;
@@ -35,7 +39,7 @@ public class Fraction implements Number {
 	}
 
 	public Number magnitude() {
-		return isNegative() == Boolean.TRUE ? negative() : this;
+		return isNegative() == IdentityBoolean.TRUE ? negative() : this;
 	}
 
 	public Number negative() {

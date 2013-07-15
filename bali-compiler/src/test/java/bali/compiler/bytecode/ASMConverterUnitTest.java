@@ -1,8 +1,8 @@
 package bali.compiler.bytecode;
 
-import bali.Boolean;
+import com.sealionsoftware.bali.CharArrayString;
 import bali.Number;
-import bali.String;
+import com.sealionsoftware.bali.IdentityBoolean;
 import bali.compiler.parser.tree.Argument;
 import bali.compiler.parser.tree.Declaration;
 import bali.compiler.parser.tree.MethodDeclaration;
@@ -23,18 +23,18 @@ public class ASMConverterUnitTest {
 
 	@Test
 	public void testInternalName() throws Exception {
-		Assert.assertEquals("bali/String", converter.getInternalName(String.class.getName()));
+		Assert.assertEquals("bali/String", converter.getInternalName(CharArrayString.class.getName()));
 	}
 
 	@Test
 	public void testTypeDescriptorString() throws Exception {
-		Assert.assertEquals("Lbali/String;", converter.getTypeDescriptor(String.class.getName()));
+		Assert.assertEquals("Lbali/String;", converter.getTypeDescriptor(CharArrayString.class.getName()));
 	}
 
 	@Test
 	public void testTypeDescriptorDeclaration() throws Exception {
 		Type declaration = new Type(0, 0);
-		declaration.setDeclaration(new TestDeclaration(String.class.getName()));
+		declaration.setDeclaration(new TestDeclaration(CharArrayString.class.getName()));
 		Assert.assertEquals("Lbali/String;", converter.getTypeDescriptor(declaration));
 	}
 
@@ -42,9 +42,9 @@ public class ASMConverterUnitTest {
 	public void testMethodDescriptorString() throws Exception {
 		Assert.assertEquals("()V", converter.getMethodDescriptor(null, new ArrayList<Type>()));
 		List<Type> argumentTypes = new ArrayList<>();
-		argumentTypes.add(getType(String.class));
+		argumentTypes.add(getType(CharArrayString.class));
 		argumentTypes.add(getType(Number.class));
-		Assert.assertEquals("(Lbali/String;Lbali/Number;)Lbali/Boolean;", converter.getMethodDescriptor(getType(Boolean.class), argumentTypes));
+		Assert.assertEquals("(Lbali/String;Lbali/Number;)Lbali/Boolean;", converter.getMethodDescriptor(getType(IdentityBoolean.class), argumentTypes));
 	}
 
 	private Type getType(Class clazz) {
@@ -58,11 +58,11 @@ public class ASMConverterUnitTest {
 		MethodDeclaration declaration = new MethodDeclaration(0, 0);
 		Assert.assertEquals("()V", converter.getMethodDescriptor(declaration));
 		Type b = new Type(0, 0);
-		b.setDeclaration(new TestDeclaration(bali.Boolean.class.getName()));
+		b.setDeclaration(new TestDeclaration(IdentityBoolean.class.getName()));
 		declaration.setType(b);
 		Type s = new Type(0, 0);
 		Type n = new Type(0, 0);
-		s.setDeclaration(new TestDeclaration(String.class.getName()));
+		s.setDeclaration(new TestDeclaration(CharArrayString.class.getName()));
 		n.setDeclaration(new TestDeclaration(Number.class.getName()));
 		Declaration argument1 = new Argument(0, 0);
 		Declaration argument2 = new Argument(0, 0);

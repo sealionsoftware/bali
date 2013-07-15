@@ -1,5 +1,14 @@
-package bali;
+package com.sealionsoftware.bali.number;
 
+
+import bali.Serializer;
+import com.sealionsoftware.bali.CharArrayString;
+import com.sealionsoftware.bali.number.Byte;
+import com.sealionsoftware.bali.number.BigInteger;
+import com.sealionsoftware.bali.number.Integer;
+import bali.Number;
+import bali.String;
+import com.sealionsoftware.bali.number.Short;
 
 /**
  * User: Richard
@@ -83,32 +92,32 @@ public class NumberFactory implements Serializer<Number> {
 		return negative ? ret.negative() : ret;
 	}
 
-	Number forLong(long o) {
+	public Number forLong(long o) {
 		if (o <= INTEGER_CEILING && o >= INTEGER_FLOOR) {
 			return forInt((int) o);
 		}
-		return new Long(o);
+		return new com.sealionsoftware.bali.number.Long(o);
 	}
 
-	Number forInt(int o) {
+	public Number forInt(int o) {
 		if (o <= SHORT_CEILING && o >= SHORT_FLOOR) {
 			return forShort((short) o);
 		}
 		return new Integer(o);
 	}
 
-	Number forShort(short o) {
+	public Number forShort(short o) {
 		if (o <= BYTE_CEILING && o >= BYTE_FLOOR) {
 			return forByte((byte) o);
 		}
-		return new Short(o);
+		return new com.sealionsoftware.bali.number.Short(o);
 	}
 
-	Number forByte(byte o) {
+	public Number forByte(byte o) {
 		return BYTES[o - BYTE_FLOOR];
 	}
 
-	int valueOf(Number n) {
+	public int valueOf(Number n) {
 		if (n instanceof Byte) {
 			return ((Byte) n).value;
 		}
@@ -135,26 +144,26 @@ public class NumberFactory implements Serializer<Number> {
 		if (in instanceof Integer) {
 			return format((Integer) in);
 		}
-		if (in instanceof Long) {
-			return format((Long) in);
+		if (in instanceof com.sealionsoftware.bali.number.Long) {
+			return format((com.sealionsoftware.bali.number.Long) in);
 		}
 		throw new RuntimeException("Cannot format Number " + in);
 	}
 
 	public String format(Byte in) {
-		return new String(java.lang.Byte.toString(in.value).toCharArray());
+		return new CharArrayString(java.lang.Byte.toString(in.value).toCharArray());
 	}
 
 	public String format(Short in) {
-		return new String(java.lang.Short.toString(in.value).toCharArray());
+		return new CharArrayString(java.lang.Short.toString(in.value).toCharArray());
 	}
 
 	public String format(Integer in) {
-		return new String(java.lang.Integer.toString(in.value).toCharArray());
+		return new CharArrayString(java.lang.Integer.toString(in.value).toCharArray());
 	}
 
-	public String format(Long in) {
-		return new String(java.lang.Long.toString(in.value).toCharArray());
+	public String format(com.sealionsoftware.bali.number.Long in) {
+		return new CharArrayString(java.lang.Long.toString(in.value).toCharArray());
 	}
 
 

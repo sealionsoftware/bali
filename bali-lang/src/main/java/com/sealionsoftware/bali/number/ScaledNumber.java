@@ -1,10 +1,14 @@
-package bali;
+package com.sealionsoftware.bali.number;
+
+import bali.Boolean;
+import bali.Number;
+import com.sealionsoftware.bali.IdentityBoolean;
 
 /**
  * User: Richard
  * Date: 11/06/13
  */
-public class ScaledNumber implements Number {
+public class ScaledNumber implements bali.Number {
 
 	private BigInteger number;
 	private BigInteger scalePlace;
@@ -29,7 +33,7 @@ public class ScaledNumber implements Number {
 	}
 
 	public Number magnitude() {
-		return isNegative() == Boolean.TRUE ? negative() : this;
+		return isNegative() == IdentityBoolean.TRUE ? negative() : this;
 	}
 
 	public Number negative() {

@@ -7,10 +7,10 @@ package bali;
 public interface Quantified<T extends Value> extends Value<T> {
 
 	@Operator(">")
-	public Boolean greaterThan(Number o);
+	public Boolean greaterThan(T o);
 
 	@Operator("<")
-	public Boolean lessThan(Number o);
+	public Boolean lessThan(T o);
 
 
 }

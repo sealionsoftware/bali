@@ -1,5 +1,6 @@
 package bali;
 
+import com.sealionsoftware.bali.IdentityBoolean;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,8 +10,8 @@ import org.junit.Test;
  */
 public class BooleanUnitTest {
 
-	private static final Boolean FALSE = Boolean.FALSE;
-	private static final Boolean TRUE = Boolean.TRUE;
+	private static final Boolean FALSE = IdentityBoolean.FALSE;
+	private static final Boolean TRUE = IdentityBoolean.TRUE;
 
 	@Test
 	public void testEquality(){

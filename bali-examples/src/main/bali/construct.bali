@@ -28,7 +28,7 @@ class ObjectConstructor() implements Executable {
 
  	method execute(){
 
- 	    AnInterface anObject = new AnObject("TEST", 1);
+ 	    AnInterface anObject = new AnObject("TEST", 6);
 
  	    CONSOLE << anObject.getFields(false);
  	    CONSOLE << anObject.getFields(true);

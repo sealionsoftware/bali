@@ -1,6 +1,6 @@
 package example;
 
-import bali.Integer;
+import com.sealionsoftware.bali.number.Integer;
 import bali.Number;
 
 public class SimpleObject {

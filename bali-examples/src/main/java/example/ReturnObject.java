@@ -1,6 +1,6 @@
 package example;
 
-import bali.Byte;
+import com.sealionsoftware.bali.number.Byte;
 import bali.Number;
 
 public class ReturnObject {

@@ -1,7 +1,8 @@
 package bali.compiler.parser.tree;
 
+import com.sealionsoftware.bali.IdentityBoolean;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -13,7 +14,7 @@ public class BooleanLiteralExpression extends Expression {
 	private String serialization;
 	private Type type; {
 		Type t = new Type();
-		t.setClassName(bali.Boolean.class.getName());
+		t.setClassName(IdentityBoolean.class.getName());
 		type = t;
 	}
 
