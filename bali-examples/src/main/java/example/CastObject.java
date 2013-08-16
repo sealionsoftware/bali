@@ -1,6 +1,6 @@
 package example;
 
-import com.sealionsoftware.bali.IdentityBoolean;
+import bali.IdentityBoolean;
 
 public class CastObject {
 

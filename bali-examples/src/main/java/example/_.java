@@ -1,14 +1,14 @@
 package example;
 
 import bali.Boolean;
-import com.sealionsoftware.bali.CharArrayString;
-import com.sealionsoftware.bali.IdentityBoolean;
-import bali.String;
-import com.sealionsoftware.bali.number.Short;
-import com.sealionsoftware.bali.number.Byte;
+import bali.CharArrayString;
+import bali.Console;
+import bali.IdentityBoolean;
 import bali.Number;
-import com.sealionsoftware.bali.collections.Array;
-import com.sealionsoftware.bali.Console;
+import bali.String;
+import bali.collection.Array;
+import bali.number.Byte;
+import bali.number.Short;
 
 public class _ {
 

@@ -1,12 +1,12 @@
 package example;
 
-import com.sealionsoftware.bali.number.Integer;
 import bali.Number;
+import bali.number.Int;
 
 public class SimpleObject {
 
 	public Number calculate() {
-		return new Integer(5);
+		return new Int(5);
 	}
 
 }

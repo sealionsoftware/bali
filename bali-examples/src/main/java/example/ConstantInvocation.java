@@ -1,6 +1,6 @@
 package example;
 
-import com.sealionsoftware.bali.CharArrayString;
+import bali.CharArrayString;
 
 public class ConstantInvocation {
 

@@ -3,6 +3,12 @@ import bali.Number;
 import bali.String;
 import bali.Executable;
 
+bean ABean {
+
+	property String aProperty;
+
+}
+
 interface AnInterface {
 
 	declare String getFields(Boolean includeNumber);

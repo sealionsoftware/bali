@@ -1,9 +1,7 @@
 package example;
 
 import bali.Boolean;
-import com.sealionsoftware.bali.CharArrayString;
-
-import java.lang.Exception;
+import bali.CharArrayString;
 
 /**
  * User: Richard
@@ -17,7 +15,7 @@ public class TryObject {
 
 		try {
 			isNull.not();
-		} catch (Exception e){
+		} catch (Exception e) {
 			bali._.CONSOLE.writeLine(new CharArrayString(e.getMessage().toCharArray()));
 		}
 

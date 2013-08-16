@@ -1,7 +1,7 @@
 package example;
 
 import bali.Number;
-import com.sealionsoftware.bali.number.Integer;
+import bali.number.Int;
 
 public class InvokeObject {
 
@@ -10,11 +10,11 @@ public class InvokeObject {
 	}
 
 	public Number returnValue() {
-		Number i = new Integer(1);
+		Number i = new Int(1);
 		return getNumber(i);
 	}
 
-	public Number getNumber(Number number){
+	public Number getNumber(Number number) {
 		return number;
 	}
 

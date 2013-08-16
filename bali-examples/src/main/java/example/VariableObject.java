@@ -1,12 +1,12 @@
 package example;
 
 import bali.Number;
-import com.sealionsoftware.bali.number.Integer;
+import bali.number.Int;
 
 public class VariableObject {
 
 	public void declareVariable() {
-		Number number = new Integer(1);
+		Number number = new Int(1);
 	}
 
 }

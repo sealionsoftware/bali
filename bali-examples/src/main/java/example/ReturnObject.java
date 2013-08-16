@@ -1,7 +1,7 @@
 package example;
 
-import com.sealionsoftware.bali.number.Byte;
 import bali.Number;
+import bali.number.Byte;
 
 public class ReturnObject {
 
