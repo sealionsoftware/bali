@@ -1,11 +1,7 @@
 package bali.number;
 
-import bali.*;
+import bali.IdentityBoolean;
 import bali.Number;
-import bali.number.*;
-import bali.number.Byte;
-import bali.number.Integer;
-import bali.number.Short;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -24,7 +20,7 @@ public class ByteUnitTest {
 	@Test
 	public void testAddSelf() {
 		Byte b = new Byte((byte) 1);
-		bali.Number result = b.add(b);
+		Number result = b.add(b);
 		Assert.assertEquals("result is not a Byte", Byte.class, result.getClass());
 		Assert.assertEquals("result is not correct value", 2, ((Byte) result).value);
 	}
@@ -49,7 +45,7 @@ public class ByteUnitTest {
 	public void testAddToInt() {
 		Byte b = new Byte((byte) 1);
 		Number result = b.add(new Short(Short.MAX_VALUE));
-		Assert.assertEquals("result is not a Integer", bali.number.Integer.class, result.getClass());
+		Assert.assertEquals("result is not a Int", Int.class, result.getClass());
 		Assert.assertEquals("result is not correct value", java.lang.Short.MAX_VALUE + 1, ((Int) result).value);
 	}
 

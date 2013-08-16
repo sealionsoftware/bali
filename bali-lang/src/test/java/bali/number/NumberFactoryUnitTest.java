@@ -12,123 +12,123 @@ public class NumberFactoryUnitTest {
 
 	private NumberFactory numberFactory = NumberFactory.NUMBER_FACTORY;
 
-	private void testForByte(byte in){
+	private void testForByte(byte in) {
 		bali.Number number = numberFactory.forByte(in);
 		Assert.assertTrue(in + " is not a Byte", number instanceof Byte);
 		Assert.assertEquals(in + " is incorrect value", in, ((Byte) number).value);
 		testForString(java.lang.Byte.toString(in).toCharArray(), Byte.class);
 	}
 
-	private void testForShort(short in){
+	private void testForShort(short in) {
 		Number number = numberFactory.forShort(in);
 		Assert.assertTrue(in + " is not a Short", number instanceof Short);
 		Assert.assertEquals(in + " is incorrect value", in, ((Short) number).value);
 		testForString(java.lang.Short.toString(in).toCharArray(), Short.class);
 	}
 
-	private void testForInteger(int in){
+	private void testForInteger(int in) {
 		Number number = numberFactory.forInt(in);
-		Assert.assertTrue(in + " is not an Integer", number instanceof Int);
+		Assert.assertTrue(in + " is not an Int", number instanceof Int);
 		Assert.assertEquals(in + " is incorrect value", in, ((Int) number).value);
-		testForString(java.lang.Integer.toString(in).toCharArray(), Integer.class);
+		testForString(java.lang.Integer.toString(in).toCharArray(), Int.class);
 	}
 
-	private void testForLong(long in){
+	private void testForLong(long in) {
 		Number number = numberFactory.forLong(in);
 		Assert.assertTrue(in + " is not a Long", number instanceof Long);
 		Assert.assertEquals(in + " is incorrect value", in, ((Long) number).value);
 		testForString(java.lang.Long.toString(in).toCharArray(), Long.class);
 	}
 
-	private void testForString(char[] in, Class<? extends Number> expectedType){
+	private void testForString(char[] in, Class<? extends Number> expectedType) {
 		Number number = numberFactory.forDecimalString(in);
-		Assert.assertEquals("Number is of wrong type",  expectedType, number.getClass());
+		Assert.assertEquals("Number is of wrong type", expectedType, number.getClass());
 	}
 
 	@Test
-	public void testForZero(){
+	public void testForZero() {
 		testForByte((byte) 0);
 	}
 
 	@Test
-	public void testForByteHigh(){
+	public void testForByteHigh() {
 		testForByte(java.lang.Byte.MAX_VALUE);
 	}
 
 	@Test
-	public void testForByteLow(){
+	public void testForByteLow() {
 		testForByte(java.lang.Byte.MIN_VALUE);
 	}
 
 	@Test
-	public void testForShortLowPositive(){
+	public void testForShortLowPositive() {
 		testForShort((short) (java.lang.Byte.MAX_VALUE + 1));
 	}
 
 	@Test
-	public void testForShortLowNegative(){
+	public void testForShortLowNegative() {
 		testForShort((short) (java.lang.Byte.MIN_VALUE - 1));
 	}
 
 	@Test
-	public void testForShortHighPositive(){
+	public void testForShortHighPositive() {
 		testForShort(java.lang.Short.MAX_VALUE);
 	}
 
 	@Test
-	public void testForShortHighNegative(){
+	public void testForShortHighNegative() {
 		testForShort(java.lang.Short.MIN_VALUE);
 	}
 
 	@Test
-	public void testForIntegerLowPositive(){
+	public void testForIntegerLowPositive() {
 		testForInteger(java.lang.Short.MAX_VALUE + 1);
 	}
 
 	@Test
-	public void testForIntegerLowNegative(){
+	public void testForIntegerLowNegative() {
 		testForInteger(java.lang.Short.MIN_VALUE - 1);
 	}
 
 	@Test
-	public void testForIntegerHighPositive(){
+	public void testForIntegerHighPositive() {
 		testForInteger(java.lang.Integer.MAX_VALUE);
 	}
 
 	@Test
-	public void testForIntegerHighNegative(){
+	public void testForIntegerHighNegative() {
 		testForInteger(java.lang.Integer.MIN_VALUE);
 	}
 
 	@Test
-	public void testForLongLowPositive(){
+	public void testForLongLowPositive() {
 		testForLong((long) java.lang.Integer.MAX_VALUE + 1);
 	}
 
 	@Test
-	public void testForLongLowNegative(){
+	public void testForLongLowNegative() {
 		testForLong((long) java.lang.Integer.MIN_VALUE - 1);
 	}
 
 	@Test
-	public void testForLongHighPositive(){
+	public void testForLongHighPositive() {
 		testForLong(java.lang.Long.MAX_VALUE);
 	}
 
 	@Test
-	public void testForLongHighNegative(){
+	public void testForLongHighNegative() {
 		testForLong(java.lang.Long.MIN_VALUE);
 	}
 
 	@Test
-	public void testForBigIntegerPositive(){
+	public void testForBigIntegerPositive() {
 		char[] chars = java.lang.Long.toString(java.lang.Long.MAX_VALUE).toCharArray();
 		chars[chars.length - 1] = (char) (chars[chars.length - 1] + 1); // This works because the last digit != 9
 		testForString(chars, BigInteger.class);
 	}
 
 	@Test
-	public void testForBigIntegerNegative(){
+	public void testForBigIntegerNegative() {
 		char[] chars = java.lang.Long.toString(java.lang.Long.MAX_VALUE).toCharArray();
 		chars[chars.length - 1] = (char) (chars[chars.length - 1] + 1); // This works because the last digit != 9
 		testForString(chars, BigInteger.class);
