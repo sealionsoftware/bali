@@ -9,7 +9,7 @@
     <artifactId>bali-lang</artifactId>
     <version>1.0</version>
 
-	<description>Bali Language</description>
+	<description>Bali Language API</description>
 
 	<dependencies>
 		<dependency>

@@ -1,20 +1,19 @@
-package com.sealionsoftware.bali.number;
+package bali.number;
 
 
 import bali.Serializer;
-import com.sealionsoftware.bali.CharArrayString;
-import com.sealionsoftware.bali.number.Byte;
-import com.sealionsoftware.bali.number.BigInteger;
-import com.sealionsoftware.bali.number.Integer;
+import bali.CharArrayString;
 import bali.Number;
 import bali.String;
-import com.sealionsoftware.bali.number.Short;
+
 
 /**
  * User: Richard
  * Date: 11/06/13
  */
 public class NumberFactory implements Serializer<Number> {
+
+	public static final NumberFactory NUMBER_FACTORY = new NumberFactory();
 
 	private static final byte BYTE_CEILING = java.lang.Byte.MAX_VALUE;
 	private static final byte BYTE_FLOOR = java.lang.Byte.MIN_VALUE;
@@ -92,28 +91,28 @@ public class NumberFactory implements Serializer<Number> {
 		return negative ? ret.negative() : ret;
 	}
 
-	public Number forLong(long o) {
+	public Integer forLong(long o) {
 		if (o <= INTEGER_CEILING && o >= INTEGER_FLOOR) {
 			return forInt((int) o);
 		}
-		return new com.sealionsoftware.bali.number.Long(o);
+		return new Long(o);
 	}
 
-	public Number forInt(int o) {
+	public Integer forInt(int o) {
 		if (o <= SHORT_CEILING && o >= SHORT_FLOOR) {
 			return forShort((short) o);
 		}
-		return new Integer(o);
+		return new Int(o);
 	}
 
-	public Number forShort(short o) {
+	public Integer forShort(short o) {
 		if (o <= BYTE_CEILING && o >= BYTE_FLOOR) {
 			return forByte((byte) o);
 		}
-		return new com.sealionsoftware.bali.number.Short(o);
+		return new Short(o);
 	}
 
-	public Number forByte(byte o) {
+	public Integer forByte(byte o) {
 		return BYTES[o - BYTE_FLOOR];
 	}
 
@@ -124,8 +123,8 @@ public class NumberFactory implements Serializer<Number> {
 		if (n instanceof Short) {
 			return ((Short) n).value;
 		}
-		if (n instanceof Integer) {
-			return ((Integer) n).value;
+		if (n instanceof Int) {
+			return ((Int) n).value;
 		}
 		throw new RuntimeException("Cannot get int value of Number " + n);
 	}
@@ -141,11 +140,11 @@ public class NumberFactory implements Serializer<Number> {
 		if (in instanceof Short) {
 			return format((Short) in);
 		}
-		if (in instanceof Integer) {
-			return format((Integer) in);
+		if (in instanceof Int) {
+			return format((Int) in);
 		}
-		if (in instanceof com.sealionsoftware.bali.number.Long) {
-			return format((com.sealionsoftware.bali.number.Long) in);
+		if (in instanceof Long) {
+			return format((Long) in);
 		}
 		throw new RuntimeException("Cannot format Number " + in);
 	}
@@ -158,11 +157,11 @@ public class NumberFactory implements Serializer<Number> {
 		return new CharArrayString(java.lang.Short.toString(in.value).toCharArray());
 	}
 
-	public String format(Integer in) {
+	public String format(Int in) {
 		return new CharArrayString(java.lang.Integer.toString(in.value).toCharArray());
 	}
 
-	public String format(com.sealionsoftware.bali.number.Long in) {
+	public String format(Long in) {
 		return new CharArrayString(java.lang.Long.toString(in.value).toCharArray());
 	}
 

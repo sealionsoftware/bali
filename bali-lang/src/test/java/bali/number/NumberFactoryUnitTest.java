@@ -1,10 +1,6 @@
-package bali;
+package bali.number;
 
-import com.sealionsoftware.bali.number.NumberFactory;
-import com.sealionsoftware.bali.number.*;
-import com.sealionsoftware.bali.number.Byte;
-import com.sealionsoftware.bali.number.Integer;
-import com.sealionsoftware.bali.number.Short;
+import bali.Number;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -14,34 +10,34 @@ import org.junit.Test;
  */
 public class NumberFactoryUnitTest {
 
-	private NumberFactory numberFactory = new NumberFactory();
+	private NumberFactory numberFactory = NumberFactory.NUMBER_FACTORY;
 
 	private void testForByte(byte in){
-		Number number = numberFactory.forByte(in);
-		Assert.assertTrue(in + " is not a Byte", number instanceof com.sealionsoftware.bali.number.Byte);
+		bali.Number number = numberFactory.forByte(in);
+		Assert.assertTrue(in + " is not a Byte", number instanceof Byte);
 		Assert.assertEquals(in + " is incorrect value", in, ((Byte) number).value);
 		testForString(java.lang.Byte.toString(in).toCharArray(), Byte.class);
 	}
 
 	private void testForShort(short in){
 		Number number = numberFactory.forShort(in);
-		Assert.assertTrue(in + " is not a Short", number instanceof com.sealionsoftware.bali.number.Short);
+		Assert.assertTrue(in + " is not a Short", number instanceof Short);
 		Assert.assertEquals(in + " is incorrect value", in, ((Short) number).value);
 		testForString(java.lang.Short.toString(in).toCharArray(), Short.class);
 	}
 
 	private void testForInteger(int in){
 		Number number = numberFactory.forInt(in);
-		Assert.assertTrue(in + " is not an Integer", number instanceof com.sealionsoftware.bali.number.Integer);
-		Assert.assertEquals(in + " is incorrect value", in, ((Integer) number).value);
+		Assert.assertTrue(in + " is not an Integer", number instanceof Int);
+		Assert.assertEquals(in + " is incorrect value", in, ((Int) number).value);
 		testForString(java.lang.Integer.toString(in).toCharArray(), Integer.class);
 	}
 
 	private void testForLong(long in){
 		Number number = numberFactory.forLong(in);
-		Assert.assertTrue(in + " is not a Long", number instanceof com.sealionsoftware.bali.number.Long);
-		Assert.assertEquals(in + " is incorrect value", in, ((com.sealionsoftware.bali.number.Long) number).value);
-		testForString(java.lang.Long.toString(in).toCharArray(), com.sealionsoftware.bali.number.Long.class);
+		Assert.assertTrue(in + " is not a Long", number instanceof Long);
+		Assert.assertEquals(in + " is incorrect value", in, ((Long) number).value);
+		testForString(java.lang.Long.toString(in).toCharArray(), Long.class);
 	}
 
 	private void testForString(char[] in, Class<? extends Number> expectedType){

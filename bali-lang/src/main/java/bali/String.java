@@ -1,20 +1,16 @@
 package bali;
 
-import com.sealionsoftware.bali.collections.Array;
-
 /**
  * User: Richard
  * Date: 15/07/13
  */
 public interface String extends Value<String> {
 
+	public Iterable<String> getCharacters();
 
-	Iterable<String> getCharacters();
-
-	Number length();
+	public Number length();
 
 	@Operator("+")
-	String join(String operand);
+	public String join(String operand);
 
-	Boolean equalTo(String operand);
 }

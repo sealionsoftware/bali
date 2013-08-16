@@ -1,12 +1,14 @@
-package bali;
+package bali.number;
 
-import com.sealionsoftware.bali.IdentityBoolean;
-import com.sealionsoftware.bali.number.BigInteger;
+import bali.*;
+import bali.Boolean;
+import bali.Number;
+import bali.number.BigInteger;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static com.sealionsoftware.bali.number.BigInteger.MAX;
-import static com.sealionsoftware.bali.number.BigInteger.MIN;
+import static bali.number.BigInteger.MAX;
+import static bali.number.BigInteger.MIN;
 
 /**
  * User: Richard
@@ -14,7 +16,7 @@ import static com.sealionsoftware.bali.number.BigInteger.MIN;
  */
 public class BigIntegerUnitTest {
 
-	private static final Number FOUR = new BigInteger(new byte[]{MIN + 4});
+	private static final bali.Number FOUR = new BigInteger(new byte[]{MIN + 4});
 	private static final Number TWO = new BigInteger(new byte[]{MIN + 2});
 	private static final Number ONE = new BigInteger(new byte[]{MIN + 1});
 	private static final Number ZERO = new BigInteger(new byte[]{MIN});

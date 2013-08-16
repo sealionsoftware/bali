@@ -1,12 +1,16 @@
 package bali.time.calendar;
 
-import com.sealionsoftware.bali.CharArrayString;
+import bali.time.Date;
+import bali.time.DateTime;
+import bali.CharArrayString;
 import bali.Number;
 import bali.String;
 import bali.time.CalendarSystem;
-import bali.time.standard.StandardDate;
 import bali.time.Instant;
+import bali.time.standard.StandardDate;
 import bali.time.standard.StandardTime;
+
+import static bali.number.NumberFactory.NUMBER_FACTORY;
 
 /**
  * Implements a proleptic Gregorian Calendar.
@@ -22,22 +26,24 @@ public final class ISOCalendarSystem implements CalendarSystem {
 	private static final String COMMON_ERA = new CharArrayString("CE".toCharArray());
 	private static final String BEFORE_COMMON_ERA = new CharArrayString("BCE".toCharArray());
 
-	public StandardDate getDate(Instant instant) {
+	public Date getDate(Instant instant) {
 
 		Number millis = instant.getMillisSince1970();
 		final Number days;
 		final Number months;
 		final Number years;
 
-//		Number year = 1970;
+//		Number year = NUMBER_FACTORY.forInt(1970);
 //		int millisInYear = getDaysInYear(year);
 //		while (millis.lessThan(millisInYear)){
 //			millis -= millisInYear;
 //			millisInYear = getDaysInYear(year++);
 //		}
-
-
-//		return new Date(COMMON_ERA, years, months, days);
+//
+//
+//
+//
+//		return new StandardDate(COMMON_ERA, years, months, days);
 		return null;
 	}
 
@@ -58,11 +64,19 @@ public final class ISOCalendarSystem implements CalendarSystem {
 		return null;
 	}
 
-	public Instant getInstant(StandardDate date) {
+	public Instant getInstant(Date date) {
 		return getInstant(date, null);
 	}
 
-	public Instant getInstant(StandardDate date, StandardTime time) {
+	public DateTime getDateTime(Instant instant) {
+		return null;
+	}
+
+	public Instant getInstant(DateTime date) {
+		return null;
+	}
+
+	public Instant getInstant(Date date, StandardTime time) {
 
 		long ret = 0;
 

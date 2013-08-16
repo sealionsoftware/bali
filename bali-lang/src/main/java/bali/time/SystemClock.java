@@ -1,17 +1,10 @@
-package com.sealionsoftware.bali;
+package bali.time;
 
 import bali.Number;
-import bali.time.CalendarSystem;
-import bali.time.Clock;
-import bali.time.Date;
-import bali.time.DateTime;
-import bali.time.Instant;
-import bali.time.Time;
-import bali.time.TimeZone;
 import bali.time.standard.StandardDateTime;
 import bali.time.standard.StandardInstant;
 
-import static com.sealionsoftware.bali._.NUMBER_FACTORY;
+import static bali.number.NumberFactory.NUMBER_FACTORY;
 
 /**
  * User: Richard

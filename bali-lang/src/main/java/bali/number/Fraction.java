@@ -1,14 +1,14 @@
-package com.sealionsoftware.bali.number;
+package bali.number;
 
 import bali.Boolean;
 import bali.Number;
-import com.sealionsoftware.bali.IdentityBoolean;
+import bali.IdentityBoolean;
 
 /**
  * User: Richard
  * Date: 10/06/13
  */
-public class Fraction implements bali.Number {
+public final class Fraction implements bali.Number {
 
 	final Number numerator;
 	final Number divisor;

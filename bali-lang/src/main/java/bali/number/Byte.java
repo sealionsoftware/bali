@@ -1,18 +1,20 @@
-package com.sealionsoftware.bali.number;
+package bali.number;
 
 import bali.Boolean;
 import bali.Number;
-import com.sealionsoftware.bali.IdentityBoolean;
 
-import static com.sealionsoftware.bali.IdentityBoolean.FALSE;
-import static com.sealionsoftware.bali.IdentityBoolean.TRUE;
-import static com.sealionsoftware.bali._.NUMBER_FACTORY;
+import static bali.IdentityBoolean.FALSE;
+import static bali.IdentityBoolean.TRUE;
+import static bali.number.NumberFactory.NUMBER_FACTORY;
 
 /**
  * User: Richard
  * Date: 11/06/13
  */
-public class Byte implements bali.Number {
+public final class Byte implements Integer {
+
+	static final byte MAX_VALUE = java.lang.Byte.MAX_VALUE;
+	static final byte MIN_VALUE = java.lang.Byte.MIN_VALUE;
 
 	final byte value;
 
@@ -31,7 +33,7 @@ public class Byte implements bali.Number {
 	}
 
 	public Boolean isZero() {
-		return value == 0 ? TRUE : IdentityBoolean.FALSE;
+		return value == 0 ? TRUE : FALSE;
 	}
 
 	public Number magnitude() {
@@ -65,7 +67,7 @@ public class Byte implements bali.Number {
 	}
 
 	public Boolean greaterThan(Byte o) {
-		return value > o.value ? IdentityBoolean.TRUE : IdentityBoolean.FALSE;
+		return value > o.value ? TRUE : FALSE;
 	}
 
 	// Less than
@@ -78,7 +80,7 @@ public class Byte implements bali.Number {
 	}
 
 	public Boolean lessThan(Byte o) {
-		return value < o.value ? IdentityBoolean.TRUE : IdentityBoolean.FALSE;
+		return value < o.value ? TRUE : FALSE;
 	}
 
 	// Addition

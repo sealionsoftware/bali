@@ -1,29 +1,30 @@
-package com.sealionsoftware.bali.collections;
+package bali.collection;
 
-import bali.*;
 import bali.Boolean;
+import bali.number.Integer;
+import bali.Iterator;
+import bali.Iterable;
 import bali.Number;
-import com.sealionsoftware.bali.IdentityBoolean;
+import bali.IdentityBoolean;
+import bali.Value;
 
 import java.util.Arrays;
 
-import static com.sealionsoftware.bali.IdentityBoolean.FALSE;
-import static com.sealionsoftware.bali.IdentityBoolean.TRUE;
-import static com.sealionsoftware.bali._.NUMBER_FACTORY;
+import static bali.number.NumberFactory.NUMBER_FACTORY;
 
 /**
  * User: Richard
  * Date: 08/05/13
  */
-public class Array<E> implements bali.Iterable<E>, Value<Array> {
+public final class Array<E> implements Collection<E>, Value<Array> {
 
-	private E[] elements;
+	private final E[] elements;
 
 	public Array(E[] elements){
 		this.elements = elements;
 	}
 
-	public Number size() {
+	public Integer size() {
 		return NUMBER_FACTORY.forInt(elements.length);
 	}
 

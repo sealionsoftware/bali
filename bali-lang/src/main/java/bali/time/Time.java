@@ -5,11 +5,12 @@ package bali.time;
  * Date: 15/07/13
  */
 public interface Time {
-	Number getHour();
 
-	Number getMinute();
+	public Number getHour();
 
-	Number getSecond();
+	public Number getMinute();
 
-	Number getMilliseconds();
+	public Number getSecond();
+
+	public Number getMilliseconds();
 }

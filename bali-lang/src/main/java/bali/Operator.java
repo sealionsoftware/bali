@@ -12,6 +12,6 @@ import static java.lang.annotation.ElementType.METHOD;
  */
 @Target(METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Operator {
+@interface Operator {
 	java.lang.String value();
 }

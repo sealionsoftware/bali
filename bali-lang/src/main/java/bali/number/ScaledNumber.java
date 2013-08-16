@@ -1,8 +1,8 @@
-package com.sealionsoftware.bali.number;
+package bali.number;
 
 import bali.Boolean;
 import bali.Number;
-import com.sealionsoftware.bali.IdentityBoolean;
+import bali.IdentityBoolean;
 
 /**
  * User: Richard

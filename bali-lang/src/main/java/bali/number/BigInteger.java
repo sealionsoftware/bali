@@ -1,14 +1,13 @@
-package com.sealionsoftware.bali.number;
+package bali.number;
 
 import bali.Boolean;
 import bali.Number;
-import com.sealionsoftware.bali.IdentityBoolean;
 
 import java.util.Arrays;
 
-import static com.sealionsoftware.bali.IdentityBoolean.FALSE;
-import static com.sealionsoftware.bali.IdentityBoolean.TRUE;
-import static com.sealionsoftware.bali._.NUMBER_FACTORY;
+import static bali.IdentityBoolean.FALSE;
+import static bali.IdentityBoolean.TRUE;
+import static bali.number.NumberFactory.NUMBER_FACTORY;
 
 /**
  * Class representing the integer numbers in base 256
@@ -16,18 +15,18 @@ import static com.sealionsoftware.bali._.NUMBER_FACTORY;
  * User: Richard
  * Date: 04/05/13
  */
-public class BigInteger implements bali.Number {
+public final class BigInteger implements bali.number.Integer {
 
 	private static final java.lang.String INVALID_NUMBER_TYPE = "Invalid Number Type";
 
 	static final byte MIN = -128;
 	static final byte MAX = 127;
-	static final short SIZE = MAX - MIN + 1;
-	static final short MIN_2 = 2 * MIN;
-	static final Number ZERO = NUMBER_FACTORY.forByte((byte) 0);
+	private static final short SIZE = MAX - MIN + 1;
+	private static final short MIN_2 = 2 * MIN;
+	private static final Number ZERO = NUMBER_FACTORY.forByte((byte) 0);
 
-	final boolean positive;
-	final byte[] value;
+	private final boolean positive;
+	private final byte[] value;
 
 	public BigInteger(byte[] value) {
 		this(value, true);
@@ -49,7 +48,7 @@ public class BigInteger implements bali.Number {
 	}
 
 	public Boolean isZero() {
-		return (value.length == 1 && value[0] == 0) ? TRUE : IdentityBoolean.FALSE;
+		return (value.length == 1 && value[0] == 0) ? TRUE : FALSE;
 	}
 
 	public BigInteger magnitude() {
@@ -66,13 +65,13 @@ public class BigInteger implements bali.Number {
 		if (number instanceof BigInteger) {
 			return equalTo((BigInteger) number);
 		}
-		if (number instanceof com.sealionsoftware.bali.number.Long) {
-			return equalTo((com.sealionsoftware.bali.number.Long) number);
+		if (number instanceof Long) {
+			return equalTo((Long) number);
 		}
-		if (number instanceof com.sealionsoftware.bali.number.Integer) {
-			return equalTo((Integer) number);
+		if (number instanceof Int) {
+			return equalTo((Int) number);
 		}
-		if (number instanceof com.sealionsoftware.bali.number.Short) {
+		if (number instanceof Short) {
 			return equalTo((Short) number);
 		}
 		if (number instanceof Byte) {
@@ -82,14 +81,14 @@ public class BigInteger implements bali.Number {
 	}
 
 	public Boolean equalTo(BigInteger o) {
-		return Arrays.equals(o.value, value) ? TRUE : IdentityBoolean.FALSE;
+		return Arrays.equals(o.value, value) ? TRUE : FALSE;
 	}
 
-	public Boolean equalTo(com.sealionsoftware.bali.number.Long o) {
+	public Boolean equalTo(bali.number.Long o) {
 		return equalTo(o.value);
 	}
 
-	public Boolean equalTo(Integer o) {
+	public Boolean equalTo(Int o) {
 		return equalTo(o.value);
 	}
 
@@ -115,11 +114,11 @@ public class BigInteger implements bali.Number {
 		if (number instanceof BigInteger) {
 			return greaterThan((BigInteger) number);
 		}
-		if (number instanceof com.sealionsoftware.bali.number.Long) {
-			return greaterThan((com.sealionsoftware.bali.number.Long) number);
+		if (number instanceof bali.number.Long) {
+			return greaterThan((bali.number.Long) number);
 		}
-		if (number instanceof Integer) {
-			return greaterThan((Integer) number);
+		if (number instanceof Int) {
+			return greaterThan((Int) number);
 		}
 		if (number instanceof Short) {
 			return greaterThan((Short) number);
@@ -135,20 +134,20 @@ public class BigInteger implements bali.Number {
 			return TRUE;
 		}
 		if (o.value.length > value.length) {
-			return IdentityBoolean.FALSE;
+			return FALSE;
 		}
 		for (int i = value.length - 1; i >= 0; i--) {
 			if (value[i] > o.value[i]) {
 				return TRUE;
 			}
 			if (o.value[i] > value[i]) {
-				return IdentityBoolean.FALSE;
+				return FALSE;
 			}
 		}
-		return IdentityBoolean.FALSE;
+		return FALSE;
 	}
 
-	public Boolean greaterThan(com.sealionsoftware.bali.number.Long o) {
+	public Boolean greaterThan(bali.number.Long o) {
 		try {
 			return toLong() > o.value ? TRUE : FALSE;
 		} catch (TooBigException e) {
@@ -156,7 +155,7 @@ public class BigInteger implements bali.Number {
 		}
 	}
 
-	public Boolean greaterThan(Integer o) {
+	public Boolean greaterThan(Int o) {
 		try {
 			return toInt() > o.value ? TRUE : FALSE;
 		} catch (TooBigException e) {
@@ -186,11 +185,11 @@ public class BigInteger implements bali.Number {
 		if (number instanceof BigInteger) {
 			return lessThan((BigInteger) number);
 		}
-		if (number instanceof com.sealionsoftware.bali.number.Long) {
-			return lessThan((com.sealionsoftware.bali.number.Long) number);
+		if (number instanceof bali.number.Long) {
+			return lessThan((bali.number.Long) number);
 		}
-		if (number instanceof Integer) {
-			return lessThan((Integer) number);
+		if (number instanceof Int) {
+			return lessThan((Int) number);
 		}
 		if (number instanceof Short) {
 			return lessThan((Short) number);
@@ -206,20 +205,20 @@ public class BigInteger implements bali.Number {
 			return TRUE;
 		}
 		if (o.value.length < value.length) {
-			return IdentityBoolean.FALSE;
+			return FALSE;
 		}
 		for (int i = value.length - 1; i >= 0; i--) {
 			if (value[i] < o.value[i]) {
 				return TRUE;
 			}
 			if (o.value[i] < value[i]) {
-				return IdentityBoolean.FALSE;
+				return FALSE;
 			}
 		}
-		return IdentityBoolean.FALSE;
+		return FALSE;
 	}
 
-	public Boolean lessThan(com.sealionsoftware.bali.number.Long o) {
+	public Boolean lessThan(bali.number.Long o) {
 		try {
 			return toLong() < o.value ? TRUE : FALSE;
 		} catch (TooBigException e) {
@@ -227,7 +226,7 @@ public class BigInteger implements bali.Number {
 		}
 	}
 
-	public Boolean lessThan(Integer o) {
+	public Boolean lessThan(Int o) {
 		try {
 			return toInt() < o.value ? TRUE : FALSE;
 		} catch (TooBigException e) {
@@ -257,11 +256,11 @@ public class BigInteger implements bali.Number {
 		if (o instanceof BigInteger) {
 			return add((BigInteger) o);
 		}
-		if (o instanceof com.sealionsoftware.bali.number.Long) {
-			return add((com.sealionsoftware.bali.number.Long) o);
+		if (o instanceof bali.number.Long) {
+			return add((bali.number.Long) o);
 		}
-		if (o instanceof Integer) {
-			return add((Integer) o);
+		if (o instanceof Int) {
+			return add((Int) o);
 		}
 		if (o instanceof Short) {
 			return add((Short) o);
@@ -295,11 +294,11 @@ public class BigInteger implements bali.Number {
 		return new BigInteger(add(o.value), positive);
 	}
 
-	public Number add(com.sealionsoftware.bali.number.Long o) {
+	public Number add(bali.number.Long o) {
 		return add(o.value);
 	}
 
-	public Number add(Integer o) {
+	public Number add(Int o) {
 		return add(o.value);
 	}
 
@@ -361,11 +360,11 @@ public class BigInteger implements bali.Number {
 		if (o instanceof BigInteger) {
 			return subtract((BigInteger) o);
 		}
-		if (o instanceof com.sealionsoftware.bali.number.Long) {
-			return subtract((com.sealionsoftware.bali.number.Long) o);
+		if (o instanceof bali.number.Long) {
+			return subtract((bali.number.Long) o);
 		}
-		if (o instanceof Integer) {
-			return subtract((Integer) o);
+		if (o instanceof Int) {
+			return subtract((Int) o);
 		}
 		if (o instanceof Short) {
 			return subtract((Short) o);
@@ -399,11 +398,11 @@ public class BigInteger implements bali.Number {
 		return new BigInteger(subtract(o.value), positive);
 	}
 
-	public Number subtract(com.sealionsoftware.bali.number.Long o) {
+	public Number subtract(bali.number.Long o) {
 		return subtract(o.value);
 	}
 
-	public Number subtract(Integer o) {
+	public Number subtract(Int o) {
 		return subtract(o.value);
 	}
 
@@ -486,7 +485,7 @@ public class BigInteger implements bali.Number {
 	public Number multiply(BigInteger o) {
 		int i = 0;
 		Number out = this;
-		while (new Integer(++i).lessThan(o) == TRUE) {
+		while (new Int(++i).lessThan(o) == TRUE) {
 			out = out.add(this);
 		}
 		return out;
@@ -501,11 +500,11 @@ public class BigInteger implements bali.Number {
 			}
 			return o.isNegative() == TRUE ? Infinity.NEGATIVE_INFINITY : Infinity.POSITIVE_INFINITY;
 		}
-		while (new Integer(++i).lessThan(o) == TRUE) {
+		while (new Int(++i).lessThan(o) == TRUE) {
 			out = out.subtract(this);
 		}
 		if (out.equalTo(ZERO) == TRUE) {
-			return new Integer(i);
+			return new Int(i);
 		}
 		return new Fraction(this, o);
 	}

@@ -6,7 +6,7 @@ package bali;
  */
 public interface Iterator<T> {
 
-	public Boolean hasNext();
+	public bali.Boolean hasNext();
 
 	public T next();
 

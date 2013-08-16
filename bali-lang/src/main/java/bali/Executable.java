@@ -6,6 +6,6 @@ package bali;
  */
 public interface Executable {
 
-	public void execute() throws Exception;
+	public void execute() throws Throwable;
 
 }

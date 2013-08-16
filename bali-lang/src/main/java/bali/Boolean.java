@@ -17,6 +17,4 @@ public interface Boolean extends Value<Boolean> {
 	@Operator("^")
 	Boolean xor(Boolean that);
 
-	@Operator("==")
-	Boolean equalTo(Boolean operand);
 }

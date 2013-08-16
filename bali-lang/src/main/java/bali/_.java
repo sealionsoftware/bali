@@ -1,27 +1,26 @@
 package bali;
 
+import bali.number.NumberFactory;
 import bali.time.Clock;
 import bali.time.TimeZone;
-import com.sealionsoftware.bali.CharArrayString;
 import bali.time.standard.StandardInterval;
 import bali.time.standard.StandardTimeZone;
-import com.sealionsoftware.bali.SystemClock;
+import bali.time.SystemClock;
 import bali.time.calendar.ISOCalendarSystem;
-import com.sealionsoftware.bali.Console;
 
 /**
  * User: Richard
  * Date: 29/04/13
  */
-public class _ {
+public final class _ {
 
 	public static final ReaderWriter CONSOLE = new Console();
 
-	public static final Serializer<Number> NUMBER_FACTORY = com.sealionsoftware.bali._.NUMBER_FACTORY;
+	public static final Serializer<Number> NUMBER_FACTORY = NumberFactory.NUMBER_FACTORY;
 
 	public static final TimeZone LOCAL_TIMEZONE = new StandardTimeZone(
 			new CharArrayString("GMT".toCharArray()),
-			new StandardInterval(NUMBER_FACTORY.parse(new CharArrayString("3600000".toCharArray())))
+			new StandardInterval(NumberFactory.NUMBER_FACTORY.forInt(3600000))
 	);
 
 	public static final Clock SYSTEM_CLOCK = new SystemClock(new ISOCalendarSystem(), LOCAL_TIMEZONE);

@@ -1,6 +1,5 @@
 package bali;
 
-import com.sealionsoftware.bali.IdentityBoolean;
 import org.junit.Assert;
 import org.junit.Test;
 

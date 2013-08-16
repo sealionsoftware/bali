@@ -1,6 +1,6 @@
 package bali.time;
 
-import bali.*;
+import bali.String;
 import bali.Number;
 
 /**
@@ -8,11 +8,12 @@ import bali.Number;
  * Date: 15/07/13
  */
 public interface Date {
-	bali.String getEpoch();
 
-	Number getYear();
+	public String getEpoch();
 
-	Number getMonth();
+	public Number getYear();
 
-	Number getDay();
+	public Number getMonth();
+
+	public Number getDay();
 }

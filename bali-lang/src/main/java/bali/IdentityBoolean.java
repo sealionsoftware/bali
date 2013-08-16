@@ -1,7 +1,4 @@
-package com.sealionsoftware.bali;
-
-import bali.*;
-import bali.Boolean;
+package bali;
 
 /**
  * User: Richard

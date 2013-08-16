@@ -10,4 +10,5 @@ import bali.Quantified;
 public interface Interval extends Quantified<Interval> {
 
 	public Number getTimeInMillis();
+
 }

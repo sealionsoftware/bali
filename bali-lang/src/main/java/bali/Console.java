@@ -1,7 +1,4 @@
-package com.sealionsoftware.bali;
-
-import bali.*;
-import bali.String;
+package bali;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,15 +8,16 @@ import java.io.PrintStream;
  * User: Richard
  * Date: 05/05/13
  */
-public class Console implements ReaderWriter {
+public final class Console implements ReaderWriter {
 
-	private PrintStream ps = System.out;
-	private InputStream is = System.in;
+	private final PrintStream ps = System.out;
+	private final InputStream is = System.in;
 
 	public Console() {}
 
-	public void writeLine(CharArrayString in){
-		ps.println(in.characters);
+	public void writeLine(String in){
+		CharArrayString cas = (CharArrayString) in;
+		ps.println(cas.characters);
 	}
 
 	public String readLine(){

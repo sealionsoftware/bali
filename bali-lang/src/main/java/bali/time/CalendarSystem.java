@@ -1,19 +1,18 @@
 package bali.time;
 
-import bali.time.standard.StandardDate;
-import bali.time.standard.StandardTime;
-
 /**
  * User: Richard
  * Date: 11/07/13
  */
 public interface CalendarSystem {
 
-	public StandardDate getDate(Instant instant);
+	public Date getDate(Instant instant);
 
-	public StandardTime getTime(Instant instant);
+	public Time getTime(Instant instant);
 
-	public Instant getInstant(StandardDate date);
+	public DateTime getDateTime(Instant instant);
 
-	public Instant getInstant(StandardDate date, StandardTime time);
+	public Instant getInstant(Date date);
+
+	public Instant getInstant(DateTime date);
 }

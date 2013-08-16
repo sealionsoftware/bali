@@ -1,10 +1,10 @@
-package com.sealionsoftware.bali.number;
+package bali.number;
 
 import bali.Boolean;
 import bali.Number;
 
-import static com.sealionsoftware.bali.IdentityBoolean.FALSE;
-import static com.sealionsoftware.bali.IdentityBoolean.TRUE;
+import static bali.IdentityBoolean.FALSE;
+import static bali.IdentityBoolean.TRUE;
 
 /**
  * User: Richard

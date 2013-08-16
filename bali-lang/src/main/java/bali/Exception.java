@@ -6,6 +6,6 @@ package bali;
  */
 public interface Exception {
 
-	public String getProblem();
+	public String getMessage();
 
 }

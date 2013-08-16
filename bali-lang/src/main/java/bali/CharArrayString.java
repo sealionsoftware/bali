@@ -1,21 +1,15 @@
-package com.sealionsoftware.bali;
+package bali;
 
-import bali.*;
-import bali.Boolean;
-import bali.Number;
-import bali.String;
-import com.sealionsoftware.bali.collections.Array;
+import bali.collection.Array;
+import bali.number.NumberFactory;
 
-import java.lang.Iterable;
 import java.util.Arrays;
-
-import static bali._.NUMBER_FACTORY;
 
 /**
  * User: Richard
  * Date: 02/05/13
  */
-public class CharArrayString implements String {
+public final class CharArrayString implements String {
 
 	final char[] characters;
 
@@ -33,20 +27,21 @@ public class CharArrayString implements String {
 	}
 
 	public Number length(){
-		return NUMBER_FACTORY.forInt(characters.length);
+		return NumberFactory.NUMBER_FACTORY.forInt(characters.length);
 	}
 
-	@Operator("+")
 	public String join(String operand){
+		CharArrayString cas = (CharArrayString) operand;
 		int thisLength = this.characters.length;
-		int thatLength = operand.characters.length;
+		int thatLength = cas.characters.length;
 		char[] characters = Arrays.copyOf(this.characters, thisLength + thatLength);
-		System.arraycopy(operand.characters, 0, characters, thisLength, thatLength);
+		System.arraycopy(cas.characters, 0, characters, thisLength, thatLength);
 		return new CharArrayString(characters);
 	}
 
-	public Boolean equalTo(CharArrayString operand) {
-		return Arrays.equals(characters, operand.characters) ? IdentityBoolean.TRUE : IdentityBoolean.FALSE;
+	public Boolean equalTo(String operand) {
+		CharArrayString cas = (CharArrayString) operand;
+		return Arrays.equals(characters, cas.characters) ? IdentityBoolean.TRUE : IdentityBoolean.FALSE;
 	}
 
 	public java.lang.String toString() {
