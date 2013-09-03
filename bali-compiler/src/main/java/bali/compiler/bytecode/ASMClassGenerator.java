@@ -1,12 +1,13 @@
 package bali.compiler.bytecode;
 
 import bali.compiler.GeneratedClass;
-import bali.compiler.parser.tree.Class;
+import bali.compiler.parser.tree.ClassDeclaration;
 import bali.compiler.parser.tree.Declaration;
 import bali.compiler.parser.tree.Expression;
 import bali.compiler.parser.tree.Field;
-import bali.compiler.parser.tree.Method;
-import bali.compiler.parser.tree.Type;
+import bali.compiler.parser.tree.MethodDeclaration;
+import bali.compiler.parser.tree.TypeReference;
+import bali.compiler.validation.TypeLibrary;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
@@ -19,17 +20,22 @@ import java.util.Map;
  * User: Richard
  * Date: 13/05/13
  */
-public class ASMClassGenerator implements Generator<Class, GeneratedClass> {
+public class ASMClassGenerator implements Generator<ClassDeclaration, GeneratedClass> {
 
 	private ASMConverter converter = new ASMConverter();
+	private TypeLibrary library;
 
-	public GeneratedClass build(Class input) throws Exception {
+	public ASMClassGenerator(TypeLibrary library) {
+		this.library = library;
+	}
+
+	public GeneratedClass build(ClassDeclaration input) throws Exception {
 
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 		String[] interfaceNames = new String[input.getImplementations().size()];
 		int i = 0;
-		for (bali.compiler.parser.tree.Type iface : input.getImplementations()) {
-			interfaceNames[i++] = converter.getInternalName(iface.getDeclaration().getQualifiedClassName());
+		for (TypeReference iface : input.getImplementations()) {
+			interfaceNames[i++] = converter.getInternalName(iface.getDeclaration().getClassName());
 		}
 
 		cw.visit(V1_7,
@@ -54,7 +60,7 @@ public class ASMClassGenerator implements Generator<Class, GeneratedClass> {
 			}
 		}
 
-		for (Declaration argument : input.getArguments()) {
+		for (Declaration argument : input.getArgumentDeclarations()) {
 			cw.visitField(ACC_PRIVATE + ACC_FINAL,
 					argument.getName(),
 					converter.getTypeDescriptor(argument.getType()),
@@ -65,7 +71,7 @@ public class ASMClassGenerator implements Generator<Class, GeneratedClass> {
 
 		buildConstructor(values, cw, input);
 
-		for (Method method : input.getMethods()) {
+		for (MethodDeclaration method : input.getMethods()) {
 			buildMethod(method, cw);
 		}
 
@@ -74,12 +80,12 @@ public class ASMClassGenerator implements Generator<Class, GeneratedClass> {
 		return new GeneratedClass(input.getClassName(), cw.toByteArray());
 	}
 
-	private void buildConstructor(Map<String, Expression> values, ClassWriter cw, Class input) {
+	private void buildConstructor(Map<String, Expression> values, ClassWriter cw, ClassDeclaration input) {
 
-		ASMStackManager manager = new ASMStackManager(converter);
+		ASMStackManager manager = new ASMStackManager(converter, library);
 
-		List<Type> argumentTypes = new ArrayList<>();
-		for (Declaration argument : input.getArguments()){
+		List<TypeReference> argumentTypes = new ArrayList<>();
+		for (Declaration argument : input.getArgumentDeclarations()){
 			argumentTypes.add(argument.getType());
 		}
 
@@ -96,7 +102,7 @@ public class ASMClassGenerator implements Generator<Class, GeneratedClass> {
 		initv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V");
 
 		int i = 1;
-		for (Declaration declaration : input.getArguments()){
+		for (Declaration declaration : input.getArgumentDeclarations()){
 			initv.visitInsn(DUP);
 			initv.visitVarInsn(ALOAD, i++);
 			initv.visitFieldInsn(PUTFIELD,
@@ -121,9 +127,9 @@ public class ASMClassGenerator implements Generator<Class, GeneratedClass> {
 
 	}
 
-	private void buildMethod(Method method, ClassWriter cw) {
+	private void buildMethod(MethodDeclaration method, ClassWriter cw) {
 
-		ASMStackManager manager = new ASMStackManager(converter);
+		ASMStackManager manager = new ASMStackManager(converter, library);
 		int flags = (method.getDeclared() ? ACC_PUBLIC : ACC_PRIVATE);
 		if (method.getFinal()){
 			flags += ACC_FINAL;

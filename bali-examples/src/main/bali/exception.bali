@@ -11,9 +11,9 @@ class TryDoer() implements Executable {
 		try {
 			throw new Exception("Test");
 		} catch (Exception e){
-            throw new Exception(e.getProblem() + " 2");
+            throw new Exception(e.getMessage() + " 2");
         } catch (Exception e){
-            CONSOLE << e.getProblem();
+            CONSOLE << e.getMessage();
         }
 
         throw new Exception("Uncaught");

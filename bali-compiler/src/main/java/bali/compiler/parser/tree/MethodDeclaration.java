@@ -1,63 +1,41 @@
 package bali.compiler.parser.tree;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * User: Richard
  * Date: 29/04/13
  */
-public class MethodDeclaration extends Declaration {
+public class MethodDeclaration extends Method {
 
-	private String operator;
-	private List<Declaration> arguments = new ArrayList<>();
+	private CodeBlock body;
+	private Boolean isDeclared = Boolean.FALSE;
 
-	public MethodDeclaration() {
-	}
+	public MethodDeclaration() {}
 
 	public MethodDeclaration(Integer line, Integer character) {
 		super(line, character);
 	}
 
-	public List<Declaration> getArguments() {
-		return arguments;
+	public void setBody(CodeBlock body) {
+		this.body = body;
 	}
 
-	public void addArgument(Declaration argument) {
-		this.arguments.add(argument);
+	public CodeBlock getBody() {
+		return body;
 	}
 
-	public String getOperator() {
-		return operator;
+	public Boolean getDeclared() {
+		return isDeclared;
 	}
 
-	public void setOperator(String operator) {
-		this.operator = operator;
-	}
-
-	public Boolean getFinal() {
-		return true;
+	public void setDeclared(Boolean declared) {
+		isDeclared = declared;
 	}
 
 	public List<Node> getChildren() {
-		List<Node> ret = super.getChildren();
-		ret.addAll(arguments);
-		return ret;
+		List<Node> children = super.getChildren();
+		children.add(body);
+		return children;
 	}
-
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass().isAssignableFrom(o.getClass())) return false;
-
-		MethodDeclaration that = (MethodDeclaration) o;
-
-		if (!arguments.equals(that.arguments)) return false;
-
-		return true;
-	}
-
-	public String toString() {
-		return getName() + "(" + arguments + ")";
-	}
-
 }

@@ -1,8 +1,10 @@
 package bali.compiler.bytecode;
 
 import bali.compiler.parser.tree.Method;
+import bali.compiler.parser.tree.MethodDeclaration;
 import bali.compiler.parser.tree.TypeDeclaration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,7 +18,7 @@ public class TestDeclaration extends TypeDeclaration<Method> {
 	}
 
 	public List<Method> getMethods() {
-		return null;
+		return new ArrayList<>();
 	}
 
 	public void addMethod(Method method) {

@@ -9,14 +9,14 @@ import java.util.List;
  */
 public class ConstructionExpression extends Expression {
 
-	private Type type;
+	private TypeReference type;
 	private List<Expression> arguments = new ArrayList<>();
 
 	public ConstructionExpression(Integer line, Integer character) {
 		super(line, character);
 	}
 
-	public void setType(Type type) {
+	public void setType(TypeReference type) {
 		this.type = type;
 	}
 
@@ -24,7 +24,7 @@ public class ConstructionExpression extends Expression {
 		arguments.add(argument);
 	}
 
-	public Type getType() {
+	public TypeReference getType() {
 		return type;
 	}
 

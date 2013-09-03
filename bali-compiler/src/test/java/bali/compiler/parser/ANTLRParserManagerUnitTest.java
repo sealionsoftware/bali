@@ -2,7 +2,7 @@ package bali.compiler.parser;
 
 import bali.compiler.parser.tree.Assignment;
 import bali.compiler.parser.tree.BooleanLiteralExpression;
-import bali.compiler.parser.tree.Class;
+import bali.compiler.parser.tree.ClassDeclaration;
 import bali.compiler.parser.tree.CodeBlock;
 import bali.compiler.parser.tree.CompilationUnit;
 import bali.compiler.parser.tree.ConditionalStatement;
@@ -11,9 +11,9 @@ import bali.compiler.parser.tree.Declaration;
 import bali.compiler.parser.tree.Field;
 import bali.compiler.parser.tree.ForStatement;
 import bali.compiler.parser.tree.Import;
-import bali.compiler.parser.tree.Interface;
+import bali.compiler.parser.tree.InterfaceDeclaration;
 import bali.compiler.parser.tree.Invocation;
-import bali.compiler.parser.tree.Method;
+import bali.compiler.parser.tree.MethodDeclaration;
 import bali.compiler.parser.tree.NumberLiteralExpression;
 import bali.compiler.parser.tree.Reference;
 import bali.compiler.parser.tree.ReturnStatement;
@@ -69,7 +69,7 @@ public class ANTLRParserManagerUnitTest {
 
 	@Test
 	public void testInterface() {
-		Interface iface = unit.getInterfaces().get(1);
+		InterfaceDeclaration iface = unit.getInterfaces().get(1);
 		Assert.assertEquals("Name", "AnInterface", iface.getClassName());
 		Assert.assertEquals("Super Interfaces", 1, iface.getSuperInterfaces().size());
 		Assert.assertEquals("Super Interface Name", "ASuperInterface", iface.getSuperInterfaces().get(0).getClassName());
@@ -79,9 +79,9 @@ public class ANTLRParserManagerUnitTest {
 
 	@Test
 	public void testClass() {
-		Class clazz = unit.getClasses().get(0);
+		ClassDeclaration clazz = unit.getClasses().get(0);
 		Assert.assertEquals("Name", "AnImplementation", clazz.getClassName());
-		Assert.assertEquals("Arguments", 1, clazz.getArguments().size());
+		Assert.assertEquals("Arguments", 1, clazz.getArgumentDeclarations().size());
 		Assert.assertEquals("Interfaces", 1, clazz.getImplementations().size());
 		Assert.assertEquals("Interface Name", "AnInterface", clazz.getImplementations().get(0).getClassName());
 		Assert.assertEquals("Fields", 1, clazz.getFields().size());
@@ -91,7 +91,7 @@ public class ANTLRParserManagerUnitTest {
 
 	@Test
 	public void testConstructionArguments() {
-		Declaration declaration = unit.getClasses().get(0).getArguments().get(0);
+		Declaration declaration = unit.getClasses().get(0).getArgumentDeclarations().get(0);
 		Assert.assertEquals("Name", "aField", declaration.getName());
 		Assert.assertEquals("Type", "Number", declaration.getType().getClassName());
 		Assert.assertEquals("Children", 1, declaration.getChildren().size());
@@ -107,7 +107,7 @@ public class ANTLRParserManagerUnitTest {
 
 	@Test
 	public void testMethod() {
-		Method method = unit.getClasses().get(0).getMethods().get(0);
+		MethodDeclaration method = unit.getClasses().get(0).getMethods().get(0);
 		Assert.assertEquals("Name", "aMethod", method.getName());
 		Assert.assertEquals("Type", "Number", method.getType().getClassName());
 		Assert.assertEquals("Arguments", 1, method.getArguments().size());

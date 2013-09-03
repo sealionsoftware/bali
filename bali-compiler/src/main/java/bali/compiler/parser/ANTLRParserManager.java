@@ -1,12 +1,12 @@
 package bali.compiler.parser;
 
-import bali.compiler.parser.tree.Argument;
+import bali.compiler.parser.tree.ArgumentDeclaration;
 import bali.compiler.parser.tree.Assignment;
 import bali.compiler.parser.tree.BooleanLiteralExpression;
 import bali.compiler.parser.tree.BreakStatement;
 import bali.compiler.parser.tree.CaseStatement;
 import bali.compiler.parser.tree.CatchStatement;
-import bali.compiler.parser.tree.Class;
+import bali.compiler.parser.tree.ClassDeclaration;
 import bali.compiler.parser.tree.CodeBlock;
 import bali.compiler.parser.tree.CompilationUnit;
 import bali.compiler.parser.tree.ConditionalBlock;
@@ -19,7 +19,7 @@ import bali.compiler.parser.tree.Expression;
 import bali.compiler.parser.tree.Field;
 import bali.compiler.parser.tree.ForStatement;
 import bali.compiler.parser.tree.Import;
-import bali.compiler.parser.tree.Interface;
+import bali.compiler.parser.tree.InterfaceDeclaration;
 import bali.compiler.parser.tree.Invocation;
 import bali.compiler.parser.tree.ListLiteralExpression;
 import bali.compiler.parser.tree.Method;
@@ -33,7 +33,7 @@ import bali.compiler.parser.tree.StringLiteralExpression;
 import bali.compiler.parser.tree.SwitchStatement;
 import bali.compiler.parser.tree.ThrowStatement;
 import bali.compiler.parser.tree.TryStatement;
-import bali.compiler.parser.tree.Type;
+import bali.compiler.parser.tree.TypeReference;
 import bali.compiler.parser.tree.UnaryOperation;
 import bali.compiler.parser.tree.Variable;
 import bali.compiler.parser.tree.WhileStatement;
@@ -123,8 +123,8 @@ public class ANTLRParserManager implements ParserManager {
 		return constant;
 	}
 
-	private Interface buildInterface(BaliParser.InterfaceDeclarationContext context) {
-		Interface iface = new Interface(l(context), c(context));
+	private InterfaceDeclaration buildInterface(BaliParser.InterfaceDeclarationContext context) {
+		InterfaceDeclaration iface = new InterfaceDeclaration(l(context), c(context));
 
 		iface.setClassName(context.typeDeclaration().getText());
 
@@ -143,8 +143,8 @@ public class ANTLRParserManager implements ParserManager {
 		return iface;
 	}
 
-	private Class buildClassDeclaration(BaliParser.ClassDeclarationContext context) throws Exception {
-		Class clazz = new Class(l(context), c(context));
+	private ClassDeclaration buildClassDeclaration(BaliParser.ClassDeclarationContext context) throws Exception {
+		ClassDeclaration clazz = new ClassDeclaration(l(context), c(context));
 		clazz.setClassName(context.typeDeclaration().TYPE_IDENTIFIER().getText());
 
 
@@ -169,8 +169,8 @@ public class ANTLRParserManager implements ParserManager {
 		return clazz;
 	}
 
-	private Method buildMethod(BaliParser.MethodDeclarationContext context) throws Exception {
-		Method method = new Method(l(context), c(context));
+	private MethodDeclaration buildMethod(BaliParser.MethodDeclarationContext context) throws Exception {
+		MethodDeclaration method = new MethodDeclaration(l(context), c(context));
 		method.setName(context.STANDARD_IDENTIFIER().getText());
 		BaliParser.TypeDeclarationContext typeDeclaration = context.typeDeclaration();
 		if (typeDeclaration != null) {
@@ -364,28 +364,28 @@ public class ANTLRParserManager implements ParserManager {
 		return field;
 	}
 
-	private Declaration buildArgument(BaliParser.ArgumentDeclarationContext context) {
-		Declaration argument = new Argument(l(context), c(context));
-		argument.setName(context.STANDARD_IDENTIFIER().getText());
-		argument.setType(getType(context.typeDeclaration()));
-		return argument;
+	private ArgumentDeclaration buildArgument(BaliParser.ArgumentDeclarationContext context) {
+		ArgumentDeclaration argumentDeclaration = new ArgumentDeclaration(l(context), c(context));
+		argumentDeclaration.setName(context.STANDARD_IDENTIFIER().getText());
+		argumentDeclaration.setType(getType(context.typeDeclaration()));
+		return argumentDeclaration;
 	}
 
-	private MethodDeclaration buildMethodDeclaration(BaliParser.DeclarationDeclarationContext context) {
-		MethodDeclaration method = new MethodDeclaration(l(context), c(context));
+	private Method buildMethodDeclaration(BaliParser.DeclarationDeclarationContext context) {
+		Method method = new Method(l(context), c(context));
 		method.setName(context.STANDARD_IDENTIFIER().getText());
 		BaliParser.TypeDeclarationContext typeDeclaration = context.typeDeclaration();
 		if (typeDeclaration != null) {
 			method.setType(getType(typeDeclaration));
 		}
 		for (BaliParser.ArgumentDeclarationContext adc : context.argumentDeclarationList().argumentDeclaration()) {
-			method.addArgument(buildDeclaration(adc));
+			method.addArgument(buildArgument(adc));
 		}
 		return method;
 	}
 
 	private Declaration buildDeclaration(BaliParser.ArgumentDeclarationContext context) {
-		Declaration declaration = new Argument(l(context), c(context));
+		Declaration declaration = new ArgumentDeclaration(l(context), c(context));
 		declaration.setName(context.STANDARD_IDENTIFIER().getText());
 		declaration.setType(getType(context.typeDeclaration()));
 		return declaration;
@@ -545,14 +545,14 @@ public class ANTLRParserManager implements ParserManager {
 		throw new RuntimeException("Could not get value for constant expression " + context.getText());
 	}
 
-	private Type getType(BaliParser.TypeDeclarationContext typeContext) {
+	private TypeReference getType(BaliParser.TypeDeclarationContext typeContext) {
 		Token className = typeContext.TYPE_IDENTIFIER().getSymbol();
-		Type returnType = new Type(className.getLine(), className.getCharPositionInLine());
+		TypeReference returnType = new TypeReference(className.getLine(), className.getCharPositionInLine());
 		returnType.setClassName(className.getText());
 		BaliParser.TypeDeclarationListContext parameterTypes = typeContext.typeDeclarationList();
 		if (parameterTypes != null) {
 			for (BaliParser.TypeDeclarationContext typeDeclaration : parameterTypes.typeDeclaration()) {
-				Type parameterType = getType(typeDeclaration);
+				TypeReference parameterType = getType(typeDeclaration);
 				parameterType.setErase(true);
 				returnType.addParameter(parameterType);
 			}

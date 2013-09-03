@@ -13,7 +13,7 @@ public class Invocation extends Expression {
 	private String method;
 	private List<Expression> arguments = new ArrayList<>();
 
-	private Type returnType;
+	private TypeReference returnType;
 
 	public Invocation() {
 	}
@@ -22,11 +22,11 @@ public class Invocation extends Expression {
 		super(line, character);
 	}
 
-	public Type getType() {
+	public TypeReference getType() {
 		return returnType;
 	}
 
-	public void setReturnType(Type returnType) {
+	public void setReturnType(TypeReference returnType) {
 		this.returnType = returnType;
 	}
 

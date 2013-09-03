@@ -1,6 +1,6 @@
 package bali.compiler.bytecode;
 
-import com.sealionsoftware.bali.number.BigInteger;
+import bali.number.BigInteger;
 
 /**
  * User: Richard

@@ -1,22 +1,23 @@
 package bali.compiler.validation.visitor;
 
 import bali._;
-import bali.compiler.parser.tree.Argument;
+import bali.compiler.parser.tree.ArgumentDeclaration;
 import bali.compiler.parser.tree.CatchStatement;
+import bali.compiler.parser.tree.ClassDeclaration;
 import bali.compiler.parser.tree.CodeBlock;
 import bali.compiler.parser.tree.CompilationUnit;
 import bali.compiler.parser.tree.Declaration;
 import bali.compiler.parser.tree.ForStatement;
-import bali.compiler.parser.tree.Method;
+import bali.compiler.parser.tree.MethodDeclaration;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.Reference;
-import bali.compiler.parser.tree.Type;
-import bali.compiler.parser.tree.TypeDeclaration;
+import bali.compiler.parser.tree.TypeReference;
 import bali.compiler.parser.tree.Variable;
-import bali.compiler.validation.TypeDeclarationLibrary;
+import bali.compiler.validation.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -32,22 +33,18 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 
 	private Scope langScope;
 
-	public ReferenceValidator(TypeDeclarationLibrary library) {
+	public ReferenceValidator(TypeLibrary library) {
 
 		// Lang level constants
 
 		Class<_> langClass = _.class;
 		List<Declaration> langDeclarations = new ArrayList<>();
 		for (Field f : langClass.getDeclaredFields()) {
-			Type type = new Type();
-			type.setClassName(f.getType().getSimpleName());
-			try {
-				type.setDeclaration(library.getTypeDeclaration(f.getType().getName()));
-			} catch (ClassNotFoundException e) {
-			}
-			Declaration d = new Argument();
+
+
+			Declaration d = new ArgumentDeclaration();
 			d.setName(f.getName());
-			d.setType(type);
+			d.setType(buildType(f.getGenericType(), library));
 			langDeclarations.add(d);
 		}
 
@@ -56,6 +53,30 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 				langClass.getName(),
 				langDeclarations
 		);
+	}
+
+	private TypeReference buildType(java.lang.reflect.Type in, TypeLibrary library){
+		TypeReference type = new TypeReference();
+		Class rawType;
+
+		if (in instanceof ParameterizedType){
+			ParameterizedType parameterizedType = (ParameterizedType) in;
+			for (java.lang.reflect.Type typeArg : parameterizedType.getActualTypeArguments()){
+				type.addParameter(buildType(typeArg, library));
+			}
+			rawType = (Class) parameterizedType.getRawType();
+		} else if (in instanceof Class) {
+			rawType = (Class) in;
+		} else {
+			throw new RuntimeException("Could not determine lang field type: " + type);
+		}
+
+		type.setClassName(rawType.getSimpleName());
+		try {
+			type.setDeclaration(library.getTypeDeclaration(rawType.getName()));
+		} catch (ClassNotFoundException e) {
+		}
+		return type;
 	}
 
 	// Engages at the root of the AST, constructs a lookup table
@@ -80,10 +101,10 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 	}
 
 	private void validate(Node node, ReferenceValidatorTypeAgent agent) {
-		if (node instanceof bali.compiler.parser.tree.Class) {
-			validate((bali.compiler.parser.tree.Class) node, agent);
-		} else if (node instanceof Method) {
-			validate((Method) node, agent);
+		if (node instanceof ClassDeclaration) {
+			validate((ClassDeclaration) node, agent);
+		} else if (node instanceof MethodDeclaration) {
+			validate((MethodDeclaration) node, agent);
 		} else if (node instanceof ForStatement) {
 			validate((ForStatement) node, agent);
 		} else if (node instanceof CatchStatement) {
@@ -99,9 +120,9 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 		}
 	}
 
-	private void validate(bali.compiler.parser.tree.Class clazz, ReferenceValidatorTypeAgent agent) {
+	private void validate(ClassDeclaration clazz, ReferenceValidatorTypeAgent agent) {
 		List<Declaration> referenceableFields = new ArrayList<>();
-		referenceableFields.addAll(clazz.getArguments());
+		referenceableFields.addAll(clazz.getArgumentDeclarations());
 		referenceableFields.addAll(clazz.getFields());
 		pushAndWalk(clazz, agent, new Scope(
 				Reference.ReferenceScope.FIELD,
@@ -110,7 +131,7 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 		));
 	}
 
-	private void validate(Method method, ReferenceValidatorTypeAgent agent) {
+	private void validate(MethodDeclaration method, ReferenceValidatorTypeAgent agent) {
 		List<Declaration> declarations = new ArrayList<>();
 		for (Declaration declaration : method.getArguments()){
 			declarations.add(declaration);

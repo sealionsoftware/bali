@@ -2,9 +2,9 @@ package bali.compiler.bytecode;
 
 import bali.compiler.GeneratedClass;
 import bali.compiler.GeneratedPackage;
-import bali.compiler.parser.tree.Class;
+import bali.compiler.parser.tree.ClassDeclaration;
 import bali.compiler.parser.tree.CompilationUnit;
-import bali.compiler.parser.tree.Interface;
+import bali.compiler.parser.tree.InterfaceDeclaration;
 
 /**
  * User: Richard
@@ -13,10 +13,10 @@ import bali.compiler.parser.tree.Interface;
 public class ConfigurablePackageGenerator implements Generator<CompilationUnit, GeneratedPackage>{
 
 	private Generator<CompilationUnit, GeneratedClass> packageClassGenerator;
-	private Generator<Interface, GeneratedClass> interfaceGenerator;
-	private Generator<Class, GeneratedClass> classGenerator;
+	private Generator<InterfaceDeclaration, GeneratedClass> interfaceGenerator;
+	private Generator<ClassDeclaration, GeneratedClass> classGenerator;
 
-	public ConfigurablePackageGenerator(Generator<CompilationUnit, GeneratedClass> packageClassGenerator, Generator<Interface, GeneratedClass> interfaceGenerator, Generator<Class, GeneratedClass> classGenerator) {
+	public ConfigurablePackageGenerator(Generator<CompilationUnit, GeneratedClass> packageClassGenerator, Generator<InterfaceDeclaration, GeneratedClass> interfaceGenerator, Generator<ClassDeclaration, GeneratedClass> classGenerator) {
 		this.packageClassGenerator = packageClassGenerator;
 		this.interfaceGenerator = interfaceGenerator;
 		this.classGenerator = classGenerator;
@@ -27,11 +27,11 @@ public class ConfigurablePackageGenerator implements Generator<CompilationUnit, 
 
 		pkg.addClass(packageClassGenerator.build(compilationUnit));
 
-		for (Interface iface : compilationUnit.getInterfaces()){
+		for (InterfaceDeclaration iface : compilationUnit.getInterfaces()){
 			pkg.addClass(interfaceGenerator.build(iface));
 		}
 
-		for (Class clazz : compilationUnit.getClasses()){
+		for (ClassDeclaration clazz : compilationUnit.getClasses()){
 			pkg.addClass(classGenerator.build(clazz));
 		}
 

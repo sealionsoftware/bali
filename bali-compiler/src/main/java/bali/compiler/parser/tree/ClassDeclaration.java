@@ -7,35 +7,35 @@ import java.util.List;
  * User: Richard
  * Date: 29/04/13
  */
-public class Class extends TypeDeclaration<Method> {
+public class ClassDeclaration extends TypeDeclaration<MethodDeclaration> {
 
-	private List<Declaration> arguments = new ArrayList<>();
+	private List<ArgumentDeclaration> argumentDeclarations = new ArrayList<>();
 	private List<Field> fields = new ArrayList<>();
-	private List<Method> methods = new ArrayList<>();
+	private List<MethodDeclaration> methods = new ArrayList<>();
 
 	private String sourceFile;
 
-	public Class() {
+	public ClassDeclaration() {
 		this(null, null);
 	}
 
-	public Class(Integer line, Integer character) {
+	public ClassDeclaration(Integer line, Integer character) {
 		super(line, character);
 	}
 
-	public List<Declaration> getArguments() {
-		return arguments;
+	public List<ArgumentDeclaration> getArgumentDeclarations() {
+		return argumentDeclarations;
 	}
 
-	public void addArgument(Declaration argument) {
-		this.arguments.add(argument);
+	public void addArgument(ArgumentDeclaration argumentDeclaration) {
+		this.argumentDeclarations.add(argumentDeclaration);
 	}
 
-	public List<Method> getMethods() {
+	public List<MethodDeclaration> getMethods() {
 		return methods;
 	}
 
-	public void addMethod(Method method) {
+	public void addMethod(MethodDeclaration method) {
 		this.methods.add(method);
 	}
 
@@ -61,7 +61,7 @@ public class Class extends TypeDeclaration<Method> {
 
 	public List<Node> getChildren() {
 		List<Node> children = super.getChildren();
-		children.addAll(arguments);
+		children.addAll(argumentDeclarations);
 		children.addAll(fields);
 		children.addAll(methods);
 		return children;

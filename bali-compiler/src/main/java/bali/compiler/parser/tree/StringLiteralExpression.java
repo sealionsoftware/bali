@@ -1,6 +1,6 @@
 package bali.compiler.parser.tree;
 
-import com.sealionsoftware.bali.CharArrayString;
+import bali.CharArrayString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +12,8 @@ import java.util.List;
 public class StringLiteralExpression extends Expression {
 
 	private String serialization;
-	private Type type;{
-		Type t = new Type();
+	private TypeReference type;{
+		TypeReference t = new TypeReference();
 		t.setClassName(CharArrayString.class.getName());
 		type = t;
 	}
@@ -25,7 +25,7 @@ public class StringLiteralExpression extends Expression {
 		super(line, character);
 	}
 
-	public Type getType() {
+	public TypeReference getType() {
 		return type;
 	}
 

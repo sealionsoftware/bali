@@ -9,7 +9,7 @@ import java.util.List;
  */
 public abstract class Declaration extends Node {
 
-	private Type type;
+	private TypeReference type;
 	private String name;
 
 	public Declaration() {
@@ -27,11 +27,11 @@ public abstract class Declaration extends Node {
 		return name;
 	}
 
-	public Type getType() {
+	public TypeReference getType() {
 		return type;
 	}
 
-	public void setType(Type type) {
+	public void setType(TypeReference type) {
 		this.type = type;
 	}
 
@@ -60,7 +60,7 @@ public abstract class Declaration extends Node {
 	public String toString() {
 		String ret = type.toString();
 		if (name != null) {
-			ret += name;
+			ret += " " + name;
 		}
 		return ret;
 	}

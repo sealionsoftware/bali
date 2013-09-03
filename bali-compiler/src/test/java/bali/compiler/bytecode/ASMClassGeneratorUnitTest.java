@@ -1,19 +1,19 @@
 package bali.compiler.bytecode;
 
-import com.sealionsoftware.bali.IdentityBoolean;
-import com.sealionsoftware.bali.number.Byte;
+import bali.IdentityBoolean;
+import bali.compiler.parser.tree.ArgumentDeclaration;
+import bali.compiler.parser.tree.ClassDeclaration;
+import bali.compiler.parser.tree.InterfaceDeclaration;
+import bali.compiler.parser.tree.MethodDeclaration;
+import bali.compiler.parser.tree.TypeReference;
+import bali.number.Byte;
 import bali.Number;
 import bali.compiler.GeneratedClass;
-import bali.compiler.parser.tree.Argument;
-import bali.compiler.parser.tree.Class;
 import bali.compiler.parser.tree.CodeBlock;
 import bali.compiler.parser.tree.Declaration;
 import bali.compiler.parser.tree.Field;
-import bali.compiler.parser.tree.Interface;
-import bali.compiler.parser.tree.Method;
 import bali.compiler.parser.tree.NumberLiteralExpression;
 import bali.compiler.parser.tree.ReturnStatement;
-import bali.compiler.parser.tree.Type;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,11 +30,11 @@ public class ASMClassGeneratorUnitTest {
 
 	private static ASMClassGenerator generator = new ASMClassGenerator();
 
-	private Class clazz;
+	private ClassDeclaration clazz;
 
 	@Before
 	public void setUp() {
-		clazz = new Class();
+		clazz = new ClassDeclaration();
 		clazz.setQualifiedClassName("bali.test.AClass");
 	}
 
@@ -53,7 +53,7 @@ public class ASMClassGeneratorUnitTest {
 	@Test
 	public void testGenerateClassWithInternalField() throws Exception {
 
-		Type number = new Type();
+		TypeReference number = new TypeReference();
 		number.setDeclaration(new TestDeclaration("bali.Number"));
 
 		NumberLiteralExpression value = new NumberLiteralExpression();
@@ -86,7 +86,7 @@ public class ASMClassGeneratorUnitTest {
 		CodeBlock codeBlock = new CodeBlock();
 		codeBlock.addStatement(new ReturnStatement());
 
-		Method declaration = new Method();
+		MethodDeclaration declaration = new MethodDeclaration();
 		declaration.setName("aMethod");
 		declaration.setBody(codeBlock);
 
@@ -103,7 +103,7 @@ public class ASMClassGeneratorUnitTest {
 	@Test
 	public void testGenerateClassWithNumberReturnDeclaration() throws Exception {
 
-		Type type = new Type();
+		TypeReference type = new TypeReference();
 		type.setClassName("Number");
 		type.setDeclaration(new TestDeclaration("bali.Number"));
 
@@ -116,7 +116,7 @@ public class ASMClassGeneratorUnitTest {
 		CodeBlock codeBlock = new CodeBlock();
 		codeBlock.addStatement(ret);
 
-		Method declaration = new Method();
+		MethodDeclaration declaration = new MethodDeclaration();
 		declaration.setName("aMethod");
 		declaration.setType(type);
 		declaration.setBody(codeBlock);
@@ -133,18 +133,18 @@ public class ASMClassGeneratorUnitTest {
 	@Test
 	public void testGenerateClassWithNumberParamDeclaration() throws Exception {
 
-		Type type = new Type();
+		TypeReference type = new TypeReference();
 		type.setClassName("Number");
 		type.setDeclaration(new TestDeclaration("bali.Number"));
 
-		Declaration argument = new Argument();
+		Declaration argument = new ArgumentDeclaration();
 		argument.setType(type);
 		argument.setName("anArgument");
 
 		CodeBlock codeBlock = new CodeBlock();
 		codeBlock.addStatement(new ReturnStatement());
 
-		Method declaration = new Method();
+		MethodDeclaration declaration = new MethodDeclaration();
 		declaration.setName("aMethod");
 		declaration.addArgument(argument);
 		declaration.setBody(codeBlock);
@@ -161,25 +161,25 @@ public class ASMClassGeneratorUnitTest {
 	@Test
 	public void testGenerateImplementation() throws Exception {
 
-		Type type = new Type();
+		TypeReference type = new TypeReference();
 		type.setClassName("Number");
 		type.setDeclaration(new TestDeclaration("bali.Number"));
 
-		Declaration argument = new Argument();
+		Declaration argument = new ArgumentDeclaration();
 		argument.setType(type);
 		argument.setName("anArgument");
 
 		CodeBlock codeBlock = new CodeBlock();
 		codeBlock.addStatement(new ReturnStatement());
 
-		Method declaration = new Method();
+		MethodDeclaration declaration = new MethodDeclaration();
 		declaration.setName("aMethod");
 		declaration.addArgument(argument);
 		declaration.setBody(codeBlock);
 		declaration.setDeclared(true);
 
-		Type ifaceType = new Type();
-		Interface iface = new Interface();
+		TypeReference ifaceType = new TypeReference();
+		InterfaceDeclaration iface = new InterfaceDeclaration();
 		iface.setQualifiedClassName("bali.compiler.bytecode.ASuperInterface");
 		iface.addMethod(declaration);
 		ifaceType.setDeclaration(iface);

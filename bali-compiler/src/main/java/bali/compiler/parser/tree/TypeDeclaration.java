@@ -8,11 +8,11 @@ import java.util.List;
  * User: Richard
  * Date: 29/04/13
  */
-public abstract class TypeDeclaration<T extends MethodDeclaration> extends Node {
+public abstract class TypeDeclaration<T extends Method> extends Node {
 
 	private String className;
-	private List<Type> implementations = new ArrayList<>();
-	private List<Type> parameters = new ArrayList<>();
+	private List<TypeReference> implementations = new ArrayList<>();
+	private List<TypeParameter> parameters = new ArrayList<>();
 
 	private String qualifiedClassName;
 
@@ -31,19 +31,19 @@ public abstract class TypeDeclaration<T extends MethodDeclaration> extends Node 
 		this.className = className;
 	}
 
-	public List<Type> getParameters() {
+	public List<TypeParameter> getParameters() {
 		return parameters;
 	}
 
-	public void addParameter(Type parameter) {
+	public void addParameter(TypeParameter parameter) {
 		parameters.add(parameter);
 	}
 
-	public List<Type> getImplementations() {
+	public List<TypeReference> getImplementations() {
 		return implementations;
 	}
 
-	public void addImplementation(Type implementation) {
+	public void addImplementation(TypeReference implementation) {
 		implementations.add(implementation);
 	}
 
@@ -61,30 +61,30 @@ public abstract class TypeDeclaration<T extends MethodDeclaration> extends Node 
 
 	public abstract void addMethod(T method);
 
-	public MethodDeclaration getDeclaration(String name, List<Type> suppliedArgumentTypes) {
-		for (MethodDeclaration declaration : getMethods()) {
-			List<Declaration> argumentDeclarations = declaration.getArguments();
-			if (declaration.getName().equals(name)
-					&& suppliedArgumentTypes.size() == argumentDeclarations.size()
-					&& typesCompatible(argumentDeclarations, suppliedArgumentTypes)) {
-				return declaration;
-			}
-		}
-		return null;
-	}
+//	public Method getDeclaration(String name, List<TypeReference> suppliedArgumentTypes) {
+//		for (Method declaration : getMethods()) {
+//			List<Declaration> argumentDeclarations = declaration.getArguments();
+//			if (declaration.getName().equals(name)
+//					&& suppliedArgumentTypes.size() == argumentDeclarations.size()
+//					&& typesCompatible(argumentDeclarations, suppliedArgumentTypes)) {
+//				return declaration;
+//			}
+//		}
+//		return null;
+//	}
 
-	public boolean typesCompatible(List<Declaration> argumentDeclarations, List<Type> suppliedArgumentTypes){
-		Iterator<Type> i = suppliedArgumentTypes.iterator();
-		Iterator<Declaration> j = argumentDeclarations.iterator();
-		while(i.hasNext()){
-			Type suppliedArgumentType = i.next();
-			Declaration argumentDeclaration = j.next();
-			if (!suppliedArgumentType.isAssignableTo(argumentDeclaration.getType())){
-				return false;
-			}
-		}
-		return true;
-	}
+//	public boolean typesCompatible(List<Declaration> argumentDeclarations, List<TypeReference> suppliedArgumentTypes){
+//		Iterator<TypeReference> i = suppliedArgumentTypes.iterator();
+//		Iterator<Declaration> j = argumentDeclarations.iterator();
+//		while(i.hasNext()){
+//			TypeReference suppliedArgumentType = i.next();
+//			Declaration argumentDeclaration = j.next();
+//			if (!suppliedArgumentType.isAssignableTo(argumentDeclaration.getType())){
+//				return false;
+//			}
+//		}
+//		return true;
+//	}
 
 	public List<Node> getChildren(){
 		List<Node> ret =  new ArrayList<>();

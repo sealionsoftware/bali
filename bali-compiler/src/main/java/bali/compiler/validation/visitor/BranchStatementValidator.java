@@ -3,7 +3,7 @@ package bali.compiler.validation.visitor;
 import bali.compiler.parser.tree.BreakStatement;
 import bali.compiler.parser.tree.ContinueStatement;
 import bali.compiler.parser.tree.LoopStatement;
-import bali.compiler.parser.tree.Method;
+import bali.compiler.parser.tree.MethodDeclaration;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.validation.ValidationFailure;
 
@@ -14,9 +14,9 @@ import java.util.List;
  * User: Richard
  * Date: 08/07/13
  */
-public class BranchStatementValidator implements Validator<Method> {
+public class BranchStatementValidator implements Validator<MethodDeclaration> {
 
-	public List<ValidationFailure> validate(Method node) {
+	public List<ValidationFailure> validate(MethodDeclaration node) {
 		return walk(node);
 	}
 

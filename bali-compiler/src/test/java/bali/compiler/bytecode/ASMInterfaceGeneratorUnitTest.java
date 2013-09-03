@@ -3,11 +3,11 @@ package bali.compiler.bytecode;
 import bali.Number;
 
 import bali.compiler.GeneratedClass;
-import bali.compiler.parser.tree.Argument;
+import bali.compiler.parser.tree.ArgumentDeclaration;
 import bali.compiler.parser.tree.Declaration;
-import bali.compiler.parser.tree.Interface;
-import bali.compiler.parser.tree.MethodDeclaration;
-import bali.compiler.parser.tree.Type;
+import bali.compiler.parser.tree.InterfaceDeclaration;
+import bali.compiler.parser.tree.Method;
+import bali.compiler.parser.tree.TypeReference;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,11 +20,11 @@ public class ASMInterfaceGeneratorUnitTest {
 
 	private static ASMInterfaceGenerator generator = new ASMInterfaceGenerator();
 
-	private Interface iface;
+	private InterfaceDeclaration iface;
 
 	@Before
 	public void setUp() {
-		iface = new Interface(0, 0);
+		iface = new InterfaceDeclaration(0, 0);
 		iface.setQualifiedClassName("bali.test.AnInterface");
 	}
 
@@ -41,7 +41,7 @@ public class ASMInterfaceGeneratorUnitTest {
 	@Test
 	public void testGenerateInterfaceExtension() throws Exception {
 
-		Type type = new Type(0, 0);
+		TypeReference type = new TypeReference(0, 0);
 		type.setDeclaration(new TestDeclaration("bali.compiler.bytecode.ASuperInterface"));
 
 		iface.addSuperInterface(type);
@@ -56,7 +56,7 @@ public class ASMInterfaceGeneratorUnitTest {
 	@Test
 	public void testGenerateInterfaceWithVoidDeclaration() throws Exception {
 
-		MethodDeclaration declaration = new MethodDeclaration(0, 0);
+		Method declaration = new Method(0, 0);
 		declaration.setName("aMethod");
 
 		iface.addMethod(declaration);
@@ -71,11 +71,11 @@ public class ASMInterfaceGeneratorUnitTest {
 	@Test
 	public void testGenerateInterfaceWithNumberReturnDeclaration() throws Exception {
 
-		Type type = new Type(0, 0);
+		TypeReference type = new TypeReference(0, 0);
 		type.setClassName("Number");
 		type.setDeclaration(new TestDeclaration("bali.Number"));
 
-		MethodDeclaration declaration = new MethodDeclaration(0, 0);
+		Method declaration = new Method(0, 0);
 		declaration.setName("aMethod");
 		declaration.setType(type);
 
@@ -91,15 +91,15 @@ public class ASMInterfaceGeneratorUnitTest {
 	@Test
 	public void testGenerateInterfaceWithNumberParamDeclaration() throws Exception {
 
-		Type type = new Type(0, 0);
+		TypeReference type = new TypeReference(0, 0);
 		type.setClassName("Number");
 		type.setDeclaration(new TestDeclaration("bali.Number"));
 
-		Declaration argument = new Argument(0, 0);
+		Declaration argument = new ArgumentDeclaration(0, 0);
 		argument.setType(type);
 		argument.setName("anArgument");
 
-		MethodDeclaration declaration = new MethodDeclaration(0, 0);
+		Method declaration = new Method(0, 0);
 		declaration.setName("aMethod");
 		declaration.addArgument(argument);
 

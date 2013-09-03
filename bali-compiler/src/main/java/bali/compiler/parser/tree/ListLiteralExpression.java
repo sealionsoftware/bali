@@ -1,6 +1,6 @@
 package bali.compiler.parser.tree;
 
-import com.sealionsoftware.bali.collections.Array;
+import bali.collection.Array;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,20 +12,20 @@ import java.util.List;
 public class ListLiteralExpression extends Expression {
 
 	private List<Expression> values = new ArrayList<>();
-	private Type type;
+	private TypeReference type;
 
 	public ListLiteralExpression(Integer line, Integer character) {
 		super(line, character);
 	}
 
-	public Type getType() {
+	public TypeReference getType() {
 		return type;
 	}
 
 	public void addValue(Expression v) {
 		values.add(v);
 		if (type == null){
-			Type newType = new Type();
+			TypeReference newType = new TypeReference();
 			newType.setClassName(Array.class.getName());
 			newType.addParameter(v.getType());
 			newType.setErase(true);

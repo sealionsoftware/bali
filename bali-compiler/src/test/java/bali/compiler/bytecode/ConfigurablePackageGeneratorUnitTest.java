@@ -2,9 +2,9 @@ package bali.compiler.bytecode;
 
 import bali.compiler.GeneratedClass;
 import bali.compiler.GeneratedPackage;
-import bali.compiler.parser.tree.Class;
+import bali.compiler.parser.tree.ClassDeclaration;
 import bali.compiler.parser.tree.CompilationUnit;
-import bali.compiler.parser.tree.Interface;
+import bali.compiler.parser.tree.InterfaceDeclaration;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,8 +17,8 @@ import org.mockito.Mockito;
 public class ConfigurablePackageGeneratorUnitTest {
 
 	private static Generator<CompilationUnit, GeneratedClass> packageClassGenerator = Mockito.mock(Generator.class);
-	private static Generator<Interface, GeneratedClass> interfaceGenerator = Mockito.mock(Generator.class);
-	private static Generator<Class, GeneratedClass> classGenerator = Mockito.mock(Generator.class);
+	private static Generator<InterfaceDeclaration, GeneratedClass> interfaceGenerator = Mockito.mock(Generator.class);
+	private static Generator<ClassDeclaration, GeneratedClass> classGenerator = Mockito.mock(Generator.class);
 
 	private static ConfigurablePackageGenerator generator = new ConfigurablePackageGenerator(
 			packageClassGenerator,
@@ -51,7 +51,7 @@ public class ConfigurablePackageGeneratorUnitTest {
 	@Test
 	public void testGeneratePackageWithInterfaces() throws Exception {
 
-		Interface iface = new Interface(0,0);
+		InterfaceDeclaration iface = new InterfaceDeclaration(0,0);
 		unit.addInterface(iface);
 
 		GeneratedClass generatedInterface = new GeneratedClass("testInterface", new byte[0]);
@@ -66,7 +66,7 @@ public class ConfigurablePackageGeneratorUnitTest {
 	@Test
 	public void testGeneratePackageWithClass() throws Exception{
 
-		Class clazz = new Class(0,0);
+		ClassDeclaration clazz = new ClassDeclaration(0,0);
 		unit.addClass(clazz);
 
 		GeneratedClass generatedClass = new GeneratedClass("testClass", new byte[0]);

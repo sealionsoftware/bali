@@ -1,8 +1,8 @@
 package bali.compiler.validation.visitor;
 
 import bali.compiler.parser.tree.CompilationUnit;
-import bali.compiler.parser.tree.Interface;
-import bali.compiler.validation.TypeDeclarationLibrary;
+import bali.compiler.parser.tree.InterfaceDeclaration;
+import bali.compiler.validation.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -14,15 +14,15 @@ import java.util.List;
  */
 public class InterfaceValidator implements Validator<CompilationUnit> {
 
-	private TypeDeclarationLibrary library;
+	private TypeLibrary library;
 
-	public InterfaceValidator(TypeDeclarationLibrary library) {
+	public InterfaceValidator(TypeLibrary library) {
 		this.library = library;
 	}
 
 	public List<ValidationFailure> validate(CompilationUnit node) {
 		List<ValidationFailure> failures = new ArrayList<>();
-		for (Interface iface : node.getInterfaces()){
+		for (InterfaceDeclaration iface : node.getInterfaces()){
 
 			iface.setQualifiedClassName(node.getName() + "." + iface.getClassName());
 

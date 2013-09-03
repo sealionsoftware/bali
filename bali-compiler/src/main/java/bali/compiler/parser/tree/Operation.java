@@ -13,7 +13,7 @@ public class Operation extends Expression {
 	private Expression two;
 	private String operator;
 
-	private Type type;
+	private TypeReference type;
 	private String method;
 
 	public Operation() {
@@ -35,7 +35,7 @@ public class Operation extends Expression {
 		this.operator = operator;
 	}
 
-	public void setType(Type type) {
+	public void setType(TypeReference type) {
 		this.type = type;
 	}
 
@@ -59,7 +59,7 @@ public class Operation extends Expression {
 		return method;
 	}
 
-	public Type getType() {
+	public TypeReference getType() {
 		return type;
 	}
 

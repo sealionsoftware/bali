@@ -1,12 +1,12 @@
 package bali.compiler.bytecode;
 
-import com.sealionsoftware.bali.CharArrayString;
 import bali.Number;
-import com.sealionsoftware.bali.IdentityBoolean;
-import bali.compiler.parser.tree.Argument;
+import bali.String;
+import bali.Boolean;
+import bali.compiler.parser.tree.ArgumentDeclaration;
 import bali.compiler.parser.tree.Declaration;
-import bali.compiler.parser.tree.MethodDeclaration;
-import bali.compiler.parser.tree.Type;
+import bali.compiler.parser.tree.Method;
+import bali.compiler.parser.tree.TypeReference;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -23,49 +23,49 @@ public class ASMConverterUnitTest {
 
 	@Test
 	public void testInternalName() throws Exception {
-		Assert.assertEquals("bali/String", converter.getInternalName(CharArrayString.class.getName()));
+		Assert.assertEquals("bali/String", converter.getInternalName(String.class.getName()));
 	}
 
 	@Test
 	public void testTypeDescriptorString() throws Exception {
-		Assert.assertEquals("Lbali/String;", converter.getTypeDescriptor(CharArrayString.class.getName()));
+		Assert.assertEquals("Lbali/String;", converter.getTypeDescriptor(String.class.getName()));
 	}
 
 	@Test
 	public void testTypeDescriptorDeclaration() throws Exception {
-		Type declaration = new Type(0, 0);
-		declaration.setDeclaration(new TestDeclaration(CharArrayString.class.getName()));
+		TypeReference declaration = new TypeReference(0, 0);
+		declaration.setDeclaration(new TestDeclaration(String.class.getName()));
 		Assert.assertEquals("Lbali/String;", converter.getTypeDescriptor(declaration));
 	}
 
 	@Test
 	public void testMethodDescriptorString() throws Exception {
-		Assert.assertEquals("()V", converter.getMethodDescriptor(null, new ArrayList<Type>()));
-		List<Type> argumentTypes = new ArrayList<>();
-		argumentTypes.add(getType(CharArrayString.class));
+		Assert.assertEquals("()V", converter.getMethodDescriptor(null, new ArrayList<TypeReference>()));
+		List<TypeReference> argumentTypes = new ArrayList<>();
+		argumentTypes.add(getType(String.class));
 		argumentTypes.add(getType(Number.class));
-		Assert.assertEquals("(Lbali/String;Lbali/Number;)Lbali/Boolean;", converter.getMethodDescriptor(getType(IdentityBoolean.class), argumentTypes));
+		Assert.assertEquals("(Lbali/String;Lbali/Number;)Lbali/Boolean;", converter.getMethodDescriptor(getType(Boolean.class), argumentTypes));
 	}
 
-	private Type getType(Class clazz) {
-		Type t = new Type();
+	private TypeReference getType(Class clazz) {
+		TypeReference t = new TypeReference();
 		t.setDeclaration(new TestDeclaration(clazz.getName()));
 		return t;
 	}
 
 	@Test
 	public void testMethodDescriptorDeclaration() throws Exception {
-		MethodDeclaration declaration = new MethodDeclaration(0, 0);
+		Method declaration = new Method(0, 0);
 		Assert.assertEquals("()V", converter.getMethodDescriptor(declaration));
-		Type b = new Type(0, 0);
-		b.setDeclaration(new TestDeclaration(IdentityBoolean.class.getName()));
+		TypeReference b = new TypeReference(0, 0);
+		b.setDeclaration(new TestDeclaration(Boolean.class.getName()));
 		declaration.setType(b);
-		Type s = new Type(0, 0);
-		Type n = new Type(0, 0);
-		s.setDeclaration(new TestDeclaration(CharArrayString.class.getName()));
+		TypeReference s = new TypeReference(0, 0);
+		TypeReference n = new TypeReference(0, 0);
+		s.setDeclaration(new TestDeclaration(String.class.getName()));
 		n.setDeclaration(new TestDeclaration(Number.class.getName()));
-		Declaration argument1 = new Argument(0, 0);
-		Declaration argument2 = new Argument(0, 0);
+		Declaration argument1 = new ArgumentDeclaration(0, 0);
+		Declaration argument2 = new ArgumentDeclaration(0, 0);
 		argument1.setType(s);
 		argument2.setType(n);
 		declaration.addArgument(argument1);

@@ -1,9 +1,10 @@
 package bali.compiler.validation.visitor;
 
-import bali.compiler.parser.tree.MethodDeclaration;
-import bali.compiler.parser.tree.TypeDeclaration;
 import bali.compiler.parser.tree.UnaryOperation;
 import bali.compiler.validation.ValidationFailure;
+import bali.compiler.validation.type.Method;
+import bali.compiler.validation.type.MethodDeclaringType;
+import bali.compiler.validation.type.Type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +25,10 @@ public class UnaryOperationValidator implements Validator<UnaryOperation> {
 	public List<ValidationFailure> validate(UnaryOperation node) {
 
 		List<ValidationFailure> ret = new ArrayList<>();
-		TypeDeclaration<?> expressionType = node.getTarget().getType().getDeclaration();
+		Type expressionType = node.getTarget().getType().getDeclaration();
 		String operator = node.getOperator();
 
-		MethodDeclaration methodDeclaration = getDeclarationForOperator(expressionType, operator);
+		Method methodDeclaration = getDeclarationForOperator(expressionType, operator);
 
 		if (methodDeclaration == null) {
 			ret.add(new ValidationFailure(node, "Type " + expressionType + " has no method for operator " + operator));
@@ -40,8 +41,8 @@ public class UnaryOperationValidator implements Validator<UnaryOperation> {
 		return ret;
 	}
 
-	private MethodDeclaration getDeclarationForOperator(TypeDeclaration<?> typeDeclaration, String operator) {
-		for (MethodDeclaration methodDeclaration : typeDeclaration.getMethods()) {
+	private Method getDeclarationForOperator(MethodDeclaringType typeDeclaration, String operator) {
+		for (Method methodDeclaration : typeDeclaration.getMethods()) {
 			if (methodDeclaration.getArguments().size() == 0 && operator.equals(methodDeclaration.getOperator())) {
 				return methodDeclaration;
 			}

@@ -3,9 +3,8 @@ package bali.compiler.validation.visitor;
 import bali.compiler.parser.tree.Declaration;
 import bali.compiler.parser.tree.Expression;
 import bali.compiler.parser.tree.Invocation;
-import bali.compiler.parser.tree.MethodDeclaration;
-import bali.compiler.parser.tree.Type;
-import bali.compiler.parser.tree.TypeDeclaration;
+import bali.compiler.parser.tree.Method;
+import bali.compiler.parser.tree.TypeReference;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -24,11 +23,11 @@ public class InvocationValidator implements Validator<Invocation> {
 
 		try {
 
-			Type targetType = invocation.getTarget().getType();
-			Type methodDeclarationType = getTypeForInvocation(invocation, targetType);
+			TypeReference targetType = invocation.getTarget().getType();
+			TypeReference methodDeclarationType = getTypeForInvocation(invocation, targetType);
 			invocation.setReturnType(methodDeclarationType);
 
-		} catch (Type.CouldNotResolveException e) {
+		} catch (TypeReference.CouldNotResolveException e) {
 			StringBuilder sb = new StringBuilder();
 			Iterator<Expression> i = invocation.getArguments().iterator();
 			if (i.hasNext()) {
@@ -45,21 +44,21 @@ public class InvocationValidator implements Validator<Invocation> {
 		return ret;
 	}
 
-	private Type getTypeForInvocation(Invocation invocation, Type type) throws Type.CouldNotResolveException {
+	private TypeReference getTypeForInvocation(Invocation invocation, TypeReference type) {
+
 		List<Expression> arguments = invocation.getArguments();
-		TypeDeclaration<MethodDeclaration> typeDeclaration = type.getDeclaration();
-		for (MethodDeclaration methodDeclaration : typeDeclaration.getMethods()) {
+		List<Method> parametrisedMethods = type.getParametrisedMethods();
+
+		for (Method methodDeclaration : parametrisedMethods) {
 			if (methodDeclaration.getName().equals(invocation.getMethod())) {
 				if (!argumentsMatch(methodDeclaration.getArguments(), arguments)) {
 					continue;
 				}
 
-				Type methodReturnType = methodDeclaration.getType();
-
-				return methodReturnType == null ? null : methodReturnType.getResolvedType(type);
+				return methodDeclaration.getType();
 			}
 		}
-		throw new Type.CouldNotResolveException();
+		throw new TypeReference.CouldNotResolveException();
 	}
 
 
@@ -72,8 +71,8 @@ public class InvocationValidator implements Validator<Invocation> {
 		while (i.hasNext()) {
 			Declaration argumentDeclaration = i.next();
 			Expression argument = j.next();
-			Type argumentType = argument.getType();
-			Type argumentDeclarationType = argumentDeclaration.getType();
+			TypeReference argumentType = argument.getType();
+			TypeReference argumentDeclarationType = argumentDeclaration.getType();
 			if (argumentType == null || !argumentType.isAssignableTo(argumentDeclarationType)) {
 				return false;
 			}

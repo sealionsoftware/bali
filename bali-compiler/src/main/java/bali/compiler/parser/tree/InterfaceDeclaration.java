@@ -7,31 +7,31 @@ import java.util.List;
  * User: Richard
  * Date: 29/04/13
  */
-public class Interface extends TypeDeclaration<MethodDeclaration> {
+public class InterfaceDeclaration extends TypeDeclaration<Method> {
 
-	private List<Type> superInterfaces = new ArrayList<>();
-	private List<MethodDeclaration> methodDeclarations = new ArrayList<>();
+	private List<TypeReference> superInterfaces = new ArrayList<>();
+	private List<Method> methodDeclarations = new ArrayList<>();
 
-	public Interface() {
+	public InterfaceDeclaration() {
 	}
 
-	public Interface(Integer line, Integer character) {
+	public InterfaceDeclaration(Integer line, Integer character) {
 		super(line, character);
 	}
 
-	public List<Type> getSuperInterfaces() {
+	public List<TypeReference> getSuperInterfaces() {
 		return superInterfaces;
 	}
 
-	public void addSuperInterface(Type superInterface) {
+	public void addSuperInterface(TypeReference superInterface) {
 		this.superInterfaces.add(superInterface);
 	}
 
-	public List<MethodDeclaration> getMethods() {
+	public List<Method> getMethods() {
 		return methodDeclarations;
 	}
 
-	public void addMethod(MethodDeclaration methodDeclaration) {
+	public void addMethod(Method methodDeclaration) {
 		this.methodDeclarations.add(methodDeclaration);
 	}
 

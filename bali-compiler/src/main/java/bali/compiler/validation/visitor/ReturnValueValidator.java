@@ -1,11 +1,11 @@
 package bali.compiler.validation.visitor;
 
 import bali.compiler.parser.tree.Expression;
-import bali.compiler.parser.tree.Method;
+import bali.compiler.parser.tree.MethodDeclaration;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.ReturnStatement;
 import bali.compiler.parser.tree.Statement;
-import bali.compiler.parser.tree.Type;
+import bali.compiler.parser.tree.TypeReference;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -15,10 +15,10 @@ import java.util.List;
  * User: Richard
  * Date: 14/05/13
  */
-public class ReturnValueValidator implements Validator<Method> {
+public class ReturnValueValidator implements Validator<MethodDeclaration> {
 
 	// Engages methods, ensures that their return values are correct
-	public List<ValidationFailure> validate(Method method) {
+	public List<ValidationFailure> validate(MethodDeclaration method) {
 
 		ReturnValueValidatorAgent agent = new ReturnValueValidatorAgent(method.getType());
 		agent.validate(method.getBody());
@@ -40,10 +40,10 @@ public class ReturnValueValidator implements Validator<Method> {
 
 	public static class ReturnValueValidatorAgent {
 
-		private Type type;
+		private TypeReference type;
 		private List<ValidationFailure> failures = new ArrayList<>();
 
-		public ReturnValueValidatorAgent(Type type) {
+		public ReturnValueValidatorAgent(TypeReference type) {
 			this.type = type;
 		}
 

@@ -3,7 +3,6 @@ package bali.compiler.parser.tree;
 import bali.Number;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -13,8 +12,8 @@ import java.util.List;
 public class NumberLiteralExpression extends Expression {
 
 	private String serialization;
-	private Type type; {
-		Type t = new Type();
+	private TypeReference type; {
+		TypeReference t = new TypeReference();
 		t.setClassName(Number.class.getName());
 		type = t;
 	}
@@ -26,7 +25,7 @@ public class NumberLiteralExpression extends Expression {
 		super(line, character);
 	}
 
-	public Type getType() {
+	public TypeReference getType() {
 		return type;
 	}
 

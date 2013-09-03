@@ -6,7 +6,7 @@ import bali.compiler.parser.tree.Expression;
 import bali.compiler.parser.tree.Field;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.Reference;
-import bali.compiler.parser.tree.Type;
+import bali.compiler.parser.tree.TypeReference;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -46,8 +46,8 @@ public class AssignmentValidator implements Validator<CompilationUnit> {
 			List<ValidationFailure> failures = new ArrayList<>();
 
 			Reference reference = statement.getReference();
-			Type site = reference.getType();
-			Type value = statement.getValue().getType();
+			TypeReference site = reference.getType();
+			TypeReference value = statement.getValue().getType();
 
 			if (value == null || !value.isAssignableTo(site)) {
 				failures.add(new ValidationFailure(statement, "Cannot assign expression of type " + value + " to reference of type " + site));
@@ -67,11 +67,11 @@ public class AssignmentValidator implements Validator<CompilationUnit> {
 
 			List<ValidationFailure> failures = new ArrayList<>();
 
-			Type siteType = field.getType();
+			TypeReference siteType = field.getType();
 			Expression value = field.getValue();
 
 			if (value != null){
-				Type valueType = value.getType();
+				TypeReference valueType = value.getType();
 
 				if (!valueType.isAssignableTo(siteType)) {
 					failures.add(new ValidationFailure(field, "Cannot assign expression of type " + valueType + " to reference of type " + siteType));

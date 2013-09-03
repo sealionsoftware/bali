@@ -1,13 +1,13 @@
 package bali.compiler.validation.visitor;
 
-import bali.compiler.parser.tree.Class;
+import bali.compiler.parser.tree.ClassDeclaration;
 import bali.compiler.parser.tree.CompilationUnit;
 import bali.compiler.parser.tree.Declaration;
 import bali.compiler.parser.tree.Import;
-import bali.compiler.parser.tree.Interface;
+import bali.compiler.parser.tree.InterfaceDeclaration;
 import bali.compiler.parser.tree.Method;
 import bali.compiler.parser.tree.MethodDeclaration;
-import bali.compiler.parser.tree.Type;
+import bali.compiler.parser.tree.TypeReference;
 import bali.compiler.parser.tree.TypeDeclaration;
 import bali.compiler.validation.ValidationFailure;
 
@@ -28,33 +28,33 @@ public class ImplementationValidator implements Validator<CompilationUnit> {
 
 	public List<ValidationFailure> validate(CompilationUnit unit) {
 
-		Map<String, TypeDeclaration<MethodDeclaration>> interfaces = new HashMap<>();
+		Map<String, TypeDeclaration<Method>> interfaces = new HashMap<>();
 
-		for (Interface iface : unit.getInterfaces()) {
+		for (InterfaceDeclaration iface : unit.getInterfaces()) {
 			interfaces.put(iface.getQualifiedClassName(), iface);
 		}
 		for (Import iport : unit.getImports()) {
-			TypeDeclaration<MethodDeclaration> typeDeclaration = iport.getDeclaration();
+			TypeDeclaration<Method> typeDeclaration = iport.getDeclaration();
 			if (typeDeclaration != null && typeDeclaration.getAbstract()) {
 				interfaces.put(typeDeclaration.getQualifiedClassName(), typeDeclaration);
 			}
 		}
 
 		List<ValidationFailure> failures = new ArrayList<>();
-		for (Class clazz : unit.getClasses()) {
+		for (ClassDeclaration clazz : unit.getClasses()) {
 			failures.addAll(validate(clazz, interfaces));
 		}
 		return failures;
 
 	}
 
-	private List<ValidationFailure> validate(Class clazz, Map<String, TypeDeclaration<MethodDeclaration>> interfaces) {
+	private List<ValidationFailure> validate(ClassDeclaration clazz, Map<String, TypeDeclaration<Method>> interfaces) {
 
 		List<ValidationFailure> failures = new ArrayList<>();
 
-		for (Type type : clazz.getImplementations()) {
+		for (TypeReference type : clazz.getImplementations()) {
 
-			TypeDeclaration<MethodDeclaration> ifaceDeclaration = type.getDeclaration();
+			TypeDeclaration<Method> ifaceDeclaration = type.getDeclaration();
 
 			if (!interfaces.containsKey(ifaceDeclaration.getQualifiedClassName())) {
 				failures.add(
@@ -63,13 +63,13 @@ public class ImplementationValidator implements Validator<CompilationUnit> {
 				continue;
 			}
 
-			for (Method method : clazz.getMethods()) {
+			for (MethodDeclaration method : clazz.getMethods()) {
 				for (TypeDeclaration iface : interfaces.values()) {
-					List<Type> argumentTypes = new ArrayList<>();
+					List<TypeReference> argumentTypes = new ArrayList<>();
 					for (Declaration declaration : method.getArguments()){
 						argumentTypes.add(declaration.getType());
 					}
-					MethodDeclaration declaration = iface.getDeclaration(method.getName(), argumentTypes);
+					Method declaration = iface.getDeclaration(method.getName(), argumentTypes);
 					if (declaration != null) {
 						method.setDeclared(true);
 						break;
@@ -77,8 +77,8 @@ public class ImplementationValidator implements Validator<CompilationUnit> {
 				}
 			}
 
-			for (MethodDeclaration method : ifaceDeclaration.getMethods()) {
-				List<Type> types = new ArrayList<>();
+			for (Method method : ifaceDeclaration.getMethods()) {
+				List<TypeReference> types = new ArrayList<>();
 				for (Declaration declaration : method.getArguments()) {
 					types.add(declaration.getType());
 				}

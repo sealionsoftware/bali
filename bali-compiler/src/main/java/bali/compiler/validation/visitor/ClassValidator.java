@@ -1,9 +1,9 @@
 package bali.compiler.validation.visitor;
 
+import bali.compiler.parser.tree.ClassDeclaration;
 import bali.compiler.parser.tree.CompilationUnit;
-import bali.compiler.parser.tree.Class;
 import bali.compiler.parser.tree.Declaration;
-import bali.compiler.validation.TypeDeclarationLibrary;
+import bali.compiler.validation.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -18,15 +18,15 @@ import java.util.Set;
  */
 public class ClassValidator implements Validator<CompilationUnit> {
 
-	private TypeDeclarationLibrary library;
+	private TypeLibrary library;
 
-	public ClassValidator(TypeDeclarationLibrary library) {
+	public ClassValidator(TypeLibrary library) {
 		this.library = library;
 	}
 
 	public List<ValidationFailure> validate(CompilationUnit node) {
 		List<ValidationFailure> failures = new ArrayList<>();
-		for (Class clazz : node.getClasses()){
+		for (ClassDeclaration clazz : node.getClasses()){
 
 			clazz.setQualifiedClassName(node.getName() + "." + clazz.getClassName());
 			clazz.setSourceFile(node.getName() + ".bali");
@@ -37,11 +37,11 @@ public class ClassValidator implements Validator<CompilationUnit> {
 		return failures;
 	}
 
-	private List<ValidationFailure> validateMemberNames(Class node){
+	private List<ValidationFailure> validateMemberNames(ClassDeclaration node){
 		Set<String> memberNames = new HashSet<>();
 		List<ValidationFailure> failures = new LinkedList<>();
 		List<Declaration> members = new LinkedList<>();
-		members.addAll(node.getArguments());
+		members.addAll(node.getArgumentDeclarations());
 		members.addAll(node.getFields());
 		members.addAll(node.getMethods());
 

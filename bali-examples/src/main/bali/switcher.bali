@@ -1,6 +1,5 @@
 import bali.Console;
 import bali.Number;
-import bali.List;
 import bali.String;
 
 interface Doer {

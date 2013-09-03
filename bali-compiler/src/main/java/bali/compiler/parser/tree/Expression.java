@@ -13,5 +13,5 @@ public abstract class Expression extends Statement {
 		super(line, character);
 	}
 
-	public abstract Type getType();
+	public abstract TypeReference getType();
 }

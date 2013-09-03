@@ -22,7 +22,7 @@ public class Reference extends Expression {
 		super(line, character);
 	}
 
-	public Type getType() {
+	public TypeReference getType() {
 		return declaration.getType();
 	}
 

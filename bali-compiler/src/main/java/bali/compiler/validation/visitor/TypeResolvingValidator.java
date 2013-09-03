@@ -1,12 +1,13 @@
 package bali.compiler.validation.visitor;
 
+import bali.compiler.parser.tree.ClassDeclaration;
 import bali.compiler.parser.tree.CompilationUnit;
 import bali.compiler.parser.tree.Import;
-import bali.compiler.parser.tree.Interface;
+import bali.compiler.parser.tree.InterfaceDeclaration;
 import bali.compiler.parser.tree.Node;
-import bali.compiler.parser.tree.Type;
+import bali.compiler.parser.tree.TypeReference;
 import bali.compiler.parser.tree.TypeDeclaration;
-import bali.compiler.validation.TypeDeclarationLibrary;
+import bali.compiler.validation.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -25,9 +26,9 @@ import java.util.Map;
  */
 public class TypeResolvingValidator implements Validator<CompilationUnit> {
 
-	private TypeDeclarationLibrary library;
+	private TypeLibrary library;
 
-	public TypeResolvingValidator(TypeDeclarationLibrary library) {
+	public TypeResolvingValidator(TypeLibrary library) {
 		this.library = library;
 	}
 
@@ -37,10 +38,10 @@ public class TypeResolvingValidator implements Validator<CompilationUnit> {
 		List<ValidationFailure> ret = new ArrayList<>();
 
 		Map<String, TypeDeclaration> resolvables = new HashMap<>();
-		for (Interface iface : unit.getInterfaces()) {
+		for (InterfaceDeclaration iface : unit.getInterfaces()) {
 			resolvables.put(iface.getClassName(), iface);
 		}
-		for (bali.compiler.parser.tree.Class clazz : unit.getClasses()) {
+		for (ClassDeclaration clazz : unit.getClasses()) {
 			resolvables.put(clazz.getClassName(), clazz);
 		}
 		for (Import iport : unit.getImports()) {
@@ -55,8 +56,8 @@ public class TypeResolvingValidator implements Validator<CompilationUnit> {
 
 	private List<ValidationFailure> walkAgentOverChildren(Node node, Agent agent) {
 		List<ValidationFailure> ret = new ArrayList<>();
-		if (node instanceof Type) {
-			ret.addAll(agent.validate((Type) node));
+		if (node instanceof TypeReference) {
+			ret.addAll(agent.validate((TypeReference) node));
 		}
 		for (Node child : node.getChildren()) {
 			ret.addAll(walkAgentOverChildren(child, agent));
@@ -64,17 +65,17 @@ public class TypeResolvingValidator implements Validator<CompilationUnit> {
 		return ret;
 	}
 
-	private static class Agent implements Validator<Type> {
+	private static class Agent implements Validator<TypeReference> {
 
 		private Map<String, TypeDeclaration> resolvables;
-		private TypeDeclarationLibrary library;
+		private TypeLibrary library;
 
-		private Agent(Map<String, TypeDeclaration> resolvables, TypeDeclarationLibrary library) {
+		private Agent(Map<String, TypeDeclaration> resolvables, TypeLibrary library) {
 			this.resolvables = resolvables;
 			this.library = library;
 		}
 
-		public List<ValidationFailure> validate(Type type) {
+		public List<ValidationFailure> validate(TypeReference type) {
 
 			List<ValidationFailure> ret = new ArrayList<>();
 			TypeDeclaration declaration = resolvables.get(type.getClassName());
@@ -90,6 +91,7 @@ public class TypeResolvingValidator implements Validator<CompilationUnit> {
 				ret.add(new ValidationFailure(type, "Cannot resolve type " + type));
 			}
 			type.setDeclaration(declaration);
+			type.resolveParametrizedTypes(type);
 			return ret;
 		}
 	}

@@ -1,19 +1,28 @@
 package bali.compiler.bytecode;
 
 import bali.Boolean;
-import com.sealionsoftware.bali.CharArrayString;
-import com.sealionsoftware.bali.IdentityBoolean;
-import com.sealionsoftware.bali.number.Byte;
+import bali.CharArrayString;
+import bali.IdentityBoolean;
 import bali.Number;
-import com.sealionsoftware.bali.collections.Array;
+import bali.String;
 import bali.Value;
+import bali.collection.Array;
 import bali.compiler.GeneratedClass;
-import bali.compiler.parser.tree.*;
+import bali.compiler.parser.tree.BooleanLiteralExpression;
+import bali.compiler.parser.tree.CompilationUnit;
+import bali.compiler.parser.tree.Constant;
+import bali.compiler.parser.tree.ConstructionExpression;
+import bali.compiler.parser.tree.Expression;
+import bali.compiler.parser.tree.ListLiteralExpression;
+import bali.compiler.parser.tree.NumberLiteralExpression;
+import bali.compiler.parser.tree.StringLiteralExpression;
+import bali.compiler.parser.tree.TypeReference;
+import bali.number.Byte;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import static bali._.NUMBER_FACTORY;
+import static bali.number.NumberFactory.NUMBER_FACTORY;
 
 /**
  * User: Richard
@@ -44,7 +53,7 @@ public class ASMPackageClassGeneratorUnitTest {
 		StringLiteralExpression slv = new StringLiteralExpression(0, 0);
 		slv.setSerialization("Hello World");
 		slv.getType().setDeclaration(new TestDeclaration(CharArrayString.class.getName()));
-		testGenerateConstant(CharArrayString.class, slv, new CharArrayString("Hello World".toCharArray()));
+		testGenerateConstant(String.class, slv, new CharArrayString("Hello World".toCharArray()));
 	}
 
 	@Test
@@ -52,7 +61,7 @@ public class ASMPackageClassGeneratorUnitTest {
 		BooleanLiteralExpression blv = new BooleanLiteralExpression(0, 0);
 		blv.setSerialization("true");
 		blv.getType().setDeclaration(new TestDeclaration(IdentityBoolean.class.getName()));
-		testGenerateConstant(IdentityBoolean.class, blv, IdentityBoolean.TRUE);
+		testGenerateConstant(Boolean.class, blv, IdentityBoolean.TRUE);
 	}
 
 	@Test
@@ -81,7 +90,7 @@ public class ASMPackageClassGeneratorUnitTest {
 
 	@Test
 	public void testNewObjectConstant() throws Exception {
-		Type type = new Type(0, 0);
+		TypeReference type = new TypeReference(0, 0);
 		type.setDeclaration(new TestDeclaration(Instantiatable.class.getName()));
 		ConstructionExpression cv = new ConstructionExpression(0, 0);
 		cv.setType(type);
@@ -90,7 +99,7 @@ public class ASMPackageClassGeneratorUnitTest {
 
 	public <T extends Value<T>> void testGenerateConstant(java.lang.Class<T> clazz, Expression value, T expectation) throws Exception {
 
-		Type type = new Type(0, 0);
+		TypeReference type = new TypeReference(0, 0);
 		type.setDeclaration(new TestDeclaration(clazz.getName()));
 
 		Constant constant = new Constant(0, 0);

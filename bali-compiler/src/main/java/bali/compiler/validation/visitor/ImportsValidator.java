@@ -2,7 +2,7 @@ package bali.compiler.validation.visitor;
 
 import bali.compiler.parser.tree.Import;
 import bali.compiler.parser.tree.TypeDeclaration;
-import bali.compiler.validation.TypeDeclarationLibrary;
+import bali.compiler.validation.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -14,9 +14,9 @@ import java.util.List;
  */
 public class ImportsValidator implements Validator<Import> {
 
-	private TypeDeclarationLibrary library;
+	private TypeLibrary library;
 
-	public ImportsValidator(TypeDeclarationLibrary library) {
+	public ImportsValidator(TypeLibrary library) {
 		this.library = library;
 	}
 

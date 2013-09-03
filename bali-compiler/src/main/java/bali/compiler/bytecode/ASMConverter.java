@@ -1,7 +1,8 @@
 package bali.compiler.bytecode;
 
 import bali.compiler.parser.tree.Declaration;
-import bali.compiler.parser.tree.MethodDeclaration;
+import bali.compiler.parser.tree.Method;
+import bali.compiler.parser.tree.TypeReference;
 import org.objectweb.asm.Type;
 
 import java.util.List;
@@ -12,16 +13,16 @@ import java.util.List;
  */
 public class ASMConverter {
 
-	public String getMethodDescriptor(bali.compiler.parser.tree.Type returnClass, List<bali.compiler.parser.tree.Type> argumentClasses) {
+	public String getMethodDescriptor(TypeReference returnClass, List<TypeReference> argumentClasses) {
 		Type[] argTypes = new Type[argumentClasses.size()];
 		int i = 0;
-		for (bali.compiler.parser.tree.Type argumentClass : argumentClasses) {
+		for (TypeReference argumentClass : argumentClasses) {
 			argTypes[i++] = Type.getType(getTypeDescriptor(argumentClass));
 		}
 		return Type.getMethodType(Type.getType(getTypeDescriptor(returnClass)), argTypes).getDescriptor();
 	}
 
-	public String getMethodDescriptor(MethodDeclaration method) {
+	public String getMethodDescriptor(Method method) {
 		Type[] argTypes = new Type[method.getArguments().size()];
 		int i = 0;
 		for (Declaration argument : method.getArguments()) {
@@ -34,16 +35,16 @@ public class ASMConverter {
 		return className == null ? "V" : Type.getObjectType(getInternalName(className)).getDescriptor();
 	}
 
-	public String getTypeDescriptor(bali.compiler.parser.tree.Type type) {
-		return (type == null ? Type.VOID_TYPE : Type.getObjectType(getInternalName(type.getDeclaration().getQualifiedClassName()))).getDescriptor();
+	public String getTypeDescriptor(TypeReference type) {
+		return (type == null ? Type.VOID_TYPE : Type.getObjectType(getInternalName(type.getDeclaration().getClassName()))).getDescriptor();
 	}
 
 	public String getInternalName(String className) {
 		return className.replaceAll("\\.", "/");
 	}
 
-	public String getInternalName(bali.compiler.parser.tree.Type type) {
-		return getInternalName(type.getDeclaration().getQualifiedClassName());
+	public String getInternalName(TypeReference type) {
+		return getInternalName(type.getDeclaration().getClassName());
 	}
 
 }

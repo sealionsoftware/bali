@@ -4,12 +4,12 @@ package bali.compiler.parser.tree;
  * User: Richard
  * Date: 10/07/13
  */
-public class Argument extends Declaration {
+public class ArgumentDeclaration extends Declaration {
 
-	public Argument() {
+	public ArgumentDeclaration() {
 	}
 
-	public Argument(Integer line, Integer character) {
+	public ArgumentDeclaration(Integer line, Integer character) {
 		super(line, character);
 	}
 

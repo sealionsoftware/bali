@@ -12,8 +12,8 @@ public class CompilationUnit extends Node {
 	private String name;
 	private List<Import> imports = new ArrayList<>();
 	private List<Constant> constants = new ArrayList<>();
-	private List<Interface> interfaces = new ArrayList<>();
-	private List<Class> classes = new ArrayList<>();
+	private List<InterfaceDeclaration> interfaces = new ArrayList<>();
+	private List<ClassDeclaration> classes = new ArrayList<>();
 
 	public CompilationUnit(Integer line, Integer character) {
 		super(line, character);
@@ -31,11 +31,11 @@ public class CompilationUnit extends Node {
 		constants.add(constant);
 	}
 
-	public void addInterface(Interface iface){
+	public void addInterface(InterfaceDeclaration iface){
 		interfaces.add(iface);
 	}
 
-	public void addClass(Class clazz){
+	public void addClass(ClassDeclaration clazz){
 		classes.add(clazz);
 	}
 
@@ -51,11 +51,11 @@ public class CompilationUnit extends Node {
 		return constants;
 	}
 
-	public List<Interface> getInterfaces() {
+	public List<InterfaceDeclaration> getInterfaces() {
 		return interfaces;
 	}
 
-	public List<Class> getClasses() {
+	public List<ClassDeclaration> getClasses() {
 		return classes;
 	}
 

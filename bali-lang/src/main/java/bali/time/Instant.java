@@ -1,6 +1,6 @@
 package bali.time;
 
-import bali.Operator;
+import bali.annotation.Operator;
 import bali.Quantified;
 import bali.Number;
 

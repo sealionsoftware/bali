@@ -22,7 +22,7 @@ OPERATOR:                   [\+\-!£$%^&\*#\~@\?/\\\><|¬`¦\:]+ ;
 packageDeclaration:
 	importDeclaration*
 	constantDeclaration*
-	// functionDeclaration*
+	beanDeclaration*
 	interfaceDeclaration*
 	classDeclaration*
 	EOF
@@ -38,11 +38,15 @@ interfaceDeclaration:       'interface' typeDeclaration ('extends' typeDeclarati
 
 classDeclaration:           'class' typeDeclaration argumentDeclarationList ( 'implements' typeDeclarationList )? '{' fieldDeclaration* methodDeclaration* '}' ;
 
+beanDeclaration:            'bean' typeDeclaration ( 'extends' typeDeclaration )? '{' propertyDeclaration* '}' ;
+
 fieldDeclaration:           'field' typeDeclaration STANDARD_IDENTIFIER ('=' expression )? ';' ;
 
 methodDeclaration:          'method' typeDeclaration? STANDARD_IDENTIFIER argumentDeclarationList codeBlock ;
 
 declarationDeclaration:     'declare' typeDeclaration? STANDARD_IDENTIFIER argumentDeclarationList ';' ;
+
+propertyDeclaration:        'property' typeDeclaration? STANDARD_IDENTIFIER ';' ;
 
 codeBlock:                  '{' statement* '}' ;
 

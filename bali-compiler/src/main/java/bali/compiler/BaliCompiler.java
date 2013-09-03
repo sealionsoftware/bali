@@ -12,7 +12,7 @@ import bali.compiler.parser.ParserManager;
 import bali.compiler.parser.tree.CompilationUnit;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.validation.ConfigurableValidationEngine;
-import bali.compiler.validation.TypeDeclarationLibrary;
+import bali.compiler.validation.TypeLibrary;
 import bali.compiler.validation.ValidationEngine;
 import bali.compiler.validation.ValidationException;
 import bali.compiler.validation.ValidationFailure;
@@ -121,7 +121,7 @@ public class BaliCompiler {
 				throw new Exception("Usage: bali.compiler.BaliCompiler (in directory) (out directory)");
 		}
 
-		TypeDeclarationLibrary library = new TypeDeclarationLibrary(Thread.currentThread().getContextClassLoader());
+		TypeLibrary library = new TypeLibrary();
 
 		BaliCompiler compiler = new BaliCompiler(
 				new ANTLRParserManager(),
@@ -145,7 +145,7 @@ public class BaliCompiler {
 				new ConfigurablePackageGenerator(
 						new ASMPackageClassGenerator(),
 						new ASMInterfaceGenerator(),
-						new ASMClassGenerator()
+						new ASMClassGenerator(library)
 				),
 				new JarPackager()
 		);

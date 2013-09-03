@@ -10,6 +10,10 @@ public interface List<T> extends Collection<T> {
 
 	public T get(Integer index);
 
-	public void set(Integer index);
+	public void set(Integer index, T object);
+
+	public void add(T object);
+
+	public void remove(Integer index);
 
 }

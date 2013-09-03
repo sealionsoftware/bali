@@ -12,8 +12,7 @@ public class UnaryOperation extends Expression {
 	private Expression target;
 	private String operator;
 
-	private String method;
-	private Type type;
+	private Method resolvedMethod;
 
 	public UnaryOperation() {
 	}
@@ -38,20 +37,16 @@ public class UnaryOperation extends Expression {
 		this.operator = operator;
 	}
 
-	public String getMethod() {
-		return method;
+	public Method getMethod() {
+		return resolvedMethod;
 	}
 
-	public void setMethod(String method) {
-		this.method = method;
+	public void setMethod(Method method) {
+		this.resolvedMethod = method;
 	}
 
-	public Type getType() {
-		return type;
-	}
-
-	public void setType(Type type) {
-		this.type = type;
+	public TypeReference getType() {
+		return null;
 	}
 
 	public List<Node> getChildren() {
