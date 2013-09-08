@@ -9,7 +9,7 @@ import bali.compiler.module.JarPackager;
 import bali.compiler.module.ModuleWriter;
 import bali.compiler.parser.ANTLRParserManager;
 import bali.compiler.parser.ParserManager;
-import bali.compiler.parser.tree.CompilationUnit;
+import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.validation.ConfigurableValidationEngine;
 import bali.compiler.validation.TypeLibrary;
@@ -17,6 +17,7 @@ import bali.compiler.validation.ValidationEngine;
 import bali.compiler.validation.ValidationException;
 import bali.compiler.validation.ValidationFailure;
 import bali.compiler.validation.visitor.AssignmentValidator;
+import bali.compiler.validation.visitor.BooleanLiteralValidator;
 import bali.compiler.validation.visitor.BranchStatementValidator;
 import bali.compiler.validation.visitor.ClassValidator;
 import bali.compiler.validation.visitor.ConstructionValidator;
@@ -25,9 +26,11 @@ import bali.compiler.validation.visitor.ImportsValidator;
 import bali.compiler.validation.visitor.InterfaceValidator;
 import bali.compiler.validation.visitor.InvocationValidator;
 import bali.compiler.validation.visitor.ListLiteralValidator;
+import bali.compiler.validation.visitor.NumberLiteralValidator;
 import bali.compiler.validation.visitor.OperationValidator;
 import bali.compiler.validation.visitor.ReferenceValidator;
 import bali.compiler.validation.visitor.ReturnValueValidator;
+import bali.compiler.validation.visitor.StringLiteralValidator;
 import bali.compiler.validation.visitor.ThrowStatementValidator;
 import bali.compiler.validation.visitor.TypeResolvingValidator;
 import bali.compiler.validation.visitor.UnaryOperationValidator;
@@ -51,10 +54,10 @@ public class BaliCompiler {
 
 	private ParserManager parserManager;
 	private ValidationEngine validator;
-	private Generator<CompilationUnit, GeneratedPackage> packageBuilder;
+	private Generator<CompilationUnitNode, GeneratedPackage> packageBuilder;
 	private ModuleWriter moduleWriter;
 
-	public BaliCompiler(ParserManager parser, ValidationEngine validator, Generator<CompilationUnit, GeneratedPackage> packageBuilder, ModuleWriter moduleWriter) {
+	public BaliCompiler(ParserManager parser, ValidationEngine validator, Generator<CompilationUnitNode, GeneratedPackage> packageBuilder, ModuleWriter moduleWriter) {
 		this.parserManager = parser;
 		this.validator = validator;
 		this.packageBuilder = packageBuilder;
@@ -73,12 +76,12 @@ public class BaliCompiler {
 			throw new Exception("No Bali Source files found in directory " + in);
 		}
 
-		List<CompilationUnit> compilationUnits = new ArrayList<>();
+		List<CompilationUnitNode> compilationUnits = new ArrayList<>();
 
 		for (File sourceFile : sourceFiles) {
 			String fileName = sourceFile.getName();
 			String packageName = fileName.substring(0, fileName.length() - BALI_SOURCE_FILE_EXTENSION.length());
-			CompilationUnit compilationUnit = parserManager.parse(sourceFile, packageName);
+			CompilationUnitNode compilationUnit = parserManager.parse(sourceFile, packageName);
 			compilationUnits.add(compilationUnit);
 		}
 
@@ -88,7 +91,7 @@ public class BaliCompiler {
 		}
 
 		List<GeneratedPackage> packages = new ArrayList<>();
-		for (CompilationUnit compilationUnit : compilationUnits) {
+		for (CompilationUnitNode compilationUnit : compilationUnits) {
 			GeneratedPackage pkg = packageBuilder.build(compilationUnit);
 			packages.add(pkg);
 		}
@@ -125,25 +128,28 @@ public class BaliCompiler {
 
 		BaliCompiler compiler = new BaliCompiler(
 				new ANTLRParserManager(),
-				new ConfigurableValidationEngine(new Array<Validator<? extends Node>>(new Validator[]{
+				new ConfigurableValidationEngine(new Array<Validator<? extends Node>>(new Validator<?>[]{
 						new ImportsValidator(library),
 						new InterfaceValidator(library),
 						new ClassValidator(library),
 						new TypeResolvingValidator(library),
-						new ListLiteralValidator(),
+						new BooleanLiteralValidator(library),
+						new NumberLiteralValidator(library),
+						new StringLiteralValidator(library),
+						new ListLiteralValidator(library),
 						new ImplementationValidator(),
 						new ReferenceValidator(library),
 						new InvocationValidator(),
 						new UnaryOperationValidator(),
 						new OperationValidator(),
 						new AssignmentValidator(),
-						new ConstructionValidator(),
+						new ConstructionValidator(library),
 						new ReturnValueValidator(),
 						new ThrowStatementValidator(library),
 						new BranchStatementValidator()
 				})),
 				new ConfigurablePackageGenerator(
-						new ASMPackageClassGenerator(),
+						new ASMPackageClassGenerator(library),
 						new ASMInterfaceGenerator(),
 						new ASMClassGenerator(library)
 				),

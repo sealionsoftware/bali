@@ -1,9 +1,10 @@
 package bali.compiler.bytecode;
 
 import bali.compiler.GeneratedClass;
-import bali.compiler.parser.tree.CompilationUnit;
-import bali.compiler.parser.tree.Constant;
-import bali.compiler.parser.tree.Expression;
+import bali.compiler.parser.tree.CompilationUnitNode;
+import bali.compiler.parser.tree.ConstantNode;
+import bali.compiler.parser.tree.ExpressionNode;
+import bali.compiler.validation.TypeLibrary;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
@@ -14,13 +15,18 @@ import java.util.Map;
  * User: Richard
  * Date: 13/05/13
  */
-public class ASMPackageClassGenerator implements Generator<CompilationUnit, GeneratedClass> {
+public class ASMPackageClassGenerator implements Generator<CompilationUnitNode, GeneratedClass> {
 
 	private ASMConverter converter = new ASMConverter();
+	private TypeLibrary library;
 
-	public GeneratedClass build(CompilationUnit input) throws Exception {
+	public ASMPackageClassGenerator(TypeLibrary library) {
+		this.library = library;
+	}
 
-		ASMStackManager manager = new ASMStackManager(converter);
+	public GeneratedClass build(CompilationUnitNode input) throws Exception {
+
+		ASMStackManager manager = new ASMStackManager(converter, library);
 
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 		String qualified = converter.getInternalName(input.getName() + "." + PACKAGE_CLASS_NAME);
@@ -32,8 +38,8 @@ public class ASMPackageClassGenerator implements Generator<CompilationUnit, Gene
 				"java/lang/Object",
 				null);
 
-		Map<Constant, Expression> constantValues = new HashMap<>();
-		for (Constant constant : input.getConstants()) {
+		Map<ConstantNode, ExpressionNode> constantValues = new HashMap<>();
+		for (ConstantNode constant : input.getConstants()) {
 			cw.visitField(ACC_PUBLIC + ACC_FINAL + ACC_STATIC,
 					constant.getName(),
 					converter.getTypeDescriptor(constant.getType()),
@@ -51,9 +57,9 @@ public class ASMPackageClassGenerator implements Generator<CompilationUnit, Gene
 		);
 
 		clinitv.visitCode();
-		for (Map.Entry<Constant, Expression> constantValueEntry : constantValues.entrySet()) {
-			Constant constant = constantValueEntry.getKey();
-			Expression value = constantValueEntry.getValue();
+		for (Map.Entry<ConstantNode, ExpressionNode> constantValueEntry : constantValues.entrySet()) {
+			ConstantNode constant = constantValueEntry.getKey();
+			ExpressionNode value = constantValueEntry.getValue();
 			manager.push(value, clinitv);
 			clinitv.visitFieldInsn(PUTSTATIC, qualified, constant.getName(), converter.getTypeDescriptor(constant.getType()));
 		}

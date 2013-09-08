@@ -1,9 +1,10 @@
 package bali.compiler.validation.visitor;
 
-import bali.compiler.parser.tree.Method;
-import bali.compiler.parser.tree.Operation;
-import bali.compiler.parser.tree.TypeDeclaration;
+import bali.compiler.parser.tree.OperationNode;
 import bali.compiler.validation.ValidationFailure;
+import bali.compiler.validation.type.Operator;
+import bali.compiler.validation.type.Site;
+import bali.compiler.validation.type.UnaryOperator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,34 +13,28 @@ import java.util.List;
  * User: Richard
  * Date: 03/07/13
  */
-public class OperationValidator implements Validator<Operation> {
+public class OperationValidator implements Validator<OperationNode> {
 
-	public List<ValidationFailure> validate(Operation node) {
+	public List<ValidationFailure> validate(OperationNode node) {
 
 		List<ValidationFailure> ret = new ArrayList<>();
-		TypeDeclaration<?> expressionType = node.getOne().getType().getDeclaration();
-		String operator = node.getOperator();
+		Site targetType = node.getOne().getType();
+		Site operandType = node.getTwo().getType();
+		String operatorName = node.getOperator();
 
-		Method methodDeclaration = getDeclarationForOperator(expressionType, operator);
+		Operator operator = targetType.getOperatorWithName(operatorName);
 
-		if (methodDeclaration == null) {
-			ret.add(new ValidationFailure(node, "Type " + expressionType + " has no method for operator " + operator));
+		if (operator == null) {
+			ret.add(new ValidationFailure(node, "Type " + targetType + " has no operator " + operatorName));
 			return ret;
 		}
 
-		node.setMethod(methodDeclaration.getName());
-		node.setType(methodDeclaration.getType());
-
-		return ret;
-	}
-
-	private Method getDeclarationForOperator(TypeDeclaration<?> typeDeclaration, String operator) {
-		for (Method methodDeclaration : typeDeclaration.getMethods()) {
-			if (methodDeclaration.getArguments().size() == 1 && operator.equals(methodDeclaration.getOperator())) {
-				return methodDeclaration;
-			}
+		if (!operandType.isAssignableTo(operator.getParameter())){
+			ret.add(new ValidationFailure(node, "Operator " + operator + " requires an operand of type " + operandType ));
 		}
-		return null;
+
+		node.setResolvedOperator(operator);
+		return ret;
 	}
 
 

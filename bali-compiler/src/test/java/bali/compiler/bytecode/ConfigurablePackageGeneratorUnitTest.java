@@ -2,9 +2,9 @@ package bali.compiler.bytecode;
 
 import bali.compiler.GeneratedClass;
 import bali.compiler.GeneratedPackage;
-import bali.compiler.parser.tree.ClassDeclaration;
-import bali.compiler.parser.tree.CompilationUnit;
-import bali.compiler.parser.tree.InterfaceDeclaration;
+import bali.compiler.parser.tree.ClassNode;
+import bali.compiler.parser.tree.CompilationUnitNode;
+import bali.compiler.parser.tree.InterfaceNode;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,9 +16,9 @@ import org.mockito.Mockito;
  */
 public class ConfigurablePackageGeneratorUnitTest {
 
-	private static Generator<CompilationUnit, GeneratedClass> packageClassGenerator = Mockito.mock(Generator.class);
-	private static Generator<InterfaceDeclaration, GeneratedClass> interfaceGenerator = Mockito.mock(Generator.class);
-	private static Generator<ClassDeclaration, GeneratedClass> classGenerator = Mockito.mock(Generator.class);
+	private static Generator<CompilationUnitNode, GeneratedClass> packageClassGenerator = Mockito.mock(Generator.class);
+	private static Generator<InterfaceNode, GeneratedClass> interfaceGenerator = Mockito.mock(Generator.class);
+	private static Generator<ClassNode, GeneratedClass> classGenerator = Mockito.mock(Generator.class);
 
 	private static ConfigurablePackageGenerator generator = new ConfigurablePackageGenerator(
 			packageClassGenerator,
@@ -26,11 +26,11 @@ public class ConfigurablePackageGeneratorUnitTest {
 			classGenerator
 	);
 
-	private CompilationUnit unit;
+	private CompilationUnitNode unit;
 
 	@Before
 	public void setUp() throws Exception{
-		unit = new CompilationUnit(0,0);
+		unit = new CompilationUnitNode(0,0);
 		unit.setName("bali.test");
 
 	}
@@ -51,7 +51,7 @@ public class ConfigurablePackageGeneratorUnitTest {
 	@Test
 	public void testGeneratePackageWithInterfaces() throws Exception {
 
-		InterfaceDeclaration iface = new InterfaceDeclaration(0,0);
+		InterfaceNode iface = new InterfaceNode(0,0);
 		unit.addInterface(iface);
 
 		GeneratedClass generatedInterface = new GeneratedClass("testInterface", new byte[0]);
@@ -66,7 +66,7 @@ public class ConfigurablePackageGeneratorUnitTest {
 	@Test
 	public void testGeneratePackageWithClass() throws Exception{
 
-		ClassDeclaration clazz = new ClassDeclaration(0,0);
+		ClassNode clazz = new ClassNode(0,0);
 		unit.addClass(clazz);
 
 		GeneratedClass generatedClass = new GeneratedClass("testClass", new byte[0]);

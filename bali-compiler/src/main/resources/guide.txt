@@ -10,7 +10,7 @@ Control Statements
 
 :: Assignment
 
-Type name = statement;
+Type className = statement;
 
 :: Boolean Literal
 
@@ -42,7 +42,7 @@ while (true){
 
 :: Iteration
 
-for (Type name : aCollection){
+for (Type className : aCollection){
 	// Code block
 }
 

@@ -1,14 +1,15 @@
 package bali.compiler.validation.visitor;
 
-import bali.compiler.parser.tree.ClassDeclaration;
-import bali.compiler.parser.tree.CompilationUnit;
-import bali.compiler.parser.tree.Import;
-import bali.compiler.parser.tree.InterfaceDeclaration;
+import bali.compiler.parser.tree.ClassNode;
+import bali.compiler.parser.tree.CompilationUnitNode;
+import bali.compiler.parser.tree.ImportNode;
+import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.Node;
-import bali.compiler.parser.tree.TypeReference;
-import bali.compiler.parser.tree.TypeDeclaration;
+import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.validation.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
+import bali.compiler.validation.type.Site;
+import bali.compiler.validation.type.Type;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,15 +17,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Validates the Type declarations of constants, fields, variables, arguments etc
+ * Validates the Site declarations of constants, fields, variables, arguments etc
  * <p/>
  * Requires that the imports have been resolved
- * Sets the full type declaration object on each typed site
+ * Sets the Site object on each typed site
  * <p/>
  * User: Richard
  * Date: 14/05/13
  */
-public class TypeResolvingValidator implements Validator<CompilationUnit> {
+public class TypeResolvingValidator implements Validator<CompilationUnitNode> {
 
 	private TypeLibrary library;
 
@@ -33,20 +34,20 @@ public class TypeResolvingValidator implements Validator<CompilationUnit> {
 	}
 
 	// Engages at the root of the AST, constructs a lookup table of unqualified names to declarations
-	public List<ValidationFailure> validate(CompilationUnit unit) {
+	public List<ValidationFailure> validate(CompilationUnitNode unit) {
 
 		List<ValidationFailure> ret = new ArrayList<>();
 
-		Map<String, TypeDeclaration> resolvables = new HashMap<>();
-		for (InterfaceDeclaration iface : unit.getInterfaces()) {
-			resolvables.put(iface.getClassName(), iface);
+		Map<String, Type> resolvables = new HashMap<>();
+		for (InterfaceNode iface : unit.getInterfaces()) {
+			resolvables.put(iface.getClassName(), iface.getResolvedType());
 		}
-		for (ClassDeclaration clazz : unit.getClasses()) {
-			resolvables.put(clazz.getClassName(), clazz);
+		for (ClassNode clazz : unit.getClasses()) {
+			resolvables.put(clazz.getClassName(), clazz.getResolvedType());
 		}
-		for (Import iport : unit.getImports()) {
+		for (ImportNode iport : unit.getImports()) {
 			String name = iport.getName();
-			resolvables.put(name.substring(name.lastIndexOf(".") + 1), iport.getDeclaration());
+			resolvables.put(name.substring(name.lastIndexOf(".") + 1), iport.getType());
 		}
 
 		Agent agent = new Agent(resolvables, library);
@@ -56,42 +57,45 @@ public class TypeResolvingValidator implements Validator<CompilationUnit> {
 
 	private List<ValidationFailure> walkAgentOverChildren(Node node, Agent agent) {
 		List<ValidationFailure> ret = new ArrayList<>();
-		if (node instanceof TypeReference) {
-			ret.addAll(agent.validate((TypeReference) node));
-		}
 		for (Node child : node.getChildren()) {
 			ret.addAll(walkAgentOverChildren(child, agent));
+		}
+		if (node instanceof SiteNode) {
+			ret.addAll(agent.validate((SiteNode) node));
 		}
 		return ret;
 	}
 
-	private static class Agent implements Validator<TypeReference> {
+	private static class Agent implements Validator<SiteNode> {
 
-		private Map<String, TypeDeclaration> resolvables;
+		private Map<String, Type> resolvables;
 		private TypeLibrary library;
 
-		private Agent(Map<String, TypeDeclaration> resolvables, TypeLibrary library) {
+		private Agent(Map<String, Type> resolvables, TypeLibrary library) {
 			this.resolvables = resolvables;
 			this.library = library;
 		}
 
-		public List<ValidationFailure> validate(TypeReference type) {
+		public List<ValidationFailure> validate(SiteNode type) {
 
 			List<ValidationFailure> ret = new ArrayList<>();
-			TypeDeclaration declaration = resolvables.get(type.getClassName());
+			Type declaration = resolvables.get(type.getClassName());
 
 			if (declaration == null) {
 				try {
-					declaration = library.getTypeDeclaration(type.getClassName());
-				} catch (ClassNotFoundException e) {
+					declaration = library.getType(type.getClassName());
+				} catch (Exception e) {
+					ret.add(new ValidationFailure(type, "Cannot resolve type " + type));
 				}
 			}
 
-			if (declaration == null) {
-				ret.add(new ValidationFailure(type, "Cannot resolve type " + type));
+			List<SiteNode> parameterReferences = type.getParameters();
+			List<Site> parameterSites = new ArrayList<>(parameterReferences.size());
+			for (SiteNode reference : parameterReferences){
+				parameterSites.add(reference.getSite());
 			}
-			type.setDeclaration(declaration);
-			type.resolveParametrizedTypes(type);
+
+			type.setSite(new Site(declaration, parameterSites));
 			return ret;
 		}
 	}

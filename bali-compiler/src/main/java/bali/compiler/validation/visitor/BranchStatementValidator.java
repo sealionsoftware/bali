@@ -1,9 +1,9 @@
 package bali.compiler.validation.visitor;
 
-import bali.compiler.parser.tree.BreakStatement;
-import bali.compiler.parser.tree.ContinueStatement;
-import bali.compiler.parser.tree.LoopStatement;
-import bali.compiler.parser.tree.MethodDeclaration;
+import bali.compiler.parser.tree.BreakStatementNode;
+import bali.compiler.parser.tree.ContinueStatementNode;
+import bali.compiler.parser.tree.LoopStatementNode;
+import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.validation.ValidationFailure;
 
@@ -14,21 +14,21 @@ import java.util.List;
  * User: Richard
  * Date: 08/07/13
  */
-public class BranchStatementValidator implements Validator<MethodDeclaration> {
+public class BranchStatementValidator implements Validator<MethodDeclarationNode> {
 
-	public List<ValidationFailure> validate(MethodDeclaration node) {
+	public List<ValidationFailure> validate(MethodDeclarationNode node) {
 		return walk(node);
 	}
 
 	private List<ValidationFailure> walk(Node node) {
 		List<ValidationFailure> failures = new ArrayList<>();
-		if (node instanceof LoopStatement) {
+		if (node instanceof LoopStatementNode) {
 			return failures;
 		}
-		if (node instanceof BreakStatement) {
+		if (node instanceof BreakStatementNode) {
 			failures.add(new ValidationFailure(node, "Break statements cannot be used outside of loops"));
 		}
-		if (node instanceof ContinueStatement) {
+		if (node instanceof ContinueStatementNode) {
 			failures.add(new ValidationFailure(node, "Continue statements cannot be used outside of loops"));
 		}
 		for (Node child : node.getChildren()) {

@@ -1,6 +1,6 @@
 package bali.compiler.validation;
 
-import bali.compiler.parser.tree.CompilationUnit;
+import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.validation.visitor.Validator;
 
@@ -23,7 +23,7 @@ public class ConfigurableValidationEngine implements ValidationEngine {
 		this.validators = validators;
 	}
 
-	public Map<String, List<ValidationFailure>> validate(List<CompilationUnit> units) {
+	public Map<String, List<ValidationFailure>> validate(List<CompilationUnitNode> units) {
 
 		Map<String, List<ValidationFailure>> failures = new HashMap<>();
 
@@ -31,7 +31,7 @@ public class ConfigurableValidationEngine implements ValidationEngine {
 
 			Class accepts = getAcceptedNodeClass(validator);
 
-			for (CompilationUnit unit : units) {
+			for (CompilationUnitNode unit : units) {
 				try {
 
 					List<ValidationFailure> validatorFailures = walk(unit, validator, accepts);

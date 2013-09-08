@@ -1,7 +1,7 @@
 package bali.compiler.validation.visitor;
 
-import bali.compiler.parser.tree.CompilationUnit;
-import bali.compiler.parser.tree.InterfaceDeclaration;
+import bali.compiler.parser.tree.CompilationUnitNode;
+import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.validation.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
 
@@ -9,10 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Constructs the interfaces qualified class name, and adds it to the TypeLibrary
+ *
  * User: Richard
  * Date: 19/06/13
  */
-public class InterfaceValidator implements Validator<CompilationUnit> {
+public class
+		InterfaceValidator implements Validator<CompilationUnitNode> {
 
 	private TypeLibrary library;
 
@@ -20,9 +23,9 @@ public class InterfaceValidator implements Validator<CompilationUnit> {
 		this.library = library;
 	}
 
-	public List<ValidationFailure> validate(CompilationUnit node) {
+	public List<ValidationFailure> validate(CompilationUnitNode node) {
 		List<ValidationFailure> failures = new ArrayList<>();
-		for (InterfaceDeclaration iface : node.getInterfaces()){
+		for (InterfaceNode iface : node.getInterfaces()){
 
 			iface.setQualifiedClassName(node.getName() + "." + iface.getClassName());
 

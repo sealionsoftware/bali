@@ -1,7 +1,7 @@
 package bali.compiler.validation.visitor;
 
-import bali.compiler.parser.tree.ThrowStatement;
-import bali.compiler.parser.tree.TypeReference;
+import bali.compiler.parser.tree.SiteNode;
+import bali.compiler.parser.tree.ThrowStatementNode;
 import bali.compiler.validation.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
 
@@ -14,18 +14,18 @@ import java.util.List;
  * User: Richard
  * Date: 07/07/13
  */
-public class ThrowStatementValidator implements Validator<ThrowStatement> {
+public class ThrowStatementValidator implements Validator<ThrowStatementNode> {
 
-	private TypeReference throwableType;
+	private SiteNode throwableType;
 
 	public ThrowStatementValidator(TypeLibrary library) {
 //		Type throwableType = new Type();
-//		throwableType.setDeclaration(library.getTypeDeclaration(Throwable.class.getName()));
+//		throwableType.setSite(library.getTypeDeclaration(Throwable.class.getClassName()));
 //		this.throwableType = throwableType;
 	}
 
 	//TODO
-	public List<ValidationFailure> validate(ThrowStatement node) {
+	public List<ValidationFailure> validate(ThrowStatementNode node) {
 
 		List<ValidationFailure> failures = new ArrayList<>();
 //		Expression value = node.getValue();

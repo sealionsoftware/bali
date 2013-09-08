@@ -1,5 +1,6 @@
 package bali.compiler.bytecode;
 
+import bali.compiler.validation.TypeLibrary;
 import org.mockito.Mockito;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -12,7 +13,7 @@ import org.objectweb.asm.Opcodes;
  */
 public class ASMStackManagerUnitTest implements Opcodes {
 
-	private ASMStackManager manager = new ASMStackManager(new ASMConverter());
+	private ASMStackManager manager = new ASMStackManager(new ASMConverter(), new TypeLibrary());
 	private MethodVisitor v = Mockito.mock(MethodVisitor.class);
 
 //	@Test
@@ -78,7 +79,7 @@ public class ASMStackManagerUnitTest implements Opcodes {
 ////		value.setSerialization("0");
 ////
 ////		Reference ref = new Reference();
-////		ref.setName("aVariable");
+////		ref.setClassName("aVariable");
 ////
 ////		Variable statement = new Variable(0, 0);
 ////		statement.setReference(ref);

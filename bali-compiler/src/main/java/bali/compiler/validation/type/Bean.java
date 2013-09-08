@@ -19,4 +19,7 @@ public class Bean extends Type {
 		return properties;
 	}
 
+	public boolean isAbstract() {
+		return false;
+	}
 }

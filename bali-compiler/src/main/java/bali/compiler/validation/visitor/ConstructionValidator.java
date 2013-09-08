@@ -1,11 +1,10 @@
 package bali.compiler.validation.visitor;
 
-import bali.compiler.parser.tree.CompilationUnit;
-import bali.compiler.parser.tree.ConstructionExpression;
-import bali.compiler.parser.tree.Node;
+import bali.compiler.parser.tree.ConstructionExpressionNode;
+import bali.compiler.validation.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
+import bali.compiler.validation.type.Type;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -13,36 +12,26 @@ import java.util.List;
  * User: Richard
  * Date: 14/05/13
  */
-public class ConstructionValidator implements Validator<CompilationUnit> {
+public class ConstructionValidator implements Validator<ConstructionExpressionNode> {
 
-	private Agent agent = new Agent();
+	private TypeLibrary library = new TypeLibrary();
 
-	public List<ValidationFailure> validate(CompilationUnit unit) {
-		return walk(unit);
+	public ConstructionValidator(TypeLibrary library) {
+		this.library = library;
 	}
 
-	public List<ValidationFailure> walk(Node node) {
-		List<ValidationFailure> failures = new ArrayList<>();
-		if (node instanceof ConstructionExpression) {
-			failures.addAll(agent.validate((ConstructionExpression) node));
-		}
-		for (Node child : node.getChildren()) {
-			failures.addAll(walk(child));
-		}
-		return failures;
-	}
+	public List<ValidationFailure> validate(ConstructionExpressionNode expression) {
 
-	public static class Agent implements Validator<ConstructionExpression> {
+		// TODO: Check constructor type signature
 
-		public List<ValidationFailure> validate(ConstructionExpression expression) {
+		Type expressionType = library.getType(expression.getClassName());
 
-			if (expression.getType().getDeclaration().getAbstract()){
-				Collections.singletonList(new ValidationFailure(expression, "Cannot instancate an interface type"));
-			}
-
-			return Collections.emptyList();
+		if (expression.getType().getType().isAbstract()){
+			Collections.singletonList(new ValidationFailure(expression, "Cannot instancate an interface type"));
 		}
 
+
+		return Collections.emptyList();
 	}
 
 }

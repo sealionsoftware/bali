@@ -1,25 +1,25 @@
 package bali.compiler.bytecode;
 
 import bali.compiler.GeneratedClass;
-import bali.compiler.parser.tree.InterfaceDeclaration;
-import bali.compiler.parser.tree.Method;
-import bali.compiler.parser.tree.TypeReference;
+import bali.compiler.parser.tree.InterfaceNode;
+import bali.compiler.parser.tree.MethodNode;
+import bali.compiler.parser.tree.SiteNode;
 import org.objectweb.asm.ClassWriter;
 
 /**
  * User: Richard
  * Date: 13/05/13
  */
-public class ASMInterfaceGenerator implements Generator<InterfaceDeclaration, GeneratedClass> {
+public class ASMInterfaceGenerator implements Generator<InterfaceNode, GeneratedClass> {
 
 	private ASMConverter converter = new ASMConverter();
 
-	public GeneratedClass build(InterfaceDeclaration input) throws Exception {
+	public GeneratedClass build(InterfaceNode input) throws Exception {
 
 		String[] extensions = new String[input.getSuperInterfaces().size()];
 		int i = 0;
-		for (TypeReference superInterface : input.getSuperInterfaces()) {
-			extensions[i++] = converter.getInternalName(superInterface.getDeclaration().getClassName());
+		for (SiteNode superInterface : input.getSuperInterfaces()) {
+			extensions[i++] = converter.getInternalName(superInterface.getSite().getClassName());
 		}
 
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
@@ -33,7 +33,7 @@ public class ASMInterfaceGenerator implements Generator<InterfaceDeclaration, Ge
 
 		cw.visitEnd();
 
-		for (Method method : input.getMethods()) {
+		for (MethodNode method : input.getMethods()) {
 			cw.visitMethod(ACC_PUBLIC + ACC_ABSTRACT,
 					method.getName(),
 					converter.getMethodDescriptor(method),

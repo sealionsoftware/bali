@@ -1,23 +1,24 @@
 package bali.compiler.validation.visitor;
 
 import bali._;
-import bali.compiler.parser.tree.ArgumentDeclaration;
-import bali.compiler.parser.tree.CatchStatement;
-import bali.compiler.parser.tree.ClassDeclaration;
-import bali.compiler.parser.tree.CodeBlock;
-import bali.compiler.parser.tree.CompilationUnit;
-import bali.compiler.parser.tree.Declaration;
-import bali.compiler.parser.tree.ForStatement;
-import bali.compiler.parser.tree.MethodDeclaration;
+import bali.compiler.parser.tree.ArgumentDeclarationNode;
+import bali.compiler.parser.tree.CatchStatementNode;
+import bali.compiler.parser.tree.ClassNode;
+import bali.compiler.parser.tree.CodeBlockNode;
+import bali.compiler.parser.tree.CompilationUnitNode;
+import bali.compiler.parser.tree.DeclarationNode;
+import bali.compiler.parser.tree.ForStatementNode;
+import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.Node;
-import bali.compiler.parser.tree.Reference;
-import bali.compiler.parser.tree.TypeReference;
-import bali.compiler.parser.tree.Variable;
+import bali.compiler.parser.tree.ReferenceNode;
+import bali.compiler.parser.tree.SiteNode;
+import bali.compiler.parser.tree.VariableNode;
 import bali.compiler.validation.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
+import bali.compiler.validation.type.Site;
+import bali.compiler.validation.type.Type;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -29,7 +30,7 @@ import java.util.Map;
  * User: Richard
  * Date: 14/05/13
  */
-public class ReferenceValidator implements Validator<CompilationUnit> {
+public class ReferenceValidator implements Validator<CompilationUnitNode> {
 
 	private Scope langScope;
 
@@ -38,49 +39,31 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 		// Lang level constants
 
 		Class<_> langClass = _.class;
-		List<Declaration> langDeclarations = new ArrayList<>();
+		List<DeclarationNode> langDeclarations = new ArrayList<>();
 		for (Field f : langClass.getDeclaredFields()) {
 
+			Type fieldType = library.getType(f.getType().getName());
+			SiteNode<Type> siteNode = new SiteNode<>();
+			siteNode.setSite(new Site<>(
+					fieldType,
+					new ArrayList<Site>() //TODO
+			));
 
-			Declaration d = new ArgumentDeclaration();
+			DeclarationNode d = new ArgumentDeclarationNode();
 			d.setName(f.getName());
-			d.setType(buildType(f.getGenericType(), library));
+			d.setType(siteNode);
 			langDeclarations.add(d);
 		}
 
 		langScope = new Scope(
-				Reference.ReferenceScope.STATIC,
+				ReferenceNode.ReferenceScope.STATIC,
 				langClass.getName(),
 				langDeclarations
 		);
 	}
 
-	private TypeReference buildType(java.lang.reflect.Type in, TypeLibrary library){
-		TypeReference type = new TypeReference();
-		Class rawType;
-
-		if (in instanceof ParameterizedType){
-			ParameterizedType parameterizedType = (ParameterizedType) in;
-			for (java.lang.reflect.Type typeArg : parameterizedType.getActualTypeArguments()){
-				type.addParameter(buildType(typeArg, library));
-			}
-			rawType = (Class) parameterizedType.getRawType();
-		} else if (in instanceof Class) {
-			rawType = (Class) in;
-		} else {
-			throw new RuntimeException("Could not determine lang field type: " + type);
-		}
-
-		type.setClassName(rawType.getSimpleName());
-		try {
-			type.setDeclaration(library.getTypeDeclaration(rawType.getName()));
-		} catch (ClassNotFoundException e) {
-		}
-		return type;
-	}
-
 	// Engages at the root of the AST, constructs a lookup table
-	public List<ValidationFailure> validate(CompilationUnit unit) {
+	public List<ValidationFailure> validate(CompilationUnitNode unit) {
 
 		Deque<Scope> unitLevelScopes = new ArrayDeque<>();
 		unitLevelScopes.add(langScope);
@@ -90,7 +73,7 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 		// Package Level Constants
 
 		unitLevelScopes.add(new Scope(
-				Reference.ReferenceScope.STATIC,
+				ReferenceNode.ReferenceScope.STATIC,
 				unit.getName() + "._",
 				unit.getConstants()
 		));
@@ -101,77 +84,77 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 	}
 
 	private void validate(Node node, ReferenceValidatorTypeAgent agent) {
-		if (node instanceof ClassDeclaration) {
-			validate((ClassDeclaration) node, agent);
-		} else if (node instanceof MethodDeclaration) {
-			validate((MethodDeclaration) node, agent);
-		} else if (node instanceof ForStatement) {
-			validate((ForStatement) node, agent);
-		} else if (node instanceof CatchStatement) {
-			validate((CatchStatement) node, agent);
-		} else if (node instanceof CodeBlock) {
-			validate((CodeBlock) node, agent);
-		} else if (node instanceof Variable) {
-			validate((Variable) node, agent);
-		} else if (node instanceof Reference) {
-			agent.validate((Reference) node);
+		if (node instanceof ClassNode) {
+			validate((ClassNode) node, agent);
+		} else if (node instanceof MethodDeclarationNode) {
+			validate((MethodDeclarationNode) node, agent);
+		} else if (node instanceof ForStatementNode) {
+			validate((ForStatementNode) node, agent);
+		} else if (node instanceof CatchStatementNode) {
+			validate((CatchStatementNode) node, agent);
+		} else if (node instanceof CodeBlockNode) {
+			validate((CodeBlockNode) node, agent);
+		} else if (node instanceof VariableNode) {
+			validate((VariableNode) node, agent);
+		} else if (node instanceof ReferenceNode) {
+			agent.validate((ReferenceNode) node);
 		} else {
 			walkAgentOverChildren(node, agent);
 		}
 	}
 
-	private void validate(ClassDeclaration clazz, ReferenceValidatorTypeAgent agent) {
-		List<Declaration> referenceableFields = new ArrayList<>();
+	private void validate(ClassNode clazz, ReferenceValidatorTypeAgent agent) {
+		List<DeclarationNode> referenceableFields = new ArrayList<>();
 		referenceableFields.addAll(clazz.getArgumentDeclarations());
 		referenceableFields.addAll(clazz.getFields());
 		pushAndWalk(clazz, agent, new Scope(
-				Reference.ReferenceScope.FIELD,
+				ReferenceNode.ReferenceScope.FIELD,
 				clazz.getQualifiedClassName(),
 				referenceableFields
 		));
 	}
 
-	private void validate(MethodDeclaration method, ReferenceValidatorTypeAgent agent) {
-		List<Declaration> declarations = new ArrayList<>();
-		for (Declaration declaration : method.getArguments()){
+	private void validate(MethodDeclarationNode method, ReferenceValidatorTypeAgent agent) {
+		List<DeclarationNode> declarations = new ArrayList<>();
+		for (DeclarationNode declaration : method.getArguments()){
 			declarations.add(declaration);
 		}
 		pushAndWalk(method, agent, new Scope(
-				Reference.ReferenceScope.VARIABLE,
+				ReferenceNode.ReferenceScope.VARIABLE,
 				null,
 				declarations
 		));
 	}
 
-	private void validate(ForStatement statement, ReferenceValidatorTypeAgent agent) {
-		List<Declaration> declarations = new ArrayList<>();
+	private void validate(ForStatementNode statement, ReferenceValidatorTypeAgent agent) {
+		List<DeclarationNode> declarations = new ArrayList<>();
 		declarations.add(statement.getElement());
 		pushAndWalk(statement, agent, new Scope(
-				Reference.ReferenceScope.VARIABLE,
+				ReferenceNode.ReferenceScope.VARIABLE,
 				null,
 				declarations
 		));
 	}
 
-	private void validate(CatchStatement statement, ReferenceValidatorTypeAgent agent) {
-		List<Declaration> declarations = new ArrayList<>();
+	private void validate(CatchStatementNode statement, ReferenceValidatorTypeAgent agent) {
+		List<DeclarationNode> declarations = new ArrayList<>();
 		declarations.add(statement.getDeclaration());
 		pushAndWalk(statement, agent, new Scope(
-				Reference.ReferenceScope.VARIABLE,
+				ReferenceNode.ReferenceScope.VARIABLE,
 				null,
 				declarations
 		));
 	}
 
-	private void validate(CodeBlock codeBlock, ReferenceValidatorTypeAgent agent) {
+	private void validate(CodeBlockNode codeBlock, ReferenceValidatorTypeAgent agent) {
 		pushAndWalk(codeBlock, agent, new Scope(
-				Reference.ReferenceScope.VARIABLE,
+				ReferenceNode.ReferenceScope.VARIABLE,
 				null,
-				new ArrayList<Declaration>()
+				new ArrayList<DeclarationNode>()
 		));
 	}
 
-	private void validate(Variable variable, ReferenceValidatorTypeAgent agent) {
+	private void validate(VariableNode variable, ReferenceValidatorTypeAgent agent) {
 		agent.peek().add(variable.getDeclaration());
 		walkAgentOverChildren(variable, agent);
 	}
@@ -213,9 +196,9 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 			scopeStack.pop();
 		}
 
-		public void validate(Reference value) {
+		public void validate(ReferenceNode value) {
 
-			Declaration declaration = null;
+			DeclarationNode declaration = null;
 			Scope declarationScope = null;
 
 			for (Scope scope : scopeStack) {
@@ -239,20 +222,20 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 
 	public static class Scope {
 
-		private Reference.ReferenceScope scope;
+		private ReferenceNode.ReferenceScope scope;
 		private String className;
-		private Map<String, Declaration> declarations;
+		private Map<String, DeclarationNode> declarations;
 
-		public Scope(Reference.ReferenceScope scope, String className, List<? extends Declaration> declarationsList) {
+		public Scope(ReferenceNode.ReferenceScope scope, String className, List<? extends DeclarationNode> declarationsList) {
 			this.scope = scope;
 			this.className = className;
 			this.declarations = new HashMap<>();
-			for (Declaration declaration : declarationsList) {
+			for (DeclarationNode declaration : declarationsList) {
 				add(declaration);
 			}
 		}
 
-		public Reference.ReferenceScope getScope() {
+		public ReferenceNode.ReferenceScope getScope() {
 			return scope;
 		}
 
@@ -260,11 +243,11 @@ public class ReferenceValidator implements Validator<CompilationUnit> {
 			return className;
 		}
 
-		public void add(Declaration declaration) {
+		public void add(DeclarationNode declaration) {
 			declarations.put(declaration.getName(), declaration);
 		}
 
-		public Declaration find(String name) {
+		public DeclarationNode find(String name) {
 			return declarations.get(name);
 		}
 	}

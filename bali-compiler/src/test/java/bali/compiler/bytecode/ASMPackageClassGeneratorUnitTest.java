@@ -8,19 +8,24 @@ import bali.String;
 import bali.Value;
 import bali.collection.Array;
 import bali.compiler.GeneratedClass;
-import bali.compiler.parser.tree.BooleanLiteralExpression;
-import bali.compiler.parser.tree.CompilationUnit;
-import bali.compiler.parser.tree.Constant;
-import bali.compiler.parser.tree.ConstructionExpression;
-import bali.compiler.parser.tree.Expression;
-import bali.compiler.parser.tree.ListLiteralExpression;
-import bali.compiler.parser.tree.NumberLiteralExpression;
-import bali.compiler.parser.tree.StringLiteralExpression;
-import bali.compiler.parser.tree.TypeReference;
+import bali.compiler.parser.tree.BooleanLiteralExpressionNode;
+import bali.compiler.parser.tree.CompilationUnitNode;
+import bali.compiler.parser.tree.ConstantNode;
+import bali.compiler.parser.tree.ConstructionExpressionNode;
+import bali.compiler.parser.tree.ExpressionNode;
+import bali.compiler.parser.tree.ListLiteralExpressionNode;
+import bali.compiler.parser.tree.NumberLiteralExpressionNode;
+import bali.compiler.parser.tree.SiteNode;
+import bali.compiler.parser.tree.StringLiteralExpressionNode;
+import bali.compiler.validation.TypeLibrary;
+import bali.compiler.validation.type.MethodDeclaringType;
+import bali.compiler.validation.type.Site;
 import bali.number.Byte;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
 
 import static bali.number.NumberFactory.NUMBER_FACTORY;
 
@@ -30,56 +35,56 @@ import static bali.number.NumberFactory.NUMBER_FACTORY;
  */
 public class ASMPackageClassGeneratorUnitTest {
 
-	private static ASMPackageClassGenerator generator = new ASMPackageClassGenerator();
+	private static ASMPackageClassGenerator generator = new ASMPackageClassGenerator(new TypeLibrary());
 
-	private CompilationUnit unit;
+	private CompilationUnitNode unit;
 
 	@Before
 	public void setUp() {
-		unit = new CompilationUnit(0, 0);
+		unit = new CompilationUnitNode(0, 0);
 		unit.setName("bali.test");
 	}
 
 	@Test
 	public void testNumberConstant() throws Exception {
-		NumberLiteralExpression nlv = new NumberLiteralExpression(0, 0);
+		NumberLiteralExpressionNode nlv = new NumberLiteralExpressionNode(0, 0);
 		nlv.setSerialization("1");
-		nlv.getType().setDeclaration(new TestDeclaration(Number.class.getName()));
+		nlv.setType(new TestSite(Number.class));
 		testGenerateConstant(Number.class, nlv, new Byte((byte) 1));
 	}
 
 	@Test
 	public void testStringConstant() throws Exception {
-		StringLiteralExpression slv = new StringLiteralExpression(0, 0);
+		StringLiteralExpressionNode slv = new StringLiteralExpressionNode(0, 0);
 		slv.setSerialization("Hello World");
-		slv.getType().setDeclaration(new TestDeclaration(CharArrayString.class.getName()));
+		slv.setType(new TestSite((String.class)));
 		testGenerateConstant(String.class, slv, new CharArrayString("Hello World".toCharArray()));
 	}
 
 	@Test
 	public void testBooleanConstant() throws Exception {
-		BooleanLiteralExpression blv = new BooleanLiteralExpression(0, 0);
+		BooleanLiteralExpressionNode blv = new BooleanLiteralExpressionNode(0, 0);
 		blv.setSerialization("true");
-		blv.getType().setDeclaration(new TestDeclaration(IdentityBoolean.class.getName()));
+		blv.setType(new TestSite((Boolean.class)));
 		testGenerateConstant(Boolean.class, blv, IdentityBoolean.TRUE);
 	}
 
 	@Test
 	public void testListConstant() throws Exception {
 
-		NumberLiteralExpression one = new NumberLiteralExpression(0, 0);
+		NumberLiteralExpressionNode one = new NumberLiteralExpressionNode(0, 0);
 		one.setSerialization("1");
-		NumberLiteralExpression two = new NumberLiteralExpression(0, 0);
+		NumberLiteralExpressionNode two = new NumberLiteralExpressionNode(0, 0);
 		two.setSerialization("2");
-		NumberLiteralExpression three = new NumberLiteralExpression(0, 0);
+		NumberLiteralExpressionNode three = new NumberLiteralExpressionNode(0, 0);
 		three.setSerialization("3");
 
-		ListLiteralExpression llv = new ListLiteralExpression(0, 0);
+		ListLiteralExpressionNode llv = new ListLiteralExpressionNode(0, 0);
 		llv.addValue(one);
 		llv.addValue(two);
 		llv.addValue(three);
 
-		llv.getType().setDeclaration(new TestDeclaration(Array.class.getName()));
+		llv.setType(new TestSite((Array.class)));
 
 		testGenerateConstant(Array.class, llv, new Array<>(new Object[]{
 				NUMBER_FACTORY.forDecimalString("1".toCharArray()),
@@ -90,19 +95,19 @@ public class ASMPackageClassGeneratorUnitTest {
 
 	@Test
 	public void testNewObjectConstant() throws Exception {
-		TypeReference type = new TypeReference(0, 0);
-		type.setDeclaration(new TestDeclaration(Instantiatable.class.getName()));
-		ConstructionExpression cv = new ConstructionExpression(0, 0);
-		cv.setType(type);
+		SiteNode type = new SiteNode(0, 0);
+		type.setSite(new TestSite(Instantiatable.class));
+		ConstructionExpressionNode cv = new ConstructionExpressionNode(0, 0);
+		cv.setType(new TestSite(Instantiatable.class));
 		testGenerateConstant(Instantiatable.class, cv, new Instantiatable());
 	}
 
-	public <T extends Value<T>> void testGenerateConstant(java.lang.Class<T> clazz, Expression value, T expectation) throws Exception {
+	public <T extends Value<T>> void testGenerateConstant(java.lang.Class<T> clazz, ExpressionNode value, T expectation) throws Exception {
 
-		TypeReference type = new TypeReference(0, 0);
-		type.setDeclaration(new TestDeclaration(clazz.getName()));
+		SiteNode type = new SiteNode(0, 0);
+		type.setSite(new TestSite(clazz));
 
-		Constant constant = new Constant(0, 0);
+		ConstantNode constant = new ConstantNode(0, 0);
 		constant.setName("aConstant");
 		constant.setValue(value);
 		constant.setType(type);
@@ -117,6 +122,7 @@ public class ASMPackageClassGeneratorUnitTest {
 		Assert.assertEquals("Constant Type", clazz, constantField.getType());
 		Assert.assertTrue("Constant Value", expectation.equalTo((T) constantField.get(null)) == IdentityBoolean.TRUE);
 	}
+
 
 	public static class Instantiatable implements Value<Instantiatable> {
 		public Boolean equalTo(Instantiatable o) {

@@ -8,14 +8,14 @@ import java.util.List;
  */
 public class Method extends Declaration {
 
-	private List<Declaration> arguments;
+	private List<Declaration> parameters;
 
-	public Method(String name, Site returnType, List<Declaration> arguments) {
+	public Method(String name, Site returnType, List<Declaration> parameters) {
 		super(name, returnType);
-		this.arguments = arguments;
+		this.parameters = parameters;
 	}
 
-	public List<Declaration> getArguments() {
-		return arguments;
+	public List<Declaration> getParameters() {
+		return parameters;
 	}
 }

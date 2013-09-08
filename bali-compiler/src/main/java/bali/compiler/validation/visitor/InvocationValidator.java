@@ -1,11 +1,12 @@
 package bali.compiler.validation.visitor;
 
-import bali.compiler.parser.tree.Declaration;
-import bali.compiler.parser.tree.Expression;
-import bali.compiler.parser.tree.Invocation;
-import bali.compiler.parser.tree.Method;
-import bali.compiler.parser.tree.TypeReference;
+import bali.compiler.parser.tree.ExpressionNode;
+import bali.compiler.parser.tree.InvocationNode;
+import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.validation.ValidationFailure;
+import bali.compiler.validation.type.Declaration;
+import bali.compiler.validation.type.Method;
+import bali.compiler.validation.type.Site;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,21 +16,21 @@ import java.util.List;
  * User: Richard
  * Date: 25/05/13
  */
-public class InvocationValidator implements Validator<Invocation> {
+public class InvocationValidator implements Validator<InvocationNode> {
 
-	public List<ValidationFailure> validate(Invocation invocation) {
+	public List<ValidationFailure> validate(InvocationNode invocation) {
 
 		List<ValidationFailure> ret = new ArrayList<>();
 
 		try {
 
-			TypeReference targetType = invocation.getTarget().getType();
-			TypeReference methodDeclarationType = getTypeForInvocation(invocation, targetType);
+			Site targetType = invocation.getTarget().getType();
+			Site methodDeclarationType = getTypeForInvocation(invocation, targetType);
 			invocation.setReturnType(methodDeclarationType);
 
-		} catch (TypeReference.CouldNotResolveException e) {
+		} catch (SiteNode.CouldNotResolveException e) {
 			StringBuilder sb = new StringBuilder();
-			Iterator<Expression> i = invocation.getArguments().iterator();
+			Iterator<ExpressionNode> i = invocation.getArguments().iterator();
 			if (i.hasNext()) {
 				sb.append(i.next().getType());
 				while (i.hasNext()) {
@@ -44,35 +45,35 @@ public class InvocationValidator implements Validator<Invocation> {
 		return ret;
 	}
 
-	private TypeReference getTypeForInvocation(Invocation invocation, TypeReference type) {
+	private Site getTypeForInvocation(InvocationNode invocation, Site type) {
 
-		List<Expression> arguments = invocation.getArguments();
-		List<Method> parametrisedMethods = type.getParametrisedMethods();
+		List<ExpressionNode> arguments = invocation.getArguments();
+		List<Method> methods = type.getMethods();
 
-		for (Method methodDeclaration : parametrisedMethods) {
-			if (methodDeclaration.getName().equals(invocation.getMethod())) {
-				if (!argumentsMatch(methodDeclaration.getArguments(), arguments)) {
+		for (Method method : methods) {
+			if (method.getName().equals(invocation.getMethod())) {
+				if (!argumentsMatch(method.getParameters(), arguments)) {
 					continue;
 				}
 
-				return methodDeclaration.getType();
+				return method.getType();
 			}
 		}
-		throw new TypeReference.CouldNotResolveException();
+		throw new SiteNode.CouldNotResolveException();
 	}
 
 
-	private boolean argumentsMatch(List<Declaration> declarations, List<Expression> arguments) {
+	private boolean argumentsMatch(List<Declaration> declarations, List<ExpressionNode> arguments) {
 		if (declarations.size() != arguments.size()) {
 			return false;
 		}
 		Iterator<Declaration> i = declarations.iterator();
-		Iterator<Expression> j = arguments.iterator();
+		Iterator<ExpressionNode> j = arguments.iterator();
 		while (i.hasNext()) {
 			Declaration argumentDeclaration = i.next();
-			Expression argument = j.next();
-			TypeReference argumentType = argument.getType();
-			TypeReference argumentDeclarationType = argumentDeclaration.getType();
+			ExpressionNode argument = j.next();
+			Site argumentType = argument.getType();
+			Site argumentDeclarationType = argumentDeclaration.getType();
 			if (argumentType == null || !argumentType.isAssignableTo(argumentDeclarationType)) {
 				return false;
 			}

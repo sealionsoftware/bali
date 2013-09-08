@@ -1,24 +1,24 @@
 package bali.compiler.parser;
 
-import bali.compiler.parser.tree.Assignment;
-import bali.compiler.parser.tree.BooleanLiteralExpression;
-import bali.compiler.parser.tree.ClassDeclaration;
-import bali.compiler.parser.tree.CodeBlock;
-import bali.compiler.parser.tree.CompilationUnit;
-import bali.compiler.parser.tree.ConditionalStatement;
-import bali.compiler.parser.tree.Constant;
-import bali.compiler.parser.tree.Declaration;
-import bali.compiler.parser.tree.Field;
-import bali.compiler.parser.tree.ForStatement;
-import bali.compiler.parser.tree.Import;
-import bali.compiler.parser.tree.InterfaceDeclaration;
-import bali.compiler.parser.tree.Invocation;
-import bali.compiler.parser.tree.MethodDeclaration;
-import bali.compiler.parser.tree.NumberLiteralExpression;
-import bali.compiler.parser.tree.Reference;
-import bali.compiler.parser.tree.ReturnStatement;
-import bali.compiler.parser.tree.Variable;
-import bali.compiler.parser.tree.WhileStatement;
+import bali.compiler.parser.tree.AssignmentNode;
+import bali.compiler.parser.tree.BooleanLiteralExpressionNode;
+import bali.compiler.parser.tree.ClassNode;
+import bali.compiler.parser.tree.CodeBlockNode;
+import bali.compiler.parser.tree.CompilationUnitNode;
+import bali.compiler.parser.tree.ConditionalStatementNode;
+import bali.compiler.parser.tree.ConstantNode;
+import bali.compiler.parser.tree.DeclarationNode;
+import bali.compiler.parser.tree.FieldNode;
+import bali.compiler.parser.tree.ForStatementNode;
+import bali.compiler.parser.tree.ImportNode;
+import bali.compiler.parser.tree.InterfaceNode;
+import bali.compiler.parser.tree.InvocationNode;
+import bali.compiler.parser.tree.MethodDeclarationNode;
+import bali.compiler.parser.tree.NumberLiteralExpressionNode;
+import bali.compiler.parser.tree.ReferenceNode;
+import bali.compiler.parser.tree.ReturnStatementNode;
+import bali.compiler.parser.tree.VariableNode;
+import bali.compiler.parser.tree.WhileStatementNode;
 import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -33,7 +33,7 @@ public class ANTLRParserManagerUnitTest {
 
 	private static ANTLRParserManager parserManager = new ANTLRParserManager();
 
-	private static CompilationUnit unit;
+	private static CompilationUnitNode unit;
 
 	@BeforeClass
 	public static void setUp() throws Exception {
@@ -52,24 +52,24 @@ public class ANTLRParserManagerUnitTest {
 
 	@Test
 	public void testImport() {
-		Import iport = unit.getImports().get(0);
+		ImportNode iport = unit.getImports().get(0);
 		Assert.assertEquals("Import name", "bali.Number", iport.getName());
 		Assert.assertEquals("Children", 0, iport.getChildren().size());
 	}
 
 	@Test
 	public void testConstant() {
-		Constant constant = unit.getConstants().get(0);
+		ConstantNode constant = unit.getConstants().get(0);
 		Assert.assertEquals("Constant name", "GLOBAL_CONSTANT", constant.getName());
 		Assert.assertEquals("Type", "Number", constant.getType().getClassName());
-		Assert.assertEquals("Value Type", NumberLiteralExpression.class, constant.getValue().getClass());
-		Assert.assertEquals("Value", "2", ((NumberLiteralExpression) constant.getValue()).getSerialization());
+		Assert.assertEquals("Value Type", NumberLiteralExpressionNode.class, constant.getValue().getClass());
+		Assert.assertEquals("Value", "2", ((NumberLiteralExpressionNode) constant.getValue()).getSerialization());
 		Assert.assertEquals("Children", 2, constant.getChildren().size());
 	}
 
 	@Test
 	public void testInterface() {
-		InterfaceDeclaration iface = unit.getInterfaces().get(1);
+		InterfaceNode iface = unit.getInterfaces().get(1);
 		Assert.assertEquals("Name", "AnInterface", iface.getClassName());
 		Assert.assertEquals("Super Interfaces", 1, iface.getSuperInterfaces().size());
 		Assert.assertEquals("Super Interface Name", "ASuperInterface", iface.getSuperInterfaces().get(0).getClassName());
@@ -79,7 +79,7 @@ public class ANTLRParserManagerUnitTest {
 
 	@Test
 	public void testClass() {
-		ClassDeclaration clazz = unit.getClasses().get(0);
+		ClassNode clazz = unit.getClasses().get(0);
 		Assert.assertEquals("Name", "AnImplementation", clazz.getClassName());
 		Assert.assertEquals("Arguments", 1, clazz.getArgumentDeclarations().size());
 		Assert.assertEquals("Interfaces", 1, clazz.getImplementations().size());
@@ -91,7 +91,7 @@ public class ANTLRParserManagerUnitTest {
 
 	@Test
 	public void testConstructionArguments() {
-		Declaration declaration = unit.getClasses().get(0).getArgumentDeclarations().get(0);
+		DeclarationNode declaration = unit.getClasses().get(0).getArgumentDeclarations().get(0);
 		Assert.assertEquals("Name", "aField", declaration.getName());
 		Assert.assertEquals("Type", "Number", declaration.getType().getClassName());
 		Assert.assertEquals("Children", 1, declaration.getChildren().size());
@@ -99,7 +99,7 @@ public class ANTLRParserManagerUnitTest {
 
 	@Test
 	public void testField() {
-		Field field = unit.getClasses().get(0).getFields().get(0);
+		FieldNode field = unit.getClasses().get(0).getFields().get(0);
 		Assert.assertEquals("Name", "aField", field.getName());
 		Assert.assertEquals("Type", "Number", field.getType().getClassName());
 		Assert.assertEquals("Children", 1, field.getChildren().size());
@@ -107,7 +107,7 @@ public class ANTLRParserManagerUnitTest {
 
 	@Test
 	public void testMethod() {
-		MethodDeclaration method = unit.getClasses().get(0).getMethods().get(0);
+		MethodDeclarationNode method = unit.getClasses().get(0).getMethods().get(0);
 		Assert.assertEquals("Name", "aMethod", method.getName());
 		Assert.assertEquals("Type", "Number", method.getType().getClassName());
 		Assert.assertEquals("Arguments", 1, method.getArguments().size());
@@ -116,7 +116,7 @@ public class ANTLRParserManagerUnitTest {
 
 	@Test
 	public void testMethodArgument() {
-		Declaration declaration = unit.getClasses().get(0).getMethods().get(0).getArguments().get(0);
+		DeclarationNode declaration = unit.getClasses().get(0).getMethods().get(0).getArguments().get(0);
 		Assert.assertEquals("Name", "anArgument", declaration.getName());
 		Assert.assertEquals("Type", "Number", declaration.getType().getClassName());
 		Assert.assertEquals("Children", 1, declaration.getChildren().size());
@@ -124,14 +124,14 @@ public class ANTLRParserManagerUnitTest {
 
 	@Test
 	public void testCodeBlock() {
-		CodeBlock body = unit.getClasses().get(0).getMethods().get(0).getBody();
+		CodeBlockNode body = unit.getClasses().get(0).getMethods().get(0).getBody();
 		Assert.assertEquals("Statements", 4, body.getStatements().size());
-		Assert.assertEquals("Assignment", 1, ((Invocation) ((Assignment) body.getStatements().get(0)).getValue()).getArguments().size());
-		Assert.assertEquals("Variable", "false", ((BooleanLiteralExpression) ((Variable) body.getStatements().get(1)).getValue()).getSerialization());
-		Assert.assertEquals("While", 2, (((WhileStatement) body.getStatements().get(2)).getBody().getChildren().size()));
-		Assert.assertEquals("For", 1, ((ForStatement) ((WhileStatement) body.getStatements().get(2)).getBody().getStatements().get(0)).getBody().getChildren().size());
-		Assert.assertEquals("If", 1, ((ConditionalStatement) ((WhileStatement) body.getStatements().get(2)).getBody().getStatements().get(1)).getConditionalBlocks().get(0).getBody().getChildren().size());
-		Assert.assertEquals("Return Statement", "anArgument", ((Reference) ((ReturnStatement) body.getStatements().get(3)).getValue()).getName());
+		Assert.assertEquals("Assignment", 1, ((InvocationNode) ((AssignmentNode) body.getStatements().get(0)).getValue()).getArguments().size());
+		Assert.assertEquals("Variable", "false", ((BooleanLiteralExpressionNode) ((VariableNode) body.getStatements().get(1)).getValue()).getSerialization());
+		Assert.assertEquals("While", 2, (((WhileStatementNode) body.getStatements().get(2)).getBody().getChildren().size()));
+		Assert.assertEquals("For", 1, ((ForStatementNode) ((WhileStatementNode) body.getStatements().get(2)).getBody().getStatements().get(0)).getBody().getChildren().size());
+		Assert.assertEquals("If", 1, ((ConditionalStatementNode) ((WhileStatementNode) body.getStatements().get(2)).getBody().getStatements().get(1)).getConditionalBlocks().get(0).getBody().getChildren().size());
+		Assert.assertEquals("Return Statement", "anArgument", ((ReferenceNode) ((ReturnStatementNode) body.getStatements().get(3)).getValue()).getName());
 	}
 
 

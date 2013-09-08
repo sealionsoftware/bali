@@ -1,15 +1,21 @@
 package bali.compiler.validation;
 
-import bali.compiler.parser.tree.ArgumentDeclaration;
-import bali.compiler.parser.tree.ClassDeclaration;
-import bali.compiler.parser.tree.InterfaceDeclaration;
-import bali.compiler.parser.tree.TypeDeclaration;
-import bali.compiler.parser.tree.TypeParameter;
+import bali.compiler.parser.tree.ArgumentDeclarationNode;
+import bali.compiler.parser.tree.ClassNode;
+import bali.compiler.parser.tree.InterfaceNode;
+import bali.compiler.parser.tree.MethodNode;
+import bali.compiler.parser.tree.SiteNode;
+import bali.compiler.parser.tree.TypeNode;
+import bali.compiler.parser.tree.TypeParameterNode;
 import bali.compiler.validation.type.Declaration;
 import bali.compiler.validation.type.Method;
+import bali.compiler.validation.type.MethodDeclaringType;
+import bali.compiler.validation.type.Operator;
+import bali.compiler.validation.type.Site;
 import bali.compiler.validation.type.Type;
 import bali.compiler.validation.type.Class;
 import bali.compiler.validation.type.Interface;
+import bali.compiler.validation.type.UnaryOperator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,73 +34,111 @@ public class TypeDeclarationTypeBuilder {
 		this.library = library;
 	}
 
-	public Type build(TypeDeclaration declaration) {
-		if (declaration instanceof ClassDeclaration){
-			return build((ClassDeclaration) declaration);
+	public Type build(TypeNode declaration) {
+		if (declaration instanceof ClassNode){
+			return build((ClassNode) declaration);
 		}
-		if (declaration instanceof InterfaceDeclaration){
-			return build((InterfaceDeclaration) declaration);
+		if (declaration instanceof InterfaceNode){
+			return build((InterfaceNode) declaration);
 		}
 		throw new RuntimeException("Cannot build MetaTypes like " + declaration);
 	}
 
-	public Type build(ClassDeclaration declaration) {
+	public Type build(ClassNode declaration) {
 		return new Class(
 				declaration.getQualifiedClassName(),
 				getParameters(declaration),
 				getArguments(declaration),
-				getMethods(declaration)
+				getMethods(declaration),
+				getInterfaces(declaration)
 		);
 	}
 
-	public Type build(InterfaceDeclaration declaration) {
+	public Type build(InterfaceNode declaration) {
 		return new Interface(
 				declaration.getQualifiedClassName(),
 				getParameters(declaration),
-				getMethods(declaration)
+				getMethods(declaration),
+				getInterfaces(declaration),
+				getOperators(declaration),
+				getUnaryOperators(declaration)
+
 		);
 	}
 
-	private List<Declaration> getParameters(TypeDeclaration declaration) {
+	private List<Declaration> getParameters(TypeNode declaration) {
 
 		List<Declaration> parameters = new ArrayList<>();
-		for (TypeParameter declaredParameter : (List<TypeParameter>) declaration.getParameters()){ // TODO: remove this cast
+		for (TypeParameterNode declaredParameter : (List<TypeParameterNode>) declaration.getParameters()){ // TODO: remove this cast
 			parameters.add(new Declaration(
 					declaredParameter.getName(),
-					library.getType(declaredParameter.getType().getClassName())
+					getType(declaredParameter.getType())
 			));
 		}
 		return parameters;
 	}
 
-	private List<Declaration> getArguments(ClassDeclaration declaration) {
+	private List<Declaration> getArguments(ClassNode declaration) {
 		List<Declaration> arguments = new ArrayList<>();
-		for (ArgumentDeclaration declaredArgument : declaration.getArgumentDeclarations()){
+		for (ArgumentDeclarationNode declaredArgument : declaration.getArgumentDeclarations()){
 			arguments.add(new Declaration(
 					declaredArgument.getName(),
-					library.getType(declaredArgument.getType().getClassName())
+					getType(declaredArgument.getType())
 			));
 		}
 		return arguments;
 	}
 
-	private List<Method> getMethods(TypeDeclaration<? extends bali.compiler.parser.tree.Method> declaration) {
+	private List<Method> getMethods(TypeNode<? extends MethodNode, ? extends MethodDeclaringType> declaration) {
 		List<Method> methods = new ArrayList<>();
-		for (bali.compiler.parser.tree.Method declaredMethod : declaration.getMethods()){
+		for (MethodNode declaredMethod : declaration.getMethods()){
 			List<Declaration> arguments = new ArrayList<>();
-			for (ArgumentDeclaration declaredArgument : declaredMethod.getArguments()){
+			for (ArgumentDeclarationNode declaredArgument : declaredMethod.getArguments()){
 				arguments.add(new Declaration(
 						declaredArgument.getName(),
-						library.getType(declaredArgument.getType().getClassName())
+						getType(declaredArgument.getType())
 				));
 			}
 			methods.add(new Method(
 					declaredMethod.getName(),
-					library.getType(declaredMethod.getType().getClassName()),
+					getType(declaredMethod.getType()),
 					arguments
 			));
 		}
 		return methods;
+	}
+
+	private List<Site> getInterfaces(TypeNode<? extends MethodNode, ? extends MethodDeclaringType> declaration){
+		List<Site> ret = new ArrayList<>();
+		for (SiteNode typeReference : declaration.getImplementations()){
+			ret.add(getType(typeReference));
+		}
+		return ret;
+	}
+
+	private List<UnaryOperator> getUnaryOperators(InterfaceNode declaration){
+		List<UnaryOperator> ret = new ArrayList<>();
+//		for (SiteNode typeReference : declaration.getO()){
+//			ret.add(getType(typeReference));
+//		}
+		return ret; //TODO: self defined unary operators
+	}
+
+	private List<Operator> getOperators(InterfaceNode declaration){
+		List<Operator> ret = new ArrayList<>();
+//		for (SiteNode typeReference : declaration.getO()){
+//			ret.add(getType(typeReference));
+//		}
+		return ret; //TODO: self defined operators
+	}
+
+	private Site getType(SiteNode reference){
+		Type type = library.getType(reference.getClassName());
+		List<Site> typeArguments = new ArrayList<>();
+		for (SiteNode argumentNode : (List<SiteNode>) reference.getParameters()){ //TODO remove cast
+			typeArguments.add(getType(argumentNode));
+		}
+		return new Site<>(type, typeArguments);
 	}
 
 

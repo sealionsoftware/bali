@@ -1,38 +1,40 @@
 package bali.compiler.bytecode;
 
-import bali.compiler.parser.tree.Assignment;
-import bali.compiler.parser.tree.BooleanLiteralExpression;
-import bali.compiler.parser.tree.BreakStatement;
-import bali.compiler.parser.tree.CaseStatement;
-import bali.compiler.parser.tree.CatchStatement;
-import bali.compiler.parser.tree.ClassDeclaration;
-import bali.compiler.parser.tree.CodeBlock;
-import bali.compiler.parser.tree.ConditionalBlock;
-import bali.compiler.parser.tree.ConditionalStatement;
-import bali.compiler.parser.tree.ConstructionExpression;
-import bali.compiler.parser.tree.ContinueStatement;
-import bali.compiler.parser.tree.Declaration;
-import bali.compiler.parser.tree.Expression;
-import bali.compiler.parser.tree.ForStatement;
-import bali.compiler.parser.tree.Invocation;
-import bali.compiler.parser.tree.ListLiteralExpression;
-import bali.compiler.parser.tree.MethodDeclaration;
-import bali.compiler.parser.tree.NumberLiteralExpression;
-import bali.compiler.parser.tree.Operation;
-import bali.compiler.parser.tree.Reference;
-import bali.compiler.parser.tree.ReturnStatement;
-import bali.compiler.parser.tree.Statement;
-import bali.compiler.parser.tree.StringLiteralExpression;
-import bali.compiler.parser.tree.SwitchStatement;
-import bali.compiler.parser.tree.ThrowStatement;
-import bali.compiler.parser.tree.TryStatement;
-import bali.compiler.parser.tree.TypeReference;
-import bali.compiler.parser.tree.TypeDeclaration;
-import bali.compiler.parser.tree.UnaryOperation;
-import bali.compiler.parser.tree.Variable;
-import bali.compiler.parser.tree.WhileStatement;
+import bali.compiler.parser.tree.AssignmentNode;
+import bali.compiler.parser.tree.BooleanLiteralExpressionNode;
+import bali.compiler.parser.tree.BreakStatementNode;
+import bali.compiler.parser.tree.CaseStatementNode;
+import bali.compiler.parser.tree.CatchStatementNode;
+import bali.compiler.parser.tree.ClassNode;
+import bali.compiler.parser.tree.CodeBlockNode;
+import bali.compiler.parser.tree.ConditionalBlockNode;
+import bali.compiler.parser.tree.ConditionalStatementNode;
+import bali.compiler.parser.tree.ConstructionExpressionNode;
+import bali.compiler.parser.tree.ContinueStatementNode;
+import bali.compiler.parser.tree.DeclarationNode;
+import bali.compiler.parser.tree.ExpressionNode;
+import bali.compiler.parser.tree.ForStatementNode;
+import bali.compiler.parser.tree.InvocationNode;
+import bali.compiler.parser.tree.ListLiteralExpressionNode;
+import bali.compiler.parser.tree.MethodDeclarationNode;
+import bali.compiler.parser.tree.NumberLiteralExpressionNode;
+import bali.compiler.parser.tree.OperationNode;
+import bali.compiler.parser.tree.ReferenceNode;
+import bali.compiler.parser.tree.ReturnStatementNode;
+import bali.compiler.parser.tree.SiteNode;
+import bali.compiler.parser.tree.StatementNode;
+import bali.compiler.parser.tree.StringLiteralExpressionNode;
+import bali.compiler.parser.tree.SwitchStatementNode;
+import bali.compiler.parser.tree.ThrowStatementNode;
+import bali.compiler.parser.tree.TryStatementNode;
+import bali.compiler.parser.tree.TypeNode;
+import bali.compiler.parser.tree.UnaryOperationNode;
+import bali.compiler.parser.tree.VariableNode;
+import bali.compiler.parser.tree.WhileStatementNode;
 import bali.compiler.validation.TypeLibrary;
 import bali.compiler.validation.type.Interface;
+import bali.compiler.validation.type.Site;
+import bali.compiler.validation.type.Type;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -59,14 +61,11 @@ public class ASMStackManager implements Opcodes {
 	private Deque<Label> scopeHorizonStack = new ArrayDeque<>();
 	private Deque<LoopContext> loopContextStack = new ArrayDeque<>();
 
-	private TypeReference erasedType;
+	private Site erasedType;
 
 	public ASMStackManager(ASMConverter converter, TypeLibrary library) {
 		this.converter = converter;
-		this.erasedType = new TypeReference();
-		TypeDeclaration t = new ClassDeclaration();
-		t.setQualifiedClassName(Object.class.getName());
-		erasedType.setDeclaration(library.getType(Object.class.getName()));
+		this.erasedType = new Site<>(library.getType(Object.class.getName()),new ArrayList<Site>());
 	}
 
 	public List<VariableInfo> getDeclaredVariables() {
@@ -75,11 +74,11 @@ public class ASMStackManager implements Opcodes {
 
 	// Execute Methods
 
-	public void execute(MethodDeclaration method, MethodVisitor v) {
+	public void execute(MethodDeclarationNode method, MethodVisitor v) {
 		Label start = new Label();
 		Label end = new Label();
 		v.visitLabel(start);
-		for (Declaration declaration : method.getArguments()){
+		for (DeclarationNode declaration : method.getArguments()){
 			declaredVariables.put(
 					declaration.getName(),
 					new VariableInfo(
@@ -95,15 +94,15 @@ public class ASMStackManager implements Opcodes {
 
 	}
 
-	public void execute(CodeBlock codeBlock, MethodVisitor v) {
+	public void execute(CodeBlockNode codeBlock, MethodVisitor v) {
 		scopeHorizonStack.push(new Label());
-		for (Statement statement : codeBlock.getStatements()) {
+		for (StatementNode statement : codeBlock.getStatements()) {
 			execute(statement, v);
 		}
 		v.visitLabel(scopeHorizonStack.pop());
 	}
 
-	public void execute(Statement statement, MethodVisitor v) {
+	public void execute(StatementNode statement, MethodVisitor v) {
 
 		Label label = new Label();
 		v.visitLabel(label);
@@ -112,37 +111,37 @@ public class ASMStackManager implements Opcodes {
 			v.visitLineNumber(statement.getLine(), label);
 		}
 
-		if (statement instanceof ReturnStatement) {
-			execute((ReturnStatement) statement, v);
-		} else if (statement instanceof ThrowStatement) {
-			execute((ThrowStatement) statement, v);
-		} else if (statement instanceof BreakStatement) {
-			execute((BreakStatement) statement, v);
-		} else if (statement instanceof ContinueStatement) {
-			execute((ContinueStatement) statement, v);
-		} else if (statement instanceof Expression) {
-			execute((Expression) statement, v);
-		} else if (statement instanceof Variable) {
-			execute((Variable) statement, v);
-		} else if (statement instanceof Assignment) {
-			execute((Assignment) statement, v);
-		} else if (statement instanceof ConditionalStatement) {
-			execute((ConditionalStatement) statement, v);
-		} else if (statement instanceof WhileStatement) {
-			execute((WhileStatement) statement, v);
-		} else if (statement instanceof ForStatement) {
-			execute((ForStatement) statement, v);
-		} else if (statement instanceof SwitchStatement) {
-			execute((SwitchStatement) statement, v);
-		} else if (statement instanceof TryStatement) {
-			execute((TryStatement) statement, v);
+		if (statement instanceof ReturnStatementNode) {
+			execute((ReturnStatementNode) statement, v);
+		} else if (statement instanceof ThrowStatementNode) {
+			execute((ThrowStatementNode) statement, v);
+		} else if (statement instanceof BreakStatementNode) {
+			execute((BreakStatementNode) statement, v);
+		} else if (statement instanceof ContinueStatementNode) {
+			execute((ContinueStatementNode) statement, v);
+		} else if (statement instanceof ExpressionNode) {
+			execute((ExpressionNode) statement, v);
+		} else if (statement instanceof VariableNode) {
+			execute((VariableNode) statement, v);
+		} else if (statement instanceof AssignmentNode) {
+			execute((AssignmentNode) statement, v);
+		} else if (statement instanceof ConditionalStatementNode) {
+			execute((ConditionalStatementNode) statement, v);
+		} else if (statement instanceof WhileStatementNode) {
+			execute((WhileStatementNode) statement, v);
+		} else if (statement instanceof ForStatementNode) {
+			execute((ForStatementNode) statement, v);
+		} else if (statement instanceof SwitchStatementNode) {
+			execute((SwitchStatementNode) statement, v);
+		} else if (statement instanceof TryStatementNode) {
+			execute((TryStatementNode) statement, v);
 		} else {
 			throw new RuntimeException("Cannot handle Statement type: " + statement);
 		}
 	}
 
-	private void execute(ReturnStatement statement, MethodVisitor v) {
-		Expression value = statement.getValue();
+	private void execute(ReturnStatementNode statement, MethodVisitor v) {
+		ExpressionNode value = statement.getValue();
 		if (value != null) {
 			push(value, v);
 			v.visitInsn(ARETURN);
@@ -151,28 +150,28 @@ public class ASMStackManager implements Opcodes {
 		}
 	}
 
-	private void execute(ThrowStatement statement, MethodVisitor v) {
+	private void execute(ThrowStatementNode statement, MethodVisitor v) {
 		push(statement.getValue(), v);
 		v.visitInsn(ATHROW);
 	}
 
-	private void execute(BreakStatement statement, MethodVisitor v) {
+	private void execute(BreakStatementNode statement, MethodVisitor v) {
 		v.visitJumpInsn(GOTO, loopContextStack.peek().getEnd());
 	}
 
-	private void execute(ContinueStatement statement, MethodVisitor v) {
+	private void execute(ContinueStatementNode statement, MethodVisitor v) {
 		v.visitJumpInsn(GOTO, loopContextStack.peek().getStart());
 	}
 
-	private void execute(Expression statement, MethodVisitor v) {
+	private void execute(ExpressionNode statement, MethodVisitor v) {
 		push(statement, v);
 		if (statement.getType() != null) {
 			v.visitInsn(POP);
 		}
 	}
 
-	private void execute(Variable variable, MethodVisitor v) {
-		Expression value = variable.getValue();
+	private void execute(VariableNode variable, MethodVisitor v) {
+		ExpressionNode value = variable.getValue();
 		if (value != null) {
 			push(value, v);
 		} else {
@@ -183,17 +182,17 @@ public class ASMStackManager implements Opcodes {
 		addToVariables(variable.getDeclaration(), varStart, scopeHorizonStack.peek(), v);
 	}
 
-	private void execute(Assignment statement, MethodVisitor v) {
+	private void execute(AssignmentNode statement, MethodVisitor v) {
 		Integer index = declaredVariables.get(statement.getReference().getName()).getIndex();
 		push(statement.getValue(), v);
 		v.visitVarInsn(ASTORE, index);
 	}
 
-	private void execute(ConditionalStatement statement, MethodVisitor v) {
+	private void execute(ConditionalStatementNode statement, MethodVisitor v) {
 
 		Label end = new Label();
 		Label next = new Label();
-		for (ConditionalBlock block : statement.getConditionalBlocks()) {
+		for (ConditionalBlockNode block : statement.getConditionalBlocks()) {
 			push(block.getCondition(), v);
 			v.visitFieldInsn(GETSTATIC, "bali/Boolean", "TRUE", "Lbali/Boolean;");
 			v.visitJumpInsn(IF_ACMPNE, next);
@@ -208,7 +207,7 @@ public class ASMStackManager implements Opcodes {
 		v.visitLabel(end);
 	}
 
-	private void execute(WhileStatement statement, MethodVisitor v) {
+	private void execute(WhileStatementNode statement, MethodVisitor v) {
 		Label end = new Label();
 		Label start = new Label();
 		v.visitLabel(start);
@@ -222,13 +221,13 @@ public class ASMStackManager implements Opcodes {
 		v.visitLabel(end);
 	}
 
-	private void execute(ForStatement statement, MethodVisitor v) {
+	private void execute(ForStatementNode statement, MethodVisitor v) {
 		Label top = new Label();
 		Label start = new Label();
 		Label end = new Label();
 		v.visitLabel(top);
 		push(statement.getCollection(), v);
-		TypeReference collectionType = statement.getCollection().getType();
+		Site collectionType = statement.getCollection().getType();
 		v.visitMethodInsn(invokeInsn(collectionType), converter.getInternalName(collectionType), "iterator", "()Lbali/Iterator;");
 		v.visitLabel(start);
 		v.visitInsn(DUP);
@@ -237,9 +236,9 @@ public class ASMStackManager implements Opcodes {
 		v.visitJumpInsn(IF_ACMPNE, end);
 		v.visitInsn(DUP);
 		v.visitMethodInsn(INVOKEINTERFACE, "bali/Iterator", "next", "()Ljava/lang/Object;");
-		Declaration element = statement.getElement();
-		TypeReference variableType = element.getType();
-		v.visitTypeInsn(CHECKCAST, converter.getInternalName(variableType.getDeclaration().getClassName()));
+		DeclarationNode element = statement.getElement();
+		SiteNode variableType = element.getType();
+		v.visitTypeInsn(CHECKCAST, converter.getInternalName(variableType.getSite().getClassName()));
 		addToVariables(element, start, end, v);
 		loopContextStack.push(new LoopContext(start, end));
 		execute(statement.getBody(), v);
@@ -250,13 +249,13 @@ public class ASMStackManager implements Opcodes {
 	}
 
 	//TODO: Add support for constant switch values
-	public void execute(SwitchStatement statement, MethodVisitor v) {
+	public void execute(SwitchStatementNode statement, MethodVisitor v) {
 
 		Label end = new Label();
 		Label next = new Label();
 		push(statement.getValue(), v);
-		TypeReference statementType = statement.getValue().getType();
-		for (CaseStatement caseStatement : statement.getCaseStatements()) {
+		Site statementType = statement.getValue().getType();
+		for (CaseStatementNode caseStatement : statement.getCaseStatements()) {
 			v.visitInsn(DUP);
 			push(caseStatement.getCondition(), v);
 			v.visitMethodInsn(invokeInsn(statementType), converter.getInternalName(statementType), "equalTo", "(Ljava/lang/Object;)Lbali/Boolean;");
@@ -274,11 +273,11 @@ public class ASMStackManager implements Opcodes {
 		v.visitInsn(POP);
 	}
 
-	public void execute(TryStatement statement, MethodVisitor v) {
+	public void execute(TryStatementNode statement, MethodVisitor v) {
 		Label start = new Label();
 		Label end = new Label();
-		Map<Label, CatchStatement> markers = new LinkedHashMap<>();
-		for (CatchStatement catchStatement : statement.getCatchStatements()) {
+		Map<Label, CatchStatementNode> markers = new LinkedHashMap<>();
+		for (CatchStatementNode catchStatement : statement.getCatchStatements()) {
 			Label catchStart = new Label();
 			markers.put(catchStart, catchStatement);
 			v.visitTryCatchBlock(start, catchStart, catchStart, converter.getInternalName(catchStatement.getDeclaration().getType()));
@@ -287,7 +286,7 @@ public class ASMStackManager implements Opcodes {
 		execute(statement.getMain(), v);
 		v.visitJumpInsn(GOTO, end);
 
-		for (Map.Entry<Label, CatchStatement> entry : markers.entrySet()) {
+		for (Map.Entry<Label, CatchStatementNode> entry : markers.entrySet()) {
 			Label catchStart = entry.getKey();
 			Label catchEnd = new Label();
 			v.visitLabel(catchStart);
@@ -300,7 +299,7 @@ public class ASMStackManager implements Opcodes {
 		v.visitLabel(end);
 	}
 
-	private void addToVariables(Declaration declaration, Label start, Label end, MethodVisitor v) {
+	private void addToVariables(DeclarationNode declaration, Label start, Label end, MethodVisitor v) {
 		String variableName = declaration.getName();
 		Integer variableIndex = declaredVariables.size() + 1;
 		declaredVariables.put(
@@ -315,49 +314,49 @@ public class ASMStackManager implements Opcodes {
 		v.visitVarInsn(ASTORE, variableIndex);
 	}
 
-	private int invokeInsn(TypeReference t) {
-		return t.getDeclaration() instanceof Interface ? INVOKEINTERFACE : INVOKEVIRTUAL;
+	private int invokeInsn(Site t) {
+		return t.getType() instanceof Interface ? INVOKEINTERFACE : INVOKEVIRTUAL;
 	}
 
 	// Push Methods
 
-	public void push(Expression value, MethodVisitor v) {
-		if (value instanceof NumberLiteralExpression) {
-			push((NumberLiteralExpression) value, v);
-		} else if (value instanceof BooleanLiteralExpression) {
-			push((BooleanLiteralExpression) value, v);
-		} else if (value instanceof StringLiteralExpression) {
-			push((StringLiteralExpression) value, v);
-		} else if (value instanceof ListLiteralExpression) {
-			push((ListLiteralExpression) value, v);
-		} else if (value instanceof Reference) {
-			push((Reference) value, v);
-		} else if (value instanceof ConstructionExpression) {
-			push((ConstructionExpression) value, v);
-		} else if (value instanceof Invocation) {
-			push((Invocation) value, v);
-		} else if (value instanceof UnaryOperation) {
-			push((UnaryOperation) value, v);
-		} else if (value instanceof Operation) {
-			push((Operation) value, v);
+	public void push(ExpressionNode value, MethodVisitor v) {
+		if (value instanceof NumberLiteralExpressionNode) {
+			push((NumberLiteralExpressionNode) value, v);
+		} else if (value instanceof BooleanLiteralExpressionNode) {
+			push((BooleanLiteralExpressionNode) value, v);
+		} else if (value instanceof StringLiteralExpressionNode) {
+			push((StringLiteralExpressionNode) value, v);
+		} else if (value instanceof ListLiteralExpressionNode) {
+			push((ListLiteralExpressionNode) value, v);
+		} else if (value instanceof ReferenceNode) {
+			push((ReferenceNode) value, v);
+		} else if (value instanceof ConstructionExpressionNode) {
+			push((ConstructionExpressionNode) value, v);
+		} else if (value instanceof InvocationNode) {
+			push((InvocationNode) value, v);
+		} else if (value instanceof UnaryOperationNode) {
+			push((UnaryOperationNode) value, v);
+		} else if (value instanceof OperationNode) {
+			push((OperationNode) value, v);
 		} else {
 			throw new RuntimeException("Cannot push value of type " + value + " onto the stack");
 		}
 	}
 
-	public void push(NumberLiteralExpression value, MethodVisitor v) {
+	public void push(NumberLiteralExpressionNode value, MethodVisitor v) {
 		v.visitFieldInsn(GETSTATIC, "bali/number/NumberFactory", "NUMBER_FACTORY", "Lbali/number/NumberFactory;");
 		v.visitLdcInsn(value.getSerialization());
 		v.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "toCharArray", "()[C");
 		v.visitMethodInsn(INVOKEVIRTUAL, "bali/number/NumberFactory", "forDecimalString", "([C)Lbali/Number;");
 	}
 
-	public void push(BooleanLiteralExpression value, MethodVisitor v) {
+	public void push(BooleanLiteralExpressionNode value, MethodVisitor v) {
 		Boolean bool = Boolean.valueOf(value.getSerialization());
 		v.visitFieldInsn(GETSTATIC, converter.getInternalName(value.getType()), bool ? "TRUE" : "FALSE", converter.getTypeDescriptor(value.getType()));
 	}
 
-	public void push(StringLiteralExpression value, MethodVisitor v) {
+	public void push(StringLiteralExpressionNode value, MethodVisitor v) {
 		String string = value.getSerialization();
 		String internalName = converter.getInternalName(value.getType());
 		v.visitTypeInsn(NEW, internalName);
@@ -367,14 +366,14 @@ public class ASMStackManager implements Opcodes {
 		v.visitMethodInsn(INVOKESPECIAL, internalName, "<init>", "([C)V");
 	}
 
-	public void push(ListLiteralExpression value, MethodVisitor v) {
+	public void push(ListLiteralExpressionNode value, MethodVisitor v) {
 		String implName = converter.getInternalName(value.getType());
 		v.visitTypeInsn(NEW, implName);
 		v.visitInsn(DUP);
 		push(value.getValues().size(), v);
 		v.visitTypeInsn(ANEWARRAY, "java/lang/Object");
 		int i = 0;
-		for (Expression elementValue : value.getValues()) {
+		for (ExpressionNode elementValue : value.getValues()) {
 			v.visitInsn(DUP);
 			push(i++, v);
 			push(elementValue, v);
@@ -383,7 +382,7 @@ public class ASMStackManager implements Opcodes {
 		v.visitMethodInsn(INVOKESPECIAL, implName, "<init>", "([Ljava/lang/Object;)V");
 	}
 
-	public void push(Reference value, MethodVisitor v) {
+	public void push(ReferenceNode value, MethodVisitor v) {
 		switch (value.getScope()) {
 			case STATIC: {
 				v.visitFieldInsn(GETSTATIC, converter.getInternalName(value.getHostClass()), value.getName(), converter.getTypeDescriptor(value.getType()));
@@ -401,19 +400,19 @@ public class ASMStackManager implements Opcodes {
 		}
 	}
 
-	public void push(ConstructionExpression value, MethodVisitor v) {
+	public void push(ConstructionExpressionNode value, MethodVisitor v) {
 		String internalName = converter.getInternalName(value.getType());
 		v.visitTypeInsn(NEW, internalName);
 		v.visitInsn(DUP);
-		List<TypeReference> argumentTypes = new ArrayList<>();
-		for (Expression argumentValue : value.getArguments()) {
+		List<Site> argumentTypes = new ArrayList<>();
+		for (ExpressionNode argumentValue : value.getArguments()) {
 			push(argumentValue, v);
 			argumentTypes.add(argumentValue.getType());
 		}
 		v.visitMethodInsn(INVOKESPECIAL, internalName, "<init>", converter.getMethodDescriptor(null, argumentTypes));
 	}
 
-	public void push(Invocation value, MethodVisitor v) {
+	public void push(InvocationNode value, MethodVisitor v) {
 		pushInvocation(
 				value.getTarget(),
 				value.getType(),
@@ -423,41 +422,41 @@ public class ASMStackManager implements Opcodes {
 		);
 	}
 
-	public void push(UnaryOperation value, MethodVisitor v) {
+	public void push(UnaryOperationNode value, MethodVisitor v) {
 		pushInvocation(
 				value.getTarget(),
 				value.getType(),
-				new ArrayList<Expression>(),
-				value.getMethod().getName(),
+				new ArrayList<ExpressionNode>(),
+				value.getResolvedOperator().getMethodName(),
 				v
 		);
 	}
 
-	public void push(Operation value, MethodVisitor v) {
+	public void push(OperationNode value, MethodVisitor v) {
 		pushInvocation(
 				value.getOne(),
 				value.getType(),
 				Collections.singletonList(value.getTwo()),
-				value.getMethod(),
+				value.getResolvedOperator().getMethodName(),
 				v
 		);
 	}
 
-	public void pushInvocation(Expression target, TypeReference valueType, List<Expression> arguments, String methodName, MethodVisitor v) {
+	public void pushInvocation(ExpressionNode target, Site valueType, List<ExpressionNode> arguments, String methodName, MethodVisitor v) {
 		push(target, v);
-		List<TypeReference> argumentClasses = new ArrayList<>();
-		for (Expression argumentValue : arguments) {
+		List<Site> argumentClasses = new ArrayList<>();
+		for (ExpressionNode argumentValue : arguments) {
 			push(argumentValue, v);
 			argumentClasses.add(argumentValue.getType());
 		}
-		TypeReference targetType = target.getType();
+		Site targetType = target.getType();
 		Boolean erased = valueType != null && valueType.getErase();
 		v.visitMethodInsn(invokeInsn(targetType),
 				converter.getInternalName(targetType),
 				methodName,
 				converter.getMethodDescriptor(erased ? erasedType : valueType, argumentClasses));
 		if (erased) {
-			v.visitTypeInsn(CHECKCAST, converter.getInternalName(valueType.getDeclaration().getClassName()));
+			v.visitTypeInsn(CHECKCAST, converter.getInternalName(valueType.getClassName()));
 		}
 	}
 

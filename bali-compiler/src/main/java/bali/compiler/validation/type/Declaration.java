@@ -21,4 +21,22 @@ public class Declaration {
 	public Site getType() {
 		return type;
 	}
+
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Declaration that = (Declaration) o;
+
+		if (!name.equals(that.name)) return false;
+		if (!type.equals(that.type)) return false;
+
+		return true;
+	}
+
+	public int hashCode() {
+		int result = name.hashCode();
+		result = 31 * result + type.hashCode();
+		return result;
+	}
 }

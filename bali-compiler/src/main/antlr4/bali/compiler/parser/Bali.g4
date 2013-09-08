@@ -89,7 +89,7 @@ unaryOperation:             OPERATOR expressionForOperation ;
 // Changed due to left recursion
 operation:                  (expressionForOperation OPERATOR)+ expressionForOperation ;
 
-construction:               'new' typeDeclaration argumentList ;
+construction:               'new' TYPE_IDENTIFIER argumentList ;
 
 returnStatement:            'return' expression? ;
 
