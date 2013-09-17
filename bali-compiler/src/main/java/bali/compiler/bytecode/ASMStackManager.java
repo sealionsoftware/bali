@@ -1,11 +1,12 @@
 package bali.compiler.bytecode;
 
+import bali.CharArrayString;
+import bali.IdentityBoolean;
 import bali.compiler.parser.tree.AssignmentNode;
 import bali.compiler.parser.tree.BooleanLiteralExpressionNode;
 import bali.compiler.parser.tree.BreakStatementNode;
 import bali.compiler.parser.tree.CaseStatementNode;
 import bali.compiler.parser.tree.CatchStatementNode;
-import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.parser.tree.CodeBlockNode;
 import bali.compiler.parser.tree.ConditionalBlockNode;
 import bali.compiler.parser.tree.ConditionalStatementNode;
@@ -27,14 +28,13 @@ import bali.compiler.parser.tree.StringLiteralExpressionNode;
 import bali.compiler.parser.tree.SwitchStatementNode;
 import bali.compiler.parser.tree.ThrowStatementNode;
 import bali.compiler.parser.tree.TryStatementNode;
-import bali.compiler.parser.tree.TypeNode;
 import bali.compiler.parser.tree.UnaryOperationNode;
 import bali.compiler.parser.tree.VariableNode;
 import bali.compiler.parser.tree.WhileStatementNode;
-import bali.compiler.validation.TypeLibrary;
-import bali.compiler.validation.type.Interface;
-import bali.compiler.validation.type.Site;
-import bali.compiler.validation.type.Type;
+import bali.compiler.type.Interface;
+import bali.compiler.type.Site;
+import bali.compiler.type.Type;
+import bali.compiler.type.TypeLibrary;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -61,11 +61,12 @@ public class ASMStackManager implements Opcodes {
 	private Deque<Label> scopeHorizonStack = new ArrayDeque<>();
 	private Deque<LoopContext> loopContextStack = new ArrayDeque<>();
 
-	private Site erasedType;
+	private Site erasedSite;
 
 	public ASMStackManager(ASMConverter converter, TypeLibrary library) {
 		this.converter = converter;
-		this.erasedType = new Site<>(library.getType(Object.class.getName()),new ArrayList<Site>());
+		Type erasedType = library.getType(Object.class.getName());
+		this.erasedSite = new Site<>(erasedType, new ArrayList<Site>());
 	}
 
 	public List<VariableInfo> getDeclaredVariables() {
@@ -78,7 +79,7 @@ public class ASMStackManager implements Opcodes {
 		Label start = new Label();
 		Label end = new Label();
 		v.visitLabel(start);
-		for (DeclarationNode declaration : method.getArguments()){
+		for (DeclarationNode declaration : method.getArguments()) {
 			declaredVariables.put(
 					declaration.getName(),
 					new VariableInfo(
@@ -353,12 +354,12 @@ public class ASMStackManager implements Opcodes {
 
 	public void push(BooleanLiteralExpressionNode value, MethodVisitor v) {
 		Boolean bool = Boolean.valueOf(value.getSerialization());
-		v.visitFieldInsn(GETSTATIC, converter.getInternalName(value.getType()), bool ? "TRUE" : "FALSE", converter.getTypeDescriptor(value.getType()));
+		v.visitFieldInsn(GETSTATIC, converter.getInternalName(IdentityBoolean.class.getName()), bool ? "TRUE" : "FALSE", converter.getTypeDescriptor(IdentityBoolean.class.getName()));
 	}
 
 	public void push(StringLiteralExpressionNode value, MethodVisitor v) {
 		String string = value.getSerialization();
-		String internalName = converter.getInternalName(value.getType());
+		String internalName = converter.getInternalName(CharArrayString.class.getName());
 		v.visitTypeInsn(NEW, internalName);
 		v.visitInsn(DUP);
 		v.visitLdcInsn(string);
@@ -454,7 +455,7 @@ public class ASMStackManager implements Opcodes {
 		v.visitMethodInsn(invokeInsn(targetType),
 				converter.getInternalName(targetType),
 				methodName,
-				converter.getMethodDescriptor(erased ? erasedType : valueType, argumentClasses));
+				converter.getMethodDescriptor(erased ? erasedSite : valueType, argumentClasses));
 		if (erased) {
 			v.visitTypeInsn(CHECKCAST, converter.getInternalName(valueType.getClassName()));
 		}

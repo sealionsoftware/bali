@@ -2,13 +2,11 @@ package bali.compiler.validation.visitor;
 
 import bali.compiler.parser.tree.AssignmentNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
-import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.FieldNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.ReferenceNode;
-import bali.compiler.parser.tree.SiteNode;
+import bali.compiler.type.Site;
 import bali.compiler.validation.ValidationFailure;
-import bali.compiler.validation.type.Site;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +51,7 @@ public class AssignmentValidator implements Validator<CompilationUnitNode> {
 			if (value == null || !value.isAssignableTo(site)) {
 				failures.add(new ValidationFailure(statement, "Cannot assign expression of type " + value + " to reference of type " + site));
 			}
-			if (reference.getDeclaration().getFinal()){
+			if (reference.getDeclaration().getFinal()) {
 				failures.add(new ValidationFailure(statement, "Cannot assign an expression to a constant reference"));
 			}
 
@@ -71,7 +69,7 @@ public class AssignmentValidator implements Validator<CompilationUnitNode> {
 
 			Site value = field.getValue().getType();
 
-			if (value != null){
+			if (value != null) {
 				Site site = field.getType().getSite();
 
 				if (!value.isAssignableTo(site)) {

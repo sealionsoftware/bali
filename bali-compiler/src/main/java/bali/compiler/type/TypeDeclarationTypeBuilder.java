@@ -1,4 +1,4 @@
-package bali.compiler.validation;
+package bali.compiler.type;
 
 import bali.compiler.parser.tree.ArgumentDeclarationNode;
 import bali.compiler.parser.tree.ClassNode;
@@ -7,22 +7,13 @@ import bali.compiler.parser.tree.MethodNode;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.parser.tree.TypeNode;
 import bali.compiler.parser.tree.TypeParameterNode;
-import bali.compiler.validation.type.Declaration;
-import bali.compiler.validation.type.Method;
-import bali.compiler.validation.type.MethodDeclaringType;
-import bali.compiler.validation.type.Operator;
-import bali.compiler.validation.type.Site;
-import bali.compiler.validation.type.Type;
-import bali.compiler.validation.type.Class;
-import bali.compiler.validation.type.Interface;
-import bali.compiler.validation.type.UnaryOperator;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Maps between the Parsers internal AST representation of a "TypeDeclaration" and the Validators "Type" model
- *
+ * <p/>
  * User: Richard
  * Date: 28/08/13
  */
@@ -35,10 +26,10 @@ public class TypeDeclarationTypeBuilder {
 	}
 
 	public Type build(TypeNode declaration) {
-		if (declaration instanceof ClassNode){
+		if (declaration instanceof ClassNode) {
 			return build((ClassNode) declaration);
 		}
-		if (declaration instanceof InterfaceNode){
+		if (declaration instanceof InterfaceNode) {
 			return build((InterfaceNode) declaration);
 		}
 		throw new RuntimeException("Cannot build MetaTypes like " + declaration);
@@ -69,7 +60,7 @@ public class TypeDeclarationTypeBuilder {
 	private List<Declaration> getParameters(TypeNode declaration) {
 
 		List<Declaration> parameters = new ArrayList<>();
-		for (TypeParameterNode declaredParameter : (List<TypeParameterNode>) declaration.getParameters()){ // TODO: remove this cast
+		for (TypeParameterNode declaredParameter : (List<TypeParameterNode>) declaration.getParameters()) { // TODO: remove this cast
 			parameters.add(new Declaration(
 					declaredParameter.getName(),
 					getType(declaredParameter.getType())
@@ -80,7 +71,7 @@ public class TypeDeclarationTypeBuilder {
 
 	private List<Declaration> getArguments(ClassNode declaration) {
 		List<Declaration> arguments = new ArrayList<>();
-		for (ArgumentDeclarationNode declaredArgument : declaration.getArgumentDeclarations()){
+		for (ArgumentDeclarationNode declaredArgument : declaration.getArgumentDeclarations()) {
 			arguments.add(new Declaration(
 					declaredArgument.getName(),
 					getType(declaredArgument.getType())
@@ -91,9 +82,9 @@ public class TypeDeclarationTypeBuilder {
 
 	private List<Method> getMethods(TypeNode<? extends MethodNode, ? extends MethodDeclaringType> declaration) {
 		List<Method> methods = new ArrayList<>();
-		for (MethodNode declaredMethod : declaration.getMethods()){
+		for (MethodNode declaredMethod : declaration.getMethods()) {
 			List<Declaration> arguments = new ArrayList<>();
-			for (ArgumentDeclarationNode declaredArgument : declaredMethod.getArguments()){
+			for (ArgumentDeclarationNode declaredArgument : declaredMethod.getArguments()) {
 				arguments.add(new Declaration(
 						declaredArgument.getName(),
 						getType(declaredArgument.getType())
@@ -108,15 +99,15 @@ public class TypeDeclarationTypeBuilder {
 		return methods;
 	}
 
-	private List<Site> getInterfaces(TypeNode<? extends MethodNode, ? extends MethodDeclaringType> declaration){
+	private List<Site> getInterfaces(TypeNode<? extends MethodNode, ? extends MethodDeclaringType> declaration) {
 		List<Site> ret = new ArrayList<>();
-		for (SiteNode typeReference : declaration.getImplementations()){
+		for (SiteNode typeReference : declaration.getImplementations()) {
 			ret.add(getType(typeReference));
 		}
 		return ret;
 	}
 
-	private List<UnaryOperator> getUnaryOperators(InterfaceNode declaration){
+	private List<UnaryOperator> getUnaryOperators(InterfaceNode declaration) {
 		List<UnaryOperator> ret = new ArrayList<>();
 //		for (SiteNode typeReference : declaration.getO()){
 //			ret.add(getType(typeReference));
@@ -124,7 +115,7 @@ public class TypeDeclarationTypeBuilder {
 		return ret; //TODO: self defined unary operators
 	}
 
-	private List<Operator> getOperators(InterfaceNode declaration){
+	private List<Operator> getOperators(InterfaceNode declaration) {
 		List<Operator> ret = new ArrayList<>();
 //		for (SiteNode typeReference : declaration.getO()){
 //			ret.add(getType(typeReference));
@@ -132,10 +123,10 @@ public class TypeDeclarationTypeBuilder {
 		return ret; //TODO: self defined operators
 	}
 
-	private Site getType(SiteNode reference){
+	private Site getType(SiteNode reference) {
 		Type type = library.getType(reference.getClassName());
 		List<Site> typeArguments = new ArrayList<>();
-		for (SiteNode argumentNode : (List<SiteNode>) reference.getParameters()){ //TODO remove cast
+		for (SiteNode argumentNode : (List<SiteNode>) reference.getParameters()) { //TODO remove cast
 			typeArguments.add(getType(argumentNode));
 		}
 		return new Site<>(type, typeArguments);

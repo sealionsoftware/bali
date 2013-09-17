@@ -13,10 +13,10 @@ import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.ReferenceNode;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.parser.tree.VariableNode;
-import bali.compiler.validation.TypeLibrary;
+import bali.compiler.type.Site;
+import bali.compiler.type.Type;
+import bali.compiler.type.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
-import bali.compiler.validation.type.Site;
-import bali.compiler.validation.type.Type;
 
 import java.lang.reflect.Field;
 import java.util.ArrayDeque;
@@ -116,7 +116,7 @@ public class ReferenceValidator implements Validator<CompilationUnitNode> {
 
 	private void validate(MethodDeclarationNode method, ReferenceValidatorTypeAgent agent) {
 		List<DeclarationNode> declarations = new ArrayList<>();
-		for (DeclarationNode declaration : method.getArguments()){
+		for (DeclarationNode declaration : method.getArguments()) {
 			declarations.add(declaration);
 		}
 		pushAndWalk(method, agent, new Scope(

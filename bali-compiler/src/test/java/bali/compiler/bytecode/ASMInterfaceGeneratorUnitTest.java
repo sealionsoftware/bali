@@ -1,10 +1,8 @@
 package bali.compiler.bytecode;
 
 import bali.Number;
-
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.ArgumentDeclarationNode;
-import bali.compiler.parser.tree.DeclarationNode;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.MethodNode;
 import bali.compiler.parser.tree.SiteNode;
@@ -41,7 +39,7 @@ public class ASMInterfaceGeneratorUnitTest {
 	@Test
 	public void testGenerateInterfaceExtension() throws Exception {
 
-		SiteNode type = new SiteNode(0, 0);
+		SiteNode type = new SiteNode();
 		type.setSite(new TestSite(ASuperInterface.class));
 
 		iface.addSuperInterface(type);
@@ -56,7 +54,7 @@ public class ASMInterfaceGeneratorUnitTest {
 	@Test
 	public void testGenerateInterfaceWithVoidDeclaration() throws Exception {
 
-		MethodNode declaration = new MethodNode(0, 0);
+		MethodNode declaration = new MethodNode();
 		declaration.setName("aMethod");
 
 		iface.addMethod(declaration);
@@ -71,11 +69,11 @@ public class ASMInterfaceGeneratorUnitTest {
 	@Test
 	public void testGenerateInterfaceWithNumberReturnDeclaration() throws Exception {
 
-		SiteNode type = new SiteNode(0, 0);
+		SiteNode type = new SiteNode();
 		type.setClassName("Number");
 		type.setSite(new TestSite(Number.class));
 
-		MethodNode declaration = new MethodNode(0, 0);
+		MethodNode declaration = new MethodNode();
 		declaration.setName("aMethod");
 		declaration.setType(type);
 
@@ -91,15 +89,15 @@ public class ASMInterfaceGeneratorUnitTest {
 	@Test
 	public void testGenerateInterfaceWithNumberParamDeclaration() throws Exception {
 
-		SiteNode type = new SiteNode(0, 0);
+		SiteNode type = new SiteNode();
 		type.setClassName("Number");
 		type.setSite(new TestSite(Number.class));
 
-		ArgumentDeclarationNode argument = new ArgumentDeclarationNode(0, 0);
+		ArgumentDeclarationNode argument = new ArgumentDeclarationNode();
 		argument.setType(type);
 		argument.setName("anArgument");
 
-		MethodNode declaration = new MethodNode(0, 0);
+		MethodNode declaration = new MethodNode();
 		declaration.setName("aMethod");
 		declaration.addArgument(argument);
 

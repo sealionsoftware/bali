@@ -1,6 +1,5 @@
-package bali.compiler.validation.type;
+package bali.compiler.type;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -10,10 +9,10 @@ import java.util.List;
 public abstract class Type {
 
 	private String className;
-	private List<Declaration> parameters;
+	private List<Declaration> typeParameters;
 
-	public Type(String className, List<Declaration> parameters) {
-		this.parameters = parameters;
+	public Type(String className, List<Declaration> typeParameters) {
+		this.typeParameters = typeParameters;
 		this.className = className;
 	}
 
@@ -21,8 +20,8 @@ public abstract class Type {
 		return className;
 	}
 
-	public List<Declaration> getParameters() {
-		return parameters;
+	public List<Declaration> getTypeParameters() {
+		return typeParameters;
 	}
 
 	public abstract boolean isAbstract();
@@ -34,14 +33,14 @@ public abstract class Type {
 		Type type = (Type) o;
 
 		if (!className.equals(type.className)) return false;
-		if (!parameters.equals(type.parameters)) return false;
+		if (!typeParameters.equals(type.typeParameters)) return false;
 
 		return true;
 	}
 
 	public int hashCode() {
 		int result = className.hashCode();
-		result = 31 * result + parameters.hashCode();
+		result = 31 * result + typeParameters.hashCode();
 		return result;
 	}
 }

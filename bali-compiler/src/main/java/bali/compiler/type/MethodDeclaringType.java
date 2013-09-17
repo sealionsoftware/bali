@@ -1,4 +1,4 @@
-package bali.compiler.validation.type;
+package bali.compiler.type;
 
 import java.util.Iterator;
 import java.util.List;
@@ -29,12 +29,12 @@ public abstract class MethodDeclaringType extends Type {
 		return methods;
 	}
 
-	public Method getMethod(String name, List<Site> argumentTypes){
+	public Method getMethod(String name, List<Site> argumentTypes) {
 
-		for (Method method : methods){
-			if (method.getName().equals(name)){
+		for (Method method : methods) {
+			if (method.getName().equals(name)) {
 				List<Declaration> parameters = method.getParameters();
-				if (checkIfArgumentsAreAssignable(argumentTypes, parameters)){
+				if (checkIfArgumentsAreAssignable(argumentTypes, parameters)) {
 					return method;
 				}
 			}
@@ -42,20 +42,19 @@ public abstract class MethodDeclaringType extends Type {
 		return null;
 	}
 
-	private boolean checkIfArgumentsAreAssignable(List<Site> argumentTypes, List<Declaration> parameters){
-		if (argumentTypes.size() != parameters.size()){
+	private boolean checkIfArgumentsAreAssignable(List<Site> argumentTypes, List<Declaration> parameters) {
+		if (argumentTypes.size() != parameters.size()) {
 			return false;
 		}
 		Iterator<Site> i = argumentTypes.iterator();
-		Iterator<Declaration> j =parameters.iterator();
-		while (i.hasNext()){
-			if (!i.next().isAssignableTo(j.next().getType())){
+		Iterator<Declaration> j = parameters.iterator();
+		while (i.hasNext()) {
+			if (!i.next().isAssignableTo(j.next().getType())) {
 				return false;
 			}
 		}
 		return true;
 	}
-
 
 
 }

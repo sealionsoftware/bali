@@ -1,8 +1,7 @@
 package bali.compiler.parser.tree;
 
-import bali.compiler.validation.type.Type;
+import bali.compiler.type.Type;
 
-import java.lang.Class;
 import java.util.Collections;
 import java.util.List;
 

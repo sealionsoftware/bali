@@ -6,6 +6,9 @@ package bali.compiler.parser.tree;
  */
 public class ConstantNode extends FieldNode {
 
+	public ConstantNode() {
+	}
+
 	public ConstantNode(Integer line, Integer character) {
 		super(line, character);
 	}

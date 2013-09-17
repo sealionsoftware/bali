@@ -1,7 +1,5 @@
-package bali.compiler.validation;
+package bali.compiler.type;
 
-import bali.compiler.validation.type.Declaration;
-import bali.compiler.validation.type.Site;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureVisitor;
 
@@ -22,10 +20,12 @@ public class MethodSignatureVisitor extends SignatureVisitor {
 	}
 
 	public SignatureVisitor visitReturnType() {
+		//TODO
 		return super.visitReturnType();
 	}
 
 	public SignatureVisitor visitParameterType() {
+		//TODO
 		return super.visitParameterType();
 	}
 

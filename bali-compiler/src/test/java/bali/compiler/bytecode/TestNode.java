@@ -2,7 +2,7 @@ package bali.compiler.bytecode;
 
 import bali.compiler.parser.tree.MethodNode;
 import bali.compiler.parser.tree.TypeNode;
-import bali.compiler.validation.type.MethodDeclaringType;
+import bali.compiler.type.MethodDeclaringType;
 
 import java.util.ArrayList;
 import java.util.List;

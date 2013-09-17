@@ -1,12 +1,12 @@
 package bali.compiler.bytecode;
 
+import bali.Boolean;
 import bali.Number;
 import bali.String;
-import bali.Boolean;
 import bali.compiler.parser.tree.ArgumentDeclarationNode;
 import bali.compiler.parser.tree.MethodNode;
 import bali.compiler.parser.tree.SiteNode;
-import bali.compiler.validation.type.Type;
+import bali.compiler.type.Type;
 import junit.framework.Assert;
 import org.junit.Test;
 

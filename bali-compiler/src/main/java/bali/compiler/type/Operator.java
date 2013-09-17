@@ -1,6 +1,4 @@
-package bali.compiler.validation.type;
-
-import java.util.List;
+package bali.compiler.type;
 
 /**
  * User: Richard

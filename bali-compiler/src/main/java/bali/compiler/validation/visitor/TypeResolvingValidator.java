@@ -6,10 +6,10 @@ import bali.compiler.parser.tree.ImportNode;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.SiteNode;
-import bali.compiler.validation.TypeLibrary;
+import bali.compiler.type.Site;
+import bali.compiler.type.Type;
+import bali.compiler.type.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
-import bali.compiler.validation.type.Site;
-import bali.compiler.validation.type.Type;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,7 +91,7 @@ public class TypeResolvingValidator implements Validator<CompilationUnitNode> {
 
 			List<SiteNode> parameterReferences = type.getParameters();
 			List<Site> parameterSites = new ArrayList<>(parameterReferences.size());
-			for (SiteNode reference : parameterReferences){
+			for (SiteNode reference : parameterReferences) {
 				parameterSites.add(reference.getSite());
 			}
 

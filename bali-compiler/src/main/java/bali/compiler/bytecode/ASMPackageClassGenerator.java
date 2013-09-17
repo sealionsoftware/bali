@@ -4,7 +4,7 @@ import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.ConstantNode;
 import bali.compiler.parser.tree.ExpressionNode;
-import bali.compiler.validation.TypeLibrary;
+import bali.compiler.type.TypeLibrary;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 

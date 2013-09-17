@@ -1,9 +1,10 @@
 package bali.compiler.bytecode;
 
-import bali.compiler.validation.type.Declaration;
-import bali.compiler.validation.type.Method;
-import bali.compiler.validation.type.MethodDeclaringType;
-import bali.compiler.validation.type.Site;
+import bali.compiler.type.Declaration;
+import bali.compiler.type.Method;
+import bali.compiler.type.MethodDeclaringType;
+import bali.compiler.type.Site;
+import bali.compiler.type.Type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,14 @@ public class TestType extends MethodDeclaringType {
 	}
 
 	public boolean isAbstract() {
+		return false;
+	}
+
+
+	public boolean equals(Object o) {
+		if (o instanceof Type) {
+			return this.getClassName().equals(((Type) o).getClassName());
+		}
 		return false;
 	}
 }

@@ -1,9 +1,9 @@
 package bali.compiler.validation.visitor;
 
 import bali.compiler.parser.tree.ConstructionExpressionNode;
-import bali.compiler.validation.TypeLibrary;
+import bali.compiler.type.Type;
+import bali.compiler.type.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
-import bali.compiler.validation.type.Type;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +26,7 @@ public class ConstructionValidator implements Validator<ConstructionExpressionNo
 
 		Type expressionType = library.getType(expression.getClassName());
 
-		if (expression.getType().getType().isAbstract()){
+		if (expression.getType().getType().isAbstract()) {
 			Collections.singletonList(new ValidationFailure(expression, "Cannot instancate an interface type"));
 		}
 

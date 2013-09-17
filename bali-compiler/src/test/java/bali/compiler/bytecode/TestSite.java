@@ -1,7 +1,7 @@
 package bali.compiler.bytecode;
 
-import bali.compiler.validation.type.Site;
-import bali.compiler.validation.type.Type;
+import bali.compiler.type.Site;
+import bali.compiler.type.Type;
 
 import java.util.ArrayList;
 
@@ -14,4 +14,5 @@ public class TestSite extends Site<Type> {
 	public TestSite(Class clazz) {
 		super(new TestType(clazz.getName()), new ArrayList<Site>());
 	}
+
 }

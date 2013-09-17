@@ -7,7 +7,7 @@ import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.FieldNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.SiteNode;
-import bali.compiler.validation.TypeLibrary;
+import bali.compiler.type.TypeLibrary;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
@@ -85,7 +85,7 @@ public class ASMClassGenerator implements Generator<ClassNode, GeneratedClass> {
 		ASMStackManager manager = new ASMStackManager(converter, library);
 
 		List<SiteNode> argumentTypes = new ArrayList<>();
-		for (DeclarationNode argument : input.getArgumentDeclarations()){
+		for (DeclarationNode argument : input.getArgumentDeclarations()) {
 			argumentTypes.add(argument.getType());
 		}
 
@@ -102,7 +102,7 @@ public class ASMClassGenerator implements Generator<ClassNode, GeneratedClass> {
 		initv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V");
 
 		int i = 1;
-		for (DeclarationNode declaration : input.getArgumentDeclarations()){
+		for (DeclarationNode declaration : input.getArgumentDeclarations()) {
 			initv.visitInsn(DUP);
 			initv.visitVarInsn(ALOAD, i++);
 			initv.visitFieldInsn(PUTFIELD,
@@ -131,7 +131,7 @@ public class ASMClassGenerator implements Generator<ClassNode, GeneratedClass> {
 
 		ASMStackManager manager = new ASMStackManager(converter, library);
 		int flags = (method.getDeclared() ? ACC_PUBLIC : ACC_PRIVATE);
-		if (method.getFinal()){
+		if (method.getFinal()) {
 			flags += ACC_FINAL;
 		}
 

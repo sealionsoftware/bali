@@ -1,4 +1,4 @@
-package bali.compiler.validation.type;
+package bali.compiler.type;
 
 import java.util.List;
 
@@ -8,19 +8,19 @@ import java.util.List;
  */
 public class Class extends MethodDeclaringType {
 
-	private List<Declaration> arguments;
+	private List<Declaration> parameters;
 
 	public Class(String className,
+	             List<Declaration> typeParameters,
 	             List<Declaration> parameters,
-	             List<Declaration> arguments,
 	             List<Method> methods,
 	             List<Site> interfaces) {
-		super(className, parameters, methods, interfaces);
-		this.arguments = arguments;
+		super(className, typeParameters, methods, interfaces);
+		this.parameters = parameters;
 	}
 
-	public List<Declaration> getArguments() {
-		return arguments;
+	public List<Declaration> getParameters() {
+		return parameters;
 	}
 
 	public boolean isAbstract() {

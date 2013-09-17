@@ -3,10 +3,10 @@ package bali.compiler.validation.visitor;
 import bali.collection.Array;
 import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.ListLiteralExpressionNode;
-import bali.compiler.validation.TypeLibrary;
+import bali.compiler.type.Site;
+import bali.compiler.type.Type;
+import bali.compiler.type.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
-import bali.compiler.validation.type.Site;
-import bali.compiler.validation.type.Type;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -36,7 +36,7 @@ public class ListLiteralValidator implements Validator<ListLiteralExpressionNode
 		Iterator<ExpressionNode> i = literal.getValues().iterator();
 		Site listEntryType = i.next().getType();
 
-		while(i.hasNext()){
+		while (i.hasNext()) {
 			ExpressionNode nextExpression = i.next();
 			Site nextEntryType = nextExpression.getType();
 			if (!nextEntryType.isAssignableTo(listEntryType)) {

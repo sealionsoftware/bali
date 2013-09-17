@@ -1,8 +1,8 @@
 package bali.compiler.parser.tree;
 
 
-import bali.compiler.validation.type.Site;
-import bali.compiler.validation.type.Type;
+import bali.compiler.type.Site;
+import bali.compiler.type.Type;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -69,7 +69,7 @@ public class SiteNode<T extends Type> extends Node {
 
 		SiteNode other = (SiteNode) o;
 
-		if (!site.getClassName().equals(other.site.getClassName())){
+		if (!site.getClassName().equals(other.site.getClassName())) {
 			return false;
 		}
 

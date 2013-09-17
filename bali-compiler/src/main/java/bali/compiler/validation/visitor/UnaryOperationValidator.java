@@ -1,10 +1,9 @@
 package bali.compiler.validation.visitor;
 
 import bali.compiler.parser.tree.UnaryOperationNode;
+import bali.compiler.type.Site;
+import bali.compiler.type.UnaryOperator;
 import bali.compiler.validation.ValidationFailure;
-import bali.compiler.validation.type.Method;
-import bali.compiler.validation.type.Site;
-import bali.compiler.validation.type.UnaryOperator;
 
 import java.util.ArrayList;
 import java.util.List;

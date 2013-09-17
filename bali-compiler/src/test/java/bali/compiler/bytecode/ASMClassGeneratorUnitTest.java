@@ -1,20 +1,19 @@
 package bali.compiler.bytecode;
 
 import bali.IdentityBoolean;
+import bali.Number;
+import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.ArgumentDeclarationNode;
 import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.parser.tree.CodeBlockNode;
 import bali.compiler.parser.tree.FieldNode;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
+import bali.compiler.parser.tree.NumberLiteralExpressionNode;
 import bali.compiler.parser.tree.ReturnStatementNode;
 import bali.compiler.parser.tree.SiteNode;
-import bali.compiler.validation.TypeLibrary;
+import bali.compiler.type.TypeLibrary;
 import bali.number.Byte;
-import bali.Number;
-import bali.compiler.GeneratedClass;
-import bali.compiler.parser.tree.DeclarationNode;
-import bali.compiler.parser.tree.NumberLiteralExpressionNode;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;

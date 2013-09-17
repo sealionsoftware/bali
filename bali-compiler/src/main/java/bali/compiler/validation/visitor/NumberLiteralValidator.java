@@ -1,9 +1,9 @@
 package bali.compiler.validation.visitor;
 
 import bali.compiler.parser.tree.NumberLiteralExpressionNode;
-import bali.compiler.validation.TypeLibrary;
+import bali.compiler.type.Site;
+import bali.compiler.type.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
-import bali.compiler.validation.type.Site;
 
 import java.util.ArrayList;
 import java.util.List;

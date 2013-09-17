@@ -1,7 +1,7 @@
 package bali.compiler.parser.tree;
 
-import bali.compiler.validation.type.Site;
-import bali.compiler.validation.type.UnaryOperator;
+import bali.compiler.type.Site;
+import bali.compiler.type.UnaryOperator;
 
 import java.util.ArrayList;
 import java.util.List;

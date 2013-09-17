@@ -2,7 +2,7 @@ package bali.compiler.validation.visitor;
 
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.parser.tree.ThrowStatementNode;
-import bali.compiler.validation.TypeLibrary;
+import bali.compiler.type.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;

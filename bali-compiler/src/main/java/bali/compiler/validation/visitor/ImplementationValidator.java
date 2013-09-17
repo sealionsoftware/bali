@@ -7,12 +7,12 @@ import bali.compiler.parser.tree.ImportNode;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.SiteNode;
+import bali.compiler.type.Declaration;
+import bali.compiler.type.Interface;
+import bali.compiler.type.Method;
+import bali.compiler.type.Site;
+import bali.compiler.type.Type;
 import bali.compiler.validation.ValidationFailure;
-import bali.compiler.validation.type.Declaration;
-import bali.compiler.validation.type.Interface;
-import bali.compiler.validation.type.Method;
-import bali.compiler.validation.type.Site;
-import bali.compiler.validation.type.Type;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -69,7 +69,7 @@ public class ImplementationValidator implements Validator<CompilationUnitNode> {
 			for (MethodDeclarationNode methodNode : classNode.getMethods()) {
 				for (Interface iface : interfaces) {
 					List<Site> argumentTypes = new ArrayList<>();
-					for (DeclarationNode declarationNode : methodNode.getArguments()){
+					for (DeclarationNode declarationNode : methodNode.getArguments()) {
 						argumentTypes.add(declarationNode.getType().getSite());
 					}
 					Method methodDeclaration = iface.getMethod(methodNode.getName(), argumentTypes);

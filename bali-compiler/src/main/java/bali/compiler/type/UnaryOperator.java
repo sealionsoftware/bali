@@ -1,4 +1,4 @@
-package bali.compiler.validation.type;
+package bali.compiler.type;
 
 /**
  * User: Richard

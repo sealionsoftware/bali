@@ -1,7 +1,7 @@
 package bali.compiler.parser.tree;
 
-import bali.compiler.validation.type.Interface;
-import bali.compiler.validation.type.Type;
+import bali.compiler.type.Interface;
+import bali.compiler.type.Type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +74,7 @@ public abstract class TypeNode<M extends MethodNode, T extends Type> extends Nod
 
 //	public Method getSite(String name, List<TypeReference> suppliedArgumentTypes) {
 //		for (Method declaration : getMethods()) {
-//			List<Declaration> argumentDeclarations = declaration.getArguments();
+//			List<Declaration> argumentDeclarations = declaration.getTypeParameters();
 //			if (declaration.getClassName().equals(name)
 //					&& suppliedArgumentTypes.size() == argumentDeclarations.size()
 //					&& typesCompatible(argumentDeclarations, suppliedArgumentTypes)) {
@@ -97,8 +97,8 @@ public abstract class TypeNode<M extends MethodNode, T extends Type> extends Nod
 //		return true;
 //	}
 
-	public List<Node> getChildren(){
-		List<Node> ret =  new ArrayList<>();
+	public List<Node> getChildren() {
+		List<Node> ret = new ArrayList<>();
 		ret.addAll(parameters);
 		ret.addAll(implementations);
 		return ret;

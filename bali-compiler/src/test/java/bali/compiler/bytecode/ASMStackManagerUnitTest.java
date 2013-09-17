@@ -1,6 +1,6 @@
 package bali.compiler.bytecode;
 
-import bali.compiler.validation.TypeLibrary;
+import bali.compiler.type.TypeLibrary;
 import org.mockito.Mockito;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;

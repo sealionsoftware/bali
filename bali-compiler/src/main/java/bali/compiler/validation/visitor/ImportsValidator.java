@@ -1,16 +1,16 @@
 package bali.compiler.validation.visitor;
 
 import bali.compiler.parser.tree.ImportNode;
-import bali.compiler.validation.TypeLibrary;
+import bali.compiler.type.Type;
+import bali.compiler.type.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
-import bali.compiler.validation.type.Type;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Checks all the imports refer to valid types, and stores these types for future use
- *
+ * <p/>
  * User: Richard
  * Date: 14/05/13
  */

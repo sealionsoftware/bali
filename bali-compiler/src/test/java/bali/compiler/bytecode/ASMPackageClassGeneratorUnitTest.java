@@ -17,15 +17,11 @@ import bali.compiler.parser.tree.ListLiteralExpressionNode;
 import bali.compiler.parser.tree.NumberLiteralExpressionNode;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.parser.tree.StringLiteralExpressionNode;
-import bali.compiler.validation.TypeLibrary;
-import bali.compiler.validation.type.MethodDeclaringType;
-import bali.compiler.validation.type.Site;
+import bali.compiler.type.TypeLibrary;
 import bali.number.Byte;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.ArrayList;
 
 import static bali.number.NumberFactory.NUMBER_FACTORY;
 
@@ -55,7 +51,7 @@ public class ASMPackageClassGeneratorUnitTest {
 
 	@Test
 	public void testStringConstant() throws Exception {
-		StringLiteralExpressionNode slv = new StringLiteralExpressionNode(0, 0);
+		StringLiteralExpressionNode slv = new StringLiteralExpressionNode();
 		slv.setSerialization("Hello World");
 		slv.setType(new TestSite((String.class)));
 		testGenerateConstant(String.class, slv, new CharArrayString("Hello World".toCharArray()));
@@ -63,7 +59,7 @@ public class ASMPackageClassGeneratorUnitTest {
 
 	@Test
 	public void testBooleanConstant() throws Exception {
-		BooleanLiteralExpressionNode blv = new BooleanLiteralExpressionNode(0, 0);
+		BooleanLiteralExpressionNode blv = new BooleanLiteralExpressionNode();
 		blv.setSerialization("true");
 		blv.setType(new TestSite((Boolean.class)));
 		testGenerateConstant(Boolean.class, blv, IdentityBoolean.TRUE);
@@ -104,10 +100,10 @@ public class ASMPackageClassGeneratorUnitTest {
 
 	public <T extends Value<T>> void testGenerateConstant(java.lang.Class<T> clazz, ExpressionNode value, T expectation) throws Exception {
 
-		SiteNode type = new SiteNode(0, 0);
+		SiteNode type = new SiteNode();
 		type.setSite(new TestSite(clazz));
 
-		ConstantNode constant = new ConstantNode(0, 0);
+		ConstantNode constant = new ConstantNode();
 		constant.setName("aConstant");
 		constant.setValue(value);
 		constant.setType(type);

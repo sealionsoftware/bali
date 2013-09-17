@@ -1,10 +1,9 @@
 package bali.compiler.validation.visitor;
 
 import bali.compiler.parser.tree.OperationNode;
+import bali.compiler.type.Operator;
+import bali.compiler.type.Site;
 import bali.compiler.validation.ValidationFailure;
-import bali.compiler.validation.type.Operator;
-import bali.compiler.validation.type.Site;
-import bali.compiler.validation.type.UnaryOperator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +28,8 @@ public class OperationValidator implements Validator<OperationNode> {
 			return ret;
 		}
 
-		if (!operandType.isAssignableTo(operator.getParameter())){
-			ret.add(new ValidationFailure(node, "Operator " + operator + " requires an operand of type " + operandType ));
+		if (!operandType.isAssignableTo(operator.getParameter())) {
+			ret.add(new ValidationFailure(node, "Operator " + operator + " requires an operand of type " + operandType));
 		}
 
 		node.setResolvedOperator(operator);

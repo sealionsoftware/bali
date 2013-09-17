@@ -3,7 +3,7 @@ package bali.compiler.validation.visitor;
 import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.DeclarationNode;
-import bali.compiler.validation.TypeLibrary;
+import bali.compiler.type.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.Set;
  * Sets the source file name
  * Checks for member name duplication
  * Adds the type to the TypeLibrary
- *
+ * <p/>
  * User: Richard
  * Date: 19/06/13
  */
@@ -31,7 +31,7 @@ public class ClassValidator implements Validator<CompilationUnitNode> {
 
 	public List<ValidationFailure> validate(CompilationUnitNode node) {
 		List<ValidationFailure> failures = new ArrayList<>();
-		for (ClassNode clazz : node.getClasses()){
+		for (ClassNode clazz : node.getClasses()) {
 
 			clazz.setQualifiedClassName(node.getName() + "." + clazz.getClassName());
 			clazz.setSourceFile(node.getName() + ".bali");
@@ -42,7 +42,7 @@ public class ClassValidator implements Validator<CompilationUnitNode> {
 		return failures;
 	}
 
-	private List<ValidationFailure> validateMemberNames(ClassNode node){
+	private List<ValidationFailure> validateMemberNames(ClassNode node) {
 		Set<String> memberNames = new HashSet<>();
 		List<ValidationFailure> failures = new LinkedList<>();
 		List<DeclarationNode> members = new LinkedList<>();
@@ -51,9 +51,9 @@ public class ClassValidator implements Validator<CompilationUnitNode> {
 		members.addAll(node.getMethods());
 
 
-		for (DeclarationNode member : members){
+		for (DeclarationNode member : members) {
 			String memberName = member.getName();
-			if (memberNames.contains(memberName)){
+			if (memberNames.contains(memberName)) {
 				failures.add(new ValidationFailure(member, "Class " + node.getClassName() + " already has a member named " + memberName));
 			} else {
 				memberNames.add(memberName);

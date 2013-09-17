@@ -3,10 +3,10 @@ package bali.compiler.validation.visitor;
 import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.InvocationNode;
 import bali.compiler.parser.tree.SiteNode;
+import bali.compiler.type.Declaration;
+import bali.compiler.type.Method;
+import bali.compiler.type.Site;
 import bali.compiler.validation.ValidationFailure;
-import bali.compiler.validation.type.Declaration;
-import bali.compiler.validation.type.Method;
-import bali.compiler.validation.type.Site;
 
 import java.util.ArrayList;
 import java.util.Iterator;

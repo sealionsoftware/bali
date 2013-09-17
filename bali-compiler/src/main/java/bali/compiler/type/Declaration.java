@@ -1,4 +1,4 @@
-package bali.compiler.validation.type;
+package bali.compiler.type;
 
 /**
  * User: Richard
@@ -34,9 +34,7 @@ public class Declaration {
 		return true;
 	}
 
-	public int hashCode() {
-		int result = name.hashCode();
-		result = 31 * result + type.hashCode();
-		return result;
+	public String toString() {
+		return type + " " + name;
 	}
 }
