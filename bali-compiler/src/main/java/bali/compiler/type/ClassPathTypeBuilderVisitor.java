@@ -124,8 +124,8 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 					returnType = visitor.getReturnType();
 					int i = 0;
 					parameterDeclarations = new ArrayList<>();
-					for (Declaration declaration : visitor.getParameterDeclarations()) {
-						parameterDeclarations.add(new Declaration(parameterNames.get(i++), declaration.getType()));
+					for (Site parameterType : visitor.getParameterTypes()) {
+						parameterDeclarations.add(new Declaration(parameterNames.get(i++), parameterType));
 					}
 				} else {
 					org.objectweb.asm.Type methodType = org.objectweb.asm.Type.getMethodType(desc);

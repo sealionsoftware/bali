@@ -14,8 +14,8 @@ public class MethodSignatureVisitor extends SignatureVisitor {
 
 	private TypeLibrary library;
 
-	private Site returnType;
-	private List<Declaration> parameterDeclarations = new ArrayList<>();
+	private SiteSignatureVisitor returnTypeVisitor ;
+	private List<SiteSignatureVisitor> parameterVisitors = new ArrayList<>();
 
 	public MethodSignatureVisitor(TypeLibrary library) {
 		super(Opcodes.ASM4);
@@ -23,28 +23,25 @@ public class MethodSignatureVisitor extends SignatureVisitor {
 	}
 
 	public SignatureVisitor visitReturnType() {
-		return new SiteSignatureVisitor(library){
-			public void visitEnd() {
-				super.visitEnd();
-				returnType = this.getSite();
-			}
-		};
+		returnTypeVisitor = new SiteSignatureVisitor(library);
+		return returnTypeVisitor;
 	}
 
 	public SignatureVisitor visitParameterType() {
-		return new SiteSignatureVisitor(library){
-			public void visitEnd() {
-				super.visitEnd();
-				parameterDeclarations.add(new Declaration(null, this.getSite()));
-			}
-		};
+		SiteSignatureVisitor visitor = new SiteSignatureVisitor(library);
+		parameterVisitors.add(visitor);
+		return visitor;
 	}
 
 	public Site getReturnType() {
-		return returnType;
+		return returnTypeVisitor.getSite();
 	}
 
-	public List<Declaration> getParameterDeclarations() {
-		return parameterDeclarations;
+	public List<Site> getParameterTypes() {
+		List<Site> ret = new ArrayList<>();
+		for (SiteSignatureVisitor visitor : parameterVisitors ){
+			ret.add(visitor.getSite());
+		}
+		return ret;
 	}
 }

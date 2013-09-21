@@ -42,7 +42,7 @@ public class SiteSignatureVisitor extends SignatureVisitor {
 	}
 
 	public void visitTypeVariable(String name) {
-		className = name;
+		site = new Site(name, null);
 		super.visitTypeVariable(name);
 	}
 

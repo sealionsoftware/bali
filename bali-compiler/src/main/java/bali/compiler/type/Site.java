@@ -1,6 +1,7 @@
 package bali.compiler.type;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -15,6 +16,7 @@ public class Site {
 	private Reference<Type> typeReference;
 	private List<Site> typeArguments;
 	private Boolean erase;
+	private Site bound;
 
 	private Type type;
 
@@ -27,15 +29,25 @@ public class Site {
 	private List<UnaryOperator> unaryOperators;
 	private List<Declaration> properties;
 
+	// Used by standard type infrastructure
 	public Site(Type type, List<Site> typeArguments) {
 		this.type = type;
 		this.typeArguments = typeArguments;
 		this.erase = false;
 	}
 
+	// Used inside type construction (to avoid infinite loops)
 	public Site(Reference<Type> typeReference, List<Site> typeArguments) {
 		this.typeReference = typeReference;
 		this.typeArguments = typeArguments;
+		this.erase = true;
+	}
+
+	// Used for type variables
+	// TODO: need pass bound here?
+	public Site(String name, Site bound) {
+		this.name = name;
+		this.typeArguments = Collections.emptyList();
 		this.erase = true;
 	}
 
@@ -168,7 +180,7 @@ public class Site {
 
 		List<Site> parametrisedArguments = new ArrayList<>();
 		for (Site argument : typeArguments) {
-			typeArguments.add(parametriseSite(argument));
+			parametrisedArguments.add(parametriseSite(argument));
 		}
 
 		return new Site(
@@ -190,6 +202,10 @@ public class Site {
 
 		if (t == null) {
 			return true;
+		}
+
+		if (bound != null){
+			return bound.isAssignableTo(t);
 		}
 
 		if (getName().equals(t.getName())) {
@@ -306,6 +322,6 @@ public class Site {
 	}
 
 	public String toString() {
-		return getType().getName();
+		return name;
 	}
 }

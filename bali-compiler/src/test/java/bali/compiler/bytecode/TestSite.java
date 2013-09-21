@@ -4,6 +4,7 @@ import bali.compiler.type.Site;
 import bali.compiler.type.Type;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * User: Richard
@@ -11,8 +12,12 @@ import java.util.ArrayList;
  */
 public class TestSite extends Site {
 
+	public TestSite(String name) {
+		super(new TestType(name), Collections.<Site>emptyList());
+	}
+
 	public TestSite(Class clazz) {
-		super(new TestType(clazz.getName()), new ArrayList<Site>());
+		super(new TestType(clazz.getName()), Collections.<Site>emptyList());
 	}
 
 }

@@ -17,7 +17,8 @@ public class SiteSignatureVisitorUnitTest {
 	public void testVisitTypeVariable() throws Exception {
 		new SignatureReader("TT;").accept(visitor);
 		Site site = visitor.getSite();
-		Assert.assertNull(site);
+		Assert.assertNotNull(site);
+		Assert.assertEquals("T", site.getName());
 	}
 
 	@Test
@@ -74,7 +75,9 @@ public class SiteSignatureVisitorUnitTest {
 
 		Assert.assertEquals("T", parameterDeclaration.getName());
 
-		Assert.assertNull(parameterDeclaration.getType());
+		Site parameterType = parameterDeclaration.getType();
+		Assert.assertNotNull(parameterType);
+		Assert.assertEquals("T", parameterType.getName());
 
 	}
 

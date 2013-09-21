@@ -136,6 +136,7 @@ public class ClasspathTypeBuilderUnitTest {
 		checkType(expectationSite, typeParameterDeclaration.getType());
 
 		Declaration expectationDeclaration = new Declaration("t", expectationSite);
+		expectationSite = new TestSite("T");
 
 		// Method getT
 
