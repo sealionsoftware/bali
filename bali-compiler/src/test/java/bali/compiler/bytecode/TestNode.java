@@ -2,7 +2,6 @@ package bali.compiler.bytecode;
 
 import bali.compiler.parser.tree.MethodNode;
 import bali.compiler.parser.tree.TypeNode;
-import bali.compiler.type.MethodDeclaringType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +10,7 @@ import java.util.List;
  * User: Richard
  * Date: 19/06/13
  */
-public class TestNode extends TypeNode<MethodNode, MethodDeclaringType> {
+public class TestNode extends TypeNode<MethodNode> {
 
 	public TestNode(String name) {
 		setQualifiedClassName(name);

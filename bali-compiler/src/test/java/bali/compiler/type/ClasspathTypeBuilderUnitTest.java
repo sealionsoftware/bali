@@ -21,21 +21,21 @@ public class ClasspathTypeBuilderUnitTest {
 	public void testBuildVanillaType() {
 
 		Type type = builder.build(VanillaObject.class.getName());
-		builder.complete(type);
 
-		Assert.assertEquals(type.getClass(), Class.class);
-		Class clazz = (Class) type;
+		Assert.assertFalse(type.isAbstract());
 
-		List<Method> methods = clazz.getMethods();
+		List<Method> methods = type.getMethods();
 
-		Assert.assertEquals(VanillaObject.class.getName(), clazz.getClassName());
-		Assert.assertEquals(Collections.<Declaration>emptyList(), clazz.getTypeParameters());
-		Assert.assertEquals(Collections.<Site>emptyList(), clazz.getInterfaces());
+		Assert.assertEquals(VanillaObject.class.getName(), type.getName());
+		Assert.assertEquals(Collections.<Declaration>emptyList(), type.getTypeParameters());
+		Assert.assertEquals(Collections.<Site>emptyList(), type.getInterfaces());
+		Assert.assertEquals(Collections.<Operator>emptyList(), type.getOperators());
+		Assert.assertEquals(Collections.<UnaryOperator>emptyList(), type.getUnaryOperators());
 		Assert.assertEquals(3, methods.size());
 
 		Method expectation;
 		Site expectationSite = new TestSite(bali.String.class);
-		Declaration expectationDeclaration = new Declaration("argument", expectationSite);
+		Declaration expectationDeclaration = new Declaration("parameter", expectationSite);
 
 		// Method aVoidMethod
 
@@ -44,7 +44,7 @@ public class ClasspathTypeBuilderUnitTest {
 
 //		Method aVoidMethodWithArgument
 
-		expectation = new Method("aVoidMethodWithArgument", null, Arrays.asList(expectationDeclaration));
+		expectation = new Method("aVoidMethodWithParameter", null, Arrays.asList(expectationDeclaration));
 		checkMethod(expectation, methods.get(1));
 
 //		Method aStringMethod
@@ -58,18 +58,16 @@ public class ClasspathTypeBuilderUnitTest {
 	public void testBuildUnparametrisedInterface() {
 
 		Type type = builder.build(UnparameterizedInterface.class.getName());
-		builder.complete(type);
 
-		Assert.assertEquals(type.getClass(), Interface.class);
-		Interface iface = (Interface) type;
+		Assert.assertTrue(type.isAbstract());
 
-		List<Method> methods = iface.getMethods();
-		List<Operator> operators = iface.getOperators();
-		List<UnaryOperator> unaryOperators = iface.getUnaryOperators();
+		List<Method> methods = type.getMethods();
+		List<Operator> operators = type.getOperators();
+		List<UnaryOperator> unaryOperators = type.getUnaryOperators();
 
-		Assert.assertEquals(UnparameterizedInterface.class.getName(), iface.getClassName());
-		Assert.assertEquals(Collections.<Declaration>emptyList(), iface.getTypeParameters());
-		Assert.assertEquals(Collections.<Site>emptyList(), iface.getInterfaces());
+		Assert.assertEquals(UnparameterizedInterface.class.getName(), type.getName());
+		Assert.assertEquals(Collections.<Declaration>emptyList(), type.getTypeParameters());
+		Assert.assertEquals(Collections.<Site>emptyList(), type.getInterfaces());
 		Assert.assertEquals(3, methods.size());
 		Assert.assertEquals(2, operators.size());
 		Assert.assertEquals(2, unaryOperators.size());
@@ -121,35 +119,32 @@ public class ClasspathTypeBuilderUnitTest {
 	public void testBuildParametrisedObject() {
 
 		Type type = builder.build(ParametrizedObject.class.getName());
-		builder.complete(type);
 
-		Assert.assertEquals(type.getClass(), Class.class);
-		Class clazz = (Class) type;
+		Assert.assertFalse(type.isAbstract());
+		List<Method> methods = type.getMethods();
 
-		List<Method> methods = clazz.getMethods();
-
-		Assert.assertEquals(ParametrizedObject.class.getName(), clazz.getClassName());
-		Assert.assertEquals(1, clazz.getTypeParameters().size());
-		Assert.assertEquals(Collections.<Site>emptyList(), clazz.getInterfaces());
+		Assert.assertEquals(ParametrizedObject.class.getName(), type.getName());
+		Assert.assertEquals(1, type.getTypeParameters().size());
+		Assert.assertEquals(Collections.<Site>emptyList(), type.getInterfaces());
 		Assert.assertEquals(2, methods.size());
 
 		Method methodExpectation;
-		Site expectationSite = new TestSite(TypeParamBase.class);
+		Site expectationSite = new TestSite(B.class);
 
-		Declaration typeParameterDeclaration = clazz.getTypeParameters().get(0);
+		Declaration typeParameterDeclaration = type.getTypeParameters().get(0);
 		Assert.assertEquals("T", typeParameterDeclaration.getName());
 		checkType(expectationSite, typeParameterDeclaration.getType());
 
 		Declaration expectationDeclaration = new Declaration("t", expectationSite);
 
-		// Method setT
-
-		methodExpectation = new Method("setT", null, Collections.singletonList(expectationDeclaration));
-		checkMethod(methodExpectation, methods.get(0));
-
 		// Method getT
 
 		methodExpectation = new Method("getT", expectationSite, Collections.<Declaration>emptyList());
+		checkMethod(methodExpectation, methods.get(0));
+
+		// Method setT
+
+		methodExpectation = new Method("setT", null, Collections.singletonList(expectationDeclaration));
 		checkMethod(methodExpectation, methods.get(1));
 
 	}
@@ -202,7 +197,7 @@ public class ClasspathTypeBuilderUnitTest {
 			return;
 		}
 		Assert.assertNotNull(result);
-		Assert.assertEquals(expectation.getClassName(), result.getClassName());
+		Assert.assertEquals(expectation.getName(), result.getName());
 		Iterator<Declaration> expectedParameters = expectation.getParameters().iterator();
 		Iterator<Declaration> resultParameters = result.getParameters().iterator();
 		while (expectedParameters.hasNext()) {

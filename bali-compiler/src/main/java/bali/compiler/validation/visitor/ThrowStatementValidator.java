@@ -20,7 +20,7 @@ public class ThrowStatementValidator implements Validator<ThrowStatementNode> {
 
 	public ThrowStatementValidator(TypeLibrary library) {
 //		Type throwableType = new Type();
-//		throwableType.setSite(library.getTypeDeclaration(Throwable.class.getClassName()));
+//		throwableType.setSite(library.getTypeDeclaration(Throwable.class.getName()));
 //		this.throwableType = throwableType;
 	}
 

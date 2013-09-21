@@ -12,11 +12,11 @@ import java.util.List;
  * User: Richard
  * Date: 29/04/13
  */
-public class SiteNode<T extends Type> extends Node {
+public class SiteNode extends Node {
 
 	private String className;
 	private List<SiteNode> parameters = new ArrayList<>();
-	private Site<T> site;
+	private Site site;
 	private Boolean erase = false;
 
 	public SiteNode() {
@@ -46,11 +46,11 @@ public class SiteNode<T extends Type> extends Node {
 		return new ArrayList<Node>(parameters);
 	}
 
-	public Site<T> getSite() {
+	public Site getSite() {
 		return site;
 	}
 
-	public void setSite(Site<T> site) {
+	public void setSite(Site site) {
 		this.site = site;
 	}
 
@@ -69,7 +69,7 @@ public class SiteNode<T extends Type> extends Node {
 
 		SiteNode other = (SiteNode) o;
 
-		if (!site.getClassName().equals(other.site.getClassName())) {
+		if (!site.getName().equals(other.site.getName())) {
 			return false;
 		}
 

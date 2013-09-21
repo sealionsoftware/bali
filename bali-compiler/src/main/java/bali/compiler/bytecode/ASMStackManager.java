@@ -31,7 +31,7 @@ import bali.compiler.parser.tree.TryStatementNode;
 import bali.compiler.parser.tree.UnaryOperationNode;
 import bali.compiler.parser.tree.VariableNode;
 import bali.compiler.parser.tree.WhileStatementNode;
-import bali.compiler.type.Interface;
+import bali.compiler.type.Reference;
 import bali.compiler.type.Site;
 import bali.compiler.type.Type;
 import bali.compiler.type.TypeLibrary;
@@ -66,7 +66,7 @@ public class ASMStackManager implements Opcodes {
 	public ASMStackManager(ASMConverter converter, TypeLibrary library) {
 		this.converter = converter;
 		Type erasedType = library.getType(Object.class.getName());
-		this.erasedSite = new Site<>(erasedType, new ArrayList<Site>());
+		this.erasedSite = new Site(erasedType, Collections.<Site>emptyList());
 	}
 
 	public List<VariableInfo> getDeclaredVariables() {
@@ -239,7 +239,7 @@ public class ASMStackManager implements Opcodes {
 		v.visitMethodInsn(INVOKEINTERFACE, "bali/Iterator", "next", "()Ljava/lang/Object;");
 		DeclarationNode element = statement.getElement();
 		SiteNode variableType = element.getType();
-		v.visitTypeInsn(CHECKCAST, converter.getInternalName(variableType.getSite().getClassName()));
+		v.visitTypeInsn(CHECKCAST, converter.getInternalName(variableType.getSite().getName()));
 		addToVariables(element, start, end, v);
 		loopContextStack.push(new LoopContext(start, end));
 		execute(statement.getBody(), v);
@@ -316,7 +316,7 @@ public class ASMStackManager implements Opcodes {
 	}
 
 	private int invokeInsn(Site t) {
-		return t.getType() instanceof Interface ? INVOKEINTERFACE : INVOKEVIRTUAL;
+		return t.getType().isAbstract() ? INVOKEINTERFACE : INVOKEVIRTUAL;
 	}
 
 	// Push Methods
@@ -457,7 +457,7 @@ public class ASMStackManager implements Opcodes {
 				methodName,
 				converter.getMethodDescriptor(erased ? erasedSite : valueType, argumentClasses));
 		if (erased) {
-			v.visitTypeInsn(CHECKCAST, converter.getInternalName(valueType.getClassName()));
+			v.visitTypeInsn(CHECKCAST, converter.getInternalName(valueType.getName()));
 		}
 	}
 

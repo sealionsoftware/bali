@@ -14,13 +14,16 @@ import java.util.List;
  */
 public class ClassSignatureVisitor extends SignatureVisitor {
 
+	private TypeLibrary library;
+
 	private List<Declaration> typeParameters = new ArrayList<>();
 	private List<Site> interfaces = new ArrayList<>();
 
 	private Deque<SiteContext> typeParamStack = new LinkedList<>();
 
-	public ClassSignatureVisitor() {
+	public ClassSignatureVisitor(TypeLibrary library) {
 		super(Opcodes.ASM4);
+		this.library = library;
 	}
 
 	public void visitFormalTypeParameter(String name) {
@@ -31,11 +34,13 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 	}
 
 	public SignatureVisitor visitClassBound() {
-		return super.visitClassBound();
+		SiteSignatureVisitor typeParameterVisitor = new SiteSignatureVisitor(library);
+		typeParamStack.peek().typeVisitor = typeParameterVisitor;
+		return typeParameterVisitor;
 	}
 
 	public SignatureVisitor visitInterfaceBound() {
-		return super.visitInterfaceBound();
+		return visitClassBound();
 	}
 
 	public SignatureVisitor visitInterface() {
@@ -47,7 +52,6 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 	}
 
 	public void visitClassType(String name) {
-		typeParamStack.peek().type = new Site(name, new ArrayList<>());
 		super.visitClassType(name);
 	}
 
@@ -62,7 +66,7 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 
 	public void visitEnd() {
 		for (SiteContext context : typeParamStack) {
-			typeParameters.add(new Declaration(context.name, context.type));
+			typeParameters.add(new Declaration(context.name, context.typeVisitor.getSite()));
 		}
 	}
 
@@ -81,7 +85,7 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 		}
 
 		private String name;
-		private Site type;
+		private SiteSignatureVisitor typeVisitor;
 
 	}
 

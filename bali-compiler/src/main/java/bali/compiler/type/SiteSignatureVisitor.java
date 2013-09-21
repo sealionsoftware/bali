@@ -3,7 +3,6 @@ package bali.compiler.type;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureVisitor;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,24 +10,39 @@ import java.util.List;
  * User: Richard
  * Date: 13/09/13
  */
-public class TypeVariableSignatureVisitor extends SignatureVisitor {
+public class SiteSignatureVisitor extends SignatureVisitor {
 
-	private Site<Type> uninitialisedSite;
+	private TypeLibrary library;
+
+	private Site site;
 
 	private String className;
-	private List<Site> typeParameters = new LinkedList<>();
+	private List<SiteSignatureVisitor> typeArgumentVisitors = new LinkedList<>();
 
-	public TypeVariableSignatureVisitor() {
+	public SiteSignatureVisitor(TypeLibrary library) {
 		super(Opcodes.ASM4);
+		this.library = library;
 	}
 
 	public void visitEnd() {
-		uninitialisedSite = new Site(className, typeParameters);
+
+		if (className.equals(java.lang.Object.class.getName())){
+			return;
+		}
+
+		Reference<Type> typeReference = library.getReference(className);
+
+		List<Site> typeArguments = new LinkedList<>();
+		for (SiteSignatureVisitor visitor : typeArgumentVisitors){
+			typeArguments.add(visitor.getSite());
+		}
+
+		site = new Site(typeReference, typeArguments);
 		super.visitEnd();
 	}
 
 	public void visitTypeVariable(String name) {
-		typeParameters.add(new Site(name, Collections.emptyList()));
+		className = name;
 		super.visitTypeVariable(name);
 	}
 
@@ -37,7 +51,9 @@ public class TypeVariableSignatureVisitor extends SignatureVisitor {
 	}
 
 	public SignatureVisitor visitTypeArgument(char wildcard) {
-		return this;
+		SiteSignatureVisitor visitor = new SiteSignatureVisitor(library);
+		typeArgumentVisitors.add(visitor);
+		return visitor;
 	}
 
 	public SignatureVisitor visitClassBound() {
@@ -88,7 +104,7 @@ public class TypeVariableSignatureVisitor extends SignatureVisitor {
 		super.visitInnerClassType(name);
 	}
 
-	public Site<Type> getUninitialisedSite() {
-		return uninitialisedSite;
+	public Site getSite() {
+		return site;
 	}
 }

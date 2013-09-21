@@ -33,7 +33,7 @@ public class ASMConverterUnitTest {
 
 	@Test
 	public void testTypeDescriptorDeclaration() throws Exception {
-		SiteNode<Type> declaration = new SiteNode<>();
+		SiteNode declaration = new SiteNode();
 		declaration.setSite(new TestSite(String.class));
 		Assert.assertEquals("Lbali/String;", converter.getTypeDescriptor(declaration));
 	}
@@ -48,7 +48,7 @@ public class ASMConverterUnitTest {
 	}
 
 	private SiteNode getType(Class clazz) {
-		SiteNode<Type> t = new SiteNode<>();
+		SiteNode t = new SiteNode();
 		t.setSite(new TestSite(clazz));
 		return t;
 	}
@@ -57,11 +57,11 @@ public class ASMConverterUnitTest {
 	public void testMethodDescriptorDeclaration() throws Exception {
 		MethodNode declaration = new MethodNode();
 		Assert.assertEquals("()V", converter.getMethodDescriptor(declaration));
-		SiteNode<Type> b = new SiteNode<>();
+		SiteNode b = new SiteNode();
 		b.setSite(new TestSite(Boolean.class));
 		declaration.setType(b);
-		SiteNode<Type> s = new SiteNode<>();
-		SiteNode<Type> n = new SiteNode<>();
+		SiteNode s = new SiteNode();
+		SiteNode n = new SiteNode();
 		s.setSite(new TestSite(String.class));
 		n.setSite(new TestSite(Number.class));
 		ArgumentDeclarationNode argument1 = new ArgumentDeclarationNode(0, 0);

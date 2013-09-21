@@ -43,8 +43,8 @@ public class ReferenceValidator implements Validator<CompilationUnitNode> {
 		for (Field f : langClass.getDeclaredFields()) {
 
 			Type fieldType = library.getType(f.getType().getName());
-			SiteNode<Type> siteNode = new SiteNode<>();
-			siteNode.setSite(new Site<>(
+			SiteNode siteNode = new SiteNode();
+			siteNode.setSite(new Site(
 					fieldType,
 					new ArrayList<Site>() //TODO
 			));

@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * User: Richard
  * Date: 08/09/13
  */
-public class TestSite extends Site<Type> {
+public class TestSite extends Site {
 
 	public TestSite(Class clazz) {
 		super(new TestType(clazz.getName()), new ArrayList<Site>());

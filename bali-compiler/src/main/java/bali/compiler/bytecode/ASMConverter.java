@@ -50,7 +50,7 @@ public class ASMConverter {
 	}
 
 	public String getTypeDescriptor(Site type) {
-		return (type == null ? Type.VOID_TYPE : Type.getObjectType(getInternalName(type.getClassName()))).getDescriptor();
+		return (type == null ? Type.VOID_TYPE : Type.getObjectType(getInternalName(type.getName()))).getDescriptor();
 	}
 
 	public String getInternalName(String className) {
@@ -58,11 +58,11 @@ public class ASMConverter {
 	}
 
 	public String getInternalName(Site type) {
-		return getInternalName(type.getClassName());
+		return getInternalName(type.getName());
 	}
 
 	public String getInternalName(SiteNode type) {
-		return getInternalName(type.getSite().getClassName());
+		return getInternalName(type.getSite().getName());
 	}
 
 }

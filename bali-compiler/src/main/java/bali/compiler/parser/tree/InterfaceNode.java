@@ -1,6 +1,5 @@
 package bali.compiler.parser.tree;
 
-import bali.compiler.type.Interface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +8,7 @@ import java.util.List;
  * User: Richard
  * Date: 29/04/13
  */
-public class InterfaceNode extends TypeNode<MethodNode, Interface> {
+public class InterfaceNode extends TypeNode<MethodNode> {
 
 	private List<SiteNode> superInterfaces = new ArrayList<>();
 	private List<MethodNode> methodDeclarations = new ArrayList<>();

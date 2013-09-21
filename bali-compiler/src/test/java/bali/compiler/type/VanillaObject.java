@@ -13,7 +13,7 @@ public class VanillaObject implements VanillaInterface {
 	public void aVoidMethod() {
 	}
 
-	public void aVoidMethodWithArgument(@Name("argument") String argument) {
+	public void aVoidMethodWithParameter(@Name("parameter") String parameter) {
 	}
 
 	public String aStringMethod() {

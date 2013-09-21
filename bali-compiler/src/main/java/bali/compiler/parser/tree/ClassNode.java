@@ -1,7 +1,5 @@
 package bali.compiler.parser.tree;
 
-import bali.compiler.type.Class;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +7,7 @@ import java.util.List;
  * User: Richard
  * Date: 29/04/13
  */
-public class ClassNode extends TypeNode<MethodDeclarationNode, Class> {
+public class ClassNode extends TypeNode<MethodDeclarationNode> {
 
 	private List<ArgumentDeclarationNode> argumentDeclarations = new ArrayList<>();
 	private List<FieldNode> fields = new ArrayList<>();

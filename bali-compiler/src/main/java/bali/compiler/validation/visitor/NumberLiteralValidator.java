@@ -6,6 +6,7 @@ import bali.compiler.type.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -17,7 +18,7 @@ public class NumberLiteralValidator implements Validator<NumberLiteralExpression
 	private Site site;
 
 	public NumberLiteralValidator(TypeLibrary library) {
-		this.site = new Site<>(library.getType(Number.class.getName()), new ArrayList<Site>());
+		this.site = new Site(library.getType(Number.class.getName()), Collections.<Site>emptyList());
 	}
 
 	public List<ValidationFailure> validate(NumberLiteralExpressionNode literal) {

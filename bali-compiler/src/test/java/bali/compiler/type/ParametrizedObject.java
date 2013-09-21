@@ -4,13 +4,13 @@ package bali.compiler.type;
  * User: Richard
  * Date: 12/09/13
  */
-public class ParametrizedObject<T extends TypeParamBase<T>> {
+public class ParametrizedObject<T extends B<T>> {
 
-	private T getT() {
+	public T getT() {
 		return null;
 	}
 
-	private void setT(T t) {
+	public void setT(T t) {
 		// Doesn't matter
 	}
 

@@ -4,5 +4,5 @@ package bali.compiler.type;
  * User: Richard
  * Date: 16/09/13
  */
-public class B extends A {
+public class B<T> {
 }

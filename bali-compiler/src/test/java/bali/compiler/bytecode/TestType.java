@@ -2,43 +2,60 @@ package bali.compiler.bytecode;
 
 import bali.compiler.type.Declaration;
 import bali.compiler.type.Method;
-import bali.compiler.type.MethodDeclaringType;
+import bali.compiler.type.Operator;
 import bali.compiler.type.Site;
 import bali.compiler.type.Type;
+import bali.compiler.type.UnaryOperator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * User: Richard
  * Date: 08/09/13
  */
-public class TestType extends MethodDeclaringType {
+public class TestType extends Type {
 
 	public TestType(String className) {
-		this(className, new ArrayList<Declaration>());
+		this(className, Collections.<Declaration>emptyList());
 	}
 
-	public TestType(String className, List<Declaration> parameters) {
-		this(className, parameters, new ArrayList<Method>());
+	public TestType(String className, List<Declaration> typeParameters) {
+		this(className, typeParameters, Collections.<Site>emptyList());
 	}
 
-	public TestType(String className, List<Declaration> parameters, List<Method> methods) {
-		this(className, parameters, methods, new ArrayList<Site>());
+	public TestType(String className, List<Declaration> typeParameters, List<Site> interfaces) {
+		this(className, typeParameters, interfaces, Collections.<Declaration>emptyList());
 	}
 
-	public TestType(String className, List<Declaration> parameters, List<Method> methods, List<Site> interfaces) {
-		super(className, parameters, methods, interfaces);
+	public TestType(String className, List<Declaration> typeParameters, List<Site> interfaces, List<Declaration> parameters) {
+		this(className, typeParameters, interfaces, parameters, Collections.<Method>emptyList());
+	}
+
+	public TestType(String className, List<Declaration> typeParameters, List<Site> interfaces, List<Declaration> parameters, List<Method> methods) {
+		this(className, typeParameters, interfaces, parameters, methods, Collections.<Operator>emptyList());
+	}
+
+	public TestType(String className, List<Declaration> typeParameters, List<Site> interfaces, List<Declaration> parameters, List<Method> methods, List<Operator> operators) {
+		this(className, typeParameters, interfaces, parameters, methods, operators, Collections.<UnaryOperator>emptyList());
+	}
+
+	public TestType(String className, List<Declaration> typeParameters, List<Site> interfaces, List<Declaration> parameters, List<Method> methods, List<Operator> operators, List<UnaryOperator> unaryOperators) {
+		this(className, typeParameters, interfaces, parameters, methods, operators, unaryOperators, Collections.<Declaration>emptyList());
+	}
+
+	public TestType(String className, List<Declaration> typeParameters, List<Site> interfaces, List<Declaration> parameters, List<Method> methods, List<Operator> operators, List<UnaryOperator> unaryOperators, List<Declaration> properties) {
+		super(className, typeParameters, interfaces, parameters, methods, operators, unaryOperators, properties, false);
 	}
 
 	public boolean isAbstract() {
 		return false;
 	}
 
-
 	public boolean equals(Object o) {
 		if (o instanceof Type) {
-			return this.getClassName().equals(((Type) o).getClassName());
+			return this.getName().equals(((Type) o).getName());
 		}
 		return false;
 	}

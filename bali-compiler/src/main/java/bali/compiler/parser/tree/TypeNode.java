@@ -1,6 +1,5 @@
 package bali.compiler.parser.tree;
 
-import bali.compiler.type.Interface;
 import bali.compiler.type.Type;
 
 import java.util.ArrayList;
@@ -10,14 +9,14 @@ import java.util.List;
  * User: Richard
  * Date: 29/04/13
  */
-public abstract class TypeNode<M extends MethodNode, T extends Type> extends Node {
+public abstract class TypeNode<M extends MethodNode> extends Node {
 
 	private String className;
-	private List<SiteNode<Interface>> implementations = new ArrayList<>();
-	private List<TypeParameterNode> parameters = new ArrayList<>();
+	private List<SiteNode> implementations = new ArrayList<>();
+	private List<TypeParameterNode> typeParameters = new ArrayList<>();
 
 	private String qualifiedClassName;
-	private T resolvedType;
+	private Type resolvedType;
 
 	public TypeNode() {
 	}
@@ -34,19 +33,19 @@ public abstract class TypeNode<M extends MethodNode, T extends Type> extends Nod
 		this.className = className;
 	}
 
-	public List<TypeParameterNode> getParameters() {
-		return parameters;
+	public List<TypeParameterNode> getTypeParameters() {
+		return typeParameters;
 	}
 
 	public void addParameter(TypeParameterNode parameter) {
-		parameters.add(parameter);
+		typeParameters.add(parameter);
 	}
 
-	public List<SiteNode<Interface>> getImplementations() {
+	public List<SiteNode> getImplementations() {
 		return implementations;
 	}
 
-	public void addImplementation(SiteNode<Interface> implementation) {
+	public void addImplementation(SiteNode implementation) {
 		implementations.add(implementation);
 	}
 
@@ -58,11 +57,11 @@ public abstract class TypeNode<M extends MethodNode, T extends Type> extends Nod
 		this.qualifiedClassName = qualifiedClassName;
 	}
 
-	public T getResolvedType() {
+	public Type getResolvedType() {
 		return resolvedType;
 	}
 
-	public void setResolvedType(T type) {
+	public void setResolvedType(Type type) {
 		this.resolvedType = type;
 	}
 
@@ -75,7 +74,7 @@ public abstract class TypeNode<M extends MethodNode, T extends Type> extends Nod
 //	public Method getSite(String name, List<TypeReference> suppliedArgumentTypes) {
 //		for (Method declaration : getMethods()) {
 //			List<Declaration> argumentDeclarations = declaration.getTypeParameters();
-//			if (declaration.getClassName().equals(name)
+//			if (declaration.getName().equals(name)
 //					&& suppliedArgumentTypes.size() == argumentDeclarations.size()
 //					&& typesCompatible(argumentDeclarations, suppliedArgumentTypes)) {
 //				return declaration;
@@ -99,7 +98,7 @@ public abstract class TypeNode<M extends MethodNode, T extends Type> extends Nod
 
 	public List<Node> getChildren() {
 		List<Node> ret = new ArrayList<>();
-		ret.addAll(parameters);
+		ret.addAll(typeParameters);
 		ret.addAll(implementations);
 		return ret;
 	}

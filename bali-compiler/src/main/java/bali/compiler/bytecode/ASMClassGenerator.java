@@ -35,7 +35,7 @@ public class ASMClassGenerator implements Generator<ClassNode, GeneratedClass> {
 		String[] interfaceNames = new String[input.getImplementations().size()];
 		int i = 0;
 		for (SiteNode iface : input.getImplementations()) {
-			interfaceNames[i++] = converter.getInternalName(iface.getSite().getClassName());
+			interfaceNames[i++] = converter.getInternalName(iface.getSite().getName());
 		}
 
 		cw.visit(V1_7,

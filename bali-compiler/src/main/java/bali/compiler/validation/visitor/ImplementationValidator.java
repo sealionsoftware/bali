@@ -8,7 +8,6 @@ import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.type.Declaration;
-import bali.compiler.type.Interface;
 import bali.compiler.type.Method;
 import bali.compiler.type.Site;
 import bali.compiler.type.Type;
@@ -31,15 +30,15 @@ public class ImplementationValidator implements Validator<CompilationUnitNode> {
 
 	public List<ValidationFailure> validate(CompilationUnitNode unit) {
 
-		Set<Interface> interfaces = new HashSet<>();
+		Set<Type> interfaces = new HashSet<>();
 
 		for (InterfaceNode iface : unit.getInterfaces()) {
 			interfaces.add(iface.getResolvedType());
 		}
 		for (ImportNode iport : unit.getImports()) {
 			Type iportType = iport.getType();
-			if (iportType instanceof Interface) {
-				interfaces.add((Interface) iportType);
+			if (iportType.isAbstract()) {
+				interfaces.add(iportType);
 			}
 		}
 
@@ -51,13 +50,13 @@ public class ImplementationValidator implements Validator<CompilationUnitNode> {
 
 	}
 
-	private List<ValidationFailure> validate(ClassNode classNode, Set<Interface> interfaces) {
+	private List<ValidationFailure> validate(ClassNode classNode, Set<Type> interfaces) {
 
 		List<ValidationFailure> failures = new ArrayList<>();
 
-		for (SiteNode<Interface> type : classNode.getImplementations()) {
+		for (SiteNode type : classNode.getImplementations()) {
 
-			Site<Interface> ifaceSite = type.getSite();
+			Site ifaceSite = type.getSite();
 
 			if (!interfaces.contains(ifaceSite.getType())) {
 				failures.add(
@@ -67,7 +66,7 @@ public class ImplementationValidator implements Validator<CompilationUnitNode> {
 			}
 
 			for (MethodDeclarationNode methodNode : classNode.getMethods()) {
-				for (Interface iface : interfaces) {
+				for (Type iface : interfaces) {
 					List<Site> argumentTypes = new ArrayList<>();
 					for (DeclarationNode declarationNode : methodNode.getArguments()) {
 						argumentTypes.add(declarationNode.getType().getSite());

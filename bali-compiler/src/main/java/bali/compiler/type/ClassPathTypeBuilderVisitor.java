@@ -28,8 +28,11 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 	private static String PARAM_NAME_ANNOTATION_DESC =
 			org.objectweb.asm.Type.getType(Name.class).getDescriptor();
 
+	private TypeLibrary library;
+
 	private Type classpathType;
 	private MetaType metaType;
+
 	private String className;
 	private List<Declaration> typeParameters = new ArrayList<>();
 	private List<Site> interfaces = new ArrayList<>();
@@ -38,10 +41,9 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 	private List<Operator> operators = new ArrayList<>();
 	private List<UnaryOperator> unaryOperators = new ArrayList<>();
 
-	private List<Site> uninitialisedSites = new LinkedList<>();
-
-	public ClassPathTypeBuilderVisitor() {
+	public ClassPathTypeBuilderVisitor(TypeLibrary library) {
 		super(Opcodes.ASM4);
+		this.library = library;
 	}
 
 	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
@@ -56,7 +58,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 		}
 
 		if (signature != null) {
-			ClassSignatureVisitor visitor = new ClassSignatureVisitor();
+			ClassSignatureVisitor visitor = new ClassSignatureVisitor(library);
 			new SignatureReader(signature).accept(visitor);
 
 			typeParameters = visitor.getTypeParameters();
@@ -69,6 +71,10 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 	}
 
 	public MethodVisitor visitMethod(int access, final String name, final String desc, final String signature, String[] exceptions) {
+
+		if ((access & Opcodes.ACC_PUBLIC) != Opcodes.ACC_PUBLIC){
+			return null;
+		}
 
 		return new MethodVisitor(Opcodes.ASM4, super.visitMethod(access, name, desc, signature, exceptions)) {
 
@@ -112,7 +118,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 				Site returnType = null;
 
 				if (signature != null) {
-					MethodSignatureVisitor visitor = new MethodSignatureVisitor();
+					MethodSignatureVisitor visitor = new MethodSignatureVisitor(library);
 					new SignatureReader(signature).accept(visitor);
 
 					returnType = visitor.getReturnType();
@@ -125,18 +131,16 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 					org.objectweb.asm.Type methodType = org.objectweb.asm.Type.getMethodType(desc);
 					org.objectweb.asm.Type methodReturnType = methodType.getReturnType();
 					if (!methodReturnType.getClassName().equals(void.class.getName())) {
-						returnType = new Site<>(methodType.getReturnType().getClassName(), new ArrayList<Site>());
-						uninitialisedSites.add(returnType);
+						returnType = new Site(library.getReference(methodReturnType.getClassName()), new ArrayList<Site>());
 					}
 					parameterDeclarations = new ArrayList<>();
 					int i = 0;
 					for (org.objectweb.asm.Type parameterType : methodType.getArgumentTypes()) {
-						Site parameterSite = new Site<>(parameterType.getClassName(), Collections.<Site>emptyList());
+						Site parameterSite = new Site(library.getReference(parameterType.getClassName()), Collections.<Site>emptyList());
 						parameterDeclarations.add(new Declaration(
 								parameterNames.get(i++),
 								parameterSite
 						));
-						uninitialisedSites.add(parameterSite);
 					}
 				}
 
@@ -164,8 +168,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 								name
 						));
 						break;
-				}
-				else {
+				} else {
 					// The method is an ordinary method
 					methods.add(new Method(
 							name,
@@ -181,29 +184,32 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 		super.visitEnd();
 		switch (metaType) {
 			case CLASS:
-				classpathType = new Class(
+				classpathType = new Type(
 						className,
 						typeParameters,
+						interfaces,
 						constructorParameters,
 						methods,
-						interfaces
+						Collections.<Operator>emptyList(),
+						Collections.<UnaryOperator>emptyList(),
+						Collections.<Declaration>emptyList(),
+						false
 				);
 				break;
 			case INTERFACE:
-				classpathType = new Interface(
+				classpathType = new Type(
 						className,
 						typeParameters,
-						methods,
 						interfaces,
+						Collections.<Declaration>emptyList(),
+						methods,
 						operators,
-						unaryOperators
+						unaryOperators,
+						Collections.<Declaration>emptyList(),
+						true
 				);
 		}
 
-	}
-
-	public List<Site> getUninitialisedSites() {
-		return uninitialisedSites;
 	}
 
 	public Type getClasspathType() {

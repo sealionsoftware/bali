@@ -12,21 +12,32 @@ import java.util.List;
  */
 public class MethodSignatureVisitor extends SignatureVisitor {
 
+	private TypeLibrary library;
+
 	private Site returnType;
 	private List<Declaration> parameterDeclarations = new ArrayList<>();
 
-	public MethodSignatureVisitor() {
+	public MethodSignatureVisitor(TypeLibrary library) {
 		super(Opcodes.ASM4);
+		this.library = library;
 	}
 
 	public SignatureVisitor visitReturnType() {
-		//TODO
-		return super.visitReturnType();
+		return new SiteSignatureVisitor(library){
+			public void visitEnd() {
+				super.visitEnd();
+				returnType = this.getSite();
+			}
+		};
 	}
 
 	public SignatureVisitor visitParameterType() {
-		//TODO
-		return super.visitParameterType();
+		return new SiteSignatureVisitor(library){
+			public void visitEnd() {
+				super.visitEnd();
+				parameterDeclarations.add(new Declaration(null, this.getSite()));
+			}
+		};
 	}
 
 	public Site getReturnType() {

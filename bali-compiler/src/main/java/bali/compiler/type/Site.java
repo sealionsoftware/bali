@@ -1,83 +1,90 @@
 package bali.compiler.type;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: Richard
  * Date: 29/08/13
  */
-public class Site<T extends Type> {
+public class Site {
 
-	private Reference<T> typeReference;
-	private List<Site> arguments;
-
-	private T type;
-	private List<Declaration> parameters;
-	private List<Method> methods;
-	private List<Site> interfaces;
-	private List<Operator> operators;
-	private List<UnaryOperator> unaryOperators;
+	private Reference<Type> typeReference;
+	private List<Site> typeArguments;
 	private Boolean erase;
 
-	public Site(T t, List<Site> arguments) {
-		this(t.getClassName(), arguments, false);
-		init(t);
-	}
-//
-//	private Site(T t, List<Site> arguments, Boolean erase) {
-//		this.className = t.getClassName();
-//		this.arguments = arguments;
-//		this.erase = erase;
-//		init(t);
-//	}
+	private Type type;
 
-	public Site(String className, List<Site> arguments) {
-		this(className, arguments, false);
-	}
+	private String name;
+	private Map<String, Declaration> typeParameters;
+	private List<Site> interfaces;
+	private List<Declaration> parameters;
+	private List<Method> methods;
+	private List<Operator> operators;
+	private List<UnaryOperator> unaryOperators;
+	private List<Declaration> properties;
 
-	private Site(String className, List<Site> arguments, Boolean erase) {
-		this.className = className;
-		this.arguments = arguments;
-		this.erase = erase;
-	}
-
-	void init(T type) {
-
+	public Site(Type type, List<Site> typeArguments) {
 		this.type = type;
-		this.parameters = parametriseTypeArguments(type.getTypeParameters(), arguments);
-
-		if (type instanceof MethodDeclaringType) {
-			MethodDeclaringType methodic = (MethodDeclaringType) type;
-			this.methods = parametriseMethods(methodic.getMethods(), arguments);
-			this.interfaces = parametriseInterfaces(methodic.getInterfaces(), arguments);
-			if (type instanceof Interface) {
-				Interface iface = (Interface) type;
-				this.operators = parametriseOperators(iface.getOperators(), arguments);
-				this.unaryOperators = parametriseUnaryOperators(iface.getUnaryOperators(), arguments);
-			} else {
-				this.operators = new ArrayList<>();
-				this.unaryOperators = new ArrayList<>();
-			}
-		} else {
-			this.methods = new ArrayList<>();
-			this.parameters = new ArrayList<>();
-			this.operators = new ArrayList<>();
-			this.unaryOperators = new ArrayList<>();
-		}
+		this.typeArguments = typeArguments;
+		this.erase = false;
 	}
 
-	private List<Declaration> parametriseTypeArguments(List<Declaration> parameterDeclarations, List<Site> parameterArguments) {
+	public Site(Reference<Type> typeReference, List<Site> typeArguments) {
+		this.typeReference = typeReference;
+		this.typeArguments = typeArguments;
+		this.erase = true;
+	}
 
-		if (parameterDeclarations.size() != parameterArguments.size()) {
-			throw new RuntimeException("Invalid Parameterization: " + parameterArguments + " => " + parameterDeclarations);
+	// Lazy initialization
+	private void init(){
+
+		if (type == null){
+			this.type = typeReference.get();
 		}
 
-		List<Declaration> ret = new ArrayList<>(parameterDeclarations.size());
-		Iterator<Site> i = parameterArguments.iterator();
+		this.name = type.getName();
+		this.typeParameters = parametriseTypeDeclarations(type.getTypeParameters());
+		this.interfaces = parametriseSites(type.getInterfaces());
+		this.parameters = parametriseDeclarations(type.getParameters());
+		this.methods = parametriseMethods(type.getMethods());
+		this.operators = parametriseOperators(type.getOperators());
+		this.unaryOperators = parametriseUnaryOperators(type.getUnaryOperators());
+		this.properties = parametriseDeclarations(type.getProperties());
+
+	}
+
+	private Map<String, Declaration> parametriseTypeDeclarations(List<Declaration> parameterDeclarations) {
+
+		if (parameterDeclarations.size() != typeArguments.size()) {
+			throw new RuntimeException("Invalid Parameterization: " + typeArguments + " => " + parameterDeclarations);
+		}
+
+		Map<String, Declaration> ret = new HashMap<>();
+		Iterator<Site> i = typeArguments.iterator();
 		for (Declaration declaration : parameterDeclarations) {
 			Site site = i.next();
+			if (site != null && !site.isAssignableTo(declaration.getType())) {
+				throw new RuntimeException("Parameter argument is not within site type");
+			}
+			ret.put(declaration.getName(),
+					new Declaration(
+						declaration.getName(),
+						site
+			));
+		}
+
+		return ret;
+	}
+
+	private List<Declaration> parametriseDeclarations(List<Declaration> parameterDeclarations) {
+
+		List<Declaration> ret = new ArrayList<>(parameterDeclarations.size());
+		for (Declaration declaration : parameterDeclarations) {
+			Site site = typeParameters.get(declaration.getName()).getType();
 			if (!site.isAssignableTo(declaration.getType())) {
 				throw new RuntimeException("Parameter argument is not within site type");
 			}
@@ -90,16 +97,16 @@ public class Site<T extends Type> {
 		return ret;
 	}
 
-	private List<Site> parametriseInterfaces(List<Site> interfaces, List<Site> parameterArguments) {
+	private List<Site> parametriseSites(List<Site> interfaces) {
 
 		List<Site> ret = new ArrayList<>();
 		for (Site iface : interfaces) {
-			ret.add(parametriseSite(iface, parameterArguments));
+			ret.add(parametriseSite(iface));
 		}
 		return ret;
 	}
 
-	private List<Method> parametriseMethods(List<Method> methods, List<Site> parameterArguments) {
+	private List<Method> parametriseMethods(List<Method> methods) {
 
 		List<Method> ret = new ArrayList<>();
 		for (Method method : methods) {
@@ -109,7 +116,7 @@ public class Site<T extends Type> {
 				parametrisedArgumentDeclarations.add(
 						new Declaration(
 								argumentDeclaration.getName(),
-								parametriseSite(argumentDeclaration.getType(), parameterArguments)
+								parametriseSite(argumentDeclaration.getType())
 						)
 				);
 			}
@@ -117,7 +124,7 @@ public class Site<T extends Type> {
 			Site methodType = method.getType();
 			ret.add(new Method(
 					method.getName(),
-					methodType != null ? parametriseSite(methodType, parameterArguments) : null,
+					methodType != null ? parametriseSite(methodType) : null,
 					parametrisedArgumentDeclarations
 			));
 
@@ -125,14 +132,14 @@ public class Site<T extends Type> {
 		return ret;
 	}
 
-	private List<Operator> parametriseOperators(List<Operator> operators, List<Site> parameterArguments) {
+	private List<Operator> parametriseOperators(List<Operator> operators) {
 
 		List<Operator> ret = new ArrayList<>();
 		for (Operator operator : operators) {
 			ret.add(new Operator(
 					operator.getName(),
-					parametriseSite(operator.getType(), parameterArguments),
-					parametriseSite(operator.getParameter(), parameterArguments),
+					parametriseSite(operator.getType()),
+					parametriseSite(operator.getParameter()),
 					operator.getMethodName()
 			));
 
@@ -140,40 +147,39 @@ public class Site<T extends Type> {
 		return ret;
 	}
 
-	private List<UnaryOperator> parametriseUnaryOperators(List<UnaryOperator> operators, List<Site> parameters) {
+	private List<UnaryOperator> parametriseUnaryOperators(List<UnaryOperator> operators) {
 		List<UnaryOperator> ret = new ArrayList<>();
 		for (UnaryOperator operator : operators) {
 			ret.add(new UnaryOperator(
 					operator.getName(),
-					parametriseSite(operator.getType(), parameters),
+					parametriseSite(operator.getType()),
 					operator.getMethodName()
 			));
 		}
 		return ret;
 	}
 
-	private <T extends Type> Site parametriseSite(Site<T> original, List<Site> parameterArguments) {
+	private Site parametriseSite(Site original) {
 
-		Site ret = retrieveSiteWithName(original.getClassName(), parameterArguments);
+		Site ret = retrieveSiteWithName(original.getName(), typeArguments);
 		if (ret != null) {
 			return ret;
 		}
 
 		List<Site> parametrisedArguments = new ArrayList<>();
-		for (Site argument : parameterArguments) {
-			parameterArguments.add(parametriseSite(argument, parameterArguments));
+		for (Site argument : typeArguments) {
+			typeArguments.add(parametriseSite(argument));
 		}
 
-		return new Site<T>(
-				original.getClassName(),
-				parametrisedArguments,
-				true
+		return new Site(
+				original.getType(),
+				parametrisedArguments
 		);
 	}
 
 	private Site retrieveSiteWithName(String name, List<Site> from) {
 		for (Site site : from) {
-			if (site.getClassName().equals(name)) {
+			if (site.getName().equals(name)) {
 				return site;
 			}
 		}
@@ -182,7 +188,11 @@ public class Site<T extends Type> {
 
 	public boolean isAssignableTo(Site t) {
 
-		if (getClassName().equals(t.getClassName())) {
+		if (t == null) {
+			return true;
+		}
+
+		if (getName().equals(t.getName())) {
 			Iterator<Declaration> i = t.getParameters().iterator();
 			for (Declaration argument : getParameters()) {
 				Declaration parameter = i.next();
@@ -202,7 +212,7 @@ public class Site<T extends Type> {
 	}
 
 	public Method getMethodWithName(String name) {
-		for (Method method : methods) {
+		for (Method method : getMethods()) {
 			if (method.getName().equals(name)) {
 				return method;
 			}
@@ -211,7 +221,7 @@ public class Site<T extends Type> {
 	}
 
 	public UnaryOperator getUnaryOperatorWithName(String name) {
-		for (UnaryOperator operator : unaryOperators) {
+		for (UnaryOperator operator : getUnaryOperators()) {
 			if (operator.getName().equals(name)) {
 				return operator;
 			}
@@ -220,7 +230,7 @@ public class Site<T extends Type> {
 	}
 
 	public Operator getOperatorWithName(String name) {
-		for (Operator operator : operators) {
+		for (Operator operator : getOperators()) {
 			if (operator.getName().equals(name)) {
 				return operator;
 			}
@@ -228,39 +238,66 @@ public class Site<T extends Type> {
 		return null;
 	}
 
-	public String getClassName() {
-		return className;
+	public String getName() {
+		if (name == null){
+			init();
+		}
+		return name;
+	}
+
+	public List<Declaration> getTypeParameters() {
+		if (typeParameters == null){
+			init();
+		}
+		return new ArrayList<>(typeParameters.values());
 	}
 
 	public List<Declaration> getParameters() {
+		if (parameters == null){
+			init();
+		}
 		return parameters;
 	}
 
 	public List<Method> getMethods() {
+		if (methods == null){
+			init();
+		}
 		return methods;
 	}
 
 	public List<Site> getInterfaces() {
+		if (interfaces == null){
+			init();
+		}
 		return interfaces;
 	}
 
 	public List<Operator> getOperators() {
+		if (operators == null){
+			init();
+		}
 		return operators;
 	}
 
-	public void setOperators(List<Operator> operators) {
-		this.operators = operators;
-	}
-
 	public List<UnaryOperator> getUnaryOperators() {
+		if (unaryOperators == null){
+			init();
+		}
 		return unaryOperators;
 	}
 
-	public void setUnaryOperators(List<UnaryOperator> unaryOperators) {
-		this.unaryOperators = unaryOperators;
+	public List<Declaration> getProperties() {
+		if (properties == null){
+			init();
+		}
+		return properties;
 	}
 
-	public T getType() {
+	public Type getType() {
+		if (type == null){
+			init();
+		}
 		return type;
 	}
 
@@ -269,6 +306,6 @@ public class Site<T extends Type> {
 	}
 
 	public String toString() {
-		return className;
+		return getType().getName();
 	}
 }

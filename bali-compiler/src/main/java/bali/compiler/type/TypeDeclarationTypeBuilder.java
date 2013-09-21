@@ -9,6 +9,7 @@ import bali.compiler.parser.tree.TypeNode;
 import bali.compiler.parser.tree.TypeParameterNode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,31 +37,37 @@ public class TypeDeclarationTypeBuilder {
 	}
 
 	public Type build(ClassNode declaration) {
-		return new Class(
+		return new Type(
 				declaration.getQualifiedClassName(),
+				getTypeParameters(declaration),
+				getInterfaces(declaration),
 				getParameters(declaration),
-				getArguments(declaration),
 				getMethods(declaration),
-				getInterfaces(declaration)
+				Collections.<Operator>emptyList(),
+				Collections.<UnaryOperator>emptyList(),
+				Collections.<Declaration>emptyList(),
+				false
 		);
 	}
 
 	public Type build(InterfaceNode declaration) {
-		return new Interface(
+		return new Type(
 				declaration.getQualifiedClassName(),
-				getParameters(declaration),
-				getMethods(declaration),
+				getTypeParameters(declaration),
 				getInterfaces(declaration),
+				Collections.<Declaration>emptyList(),
+				getMethods(declaration),
 				getOperators(declaration),
-				getUnaryOperators(declaration)
-
+				getUnaryOperators(declaration),
+				Collections.<Declaration>emptyList(),
+				true
 		);
 	}
 
-	private List<Declaration> getParameters(TypeNode declaration) {
+	private List<Declaration> getTypeParameters(TypeNode declaration) {
 
 		List<Declaration> parameters = new ArrayList<>();
-		for (TypeParameterNode declaredParameter : (List<TypeParameterNode>) declaration.getParameters()) { // TODO: remove this cast
+		for (TypeParameterNode declaredParameter : (List<TypeParameterNode>) declaration.getTypeParameters()) { // TODO: remove this cast
 			parameters.add(new Declaration(
 					declaredParameter.getName(),
 					getType(declaredParameter.getType())
@@ -69,7 +76,7 @@ public class TypeDeclarationTypeBuilder {
 		return parameters;
 	}
 
-	private List<Declaration> getArguments(ClassNode declaration) {
+	private List<Declaration> getParameters(ClassNode declaration) {
 		List<Declaration> arguments = new ArrayList<>();
 		for (ArgumentDeclarationNode declaredArgument : declaration.getArgumentDeclarations()) {
 			arguments.add(new Declaration(
@@ -80,7 +87,7 @@ public class TypeDeclarationTypeBuilder {
 		return arguments;
 	}
 
-	private List<Method> getMethods(TypeNode<? extends MethodNode, ? extends MethodDeclaringType> declaration) {
+	private List<Method> getMethods(TypeNode<? extends MethodNode> declaration) {
 		List<Method> methods = new ArrayList<>();
 		for (MethodNode declaredMethod : declaration.getMethods()) {
 			List<Declaration> arguments = new ArrayList<>();
@@ -99,7 +106,7 @@ public class TypeDeclarationTypeBuilder {
 		return methods;
 	}
 
-	private List<Site> getInterfaces(TypeNode<? extends MethodNode, ? extends MethodDeclaringType> declaration) {
+	private List<Site> getInterfaces(TypeNode<? extends MethodNode> declaration) {
 		List<Site> ret = new ArrayList<>();
 		for (SiteNode typeReference : declaration.getImplementations()) {
 			ret.add(getType(typeReference));
@@ -124,12 +131,12 @@ public class TypeDeclarationTypeBuilder {
 	}
 
 	private Site getType(SiteNode reference) {
-		Type type = library.getType(reference.getClassName());
+		Reference<Type> type = library.getReference(reference.getClassName());
 		List<Site> typeArguments = new ArrayList<>();
-		for (SiteNode argumentNode : (List<SiteNode>) reference.getParameters()) { //TODO remove cast
+		for (SiteNode argumentNode : reference.getParameters()) {
 			typeArguments.add(getType(argumentNode));
 		}
-		return new Site<>(type, typeArguments);
+		return new Site(type, typeArguments);
 	}
 
 

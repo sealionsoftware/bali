@@ -6,6 +6,7 @@ import bali.compiler.parser.tree.ImportNode;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.SiteNode;
+import bali.compiler.type.Reference;
 import bali.compiler.type.Site;
 import bali.compiler.type.Type;
 import bali.compiler.type.TypeLibrary;
@@ -94,6 +95,7 @@ public class TypeResolvingValidator implements Validator<CompilationUnitNode> {
 			for (SiteNode reference : parameterReferences) {
 				parameterSites.add(reference.getSite());
 			}
+
 
 			type.setSite(new Site(declaration, parameterSites));
 			return ret;

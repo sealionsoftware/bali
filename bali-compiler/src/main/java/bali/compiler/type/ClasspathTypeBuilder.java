@@ -32,21 +32,12 @@ public class ClasspathTypeBuilder {
 			throw new RuntimeException("Cannot read bytecode for class " + typeToBuild, e);
 		}
 
-		ClassPathTypeBuilderVisitor visitor = new ClassPathTypeBuilderVisitor();
+		ClassPathTypeBuilderVisitor visitor = new ClassPathTypeBuilderVisitor(library);
 		reader.accept(visitor, ClassReader.SKIP_FRAMES);
 
 		Type ret = visitor.getClasspathType();
-		uninitialisedSites.put(ret, visitor.getUninitialisedSites());
 
 		return ret;
-	}
-
-	public void complete(Type t) {
-		List<Site> uninitialisedSites = this.uninitialisedSites.remove(t);
-		for (Site uninitialisedSite : uninitialisedSites) {
-			Type type = library.getType(uninitialisedSite.getClassName());
-			uninitialisedSite.init(type);
-		}
 	}
 
 }
