@@ -5,6 +5,7 @@ import bali.compiler.parser.tree.InvocationNode;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.type.Declaration;
 import bali.compiler.type.Method;
+import bali.compiler.type.ParametrizedSite;
 import bali.compiler.type.Site;
 import bali.compiler.validation.ValidationFailure;
 

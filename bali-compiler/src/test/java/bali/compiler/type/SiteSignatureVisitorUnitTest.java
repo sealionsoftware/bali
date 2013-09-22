@@ -4,6 +4,8 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.objectweb.asm.signature.SignatureReader;
 
+import java.util.HashMap;
+
 
 /**
  * User: Richard
@@ -11,7 +13,7 @@ import org.objectweb.asm.signature.SignatureReader;
  */
 public class SiteSignatureVisitorUnitTest {
 
-	private SiteSignatureVisitor visitor = new SiteSignatureVisitor(new TypeLibrary());
+	private SiteSignatureVisitor visitor = new SiteSignatureVisitor(new TypeLibrary(), new HashMap<String, Site>());
 
 	@Test
 	public void testVisitTypeVariable() throws Exception {

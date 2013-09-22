@@ -31,10 +31,11 @@ import bali.compiler.parser.tree.TryStatementNode;
 import bali.compiler.parser.tree.UnaryOperationNode;
 import bali.compiler.parser.tree.VariableNode;
 import bali.compiler.parser.tree.WhileStatementNode;
-import bali.compiler.type.Reference;
+import bali.compiler.type.ParametrizedSite;
 import bali.compiler.type.Site;
 import bali.compiler.type.Type;
 import bali.compiler.type.TypeLibrary;
+import bali.compiler.type.VanillaSite;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -66,7 +67,7 @@ public class ASMStackManager implements Opcodes {
 	public ASMStackManager(ASMConverter converter, TypeLibrary library) {
 		this.converter = converter;
 		Type erasedType = library.getType(Object.class.getName());
-		this.erasedSite = new Site(erasedType, Collections.<Site>emptyList());
+		this.erasedSite = new VanillaSite(erasedType);
 	}
 
 	public List<VariableInfo> getDeclaredVariables() {

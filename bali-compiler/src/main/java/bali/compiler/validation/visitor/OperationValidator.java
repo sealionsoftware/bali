@@ -2,6 +2,7 @@ package bali.compiler.validation.visitor;
 
 import bali.compiler.parser.tree.OperationNode;
 import bali.compiler.type.Operator;
+import bali.compiler.type.ParametrizedSite;
 import bali.compiler.type.Site;
 import bali.compiler.validation.ValidationFailure;
 

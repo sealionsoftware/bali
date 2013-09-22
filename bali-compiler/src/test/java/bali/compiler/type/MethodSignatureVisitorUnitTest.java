@@ -4,6 +4,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.objectweb.asm.signature.SignatureReader;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
  */
 public class MethodSignatureVisitorUnitTest {
 
-	private MethodSignatureVisitor visitor = new MethodSignatureVisitor(new TypeLibrary());
+	private MethodSignatureVisitor visitor = new MethodSignatureVisitor(new TypeLibrary(), new HashMap<String, Site>());
 
 	@Test
 	public void testParameterizedReturnMethod() throws Exception {

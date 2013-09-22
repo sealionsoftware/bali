@@ -13,6 +13,7 @@ import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.ReferenceNode;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.parser.tree.VariableNode;
+import bali.compiler.type.ParametrizedSite;
 import bali.compiler.type.Site;
 import bali.compiler.type.Type;
 import bali.compiler.type.TypeLibrary;
@@ -44,7 +45,7 @@ public class ReferenceValidator implements Validator<CompilationUnitNode> {
 
 			Type fieldType = library.getType(f.getType().getName());
 			SiteNode siteNode = new SiteNode();
-			siteNode.setSite(new Site(
+			siteNode.setSite(new ParametrizedSite(
 					fieldType,
 					new ArrayList<Site>() //TODO
 			));

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: Richard
@@ -18,12 +19,14 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 
 	private List<Declaration> typeParameters = new ArrayList<>();
 	private List<Site> interfaces = new ArrayList<>();
-
 	private Deque<SiteContext> typeParamStack = new LinkedList<>();
 
-	public ClassSignatureVisitor(TypeLibrary library) {
+	private Map<String, Site> typeVariableBounds;
+
+	public ClassSignatureVisitor(TypeLibrary library, Map<String, Site> typeVariableBounds) {
 		super(Opcodes.ASM4);
 		this.library = library;
+		this.typeVariableBounds = typeVariableBounds;
 	}
 
 	public void visitFormalTypeParameter(String name) {
@@ -34,7 +37,7 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 	}
 
 	public SignatureVisitor visitClassBound() {
-		SiteSignatureVisitor typeParameterVisitor = new SiteSignatureVisitor(library);
+		SiteSignatureVisitor typeParameterVisitor = new SiteSignatureVisitor(library, typeVariableBounds);
 		typeParamStack.peek().typeVisitor = typeParameterVisitor;
 		return typeParameterVisitor;
 	}

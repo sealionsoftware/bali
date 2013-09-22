@@ -136,7 +136,7 @@ public class TypeDeclarationTypeBuilder {
 		for (SiteNode argumentNode : reference.getParameters()) {
 			typeArguments.add(getType(argumentNode));
 		}
-		return new Site(type, typeArguments);
+		return new ParametrizedSite(type, typeArguments);
 	}
 
 

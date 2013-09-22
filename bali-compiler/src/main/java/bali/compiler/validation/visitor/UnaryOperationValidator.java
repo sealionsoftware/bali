@@ -1,6 +1,7 @@
 package bali.compiler.validation.visitor;
 
 import bali.compiler.parser.tree.UnaryOperationNode;
+import bali.compiler.type.ParametrizedSite;
 import bali.compiler.type.Site;
 import bali.compiler.type.UnaryOperator;
 import bali.compiler.validation.ValidationFailure;

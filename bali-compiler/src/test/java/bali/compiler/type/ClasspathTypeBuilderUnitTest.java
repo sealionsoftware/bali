@@ -1,6 +1,7 @@
 package bali.compiler.type;
 
-import bali.compiler.bytecode.TestSite;
+import bali.compiler.bytecode.TestVanillaSite;
+import bali.compiler.bytecode.TestVariableSite;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -28,13 +29,13 @@ public class ClasspathTypeBuilderUnitTest {
 
 		Assert.assertEquals(VanillaObject.class.getName(), type.getName());
 		Assert.assertEquals(Collections.<Declaration>emptyList(), type.getTypeParameters());
-		Assert.assertEquals(Collections.<Site>emptyList(), type.getInterfaces());
+		Assert.assertEquals(Collections.<ParametrizedSite>emptyList(), type.getInterfaces());
 		Assert.assertEquals(Collections.<Operator>emptyList(), type.getOperators());
 		Assert.assertEquals(Collections.<UnaryOperator>emptyList(), type.getUnaryOperators());
 		Assert.assertEquals(3, methods.size());
 
 		Method expectation;
-		Site expectationSite = new TestSite(bali.String.class);
+		ParametrizedSite expectationSite = new TestVanillaSite(bali.String.class);
 		Declaration expectationDeclaration = new Declaration("parameter", expectationSite);
 
 		// Method aVoidMethod
@@ -67,7 +68,7 @@ public class ClasspathTypeBuilderUnitTest {
 
 		Assert.assertEquals(UnparameterizedInterface.class.getName(), type.getName());
 		Assert.assertEquals(Collections.<Declaration>emptyList(), type.getTypeParameters());
-		Assert.assertEquals(Collections.<Site>emptyList(), type.getInterfaces());
+		Assert.assertEquals(Collections.<ParametrizedSite>emptyList(), type.getInterfaces());
 		Assert.assertEquals(3, methods.size());
 		Assert.assertEquals(2, operators.size());
 		Assert.assertEquals(2, unaryOperators.size());
@@ -75,7 +76,7 @@ public class ClasspathTypeBuilderUnitTest {
 		Method methodExpectation;
 		Operator operatorExpectation;
 		UnaryOperator unaryOperatorExpectation;
-		Site expectationSite = new TestSite(bali.String.class);
+		ParametrizedSite expectationSite = new TestVanillaSite(bali.String.class);
 		Declaration expectationDeclaration = new Declaration("argument", expectationSite);
 
 		// Method aVoidMethod
@@ -125,18 +126,18 @@ public class ClasspathTypeBuilderUnitTest {
 
 		Assert.assertEquals(ParametrizedObject.class.getName(), type.getName());
 		Assert.assertEquals(1, type.getTypeParameters().size());
-		Assert.assertEquals(Collections.<Site>emptyList(), type.getInterfaces());
+		Assert.assertEquals(Collections.<ParametrizedSite>emptyList(), type.getInterfaces());
 		Assert.assertEquals(2, methods.size());
 
 		Method methodExpectation;
-		Site expectationSite = new TestSite(B.class);
+		Site expectationSite = new TestVanillaSite(B.class);
 
 		Declaration typeParameterDeclaration = type.getTypeParameters().get(0);
 		Assert.assertEquals("T", typeParameterDeclaration.getName());
 		checkType(expectationSite, typeParameterDeclaration.getType());
 
+		expectationSite = new TestVariableSite("T", new TestVanillaSite(B.class));
 		Declaration expectationDeclaration = new Declaration("t", expectationSite);
-		expectationSite = new TestSite("T");
 
 		// Method getT
 

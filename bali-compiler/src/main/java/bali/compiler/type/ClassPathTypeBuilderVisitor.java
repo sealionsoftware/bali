@@ -11,7 +11,6 @@ import org.objectweb.asm.signature.SignatureReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +40,8 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 	private List<Operator> operators = new ArrayList<>();
 	private List<UnaryOperator> unaryOperators = new ArrayList<>();
 
+	private Map<String, Site> typeVariableBounds = new HashMap<>();
+
 	public ClassPathTypeBuilderVisitor(TypeLibrary library) {
 		super(Opcodes.ASM4);
 		this.library = library;
@@ -58,10 +59,13 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 		}
 
 		if (signature != null) {
-			ClassSignatureVisitor visitor = new ClassSignatureVisitor(library);
+			ClassSignatureVisitor visitor = new ClassSignatureVisitor(library, typeVariableBounds);
 			new SignatureReader(signature).accept(visitor);
 
 			typeParameters = visitor.getTypeParameters();
+			for (Declaration typeParameter : typeParameters){
+				typeVariableBounds.put(typeParameter.getName(), typeParameter.getType());
+			}
 			this.interfaces = visitor.getInterfaces();
 		}
 	}
@@ -118,7 +122,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 				Site returnType = null;
 
 				if (signature != null) {
-					MethodSignatureVisitor visitor = new MethodSignatureVisitor(library);
+					MethodSignatureVisitor visitor = new MethodSignatureVisitor(library, typeVariableBounds);
 					new SignatureReader(signature).accept(visitor);
 
 					returnType = visitor.getReturnType();
@@ -131,12 +135,12 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 					org.objectweb.asm.Type methodType = org.objectweb.asm.Type.getMethodType(desc);
 					org.objectweb.asm.Type methodReturnType = methodType.getReturnType();
 					if (!methodReturnType.getClassName().equals(void.class.getName())) {
-						returnType = new Site(library.getReference(methodReturnType.getClassName()), new ArrayList<Site>());
+						returnType = new ParametrizedSite(library.getReference(methodReturnType.getClassName()), Collections.<Site>emptyList());
 					}
 					parameterDeclarations = new ArrayList<>();
 					int i = 0;
 					for (org.objectweb.asm.Type parameterType : methodType.getArgumentTypes()) {
-						Site parameterSite = new Site(library.getReference(parameterType.getClassName()), Collections.<Site>emptyList());
+						Site parameterSite = new ParametrizedSite(library.getReference(parameterType.getClassName()), Collections.<Site>emptyList());
 						parameterDeclarations.add(new Declaration(
 								parameterNames.get(i++),
 								parameterSite

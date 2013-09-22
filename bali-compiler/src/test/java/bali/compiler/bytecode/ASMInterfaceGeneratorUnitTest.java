@@ -40,7 +40,7 @@ public class ASMInterfaceGeneratorUnitTest {
 	public void testGenerateInterfaceExtension() throws Exception {
 
 		SiteNode type = new SiteNode();
-		type.setSite(new TestSite(ASuperInterface.class));
+		type.setSite(new TestVanillaSite(ASuperInterface.class));
 
 		iface.addSuperInterface(type);
 
@@ -71,7 +71,7 @@ public class ASMInterfaceGeneratorUnitTest {
 
 		SiteNode type = new SiteNode();
 		type.setClassName("Number");
-		type.setSite(new TestSite(Number.class));
+		type.setSite(new TestVanillaSite(Number.class));
 
 		MethodNode declaration = new MethodNode();
 		declaration.setName("aMethod");
@@ -91,7 +91,7 @@ public class ASMInterfaceGeneratorUnitTest {
 
 		SiteNode type = new SiteNode();
 		type.setClassName("Number");
-		type.setSite(new TestSite(Number.class));
+		type.setSite(new TestVanillaSite(Number.class));
 
 		ArgumentDeclarationNode argument = new ArgumentDeclarationNode();
 		argument.setType(type);

@@ -54,11 +54,11 @@ public class ASMClassGeneratorUnitTest {
 	public void testGenerateClassWithInternalField() throws Exception {
 
 		SiteNode number = new SiteNode();
-		number.setSite(new TestSite(Number.class));
+		number.setSite(new TestVanillaSite(Number.class));
 
 		NumberLiteralExpressionNode value = new NumberLiteralExpressionNode();
 		value.setSerialization("1");
-		value.setType(new TestSite(Number.class));
+		value.setType(new TestVanillaSite(Number.class));
 
 		FieldNode declaration = new FieldNode();
 		declaration.setName("aField");
@@ -105,7 +105,7 @@ public class ASMClassGeneratorUnitTest {
 
 		SiteNode type = new SiteNode();
 		type.setClassName("Number");
-		type.setSite(new TestSite(Number.class));
+		type.setSite(new TestVanillaSite(Number.class));
 
 		NumberLiteralExpressionNode nlv = new NumberLiteralExpressionNode();
 		nlv.setSerialization("1");
@@ -135,7 +135,7 @@ public class ASMClassGeneratorUnitTest {
 
 		SiteNode type = new SiteNode();
 		type.setClassName("Number");
-		type.setSite(new TestSite(Number.class));
+		type.setSite(new TestVanillaSite(Number.class));
 
 		ArgumentDeclarationNode argument = new ArgumentDeclarationNode();
 		argument.setType(type);
@@ -163,7 +163,7 @@ public class ASMClassGeneratorUnitTest {
 
 		SiteNode type = new SiteNode();
 		type.setClassName("Number");
-		type.setSite(new TestSite(Number.class));
+		type.setSite(new TestVanillaSite(Number.class));
 
 		ArgumentDeclarationNode argument = new ArgumentDeclarationNode();
 		argument.setType(type);
@@ -182,7 +182,7 @@ public class ASMClassGeneratorUnitTest {
 		InterfaceNode iface = new InterfaceNode();
 		iface.setQualifiedClassName("bali.compiler.bytecode.ASuperInterface");
 		iface.addMethod(declaration);
-		ifaceType.setSite(new TestSite(ASuperInterface.class));
+		ifaceType.setSite(new TestVanillaSite(ASuperInterface.class));
 
 		clazz.addMethod(declaration);
 		clazz.addImplementation(ifaceType);

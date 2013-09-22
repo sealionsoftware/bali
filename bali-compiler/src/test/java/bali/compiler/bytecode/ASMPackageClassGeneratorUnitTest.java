@@ -45,7 +45,7 @@ public class ASMPackageClassGeneratorUnitTest {
 	public void testNumberConstant() throws Exception {
 		NumberLiteralExpressionNode nlv = new NumberLiteralExpressionNode(0, 0);
 		nlv.setSerialization("1");
-		nlv.setType(new TestSite(Number.class));
+		nlv.setType(new TestVanillaSite(Number.class));
 		testGenerateConstant(Number.class, nlv, new Byte((byte) 1));
 	}
 
@@ -53,7 +53,7 @@ public class ASMPackageClassGeneratorUnitTest {
 	public void testStringConstant() throws Exception {
 		StringLiteralExpressionNode slv = new StringLiteralExpressionNode();
 		slv.setSerialization("Hello World");
-		slv.setType(new TestSite((String.class)));
+		slv.setType(new TestVanillaSite((String.class)));
 		testGenerateConstant(String.class, slv, new CharArrayString("Hello World".toCharArray()));
 	}
 
@@ -61,7 +61,7 @@ public class ASMPackageClassGeneratorUnitTest {
 	public void testBooleanConstant() throws Exception {
 		BooleanLiteralExpressionNode blv = new BooleanLiteralExpressionNode();
 		blv.setSerialization("true");
-		blv.setType(new TestSite((Boolean.class)));
+		blv.setType(new TestVanillaSite((Boolean.class)));
 		testGenerateConstant(Boolean.class, blv, IdentityBoolean.TRUE);
 	}
 
@@ -80,7 +80,7 @@ public class ASMPackageClassGeneratorUnitTest {
 		llv.addValue(two);
 		llv.addValue(three);
 
-		llv.setType(new TestSite((Array.class)));
+		llv.setType(new TestVanillaSite((Array.class)));
 
 		testGenerateConstant(Array.class, llv, new Array<>(new Object[]{
 				NUMBER_FACTORY.forDecimalString("1".toCharArray()),
@@ -92,16 +92,16 @@ public class ASMPackageClassGeneratorUnitTest {
 	@Test
 	public void testNewObjectConstant() throws Exception {
 		SiteNode type = new SiteNode(0, 0);
-		type.setSite(new TestSite(Instantiatable.class));
+		type.setSite(new TestVanillaSite(Instantiatable.class));
 		ConstructionExpressionNode cv = new ConstructionExpressionNode(0, 0);
-		cv.setType(new TestSite(Instantiatable.class));
+		cv.setType(new TestVanillaSite(Instantiatable.class));
 		testGenerateConstant(Instantiatable.class, cv, new Instantiatable());
 	}
 
 	public <T extends Value<T>> void testGenerateConstant(java.lang.Class<T> clazz, ExpressionNode value, T expectation) throws Exception {
 
 		SiteNode type = new SiteNode();
-		type.setSite(new TestSite(clazz));
+		type.setSite(new TestVanillaSite(clazz));
 
 		ConstantNode constant = new ConstantNode();
 		constant.setName("aConstant");

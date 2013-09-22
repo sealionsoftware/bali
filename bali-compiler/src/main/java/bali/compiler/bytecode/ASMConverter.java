@@ -3,6 +3,7 @@ package bali.compiler.bytecode;
 import bali.compiler.parser.tree.DeclarationNode;
 import bali.compiler.parser.tree.MethodNode;
 import bali.compiler.parser.tree.SiteNode;
+import bali.compiler.type.ParametrizedSite;
 import bali.compiler.type.Site;
 import org.objectweb.asm.Type;
 

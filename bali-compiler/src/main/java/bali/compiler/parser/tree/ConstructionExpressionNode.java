@@ -1,6 +1,6 @@
 package bali.compiler.parser.tree;
 
-import bali.compiler.type.Site;
+import bali.compiler.type.ParametrizedSite;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ public class ConstructionExpressionNode extends ExpressionNode {
 	private String className;
 	private List<ExpressionNode> arguments = new ArrayList<>();
 
-	private Site type;
+	private ParametrizedSite type;
 
 	public ConstructionExpressionNode(Integer line, Integer character) {
 		super(line, character);
@@ -28,7 +28,7 @@ public class ConstructionExpressionNode extends ExpressionNode {
 		this.className = className;
 	}
 
-	public void setType(Site type) {
+	public void setType(ParametrizedSite type) {
 		this.type = type;
 	}
 
@@ -36,7 +36,7 @@ public class ConstructionExpressionNode extends ExpressionNode {
 		arguments.add(argument);
 	}
 
-	public Site getType() {
+	public ParametrizedSite getType() {
 		return type;
 	}
 

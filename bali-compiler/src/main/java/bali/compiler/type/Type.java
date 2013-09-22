@@ -121,5 +121,18 @@ public class Type {
 		return true;
 	}
 
-
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(name);
+		if (typeParameters.size() > 0){
+			sb.append("<");
+			Iterator<Declaration> i = typeParameters.iterator();
+			sb.append(i.next().getName());
+			while(i.hasNext()){
+				sb.append(",").append(i.next().getName());
+			}
+			sb.append(">");
+		}
+		return sb.toString();
+	}
 }

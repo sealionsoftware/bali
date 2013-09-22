@@ -1,8 +1,7 @@
 package bali.compiler.parser.tree;
 
 
-import bali.compiler.type.Site;
-import bali.compiler.type.Type;
+import bali.compiler.type.ParametrizedSite;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,7 +15,7 @@ public class SiteNode extends Node {
 
 	private String className;
 	private List<SiteNode> parameters = new ArrayList<>();
-	private Site site;
+	private ParametrizedSite site;
 	private Boolean erase = false;
 
 	public SiteNode() {
@@ -46,11 +45,11 @@ public class SiteNode extends Node {
 		return new ArrayList<Node>(parameters);
 	}
 
-	public Site getSite() {
+	public ParametrizedSite getSite() {
 		return site;
 	}
 
-	public void setSite(Site site) {
+	public void setSite(ParametrizedSite site) {
 		this.site = site;
 	}
 

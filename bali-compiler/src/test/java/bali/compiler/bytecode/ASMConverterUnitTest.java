@@ -6,7 +6,6 @@ import bali.String;
 import bali.compiler.parser.tree.ArgumentDeclarationNode;
 import bali.compiler.parser.tree.MethodNode;
 import bali.compiler.parser.tree.SiteNode;
-import bali.compiler.type.Type;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -34,7 +33,7 @@ public class ASMConverterUnitTest {
 	@Test
 	public void testTypeDescriptorDeclaration() throws Exception {
 		SiteNode declaration = new SiteNode();
-		declaration.setSite(new TestSite(String.class));
+		declaration.setSite(new TestVanillaSite(String.class));
 		Assert.assertEquals("Lbali/String;", converter.getTypeDescriptor(declaration));
 	}
 
@@ -49,7 +48,7 @@ public class ASMConverterUnitTest {
 
 	private SiteNode getType(Class clazz) {
 		SiteNode t = new SiteNode();
-		t.setSite(new TestSite(clazz));
+		t.setSite(new TestVanillaSite(clazz));
 		return t;
 	}
 
@@ -58,12 +57,12 @@ public class ASMConverterUnitTest {
 		MethodNode declaration = new MethodNode();
 		Assert.assertEquals("()V", converter.getMethodDescriptor(declaration));
 		SiteNode b = new SiteNode();
-		b.setSite(new TestSite(Boolean.class));
+		b.setSite(new TestVanillaSite(Boolean.class));
 		declaration.setType(b);
 		SiteNode s = new SiteNode();
 		SiteNode n = new SiteNode();
-		s.setSite(new TestSite(String.class));
-		n.setSite(new TestSite(Number.class));
+		s.setSite(new TestVanillaSite(String.class));
+		n.setSite(new TestVanillaSite(Number.class));
 		ArgumentDeclarationNode argument1 = new ArgumentDeclarationNode(0, 0);
 		ArgumentDeclarationNode argument2 = new ArgumentDeclarationNode(0, 0);
 		argument1.setType(s);

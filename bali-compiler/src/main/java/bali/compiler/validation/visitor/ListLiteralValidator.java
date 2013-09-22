@@ -3,6 +3,7 @@ package bali.compiler.validation.visitor;
 import bali.collection.Array;
 import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.ListLiteralExpressionNode;
+import bali.compiler.type.ParametrizedSite;
 import bali.compiler.type.Site;
 import bali.compiler.type.Type;
 import bali.compiler.type.TypeLibrary;
@@ -47,7 +48,7 @@ public class ListLiteralValidator implements Validator<ListLiteralExpressionNode
 		List<Site> params = new ArrayList<>();
 		params.add(listEntryType);
 
-		literal.setType(new Site(
+		literal.setType(new ParametrizedSite(
 				arrayType,
 				params
 		));

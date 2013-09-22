@@ -1,8 +1,9 @@
 package bali.compiler.validation.visitor;
 
 import bali.compiler.parser.tree.StringLiteralExpressionNode;
-import bali.compiler.type.Site;
+import bali.compiler.type.ParametrizedSite;
 import bali.compiler.type.TypeLibrary;
+import bali.compiler.type.VanillaSite;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -14,10 +15,10 @@ import java.util.List;
  */
 public class StringLiteralValidator implements Validator<StringLiteralExpressionNode> {
 
-	private Site stringSite;
+	private ParametrizedSite stringSite;
 
 	public StringLiteralValidator(TypeLibrary library) {
-		this.stringSite = new Site(library.getType(String.class.getName()), new ArrayList<Site>());
+		this.stringSite = new VanillaSite(library.getType(String.class.getName()));
 	}
 
 	public List<ValidationFailure> validate(StringLiteralExpressionNode literal) {

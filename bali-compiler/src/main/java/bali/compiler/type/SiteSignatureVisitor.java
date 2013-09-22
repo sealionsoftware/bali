@@ -5,6 +5,7 @@ import org.objectweb.asm.signature.SignatureVisitor;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: Richard
@@ -13,15 +14,17 @@ import java.util.List;
 public class SiteSignatureVisitor extends SignatureVisitor {
 
 	private TypeLibrary library;
+	private Map<String, Site> typeVariableBounds;
 
 	private Site site;
 
 	private String className;
 	private List<SiteSignatureVisitor> typeArgumentVisitors = new LinkedList<>();
 
-	public SiteSignatureVisitor(TypeLibrary library) {
+	public SiteSignatureVisitor(TypeLibrary library, Map<String, Site> typeVariableBounds) {
 		super(Opcodes.ASM4);
 		this.library = library;
+		this.typeVariableBounds = typeVariableBounds;
 	}
 
 	public void visitEnd() {
@@ -37,12 +40,12 @@ public class SiteSignatureVisitor extends SignatureVisitor {
 			typeArguments.add(visitor.getSite());
 		}
 
-		site = new Site(typeReference, typeArguments);
+		site = new ParametrizedSite(typeReference, typeArguments);
 		super.visitEnd();
 	}
 
 	public void visitTypeVariable(String name) {
-		site = new Site(name, null);
+		site = new VariableSite(name, typeVariableBounds.get(name));
 		super.visitTypeVariable(name);
 	}
 
@@ -51,7 +54,7 @@ public class SiteSignatureVisitor extends SignatureVisitor {
 	}
 
 	public SignatureVisitor visitTypeArgument(char wildcard) {
-		SiteSignatureVisitor visitor = new SiteSignatureVisitor(library);
+		SiteSignatureVisitor visitor = new SiteSignatureVisitor(library, typeVariableBounds);
 		typeArgumentVisitors.add(visitor);
 		return visitor;
 	}

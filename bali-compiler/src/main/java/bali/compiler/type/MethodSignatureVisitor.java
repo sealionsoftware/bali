@@ -5,6 +5,7 @@ import org.objectweb.asm.signature.SignatureVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: Richard
@@ -16,19 +17,21 @@ public class MethodSignatureVisitor extends SignatureVisitor {
 
 	private SiteSignatureVisitor returnTypeVisitor ;
 	private List<SiteSignatureVisitor> parameterVisitors = new ArrayList<>();
+	private Map<String, Site> typeVariableBounds;
 
-	public MethodSignatureVisitor(TypeLibrary library) {
+	public MethodSignatureVisitor(TypeLibrary library, Map<String, Site> typeVariableBounds) {
 		super(Opcodes.ASM4);
 		this.library = library;
+		this.typeVariableBounds = typeVariableBounds;
 	}
 
 	public SignatureVisitor visitReturnType() {
-		returnTypeVisitor = new SiteSignatureVisitor(library);
+		returnTypeVisitor = new SiteSignatureVisitor(library, typeVariableBounds);
 		return returnTypeVisitor;
 	}
 
 	public SignatureVisitor visitParameterType() {
-		SiteSignatureVisitor visitor = new SiteSignatureVisitor(library);
+		SiteSignatureVisitor visitor = new SiteSignatureVisitor(library, typeVariableBounds);
 		parameterVisitors.add(visitor);
 		return visitor;
 	}

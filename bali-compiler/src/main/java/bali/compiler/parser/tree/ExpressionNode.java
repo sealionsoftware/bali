@@ -1,5 +1,6 @@
 package bali.compiler.parser.tree;
 
+import bali.compiler.type.ParametrizedSite;
 import bali.compiler.type.Site;
 
 /**
