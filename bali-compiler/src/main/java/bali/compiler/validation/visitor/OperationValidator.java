@@ -22,7 +22,7 @@ public class OperationValidator implements Validator<OperationNode> {
 		Site operandType = node.getTwo().getType();
 		String operatorName = node.getOperator();
 
-		Operator operator = targetType.getOperatorWithName(operatorName);
+		Operator operator = getOperatorWithName(operatorName, targetType);
 
 		if (operator == null) {
 			ret.add(new ValidationFailure(node, "Type " + targetType + " has no operator " + operatorName));
@@ -35,6 +35,21 @@ public class OperationValidator implements Validator<OperationNode> {
 
 		node.setResolvedOperator(operator);
 		return ret;
+	}
+
+	public Operator getOperatorWithName(String name, Site site) {
+		for (Operator operator : site.getOperators()) {
+			if (operator.getName().equals(name)) {
+				return operator;
+			}
+		}
+		for (Site iface : site.getInterfaces()){
+			Operator ret = getOperatorWithName(name, iface);
+			if (ret != null){
+				return ret;
+			}
+		}
+		return null;
 	}
 
 

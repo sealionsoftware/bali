@@ -12,18 +12,6 @@ import java.util.Map;
  */
 public class TypeLibrary {
 
-	public static final Type NULL_TYPE = new Type(
-			"<NULL>",
-			Collections.<Declaration>emptyList(),
-			Collections.<Site>emptyList(),
-			Collections.<Declaration>emptyList(),
-			Collections.<Method>emptyList(),
-			Collections.<Operator>emptyList(),
-			Collections.<UnaryOperator>emptyList(),
-			Collections.<Declaration>emptyList(),
-			true
-	);
-
 	private TypeDeclarationTypeBuilder declarationBuilder = new TypeDeclarationTypeBuilder(this);
 	private ClasspathTypeBuilder classpathBuilder = new ClasspathTypeBuilder(this);
 	private Map<String, Reference<Type>> types = new HashMap<>();

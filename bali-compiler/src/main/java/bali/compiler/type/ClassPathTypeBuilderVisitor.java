@@ -142,12 +142,12 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 					org.objectweb.asm.Type methodType = org.objectweb.asm.Type.getMethodType(desc);
 					org.objectweb.asm.Type methodReturnType = methodType.getReturnType();
 					if (!methodReturnType.getClassName().equals(void.class.getName())) {
-						returnType = new ParametrizedSite(library.getReference(methodReturnType.getClassName()), Collections.<Site>emptyList());
+						returnType = new VanillaSite(library.getReference(methodReturnType.getClassName())); //TODO
 					}
 					parameterDeclarations = new ArrayList<>();
 					int i = 0;
 					for (org.objectweb.asm.Type parameterType : methodType.getArgumentTypes()) {
-						Site parameterSite = new ParametrizedSite(library.getReference(parameterType.getClassName()), Collections.<Site>emptyList());
+						Site parameterSite = new VanillaSite(library.getReference(parameterType.getClassName()));
 						parameterDeclarations.add(new Declaration(
 								parameterNames.get(i++),
 								parameterSite
@@ -209,12 +209,12 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 				break;
 			case INTERFACE:
 
-				for (Site implementation : new ArrayList<>(interfaces)){
-					interfaces.addAll(implementation.getInterfaces());
-					methods.addAll(implementation.getMethods());
-					operators.addAll(implementation.getOperators());
-					unaryOperators.addAll(implementation.getUnaryOperators());
-				}
+//				for (Site implementation : new ArrayList<>(interfaces)){
+//					interfaces.addAll(implementation.getInterfaces());
+//					methods.addAll(implementation.getMethods());
+//					operators.addAll(implementation.getOperators());
+//					unaryOperators.addAll(implementation.getUnaryOperators());
+//				}
 
 				classpathType = new Type(
 						className,

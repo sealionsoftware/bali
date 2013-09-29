@@ -16,7 +16,7 @@ import static bali.number.NumberFactory.NUMBER_FACTORY;
  * User: Richard
  * Date: 08/05/13
  */
-public final class Array<E> implements Collection<E>, Value<Array> {
+public final class Array<E extends Value<?>> implements Collection<E>, Value<Array<E>> {
 
 	private final E[] elements;
 
@@ -53,7 +53,7 @@ public final class Array<E> implements Collection<E>, Value<Array> {
 		return elements[NUMBER_FACTORY.valueOf(index)];
 	}
 
-	public Boolean equalTo(Array operand) {
+	public Boolean equalTo(Array<E> operand) {
 		return Arrays.equals(elements, operand.elements) ? IdentityBoolean.TRUE : IdentityBoolean.FALSE;
 	}
 }

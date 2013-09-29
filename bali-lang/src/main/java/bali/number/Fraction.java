@@ -8,7 +8,7 @@ import bali.IdentityBoolean;
  * User: Richard
  * Date: 10/06/13
  */
-public final class Fraction implements bali.Number {
+public final class Fraction implements Number {
 
 	final Number numerator;
 	final Number divisor;

@@ -131,9 +131,16 @@ public class TypeDeclarationTypeBuilder {
 	}
 
 	private Site getType(SiteNode reference) {
+
 		Reference<Type> type = library.getReference(reference.getSite().getName());
+
+		List<SiteNode> parameterNodes = reference.getParameters();
+		if (parameterNodes.isEmpty()){
+			return new VanillaSite(type);
+		}
+
 		List<Site> typeArguments = new ArrayList<>();
-		for (SiteNode argumentNode : reference.getParameters()) {
+		for (SiteNode argumentNode : parameterNodes) {
 			typeArguments.add(getType(argumentNode));
 		}
 		return new ParametrizedSite(type, typeArguments);

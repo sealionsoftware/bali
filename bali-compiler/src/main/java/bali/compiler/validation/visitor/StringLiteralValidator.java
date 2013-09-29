@@ -3,6 +3,7 @@ package bali.compiler.validation.visitor;
 import bali.String;
 import bali.compiler.parser.tree.StringLiteralExpressionNode;
 import bali.compiler.type.ParametrizedSite;
+import bali.compiler.type.Site;
 import bali.compiler.type.TypeLibrary;
 import bali.compiler.type.VanillaSite;
 import bali.compiler.validation.ValidationFailure;
@@ -16,7 +17,7 @@ import java.util.List;
  */
 public class StringLiteralValidator implements Validator<StringLiteralExpressionNode> {
 
-	private ParametrizedSite stringSite;
+	private Site stringSite;
 
 	public StringLiteralValidator(TypeLibrary library) {
 		this.stringSite = new VanillaSite(library.getType(String.class.getName()));

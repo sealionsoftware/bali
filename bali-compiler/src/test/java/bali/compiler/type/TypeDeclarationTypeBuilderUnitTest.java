@@ -44,6 +44,7 @@ public class TypeDeclarationTypeBuilderUnitTest {
 		superNode.setClassName("ASuperInterface");
 		superNode.setQualifiedClassName("test.ASuperInterface");
 
+		library.notifyOfDeclaration(superNode);
 		library.addDeclaration(superNode);
 
 		SiteNode superInterface = new SiteNode();

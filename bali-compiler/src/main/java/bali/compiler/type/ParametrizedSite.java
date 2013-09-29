@@ -41,23 +41,6 @@ public class ParametrizedSite implements Site {
 		this.erase = true;
 	}
 
-	// Lazy initialization
-	protected void init(){
-
-		if (type == null){
-			this.type = typeReference.get();
-		}
-
-		this.typeParameters = parametriseTypeDeclarations(type.getTypeParameters());
-		this.interfaces = parametriseSites(type.getInterfaces());
-		this.parameters = parametriseDeclarations(type.getParameters());
-		this.methods = parametriseMethods(type.getMethods());
-		this.operators = parametriseOperators(type.getOperators());
-		this.unaryOperators = parametriseUnaryOperators(type.getUnaryOperators());
-		this.properties = parametriseDeclarations(type.getProperties());
-
-	}
-
 	private Map<String, Declaration> parametriseTypeDeclarations(List<Declaration> parameterDeclarations) {
 
 		if (parameterDeclarations.size() != typeArguments.size()) {
@@ -68,9 +51,6 @@ public class ParametrizedSite implements Site {
 		Iterator<Site> i = typeArguments.iterator();
 		for (Declaration declaration : parameterDeclarations) {
 			Site site = i.next();
-			if (site != null && !site.isAssignableTo(declaration.getType())) {
-				throw new RuntimeException("Parameter argument is not within site type");
-			}
 			ret.put(declaration.getName(),
 					new Declaration(
 						declaration.getName(),
@@ -163,7 +143,9 @@ public class ParametrizedSite implements Site {
 	}
 
 	private Site parametriseSite(Site original) {
-
+		if (typeParameters == null){
+			this.typeParameters = parametriseTypeDeclarations(getType().getTypeParameters());
+		}
 		Declaration ret = typeParameters.get(original.getName());
 		if (ret != null) {
 			return ret.getType();
@@ -208,92 +190,63 @@ public class ParametrizedSite implements Site {
 		return false;
 	}
 
-	public Method getMethodWithName(String name) {
-		for (Method method : getMethods()) {
-			if (method.getName().equals(name)) {
-				return method;
-			}
-		}
-		return null;
-	}
-
-	public UnaryOperator getUnaryOperatorWithName(String name) {
-		for (UnaryOperator operator : getUnaryOperators()) {
-			if (operator.getName().equals(name)) {
-				return operator;
-			}
-		}
-		return null;
-	}
-
-	public Operator getOperatorWithName(String name) {
-		for (Operator operator : getOperators()) {
-			if (operator.getName().equals(name)) {
-				return operator;
-			}
-		}
-		return null;
-	}
-
 	public String getName() {
-		if (type == null){
-			init();
-		}
-		return type.getName();
+		return getType().getName();
 	}
 
 	public List<Declaration> getTypeParameters() {
 		if (typeParameters == null){
-			init();
+			this.typeParameters = parametriseTypeDeclarations(getType().getTypeParameters());
 		}
 		return new ArrayList<>(typeParameters.values());
 	}
 
 	public List<Declaration> getParameters() {
 		if (parameters == null){
-			init();
+			this.parameters = parametriseDeclarations(getType().getParameters());
 		}
 		return parameters;
 	}
 
 	public List<Method> getMethods() {
 		if (methods == null){
-			init();
+			this.methods = parametriseMethods(getType().getMethods());
 		}
 		return methods;
 	}
 
 	public List<Site> getInterfaces() {
 		if (interfaces == null){
-			init();
+			this.interfaces = getType().getInterfaces();
+			this.interfaces = parametriseSites(getType().getInterfaces());
 		}
 		return interfaces;
 	}
 
 	public List<Operator> getOperators() {
 		if (operators == null){
-			init();
+			this.operators = parametriseOperators(getType().getOperators());
 		}
 		return operators;
 	}
 
 	public List<UnaryOperator> getUnaryOperators() {
 		if (unaryOperators == null){
-			init();
+			this.unaryOperators = parametriseUnaryOperators(getType().getUnaryOperators());
 		}
 		return unaryOperators;
 	}
 
 	public List<Declaration> getProperties() {
 		if (properties == null){
-			init();
+			this.properties = parametriseDeclarations(getType().getProperties());
 		}
 		return properties;
 	}
 
 	public Type getType() {
 		if (type == null){
-			init();
+			type = typeReference.get();
 		}
 		return type;
 	}

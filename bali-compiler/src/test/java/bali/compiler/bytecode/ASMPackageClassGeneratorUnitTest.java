@@ -82,7 +82,7 @@ public class ASMPackageClassGeneratorUnitTest {
 
 		llv.setType(new TestVanillaSite((Array.class)));
 
-		testGenerateConstant(Array.class, llv, new Array<>(new Object[]{
+		testGenerateConstant(Array.class, llv, new Array<Number>(new Number[]{
 				NUMBER_FACTORY.forDecimalString("1".toCharArray()),
 				NUMBER_FACTORY.forDecimalString("2".toCharArray()),
 				NUMBER_FACTORY.forDecimalString("3".toCharArray())

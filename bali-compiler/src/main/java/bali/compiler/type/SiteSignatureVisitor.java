@@ -40,7 +40,7 @@ public class SiteSignatureVisitor extends SignatureVisitor {
 			typeArguments.add(visitor.getSite());
 		}
 
-		site = new ParametrizedSite(typeReference, typeArguments);
+		site = typeArguments.isEmpty() ? new VanillaSite(typeReference) : new ParametrizedSite(typeReference, typeArguments);
 		super.visitEnd();
 	}
 

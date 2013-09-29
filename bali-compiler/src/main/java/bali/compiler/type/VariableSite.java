@@ -84,27 +84,6 @@ public class VariableSite implements Site {
 		return bound.getType();
 	}
 
-	public Method getMethodWithName(String name) {
-		if (bound == null){
-			return null;
-		}
-		return bound.getMethodWithName(name);
-	}
-
-	public UnaryOperator getUnaryOperatorWithName(String name) {
-		if (bound == null){
-			return null;
-		}
-		return bound.getUnaryOperatorWithName(name);
-	}
-
-	public Operator getOperatorWithName(String name) {
-		if (bound == null){
-			return null;
-		}
-		return bound.getOperatorWithName(name);
-	}
-
 	public Boolean getErase() {
 		return true;
 	}

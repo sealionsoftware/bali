@@ -10,7 +10,7 @@ import static bali.IdentityBoolean.TRUE;
  * User: Richard
  * Date: 10/06/13
  */
-public enum Infinity implements bali.Number {
+public enum Infinity implements Number {
 
 	POSITIVE_INFINITY, NEGATIVE_INFINITY;
 

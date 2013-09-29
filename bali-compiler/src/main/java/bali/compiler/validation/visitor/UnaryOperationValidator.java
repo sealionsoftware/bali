@@ -28,7 +28,7 @@ public class UnaryOperationValidator implements Validator<UnaryOperationNode> {
 		Site targetType = node.getTarget().getType();
 		String operatorName = node.getOperator();
 
-		UnaryOperator operator = targetType.getUnaryOperatorWithName(operatorName);
+		UnaryOperator operator = getUnaryOperatorWithName(operatorName, targetType);
 
 		if (operator == null) {
 			ret.add(new ValidationFailure(node, "Type " + targetType + " has no method for operator " + operator));
@@ -37,6 +37,21 @@ public class UnaryOperationValidator implements Validator<UnaryOperationNode> {
 
 		node.setResolvedOperator(operator);
 		return ret;
+	}
+
+	public UnaryOperator getUnaryOperatorWithName(String name, Site site) {
+		for (UnaryOperator operator : site.getUnaryOperators()) {
+			if (operator.getName().equals(name)) {
+				return operator;
+			}
+		}
+		for (Site iface : site.getInterfaces()){
+			UnaryOperator ret = getUnaryOperatorWithName(name, iface);
+			if (ret != null){
+				return ret;
+			}
+		}
+		return null;
 	}
 
 }

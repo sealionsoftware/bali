@@ -30,9 +30,4 @@ public interface Site {
 
 	Boolean getErase();
 
-	Method getMethodWithName(String name);
-
-	UnaryOperator getUnaryOperatorWithName(String name);
-
-	Operator getOperatorWithName(String name);
 }

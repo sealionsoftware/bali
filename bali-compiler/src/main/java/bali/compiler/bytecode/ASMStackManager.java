@@ -385,7 +385,7 @@ public class ASMStackManager implements Opcodes {
 		v.visitTypeInsn(NEW, implName);
 		v.visitInsn(DUP);
 		push(value.getValues().size(), v);
-		v.visitTypeInsn(ANEWARRAY, "java/lang/Object");
+		v.visitTypeInsn(ANEWARRAY, "bali/Value");
 		int i = 0;
 		for (ExpressionNode elementValue : value.getValues()) {
 			v.visitInsn(DUP);
@@ -393,7 +393,7 @@ public class ASMStackManager implements Opcodes {
 			push(elementValue, v);
 			v.visitInsn(AASTORE);
 		}
-		v.visitMethodInsn(INVOKESPECIAL, implName, "<init>", "([Ljava/lang/Object;)V");
+		v.visitMethodInsn(INVOKESPECIAL, implName, "<init>", "([Lbali/Value;)V");
 	}
 
 	public void push(ReferenceNode value, MethodVisitor v) {

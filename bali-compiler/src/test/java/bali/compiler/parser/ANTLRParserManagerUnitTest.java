@@ -85,14 +85,14 @@ public class ANTLRParserManagerUnitTest {
 		Assert.assertEquals("Interfaces", 1, clazz.getImplementations().size());
 		Assert.assertEquals("Interface Name", "AnInterface", clazz.getImplementations().get(0).getClassName());
 		Assert.assertEquals("Fields", 1, clazz.getFields().size());
-		Assert.assertEquals("Methods", 1, clazz.getMethods().size());
-		Assert.assertEquals("Children", 4, clazz.getChildren().size());
+		Assert.assertEquals("Methods", 2, clazz.getMethods().size());
+		Assert.assertEquals("Children", 5, clazz.getChildren().size());
 	}
 
 	@Test
 	public void testConstructionArguments() {
 		DeclarationNode declaration = unit.getClasses().get(0).getArgumentDeclarations().get(0);
-		Assert.assertEquals("Name", "aField", declaration.getName());
+		Assert.assertEquals("Name", "aParameter", declaration.getName());
 		Assert.assertEquals("Type", "Number", declaration.getType().getClassName());
 		Assert.assertEquals("Children", 1, declaration.getChildren().size());
 	}
@@ -126,7 +126,6 @@ public class ANTLRParserManagerUnitTest {
 	public void testCodeBlock() {
 		CodeBlockNode body = unit.getClasses().get(0).getMethods().get(0).getBody();
 		Assert.assertEquals("Statements", 4, body.getStatements().size());
-		Assert.assertEquals("Assignment", 1, ((InvocationNode) ((AssignmentNode) body.getStatements().get(0)).getValue()).getArguments().size());
 		Assert.assertEquals("Variable", "false", ((BooleanLiteralExpressionNode) ((VariableNode) body.getStatements().get(1)).getValue()).getSerialization());
 		Assert.assertEquals("While", 2, (((WhileStatementNode) body.getStatements().get(2)).getBody().getChildren().size()));
 		Assert.assertEquals("For", 1, ((ForStatementNode) ((WhileStatementNode) body.getStatements().get(2)).getBody().getStatements().get(0)).getBody().getChildren().size());

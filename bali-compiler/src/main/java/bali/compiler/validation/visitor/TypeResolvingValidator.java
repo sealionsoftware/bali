@@ -6,11 +6,13 @@ import bali.compiler.parser.tree.ImportNode;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.SiteNode;
+import bali.compiler.type.Declaration;
 import bali.compiler.type.ParametrizedSite;
 import bali.compiler.type.Reference;
 import bali.compiler.type.Site;
 import bali.compiler.type.Type;
 import bali.compiler.type.TypeLibrary;
+import bali.compiler.type.VanillaSite;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -81,24 +83,28 @@ public class TypeResolvingValidator implements Validator<CompilationUnitNode> {
 		public List<ValidationFailure> validate(SiteNode type) {
 
 			List<ValidationFailure> ret = new ArrayList<>();
-			Reference<Type> declaration = resolvables.get(type.getClassName());
+			Reference<Type> reference = resolvables.get(type.getClassName());
 
-			if (declaration == null) {
+			if (reference == null) {
 				try {
-					declaration = library.getReference(type.getClassName());
+					reference = library.getReference(type.getClassName());
 				} catch (Exception e) {
 					ret.add(new ValidationFailure(type, "Cannot resolve type " + type));
+					return ret;
 				}
 			}
 
-			List<SiteNode> parameterReferences = type.getParameters();
-			List<Site> parameterSites = new ArrayList<>(parameterReferences.size());
-			for (SiteNode reference : parameterReferences) {
-				parameterSites.add(reference.getSite());
+			List<SiteNode> parameterNodes = type.getParameters();
+			if (parameterNodes.isEmpty()){
+				type.setSite(new VanillaSite(reference));
 			}
 
+			List<Site> parameterSites = new ArrayList<>(parameterNodes.size());
+			for (SiteNode parameterNode : parameterNodes) {
+				parameterSites.add(parameterNode.getSite());
+			}
 
-			type.setSite(new ParametrizedSite(declaration, parameterSites));
+			type.setSite(new ParametrizedSite(reference, parameterSites));
 			return ret;
 		}
 	}
