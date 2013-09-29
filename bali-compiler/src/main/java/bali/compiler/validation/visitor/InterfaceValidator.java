@@ -14,8 +14,7 @@ import java.util.List;
  * User: Richard
  * Date: 19/06/13
  */
-public class
-		InterfaceValidator implements Validator<CompilationUnitNode> {
+public class InterfaceValidator implements Validator<CompilationUnitNode>{
 
 	private TypeLibrary library;
 
@@ -26,8 +25,6 @@ public class
 	public List<ValidationFailure> validate(CompilationUnitNode node) {
 		List<ValidationFailure> failures = new ArrayList<>();
 		for (InterfaceNode iface : node.getInterfaces()) {
-
-			iface.setQualifiedClassName(node.getName() + "." + iface.getClassName());
 
 			// TODO: validations
 

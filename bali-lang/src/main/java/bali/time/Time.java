@@ -1,5 +1,7 @@
 package bali.time;
 
+import bali.Number;
+
 /**
  * User: Richard
  * Date: 15/07/13

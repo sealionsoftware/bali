@@ -7,6 +7,7 @@ import bali.annotation.Operator;
  * Date: 15/07/13
  */
 public interface Boolean extends Value<Boolean> {
+
 	@Operator("!")
 	Boolean not();
 

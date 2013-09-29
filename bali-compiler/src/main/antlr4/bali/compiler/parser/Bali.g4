@@ -15,7 +15,7 @@ STRING_LITERAL:             '"' ~[^"]* '"' ;
 
 NUMBER_LITERAL:             [0-9]+ ('.' [0-9]+)? ;
 
-OPERATOR:                   [\+\-!£$%^&\*#\~@\?/\\\><|¬`¦\:]+ ;
+OPERATOR:                   [\+\-!£$%^&\*#\~@\?/\\\|<>¬`¦:=]+ ;
 
 // Grammar Definition
 

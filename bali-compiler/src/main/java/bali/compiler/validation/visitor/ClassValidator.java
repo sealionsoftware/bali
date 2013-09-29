@@ -33,10 +33,8 @@ public class ClassValidator implements Validator<CompilationUnitNode> {
 		List<ValidationFailure> failures = new ArrayList<>();
 		for (ClassNode clazz : node.getClasses()) {
 
-			clazz.setQualifiedClassName(node.getName() + "." + clazz.getClassName());
 			clazz.setSourceFile(node.getName() + ".bali");
 			failures.addAll(validateMemberNames(clazz));
-
 			library.addDeclaration(clazz);
 		}
 		return failures;

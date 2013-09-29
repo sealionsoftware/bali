@@ -20,28 +20,32 @@ interface ASuperInterface {
 }
 
 interface AnInterface extends ASuperInterface {
-	declare Number aMethod(Number anArgument);
+	declare Number anotherMethod(Number anArgument);
 }
 
 // Classes
 
-class AnImplementation(Number aField) implements AnInterface {
+class AnImplementation(Number aParameter) implements AnInterface {
 
  	field Number aField;
 
  	method Number aMethod(Number anArgument){
 
- 	    anArgument = anArgument.add(GLOBAL_CONSTANT);
+ 	    Number aVariable = anArgument + GLOBAL_CONSTANT;
  	    Boolean stop = false;
 
  	    while(!stop){
 	        for (Number number : [3,4,5]){
-	            anArgument = anArgument + number;
+	            aVariable = aVariable + number;
 	        }
-	        if (number.greaterThan(100)){
+	        if (aVariable == 100){
 	            stop = true;
 	        }
  	    }
 		return anArgument;
  	}
+
+	method Number anotherMethod(Number anArgument){
+        return anArgument;
+    }
 }

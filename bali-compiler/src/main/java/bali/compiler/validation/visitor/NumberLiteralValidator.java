@@ -1,5 +1,6 @@
 package bali.compiler.validation.visitor;
 
+import bali.Number;
 import bali.compiler.parser.tree.NumberLiteralExpressionNode;
 import bali.compiler.type.ParametrizedSite;
 import bali.compiler.type.Site;

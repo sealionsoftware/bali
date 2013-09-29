@@ -42,7 +42,7 @@ public class ASMInterfaceGeneratorUnitTest {
 		SiteNode type = new SiteNode();
 		type.setSite(new TestVanillaSite(ASuperInterface.class));
 
-		iface.addSuperInterface(type);
+		iface.addImplementation(type);
 
 		java.lang.Class loadedClass = build();
 

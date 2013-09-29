@@ -2,7 +2,7 @@ package example;
 
 import bali.Number;
 
-import static bali._.NUMBER_FACTORY;
+import static bali.number.NumberFactory.NUMBER_FACTORY;
 
 public class NumberObject {
 

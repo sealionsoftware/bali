@@ -28,14 +28,16 @@ public class TypeLibrary {
 	private ClasspathTypeBuilder classpathBuilder = new ClasspathTypeBuilder(this);
 	private Map<String, Reference<Type>> types = new HashMap<>();
 
-
-	public void addDeclaration(TypeNode declaration) {
+	public void notifyOfDeclaration(TypeNode declaration) {
 		Reference<Type> reference = new Reference<>();
 		types.put(declaration.getQualifiedClassName(), reference);
+	}
+
+	public void addDeclaration(TypeNode declaration) {
+		Reference<Type> reference = types.get(declaration.getQualifiedClassName());
 		Type ret = declarationBuilder.build(declaration);
 		reference.set(ret);
 		declaration.setResolvedType(ret);
-
 	}
 
 	public Type getType(String fullyQualifiedClassName) {

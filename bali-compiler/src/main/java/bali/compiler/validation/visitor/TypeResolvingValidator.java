@@ -7,6 +7,7 @@ import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.type.ParametrizedSite;
+import bali.compiler.type.Reference;
 import bali.compiler.type.Site;
 import bali.compiler.type.Type;
 import bali.compiler.type.TypeLibrary;
@@ -39,16 +40,16 @@ public class TypeResolvingValidator implements Validator<CompilationUnitNode> {
 
 		List<ValidationFailure> ret = new ArrayList<>();
 
-		Map<String, Type> resolvables = new HashMap<>();
+		Map<String, Reference<Type>> resolvables = new HashMap<>();
 		for (InterfaceNode iface : unit.getInterfaces()) {
-			resolvables.put(iface.getClassName(), iface.getResolvedType());
+			resolvables.put(iface.getClassName(), library.getReference(iface.getQualifiedClassName()));
 		}
 		for (ClassNode clazz : unit.getClasses()) {
-			resolvables.put(clazz.getClassName(), clazz.getResolvedType());
+			resolvables.put(clazz.getClassName(), library.getReference(clazz.getQualifiedClassName()));
 		}
 		for (ImportNode iport : unit.getImports()) {
 			String name = iport.getName();
-			resolvables.put(name.substring(name.lastIndexOf(".") + 1), iport.getType());
+			resolvables.put(name.substring(name.lastIndexOf(".") + 1), new Reference<>(iport.getType()));
 		}
 
 		Agent agent = new Agent(resolvables, library);
@@ -69,10 +70,10 @@ public class TypeResolvingValidator implements Validator<CompilationUnitNode> {
 
 	private static class Agent implements Validator<SiteNode> {
 
-		private Map<String, Type> resolvables;
+		private Map<String, Reference<Type>> resolvables;
 		private TypeLibrary library;
 
-		private Agent(Map<String, Type> resolvables, TypeLibrary library) {
+		private Agent(Map<String, Reference<Type>> resolvables, TypeLibrary library) {
 			this.resolvables = resolvables;
 			this.library = library;
 		}
@@ -80,11 +81,11 @@ public class TypeResolvingValidator implements Validator<CompilationUnitNode> {
 		public List<ValidationFailure> validate(SiteNode type) {
 
 			List<ValidationFailure> ret = new ArrayList<>();
-			Type declaration = resolvables.get(type.getClassName());
+			Reference<Type> declaration = resolvables.get(type.getClassName());
 
 			if (declaration == null) {
 				try {
-					declaration = library.getType(type.getClassName());
+					declaration = library.getReference(type.getClassName());
 				} catch (Exception e) {
 					ret.add(new ValidationFailure(type, "Cannot resolve type " + type));
 				}

@@ -1,5 +1,6 @@
 package bali.time.standard;
 
+import bali.Number;
 import bali.time.Time;
 
 /**

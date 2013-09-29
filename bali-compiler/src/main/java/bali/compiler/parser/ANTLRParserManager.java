@@ -133,7 +133,7 @@ public class ANTLRParserManager implements ParserManager {
 //		}
 		if (context.typeDeclarationList() != null) {
 			for (BaliParser.TypeDeclarationContext typeDeclaration : context.typeDeclarationList().typeDeclaration()) {
-				iface.addSuperInterface(getType(typeDeclaration));
+				iface.addImplementation(getType(typeDeclaration));
 			}
 		}
 		for (BaliParser.DeclarationDeclarationContext ddc : context.declarationDeclaration()) {

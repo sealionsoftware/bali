@@ -2,7 +2,7 @@ package example;
 
 import bali.Boolean;
 
-import static bali.Boolean.TRUE;
+import static bali.IdentityBoolean.TRUE;
 
 public class WhileObject {
 

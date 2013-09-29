@@ -1,6 +1,7 @@
 package bali.time.standard;
 
 import bali.Number;
+import bali.String;
 import bali.time.Date;
 import bali.time.DateTime;
 import bali.time.Time;
@@ -19,7 +20,7 @@ public final class StandardDateTime implements DateTime {
 		this.time = time;
 	}
 
-	public bali.String getEpoch() {
+	public String getEpoch() {
 		return date.getEpoch();
 	}
 
@@ -35,19 +36,19 @@ public final class StandardDateTime implements DateTime {
 		return date.getDay();
 	}
 
-	public java.lang.Number getHour() {
+	public Number getHour() {
 		return time.getHour();
 	}
 
-	public java.lang.Number getMinute() {
+	public Number getMinute() {
 		return time.getMinute();
 	}
 
-	public java.lang.Number getSecond() {
+	public Number getSecond() {
 		return time.getSecond();
 	}
 
-	public java.lang.Number getMilliseconds() {
+	public Number getMilliseconds() {
 		return time.getMilliseconds();
 	}
 }

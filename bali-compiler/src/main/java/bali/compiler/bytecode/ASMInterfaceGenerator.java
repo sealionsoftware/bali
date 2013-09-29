@@ -16,9 +16,9 @@ public class ASMInterfaceGenerator implements Generator<InterfaceNode, Generated
 
 	public GeneratedClass build(InterfaceNode input) throws Exception {
 
-		String[] extensions = new String[input.getSuperInterfaces().size()];
+		String[] extensions = new String[input.getImplementations().size()];
 		int i = 0;
-		for (SiteNode superInterface : input.getSuperInterfaces()) {
+		for (SiteNode superInterface : input.getImplementations()) {
 			extensions[i++] = converter.getInternalName(superInterface.getSite().getName());
 		}
 

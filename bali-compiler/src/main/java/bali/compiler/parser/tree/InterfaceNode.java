@@ -10,7 +10,6 @@ import java.util.List;
  */
 public class InterfaceNode extends TypeNode<MethodNode> {
 
-	private List<SiteNode> superInterfaces = new ArrayList<>();
 	private List<MethodNode> methodDeclarations = new ArrayList<>();
 
 	public InterfaceNode() {
@@ -18,14 +17,6 @@ public class InterfaceNode extends TypeNode<MethodNode> {
 
 	public InterfaceNode(Integer line, Integer character) {
 		super(line, character);
-	}
-
-	public List<SiteNode> getSuperInterfaces() {
-		return superInterfaces;
-	}
-
-	public void addSuperInterface(SiteNode superInterface) {
-		this.superInterfaces.add(superInterface);
 	}
 
 	public List<MethodNode> getMethods() {
@@ -42,7 +33,6 @@ public class InterfaceNode extends TypeNode<MethodNode> {
 
 	public List<Node> getChildren() {
 		List<Node> children = super.getChildren();
-		children.addAll(superInterfaces);
 		children.addAll(methodDeclarations);
 		return children;
 	}

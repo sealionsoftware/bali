@@ -15,6 +15,7 @@
 	<modules>
 		<module>bali-lang</module>
 		<module>bali-compiler</module>
+		<module>bali-examples</module>
 	</modules>
 
 </project>

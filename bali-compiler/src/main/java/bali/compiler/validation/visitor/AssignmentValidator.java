@@ -2,6 +2,7 @@ package bali.compiler.validation.visitor;
 
 import bali.compiler.parser.tree.AssignmentNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
+import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.FieldNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.ReferenceNode;
@@ -66,13 +67,13 @@ public class AssignmentValidator implements Validator<CompilationUnitNode> {
 
 			List<ValidationFailure> failures = new ArrayList<>();
 
-
-			Site value = field.getValue().getType();
+			ExpressionNode value = field.getValue();
 
 			if (value != null) {
+
 				Site site = field.getType().getSite();
 
-				if (!value.isAssignableTo(site)) {
+				if (!value.getType().isAssignableTo(site)) {
 					failures.add(new ValidationFailure(field, "Cannot assign expression of type " + value + " to reference of type " + site));
 				}
 			}

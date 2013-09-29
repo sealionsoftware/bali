@@ -59,7 +59,7 @@ public class ReturnValueValidator implements Validator<MethodDeclarationNode> {
 					if (value == null) {
 						failures.add(new ValidationFailure(node, "Method requires a return value of type " + type));
 					} else {
-						if (!value.getType().equals(type)) {
+						if (!value.getType().isAssignableTo(type.getSite())) {
 							failures.add(new ValidationFailure(node, "Return value is of incorrect type: " + value.getType() + ", should be: " + type));
 						}
 					}

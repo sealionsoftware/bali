@@ -21,6 +21,7 @@ import bali.compiler.validation.visitor.BooleanLiteralValidator;
 import bali.compiler.validation.visitor.BranchStatementValidator;
 import bali.compiler.validation.visitor.ClassValidator;
 import bali.compiler.validation.visitor.ConstructionValidator;
+import bali.compiler.validation.visitor.DeclaredTypeValidator;
 import bali.compiler.validation.visitor.ImplementationValidator;
 import bali.compiler.validation.visitor.ImportsValidator;
 import bali.compiler.validation.visitor.InterfaceValidator;
@@ -130,21 +131,22 @@ public class BaliCompiler {
 				new ANTLRParserManager(),
 				new ConfigurableValidationEngine(new Array<Validator<? extends Node>>(new Validator<?>[]{
 						new ImportsValidator(library),
+						new DeclaredTypeValidator(library),
+						new TypeResolvingValidator(library),
 						new InterfaceValidator(library),
 						new ClassValidator(library),
-						new TypeResolvingValidator(library),
 						new BooleanLiteralValidator(library),
 						new NumberLiteralValidator(library),
 						new StringLiteralValidator(library),
 						new ListLiteralValidator(library),
-						new ImplementationValidator(),
 						new ReferenceValidator(library),
+						new ReturnValueValidator(),
+						new ImplementationValidator(),
 						new InvocationValidator(),
 						new UnaryOperationValidator(),
 						new OperationValidator(),
 						new AssignmentValidator(),
 						new ConstructionValidator(library),
-						new ReturnValueValidator(),
 						new ThrowStatementValidator(library),
 						new BranchStatementValidator()
 				})),

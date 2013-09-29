@@ -10,7 +10,7 @@ import java.lang.Exception;
  */
 public class ThreadObject implements Executable {
 
-	public void execute() throws bali.Exception {
+	public void execute() {
 
 		Thread thread = new Thread(new Runnable() {
 			public void run() {

@@ -8,6 +8,13 @@ public class Reference<T> {
 
 	private T referenced;
 
+	public Reference() {
+	}
+
+	public Reference(T referenced) {
+		this.referenced = referenced;
+	}
+
 	public T get() {
 		return referenced;
 	}

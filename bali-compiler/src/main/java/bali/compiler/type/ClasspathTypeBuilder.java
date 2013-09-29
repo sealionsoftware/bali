@@ -3,6 +3,7 @@ package bali.compiler.type;
 import org.objectweb.asm.ClassReader;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,18 +17,19 @@ import java.util.Map;
 public class ClasspathTypeBuilder {
 
 	private TypeLibrary library;
+	private ClassLoader classLoader;
 
 	public ClasspathTypeBuilder(TypeLibrary library) {
 		this.library = library;
+		this.classLoader = Thread.currentThread().getContextClassLoader();
 	}
-
-	private Map<Type, List<Site>> uninitialisedSites = new HashMap<>();
 
 	public Type build(String typeToBuild) {
 
 		ClassReader reader;
 		try {
-			reader = new ClassReader(typeToBuild);
+			InputStream classFileStream = classLoader.getResourceAsStream(typeToBuild.replace('.','/').concat(".class"));
+			reader = new ClassReader(classFileStream);
 		} catch (IOException e) {
 			throw new RuntimeException("Cannot read bytecode for class " + typeToBuild, e);
 		}

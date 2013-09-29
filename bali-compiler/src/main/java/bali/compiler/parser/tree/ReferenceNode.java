@@ -1,6 +1,7 @@
 package bali.compiler.parser.tree;
 
 import bali.compiler.type.ParametrizedSite;
+import bali.compiler.type.Site;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +25,7 @@ public class ReferenceNode extends ExpressionNode {
 		super(line, character);
 	}
 
-	public ParametrizedSite getType() {
+	public Site getType() {
 		return declaration.getType().getSite();
 	}
 

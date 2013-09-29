@@ -67,6 +67,13 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 				typeVariableBounds.put(typeParameter.getName(), typeParameter.getType());
 			}
 			this.interfaces = visitor.getInterfaces();
+		} else {
+			List<Site> ifaces = new ArrayList<>();
+			for (String iface : interfaces){
+				Reference<Type> ref = library.getReference(iface);
+				ifaces.add(new VanillaSite(ref));
+			}
+			this.interfaces = ifaces;
 		}
 	}
 
@@ -201,6 +208,14 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 				);
 				break;
 			case INTERFACE:
+
+				for (Site implementation : new ArrayList<>(interfaces)){
+					interfaces.addAll(implementation.getInterfaces());
+					methods.addAll(implementation.getMethods());
+					operators.addAll(implementation.getOperators());
+					unaryOperators.addAll(implementation.getUnaryOperators());
+				}
+
 				classpathType = new Type(
 						className,
 						typeParameters,

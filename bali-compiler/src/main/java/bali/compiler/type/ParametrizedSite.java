@@ -16,11 +16,9 @@ public class ParametrizedSite implements Site {
 	private Reference<Type> typeReference;
 	private List<Site> typeArguments;
 	private Boolean erase;
-	private Site bound;
 
 	private Type type;
 
-	private String name;
 	private Map<String, Declaration> typeParameters;
 	private List<Site> interfaces;
 	private List<Declaration> parameters;
@@ -43,22 +41,13 @@ public class ParametrizedSite implements Site {
 		this.erase = true;
 	}
 
-	// Used for type variables
-	// TODO: need pass bound here?
-//	public ParametrizedSite(String name, Site bound) {
-//		this.name = name;
-//		this.typeArguments = Collections.emptyList();
-//		this.erase = true;
-//	}
-
 	// Lazy initialization
-	private void init(){
+	protected void init(){
 
 		if (type == null){
 			this.type = typeReference.get();
 		}
 
-		this.name = type.getName();
 		this.typeParameters = parametriseTypeDeclarations(type.getTypeParameters());
 		this.interfaces = parametriseSites(type.getInterfaces());
 		this.parameters = parametriseDeclarations(type.getParameters());
@@ -148,9 +137,10 @@ public class ParametrizedSite implements Site {
 
 		List<Operator> ret = new ArrayList<>();
 		for (Operator operator : operators) {
+			Site returnType = operator.getType();
 			ret.add(new Operator(
 					operator.getName(),
-					parametriseSite(operator.getType()),
+					returnType != null ? parametriseSite(returnType) : null,
 					parametriseSite(operator.getParameter()),
 					operator.getMethodName()
 			));
@@ -162,9 +152,10 @@ public class ParametrizedSite implements Site {
 	private List<UnaryOperator> parametriseUnaryOperators(List<UnaryOperator> operators) {
 		List<UnaryOperator> ret = new ArrayList<>();
 		for (UnaryOperator operator : operators) {
+			Site returnType = operator.getType();
 			ret.add(new UnaryOperator(
 					operator.getName(),
-					parametriseSite(operator.getType()),
+					returnType != null ? parametriseSite(returnType) : null,
 					operator.getMethodName()
 			));
 		}
@@ -173,14 +164,14 @@ public class ParametrizedSite implements Site {
 
 	private Site parametriseSite(Site original) {
 
-		Site ret = retrieveSiteWithName(original.getName(), typeArguments);
+		Declaration ret = typeParameters.get(original.getName());
 		if (ret != null) {
-			return ret;
+			return ret.getType();
 		}
 
 		List<Site> parametrisedArguments = new ArrayList<>();
-		for (Site argument : typeArguments) {
-			parametrisedArguments.add(parametriseSite(argument));
+		for (Declaration argument : original.getTypeParameters()) {
+			parametrisedArguments.add(parametriseSite(argument.getType()));
 		}
 
 		return new ParametrizedSite(
@@ -189,23 +180,12 @@ public class ParametrizedSite implements Site {
 		);
 	}
 
-	private Site retrieveSiteWithName(String name, List<Site> from) {
-		for (Site site : from) {
-			if (site.getName().equals(name)) {
-				return site;
-			}
-		}
-		return null;
-	}
+
 
 	public boolean isAssignableTo(Site t) {
 
 		if (t == null) {
 			return true;
-		}
-
-		if (bound != null){
-			return bound.isAssignableTo(t);
 		}
 
 		if (getName().equals(t.getName())) {
@@ -216,6 +196,7 @@ public class ParametrizedSite implements Site {
 					return false;
 				}
 			}
+			return true;
 		}
 
 		for (Site iface : getInterfaces()) {
@@ -255,10 +236,10 @@ public class ParametrizedSite implements Site {
 	}
 
 	public String getName() {
-		if (name == null){
+		if (type == null){
 			init();
 		}
-		return name;
+		return type.getName();
 	}
 
 	public List<Declaration> getTypeParameters() {
@@ -322,6 +303,24 @@ public class ParametrizedSite implements Site {
 	}
 
 	public String toString() {
-		return name;
+
+		if(type == null){
+			return "Not initialised";
+		}
+
+		if (typeArguments.isEmpty()){
+			return type.getName();
+		}
+
+		Iterator<Site> i = typeArguments.iterator();
+		StringBuilder sb = new StringBuilder(type.getName())
+				.append("<")
+				.append(i.next());
+		while(i.hasNext()){
+			sb.append(",")
+					.append(i.next());
+		}
+		sb.append(">");
+		return sb.toString();
 	}
 }

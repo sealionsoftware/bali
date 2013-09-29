@@ -17,8 +17,8 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 
 	private TypeLibrary library;
 
-	private List<Declaration> typeParameters = new ArrayList<>();
-	private List<Site> interfaces = new ArrayList<>();
+	private List<SiteSignatureVisitor> interfaceVisitors = new ArrayList<>();
+
 	private Deque<SiteContext> typeParamStack = new LinkedList<>();
 
 	private Map<String, Site> typeVariableBounds;
@@ -47,7 +47,9 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 	}
 
 	public SignatureVisitor visitInterface() {
-		return super.visitInterface();
+		SiteSignatureVisitor interfaceVisitor = new SiteSignatureVisitor(library, typeVariableBounds);
+		interfaceVisitors.add(interfaceVisitor);
+		return interfaceVisitor;
 	}
 
 	public void visitTypeVariable(String name) {
@@ -66,19 +68,20 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 		return super.visitTypeArgument(wildcard);
 	}
 
-
-	public void visitEnd() {
-		for (SiteContext context : typeParamStack) {
-			typeParameters.add(new Declaration(context.name, context.typeVisitor.getSite()));
-		}
-	}
-
 	public List<Declaration> getTypeParameters() {
-		return typeParameters;
+		List<Declaration> ret = new ArrayList<>(typeParamStack.size());
+		for (SiteContext context : typeParamStack) {
+			ret.add(new Declaration(context.name, context.typeVisitor.getSite()));
+		}
+		return ret;
 	}
 
 	public List<Site> getInterfaces() {
-		return interfaces;
+		List<Site> ret = new ArrayList<>(interfaceVisitors.size());
+		for (SiteSignatureVisitor visitor : interfaceVisitors){
+			ret.add(visitor.getSite());
+		}
+		return ret;
 	}
 
 	private class SiteContext {

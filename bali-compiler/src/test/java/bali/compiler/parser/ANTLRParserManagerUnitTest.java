@@ -71,8 +71,8 @@ public class ANTLRParserManagerUnitTest {
 	public void testInterface() {
 		InterfaceNode iface = unit.getInterfaces().get(1);
 		Assert.assertEquals("Name", "AnInterface", iface.getClassName());
-		Assert.assertEquals("Super Interfaces", 1, iface.getSuperInterfaces().size());
-		Assert.assertEquals("Super Interface Name", "ASuperInterface", iface.getSuperInterfaces().get(0).getClassName());
+		Assert.assertEquals("Super Interfaces", 1, iface.getImplementations().size());
+		Assert.assertEquals("Super Interface Name", "ASuperInterface", iface.getImplementations().get(0).getClassName());
 		Assert.assertEquals("Method Declarations", 1, iface.getMethods().size());
 		Assert.assertEquals("Children", 2, iface.getChildren().size());
 	}

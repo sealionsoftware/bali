@@ -1,13 +1,13 @@
 package bali.compiler.validation.visitor;
 
+import bali.Boolean;
 import bali.compiler.parser.tree.BooleanLiteralExpressionNode;
-import bali.compiler.type.ParametrizedSite;
 import bali.compiler.type.Site;
 import bali.compiler.type.TypeLibrary;
+import bali.compiler.type.VanillaSite;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,7 +19,7 @@ public class BooleanLiteralValidator implements Validator<BooleanLiteralExpressi
 	private Site site;
 
 	public BooleanLiteralValidator(TypeLibrary library) {
-		this.site = new ParametrizedSite(library.getType(Boolean.class.getName()), Collections.<Site>emptyList());
+		this.site = new VanillaSite(library.getType(Boolean.class.getName()));
 	}
 
 	public List<ValidationFailure> validate(BooleanLiteralExpressionNode literal) {

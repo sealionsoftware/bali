@@ -2,6 +2,7 @@ package bali.number;
 
 import bali.Boolean;
 import bali.Number;
+import bali.Value;
 
 import static bali.IdentityBoolean.FALSE;
 import static bali.IdentityBoolean.TRUE;
@@ -203,6 +204,5 @@ public class Short implements Integer {
 		int ret = value / o;
 		return NUMBER_FACTORY.forInt(ret);
 	}
-
 
 }

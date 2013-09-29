@@ -64,10 +64,10 @@ public class TypeDeclarationTypeBuilder {
 		);
 	}
 
-	private List<Declaration> getTypeParameters(TypeNode declaration) {
+	private List<Declaration> getTypeParameters(TypeNode<?> declaration) {
 
 		List<Declaration> parameters = new ArrayList<>();
-		for (TypeParameterNode declaredParameter : (List<TypeParameterNode>) declaration.getTypeParameters()) { // TODO: remove this cast
+		for (TypeParameterNode declaredParameter : declaration.getTypeParameters()) {
 			parameters.add(new Declaration(
 					declaredParameter.getName(),
 					getType(declaredParameter.getType())
@@ -131,7 +131,7 @@ public class TypeDeclarationTypeBuilder {
 	}
 
 	private Site getType(SiteNode reference) {
-		Reference<Type> type = library.getReference(reference.getClassName());
+		Reference<Type> type = library.getReference(reference.getSite().getName());
 		List<Site> typeArguments = new ArrayList<>();
 		for (SiteNode argumentNode : reference.getParameters()) {
 			typeArguments.add(getType(argumentNode));
