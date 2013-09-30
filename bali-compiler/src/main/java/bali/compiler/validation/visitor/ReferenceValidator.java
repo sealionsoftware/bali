@@ -1,7 +1,5 @@
 package bali.compiler.validation.visitor;
 
-import bali._;
-import bali.compiler.parser.tree.ArgumentDeclarationNode;
 import bali.compiler.parser.tree.CatchStatementNode;
 import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.parser.tree.CodeBlockNode;
@@ -11,15 +9,12 @@ import bali.compiler.parser.tree.ForStatementNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.ReferenceNode;
-import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.parser.tree.VariableNode;
-import bali.compiler.type.ParametrizedSite;
+import bali.compiler.type.Declaration;
 import bali.compiler.type.Site;
-import bali.compiler.type.Type;
 import bali.compiler.type.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
 
-import java.lang.reflect.Field;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -33,56 +28,53 @@ import java.util.Map;
  */
 public class ReferenceValidator implements Validator<CompilationUnitNode> {
 
-	private Scope langScope;
+	private TypeLibrary library;
 
 	public ReferenceValidator(TypeLibrary library) {
-
-		// Lang level constants
-
-		Class<_> langClass = _.class;
-		List<DeclarationNode> langDeclarations = new ArrayList<>();
-		for (Field f : langClass.getDeclaredFields()) {
-
-			Type fieldType = library.getType(f.getType().getName());
-			SiteNode siteNode = new SiteNode();
-			siteNode.setSite(new ParametrizedSite(
-					fieldType,
-					new ArrayList<Site>() //TODO
-			));
-
-			DeclarationNode d = new ArgumentDeclarationNode();
-			d.setName(f.getName());
-			d.setType(siteNode);
-			langDeclarations.add(d);
-		}
-
-		langScope = new Scope(
-				ReferenceNode.ReferenceScope.STATIC,
-				langClass.getName(),
-				langDeclarations
-		);
+		this.library = library;
 	}
 
 	// Engages at the root of the AST, constructs a lookup table
 	public List<ValidationFailure> validate(CompilationUnitNode unit) {
 
 		Deque<Scope> unitLevelScopes = new ArrayDeque<>();
-		unitLevelScopes.add(langScope);
+		String pkgName = "_";
+		List<Declaration> packageConstants = library.getConstants(pkgName);
+		Scope scope = new Scope(
+				ReferenceNode.ReferenceScope.STATIC,
+				pkgName,
+				true
+		);
+		for (Declaration declaration : packageConstants){
+			scope.add(declaration.getName(), declaration.getType());
+		}
+		unitLevelScopes.push(scope);
 
-		// TODO: Higher Packages?
+		String compilationUnitName = unit.getName();
+		int i = -1;
+		do {
+			i = compilationUnitName.indexOf('.', i);
+			pkgName = i > 0 ? compilationUnitName.substring(0, i) : compilationUnitName;
+			packageConstants = library.getConstants(pkgName);
+			scope = new Scope(
+					ReferenceNode.ReferenceScope.STATIC,
+					pkgName + "._",
+					true
+			);
+			for (Declaration declaration : packageConstants){
+				scope.add(declaration.getName(), declaration.getType());
+			}
+			unitLevelScopes.push(scope);
+		} while (i > 0);
 
 		// Package Level Constants
-
-		unitLevelScopes.add(new Scope(
-				ReferenceNode.ReferenceScope.STATIC,
-				unit.getName() + "._",
-				unit.getConstants()
-		));
 
 		ReferenceValidatorTypeAgent agent = new ReferenceValidatorTypeAgent(unitLevelScopes);
 		walkAgentOverChildren(unit, agent);
 		return agent.getFailures();
 	}
+
+
 
 	private void validate(Node node, ReferenceValidatorTypeAgent agent) {
 		if (node instanceof ClassNode) {
@@ -108,55 +100,64 @@ public class ReferenceValidator implements Validator<CompilationUnitNode> {
 		List<DeclarationNode> referenceableFields = new ArrayList<>();
 		referenceableFields.addAll(clazz.getArgumentDeclarations());
 		referenceableFields.addAll(clazz.getFields());
-		pushAndWalk(clazz, agent, new Scope(
+
+		Scope scope = new  Scope(
 				ReferenceNode.ReferenceScope.FIELD,
 				clazz.getQualifiedClassName(),
-				referenceableFields
-		));
+				false
+		);
+		for (DeclarationNode field : referenceableFields){
+			scope.add(field.getName(), field.getType().getSite());
+		}
+		pushAndWalk(clazz, agent, scope);
 	}
 
 	private void validate(MethodDeclarationNode method, ReferenceValidatorTypeAgent agent) {
-		List<DeclarationNode> declarations = new ArrayList<>();
-		for (DeclarationNode declaration : method.getArguments()) {
-			declarations.add(declaration);
-		}
-		pushAndWalk(method, agent, new Scope(
+		Scope scope = new Scope(
 				ReferenceNode.ReferenceScope.VARIABLE,
 				null,
-				declarations
-		));
+				true
+		);
+		for (DeclarationNode declaration : method.getArguments()) {
+			scope.add(declaration.getName(), declaration.getType().getSite());
+		}
+		pushAndWalk(method, agent, scope);
 	}
 
 	private void validate(ForStatementNode statement, ReferenceValidatorTypeAgent agent) {
-		List<DeclarationNode> declarations = new ArrayList<>();
-		declarations.add(statement.getElement());
-		pushAndWalk(statement, agent, new Scope(
+		Scope scope = new Scope(
 				ReferenceNode.ReferenceScope.VARIABLE,
 				null,
-				declarations
-		));
+				true
+		);
+		DeclarationNode element = statement.getElement();
+		scope.add(element.getName(), element.getType().getSite());
+		pushAndWalk(statement, agent, scope);
 	}
 
 	private void validate(CatchStatementNode statement, ReferenceValidatorTypeAgent agent) {
-		List<DeclarationNode> declarations = new ArrayList<>();
-		declarations.add(statement.getDeclaration());
-		pushAndWalk(statement, agent, new Scope(
+		Scope scope = new Scope(
 				ReferenceNode.ReferenceScope.VARIABLE,
 				null,
-				declarations
-		));
+				true
+		);
+		DeclarationNode element = statement.getDeclaration();
+		scope.add(element.getName(), element.getType().getSite());
+		pushAndWalk(statement, agent, scope);
 	}
 
 	private void validate(CodeBlockNode codeBlock, ReferenceValidatorTypeAgent agent) {
-		pushAndWalk(codeBlock, agent, new Scope(
+		Scope scope = new Scope(
 				ReferenceNode.ReferenceScope.VARIABLE,
 				null,
-				new ArrayList<DeclarationNode>()
-		));
+				false
+		);
+		pushAndWalk(codeBlock, agent, scope);
 	}
 
 	private void validate(VariableNode variable, ReferenceValidatorTypeAgent agent) {
-		agent.peek().add(variable.getDeclaration());
+		DeclarationNode declarationNode = variable.getDeclaration();
+		agent.peek().add(declarationNode.getName(), declarationNode.getType().getSite());
 		walkAgentOverChildren(variable, agent);
 	}
 
@@ -199,7 +200,7 @@ public class ReferenceValidator implements Validator<CompilationUnitNode> {
 
 		public void validate(ReferenceNode value) {
 
-			DeclarationNode declaration = null;
+			Site declaration = null;
 			Scope declarationScope = null;
 
 			for (Scope scope : scopeStack) {
@@ -215,6 +216,7 @@ public class ReferenceValidator implements Validator<CompilationUnitNode> {
 				return;
 			}
 
+			value.setFinal(declarationScope.getFinal());
 			value.setDeclaration(declaration);
 			value.setHostClass(declarationScope.getClassName());
 			value.setScope(declarationScope.getScope());
@@ -225,15 +227,13 @@ public class ReferenceValidator implements Validator<CompilationUnitNode> {
 
 		private ReferenceNode.ReferenceScope scope;
 		private String className;
-		private Map<String, DeclarationNode> declarations;
+		private Boolean isFinal;
+		private Map<String, Site> declarations = new HashMap<>();
 
-		public Scope(ReferenceNode.ReferenceScope scope, String className, List<? extends DeclarationNode> declarationsList) {
+		public Scope(ReferenceNode.ReferenceScope scope, String className, Boolean isFinal) {
 			this.scope = scope;
 			this.className = className;
-			this.declarations = new HashMap<>();
-			for (DeclarationNode declaration : declarationsList) {
-				add(declaration);
-			}
+			this.isFinal = isFinal;
 		}
 
 		public ReferenceNode.ReferenceScope getScope() {
@@ -244,11 +244,15 @@ public class ReferenceValidator implements Validator<CompilationUnitNode> {
 			return className;
 		}
 
-		public void add(DeclarationNode declaration) {
-			declarations.put(declaration.getName(), declaration);
+		public Boolean getFinal() {
+			return isFinal;
 		}
 
-		public DeclarationNode find(String name) {
+		public void add(String name, Site type) {
+			declarations.put(name, type);
+		}
+
+		public Site find(String name) {
 			return declarations.get(name);
 		}
 	}

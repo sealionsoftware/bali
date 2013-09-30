@@ -9,7 +9,7 @@ import unary.UnaryDoer;
  */
 public class UnaryRunner {
 
-	public static void main(String[] args) throws Exception{
+	public static void main(String[] args) throws Throwable {
 		Executable doer = new UnaryDoer();
 		doer.execute();
 	}

@@ -20,6 +20,7 @@ import bali.compiler.validation.visitor.AssignmentValidator;
 import bali.compiler.validation.visitor.BooleanLiteralValidator;
 import bali.compiler.validation.visitor.BranchStatementValidator;
 import bali.compiler.validation.visitor.ClassValidator;
+import bali.compiler.validation.visitor.ConstantValidator;
 import bali.compiler.validation.visitor.ConstructionValidator;
 import bali.compiler.validation.visitor.DeclaredTypeValidator;
 import bali.compiler.validation.visitor.ImplementationValidator;
@@ -135,16 +136,17 @@ public class BaliCompiler {
 						new TypeResolvingValidator(library),
 						new InterfaceValidator(library),
 						new ClassValidator(library),
+						new ConstantValidator(library),
 						new BooleanLiteralValidator(library),
 						new NumberLiteralValidator(library),
 						new StringLiteralValidator(library),
 						new ListLiteralValidator(library),
 						new ReferenceValidator(library),
-						new ReturnValueValidator(),
-						new ImplementationValidator(),
 						new InvocationValidator(),
 						new UnaryOperationValidator(),
 						new OperationValidator(),
+						new ReturnValueValidator(),
+						new ImplementationValidator(),
 						new AssignmentValidator(),
 						new ConstructionValidator(library),
 						new ThrowStatementValidator(library),

@@ -3,7 +3,6 @@ package bali.compiler.bytecode;
 import bali.compiler.type.Declaration;
 import bali.compiler.type.Method;
 import bali.compiler.type.Operator;
-import bali.compiler.type.ParametrizedSite;
 import bali.compiler.type.Site;
 import bali.compiler.type.Type;
 import bali.compiler.type.UnaryOperator;

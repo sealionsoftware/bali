@@ -1,16 +1,13 @@
 package bali.time.calendar;
 
-import bali.time.Date;
-import bali.time.DateTime;
 import bali.CharArrayString;
 import bali.Number;
 import bali.String;
 import bali.time.CalendarSystem;
+import bali.time.Date;
+import bali.time.DateTime;
 import bali.time.Instant;
-import bali.time.standard.StandardDate;
 import bali.time.standard.StandardTime;
-
-import static bali.number.NumberFactory.NUMBER_FACTORY;
 
 /**
  * Implements a proleptic Gregorian Calendar.

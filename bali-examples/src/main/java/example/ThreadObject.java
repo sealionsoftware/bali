@@ -1,8 +1,6 @@
 package example;
 
-import bali.*;
-
-import java.lang.Exception;
+import bali.Executable;
 
 /**
  * User: Richard

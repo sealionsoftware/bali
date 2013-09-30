@@ -24,9 +24,9 @@ public class ConstructionValidator implements Validator<ConstructionExpressionNo
 
 		// TODO: Check constructor type signature
 
-		Type expressionType = library.getType(expression.getClassName());
+		Type expressionType = library.getType(expression.getType().getName());
 
-		if (expression.getType().getType().isAbstract()) {
+		if (expressionType.isAbstract()) {
 			Collections.singletonList(new ValidationFailure(expression, "Cannot instancate an interface type"));
 		}
 

@@ -1,8 +1,8 @@
 package bali.number;
 
 import bali.Boolean;
-import bali.Number;
 import bali.IdentityBoolean;
+import bali.Number;
 
 /**
  * User: Richard

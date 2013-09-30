@@ -1,6 +1,5 @@
 package bali.compiler.parser;
 
-import bali.compiler.parser.tree.AssignmentNode;
 import bali.compiler.parser.tree.BooleanLiteralExpressionNode;
 import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.parser.tree.CodeBlockNode;
@@ -12,7 +11,6 @@ import bali.compiler.parser.tree.FieldNode;
 import bali.compiler.parser.tree.ForStatementNode;
 import bali.compiler.parser.tree.ImportNode;
 import bali.compiler.parser.tree.InterfaceNode;
-import bali.compiler.parser.tree.InvocationNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.NumberLiteralExpressionNode;
 import bali.compiler.parser.tree.ReferenceNode;

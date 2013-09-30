@@ -2,7 +2,6 @@ package bali.compiler.validation.visitor;
 
 import bali.String;
 import bali.compiler.parser.tree.StringLiteralExpressionNode;
-import bali.compiler.type.ParametrizedSite;
 import bali.compiler.type.Site;
 import bali.compiler.type.TypeLibrary;
 import bali.compiler.type.VanillaSite;

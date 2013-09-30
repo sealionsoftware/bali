@@ -2,7 +2,6 @@ package bali.number;
 
 import bali.Boolean;
 import bali.Number;
-import bali.Value;
 
 import static bali.IdentityBoolean.FALSE;
 import static bali.IdentityBoolean.TRUE;

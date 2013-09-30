@@ -2,11 +2,11 @@ package bali.compiler.validation.visitor;
 
 import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
+import bali.compiler.parser.tree.ConstructionExpressionNode;
 import bali.compiler.parser.tree.ImportNode;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.SiteNode;
-import bali.compiler.type.Declaration;
 import bali.compiler.type.ParametrizedSite;
 import bali.compiler.type.Reference;
 import bali.compiler.type.Site;
@@ -55,17 +55,21 @@ public class TypeResolvingValidator implements Validator<CompilationUnitNode> {
 		}
 
 		Agent agent = new Agent(resolvables, library);
-		ret.addAll(walkAgentOverChildren(unit, agent));
+		ConstructorAgent constructorAgent = new ConstructorAgent(resolvables, library);
+		ret.addAll(walkAgentOverChildren(unit, agent, constructorAgent));
 		return ret;
 	}
 
-	private List<ValidationFailure> walkAgentOverChildren(Node node, Agent agent) {
+	private List<ValidationFailure> walkAgentOverChildren(Node node, Agent agent, ConstructorAgent constructorAgent) {
 		List<ValidationFailure> ret = new ArrayList<>();
 		for (Node child : node.getChildren()) {
-			ret.addAll(walkAgentOverChildren(child, agent));
+			ret.addAll(walkAgentOverChildren(child, agent, constructorAgent));
 		}
 		if (node instanceof SiteNode) {
 			ret.addAll(agent.validate((SiteNode) node));
+		}
+		if (node instanceof ConstructionExpressionNode){
+			ret.addAll(constructorAgent.validate((ConstructionExpressionNode) node));
 		}
 		return ret;
 	}
@@ -109,5 +113,33 @@ public class TypeResolvingValidator implements Validator<CompilationUnitNode> {
 		}
 	}
 
+	private static class ConstructorAgent implements Validator<ConstructionExpressionNode> {
+
+		private Map<String, Reference<Type>> resolvables;
+		private TypeLibrary library;
+
+		private ConstructorAgent(Map<String, Reference<Type>> resolvables, TypeLibrary library) {
+			this.resolvables = resolvables;
+			this.library = library;
+		}
+
+		public List<ValidationFailure> validate(ConstructionExpressionNode type) {
+
+			List<ValidationFailure> ret = new ArrayList<>();
+			Reference<Type> reference = resolvables.get(type.getClassName());
+
+			if (reference == null) {
+				try {
+					reference = library.getReference(type.getClassName());
+				} catch (Exception e) {
+					ret.add(new ValidationFailure(type, "Cannot resolve type " + type));
+					return ret;
+				}
+			}
+
+			type.setType(new VanillaSite(reference));
+			return ret;
+		}
+	}
 
 }

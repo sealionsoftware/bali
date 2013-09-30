@@ -70,7 +70,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 		} else {
 			List<Site> ifaces = new ArrayList<>();
 			for (String iface : interfaces){
-				Reference<Type> ref = library.getReference(iface);
+				Reference<Type> ref = library.getReference(iface.replaceAll("/", "."));
 				ifaces.add(new VanillaSite(ref));
 			}
 			this.interfaces = ifaces;

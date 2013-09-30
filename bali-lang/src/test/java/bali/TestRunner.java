@@ -1,7 +1,5 @@
 package bali;
 
-import java.lang.Long;
-
 /**
  * User: Richard
  * Date: 11/06/13

@@ -9,7 +9,7 @@ import construct.ObjectConstructor;
  */
 public class ConstructRunner {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Throwable {
 		Executable doer = new ObjectConstructor();
 		doer.execute();
 	}

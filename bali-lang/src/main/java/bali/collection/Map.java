@@ -1,7 +1,7 @@
 package bali.collection;
 
-import bali.Value;
 import bali.Boolean;
+import bali.Value;
 
 /**
  * User: Richard

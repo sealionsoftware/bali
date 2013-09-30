@@ -1,12 +1,15 @@
-package bali;
-
+import bali.CharArrayString;
+import bali.Console;
+import bali.Number;
+import bali.ReaderWriter;
+import bali.Serializer;
 import bali.number.NumberFactory;
 import bali.time.Clock;
+import bali.time.SystemClock;
 import bali.time.TimeZone;
+import bali.time.calendar.ISOCalendarSystem;
 import bali.time.standard.StandardInterval;
 import bali.time.standard.StandardTimeZone;
-import bali.time.SystemClock;
-import bali.time.calendar.ISOCalendarSystem;
 
 /**
  * User: Richard

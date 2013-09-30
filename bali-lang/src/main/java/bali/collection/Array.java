@@ -1,12 +1,11 @@
 package bali.collection;
 
 import bali.Boolean;
-import bali.number.Integer;
-import bali.Iterator;
-import bali.Iterable;
-import bali.Number;
 import bali.IdentityBoolean;
+import bali.Iterator;
+import bali.Number;
 import bali.Value;
+import bali.number.Integer;
 
 import java.util.Arrays;
 

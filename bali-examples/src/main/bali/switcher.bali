@@ -14,13 +14,13 @@ class SwitchDoer() implements Doer {
 
 		switch (operand){
 			case 0: {
-				CONSOLE.writeLine("Operand was 0");
+				CONSOLE << "Operand was 0";
 			}
 			case 1: {
-            	CONSOLE.writeLine("Operand was 1");
+            	CONSOLE << "Operand was 1";
             }
 			default: {
-				CONSOLE.writeLine("?");
+				CONSOLE << "?";
 			}
 		}
 

@@ -8,12 +8,12 @@ class WhileDoer() implements Executable {
 
 		Number flag = 0;
 
-	    while (flag.lessThan(4)){
-	        CONSOLE.writeLine("Hello");
-	        if (flag.greaterThan(1)){
+	    while (true){
+	        CONSOLE << "Hello";
+	        if (flag == 3){
 	            break;
 	        }
-	        flag = flag.add(1);
+	        flag = flag + 1;
 	    }
  	}
 

@@ -1,7 +1,7 @@
 package bali.time;
 
-import bali.String;
 import bali.Number;
+import bali.String;
 
 /**
  * User: Richard

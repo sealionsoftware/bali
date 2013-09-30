@@ -1,6 +1,5 @@
 package bali.compiler.parser.tree;
 
-import bali.compiler.type.ParametrizedSite;
 import bali.compiler.type.Site;
 
 import java.util.Collections;
@@ -14,9 +13,10 @@ public class ReferenceNode extends ExpressionNode {
 
 	private String name;
 
-	private DeclarationNode declaration;
+	private Site declaration;
 	private ReferenceScope scope;
 	private String hostClass;
+	private Boolean isFinal = false;
 
 	public ReferenceNode() {
 	}
@@ -26,14 +26,14 @@ public class ReferenceNode extends ExpressionNode {
 	}
 
 	public Site getType() {
-		return declaration.getType().getSite();
+		return declaration;
 	}
 
-	public void setDeclaration(DeclarationNode declaration) {
+	public void setDeclaration(Site declaration) {
 		this.declaration = declaration;
 	}
 
-	public DeclarationNode getDeclaration() {
+	public Site getDeclaration() {
 		return declaration;
 	}
 
@@ -63,6 +63,14 @@ public class ReferenceNode extends ExpressionNode {
 
 	public List<Node> getChildren() {
 		return Collections.emptyList();
+	}
+
+	public Boolean getFinal() {
+		return isFinal;
+	}
+
+	public void setFinal(Boolean aFinal) {
+		isFinal = aFinal;
 	}
 
 	public enum ReferenceScope {

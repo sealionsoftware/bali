@@ -9,7 +9,7 @@ import loop.WhileDoer;
  */
 public class WhileRunner {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Throwable {
 		Executable doer = new WhileDoer();
 		doer.execute();
 	}

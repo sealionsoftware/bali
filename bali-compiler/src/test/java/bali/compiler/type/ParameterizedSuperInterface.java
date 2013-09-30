@@ -1,7 +1,5 @@
 package bali.compiler.type;
 
-import bali.String;
-import bali.Value;
 import bali.annotation.Operator;
 
 /**

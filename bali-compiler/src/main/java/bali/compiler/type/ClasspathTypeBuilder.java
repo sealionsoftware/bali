@@ -4,9 +4,6 @@ import org.objectweb.asm.ClassReader;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Builds a Validator "Type" model for referenced types on the classpath

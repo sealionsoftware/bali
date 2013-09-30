@@ -1,6 +1,5 @@
 package bali.compiler.type;
 
-import bali.compiler.bytecode.TestType;
 import bali.compiler.bytecode.TestVanillaSite;
 import bali.compiler.bytecode.TestVariableSite;
 import junit.framework.Assert;

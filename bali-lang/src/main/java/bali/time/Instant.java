@@ -1,8 +1,8 @@
 package bali.time;
 
-import bali.annotation.Operator;
-import bali.Quantified;
 import bali.Number;
+import bali.Quantified;
+import bali.annotation.Operator;
 
 /**
  * Represents an instant in universal time as milliseconds since the start of 1970 UTC

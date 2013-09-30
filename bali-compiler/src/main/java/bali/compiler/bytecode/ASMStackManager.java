@@ -31,6 +31,7 @@ import bali.compiler.parser.tree.TryStatementNode;
 import bali.compiler.parser.tree.UnaryOperationNode;
 import bali.compiler.parser.tree.VariableNode;
 import bali.compiler.parser.tree.WhileStatementNode;
+import bali.compiler.type.Declaration;
 import bali.compiler.type.Method;
 import bali.compiler.type.Operator;
 import bali.compiler.type.Site;
@@ -38,7 +39,6 @@ import bali.compiler.type.Type;
 import bali.compiler.type.TypeLibrary;
 import bali.compiler.type.UnaryOperator;
 import bali.compiler.type.VanillaSite;
-import bali.compiler.type.Declaration;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -208,7 +208,7 @@ public class ASMStackManager implements Opcodes {
 		Label next = new Label();
 		for (ConditionalBlockNode block : statement.getConditionalBlocks()) {
 			push(block.getCondition(), v);
-			v.visitFieldInsn(GETSTATIC, "bali/Boolean", "TRUE", "Lbali/Boolean;");
+			v.visitFieldInsn(GETSTATIC, "bali/IdentityBoolean", "TRUE", "Lbali/IdentityBoolean;");
 			v.visitJumpInsn(IF_ACMPNE, next);
 			execute(block.getBody(), v);
 			v.visitJumpInsn(GOTO, end);
@@ -226,7 +226,7 @@ public class ASMStackManager implements Opcodes {
 		Label start = new Label();
 		v.visitLabel(start);
 		push(statement.getCondition(), v);
-		v.visitFieldInsn(GETSTATIC, "bali/Boolean", "TRUE", "Lbali/Boolean;");
+		v.visitFieldInsn(GETSTATIC, "bali/IdentityBoolean", "TRUE", "Lbali/IdentityBoolean;");
 		v.visitJumpInsn(IF_ACMPNE, end);
 		loopContextStack.push(new LoopContext(start, end));
 		execute(statement.getBody(), v);
@@ -246,7 +246,7 @@ public class ASMStackManager implements Opcodes {
 		v.visitLabel(start);
 		v.visitInsn(DUP);
 		v.visitMethodInsn(INVOKEINTERFACE, "bali/Iterator", "hasNext", "()Lbali/Boolean;");
-		v.visitFieldInsn(GETSTATIC, "bali/Boolean", "TRUE", "Lbali/Boolean;");
+		v.visitFieldInsn(GETSTATIC, "bali/IdentityBoolean", "TRUE", "Lbali/IdentityBoolean;");
 		v.visitJumpInsn(IF_ACMPNE, end);
 		v.visitInsn(DUP);
 		v.visitMethodInsn(INVOKEINTERFACE, "bali/Iterator", "next", "()Ljava/lang/Object;");
@@ -273,7 +273,7 @@ public class ASMStackManager implements Opcodes {
 			v.visitInsn(DUP);
 			push(caseStatement.getCondition(), v);
 			v.visitMethodInsn(invokeInsn(statementType), converter.getInternalName(statementType), "equalTo", "(Ljava/lang/Object;)Lbali/Boolean;");
-			v.visitFieldInsn(GETSTATIC, "bali/Boolean", "TRUE", "Lbali/Boolean;");
+			v.visitFieldInsn(GETSTATIC, "bali/IdentityBoolean", "TRUE", "Lbali/Boolean;");
 			v.visitJumpInsn(IF_ACMPNE, next);
 			execute(caseStatement.getBody(), v);
 			v.visitJumpInsn(GOTO, end);

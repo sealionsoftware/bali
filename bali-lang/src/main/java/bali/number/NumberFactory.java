@@ -1,9 +1,9 @@
 package bali.number;
 
 
-import bali.Serializer;
 import bali.CharArrayString;
 import bali.Number;
+import bali.Serializer;
 import bali.String;
 
 

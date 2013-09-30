@@ -97,9 +97,10 @@ public class TypeDeclarationTypeBuilder {
 						getType(declaredArgument.getType())
 				));
 			}
+			SiteNode returnTypeNode = declaredMethod.getType();
 			methods.add(new Method(
 					declaredMethod.getName(),
-					getType(declaredMethod.getType()),
+					returnTypeNode != null ? getType(declaredMethod.getType()) : null,
 					arguments
 			));
 		}

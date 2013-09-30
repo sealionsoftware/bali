@@ -1,9 +1,8 @@
 package bali.number;
 
-import bali.*;
 import bali.Boolean;
+import bali.IdentityBoolean;
 import bali.Number;
-import bali.number.BigInteger;
 import org.junit.Assert;
 import org.junit.Test;
 

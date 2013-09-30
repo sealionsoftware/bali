@@ -9,7 +9,7 @@ import exception.TryDoer;
  */
 public class ExceptionRunner {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Throwable {
 		Executable tryer = new TryDoer();
 		tryer.execute();
 	}

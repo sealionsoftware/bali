@@ -1,7 +1,7 @@
 package bali.collection;
 
-import bali.number.Integer;
 import bali.Iterable;
+import bali.number.Integer;
 
 /**
  * User: Richard

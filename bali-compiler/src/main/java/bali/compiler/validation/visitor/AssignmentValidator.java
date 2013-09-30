@@ -52,7 +52,7 @@ public class AssignmentValidator implements Validator<CompilationUnitNode> {
 			if (value == null || !value.isAssignableTo(site)) {
 				failures.add(new ValidationFailure(statement, "Cannot assign expression of type " + value + " to reference of type " + site));
 			}
-			if (reference.getDeclaration().getFinal()) {
+			if (reference.getFinal()) {
 				failures.add(new ValidationFailure(statement, "Cannot assign an expression to a constant reference"));
 			}
 

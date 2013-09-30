@@ -1,17 +1,12 @@
 package bali.compiler.validation.visitor;
 
-import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
-import bali.compiler.parser.tree.DeclarationNode;
 import bali.compiler.parser.tree.TypeNode;
 import bali.compiler.type.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Constructs the Class declarations qualified name,
