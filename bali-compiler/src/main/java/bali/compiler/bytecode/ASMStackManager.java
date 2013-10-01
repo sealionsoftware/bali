@@ -32,6 +32,7 @@ import bali.compiler.parser.tree.UnaryOperationNode;
 import bali.compiler.parser.tree.VariableNode;
 import bali.compiler.parser.tree.WhileStatementNode;
 import bali.compiler.type.Declaration;
+import bali.compiler.type.ErasedSite;
 import bali.compiler.type.Method;
 import bali.compiler.type.Operator;
 import bali.compiler.type.Site;
@@ -65,11 +66,11 @@ public class ASMStackManager implements Opcodes {
 	private Deque<Label> scopeHorizonStack = new ArrayDeque<>();
 	private Deque<LoopContext> loopContextStack = new ArrayDeque<>();
 
-	private Site erasedSite;
+	private Type erasedType;
 
 	public ASMStackManager(ASMConverter converter, TypeLibrary library) {
 		this.converter = converter;
-		Type erasedType = new Type(Object.class.getName(),
+		erasedType = new Type(Object.class.getName(),
 				Collections.<Declaration>emptyList(),
 				Collections.<Site>emptyList(),
 				Collections.<Declaration>emptyList(),
@@ -79,7 +80,6 @@ public class ASMStackManager implements Opcodes {
 				Collections.<Declaration>emptyList(),
 				false
 		);
-		this.erasedSite = new VanillaSite(erasedType);
 	}
 
 	public List<VariableInfo> getDeclaredVariables() {
@@ -241,7 +241,7 @@ public class ASMStackManager implements Opcodes {
 		Label end = new Label();
 		v.visitLabel(top);
 		push(statement.getCollection(), v);
-		Site collectionType = statement.getCollection().getType();
+		Type collectionType = statement.getCollection().getType().getType();
 		v.visitMethodInsn(invokeInsn(collectionType), converter.getInternalName(collectionType), "iterator", "()Lbali/Iterator;");
 		v.visitLabel(start);
 		v.visitInsn(DUP);
@@ -268,7 +268,7 @@ public class ASMStackManager implements Opcodes {
 		Label end = new Label();
 		Label next = new Label();
 		push(statement.getValue(), v);
-		Site statementType = statement.getValue().getType();
+		Type statementType = statement.getValue().getType().getType();
 		for (CaseStatementNode caseStatement : statement.getCaseStatements()) {
 			v.visitInsn(DUP);
 			push(caseStatement.getCondition(), v);
@@ -328,8 +328,8 @@ public class ASMStackManager implements Opcodes {
 		v.visitVarInsn(ASTORE, variableIndex);
 	}
 
-	private int invokeInsn(Site t) {
-		return t.getType().isAbstract() ? INVOKEINTERFACE : INVOKEVIRTUAL;
+	private int invokeInsn(Type t) {
+		return t.isAbstract() ? INVOKEINTERFACE : INVOKEVIRTUAL;
 	}
 
 	// Push Methods
@@ -381,7 +381,7 @@ public class ASMStackManager implements Opcodes {
 	}
 
 	public void push(ListLiteralExpressionNode value, MethodVisitor v) {
-		String implName = converter.getInternalName(value.getType());
+		String implName = converter.getInternalName(value.getType().getType());
 		v.visitTypeInsn(NEW, implName);
 		v.visitInsn(DUP);
 		push(value.getValues().size(), v);
@@ -399,12 +399,12 @@ public class ASMStackManager implements Opcodes {
 	public void push(ReferenceNode value, MethodVisitor v) {
 		switch (value.getScope()) {
 			case STATIC: {
-				v.visitFieldInsn(GETSTATIC, converter.getInternalName(value.getHostClass()), value.getName(), converter.getTypeDescriptor(value.getType()));
+				v.visitFieldInsn(GETSTATIC, converter.getInternalName(value.getHostClass()), value.getName(), converter.getTypeDescriptor(value.getType().getType()));
 			}
 			break;
 			case FIELD: {
 				v.visitVarInsn(ALOAD, 0);
-				v.visitFieldInsn(GETFIELD, converter.getInternalName(value.getHostClass()), value.getName(), converter.getTypeDescriptor(value.getType()));
+				v.visitFieldInsn(GETFIELD, converter.getInternalName(value.getHostClass()), value.getName(), converter.getTypeDescriptor(value.getType().getType()));
 			}
 			break;
 			case VARIABLE: {
@@ -415,13 +415,13 @@ public class ASMStackManager implements Opcodes {
 	}
 
 	public void push(ConstructionExpressionNode value, MethodVisitor v) {
-		String internalName = converter.getInternalName(value.getType());
+		String internalName = converter.getInternalName(value.getType().getType());
 		v.visitTypeInsn(NEW, internalName);
 		v.visitInsn(DUP);
-		List<Site> argumentTypes = new ArrayList<>();
+		List<Type> argumentTypes = new ArrayList<>();
 		for (ExpressionNode argumentValue : value.getArguments()) {
 			push(argumentValue, v);
-			argumentTypes.add(argumentValue.getType());
+			argumentTypes.add(argumentValue.getType().getType());
 		}
 		v.visitMethodInsn(INVOKESPECIAL, internalName, "<init>", converter.getMethodDescriptor(null, argumentTypes));
 	}
@@ -458,20 +458,32 @@ public class ASMStackManager implements Opcodes {
 
 	public void pushInvocation(ExpressionNode target, Site valueType, List<ExpressionNode> arguments, String methodName, MethodVisitor v) {
 		push(target, v);
-		List<Site> argumentClasses = new ArrayList<>();
+		List<Type> argumentsErased = new ArrayList<>();
 		for (ExpressionNode argumentValue : arguments) {
 			push(argumentValue, v);
-			argumentClasses.add(argumentValue.getType());
+			argumentsErased.add(getErasure(argumentValue.getType()));
 		}
-		Site targetType = target.getType();
-		Boolean erased = valueType != null && valueType.getErase();
+		Type targetType = target.getType().getType();
+		Type valueErased = getErasure(valueType);
 		v.visitMethodInsn(invokeInsn(targetType),
 				converter.getInternalName(targetType),
 				methodName,
-				converter.getMethodDescriptor(erased ? erasedSite : valueType, argumentClasses));
-		if (erased) {
+				converter.getMethodDescriptor(valueErased, argumentsErased));
+		if (valueType != null && !valueErased.getName().equals(valueType.getName())) {
 			v.visitTypeInsn(CHECKCAST, converter.getInternalName(valueType.getName()));
 		}
+	}
+
+	private Type getErasure(Site site){
+		if (site == null){
+			return null;
+		}
+		if (site instanceof ErasedSite){
+			ErasedSite erased = (ErasedSite) site;
+			Type bound = erased.getBoundType();
+			return bound != null ? bound : erasedType;
+		}
+		return site.getType();
 	}
 
 	public void push(int i, MethodVisitor v) {

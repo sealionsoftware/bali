@@ -80,10 +80,6 @@ public class VanillaSite implements Site {
 		return type.get();
 	}
 
-	public Boolean getErase() {
-		return false;
-	}
-
 	public String toString() {
 		return type.get().getName();
 	}

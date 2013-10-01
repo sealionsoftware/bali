@@ -28,6 +28,4 @@ public interface Site {
 
 	Type getType();
 
-	Boolean getErase();
-
 }

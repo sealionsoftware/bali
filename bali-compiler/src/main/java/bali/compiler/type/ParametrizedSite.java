@@ -14,7 +14,6 @@ public class ParametrizedSite implements Site {
 
 	private Reference<Type> typeReference;
 	private List<Site> typeArguments;
-	private Boolean erase;
 
 	private Type type;
 
@@ -30,14 +29,12 @@ public class ParametrizedSite implements Site {
 	public ParametrizedSite(Type type, List<Site> typeArguments) {
 		this.type = type;
 		this.typeArguments = typeArguments;
-		this.erase = false;
 	}
 
 	// Used inside type construction (to avoid infinite loops)
 	public ParametrizedSite(Reference<Type> typeReference, List<Site> typeArguments) {
 		this.typeReference = typeReference;
 		this.typeArguments = typeArguments;
-		this.erase = true;
 	}
 
 	private Map<String, Declaration> parametriseTypeDeclarations(List<Declaration> parameterDeclarations) {
@@ -142,13 +139,20 @@ public class ParametrizedSite implements Site {
 	}
 
 	private Site parametriseSite(Site original) {
-		if (typeParameters == null){
-			this.typeParameters = parametriseTypeDeclarations(getType().getTypeParameters());
+
+		if (original instanceof VariableSite){
+
+			if (typeParameters == null){
+				this.typeParameters = parametriseTypeDeclarations(getType().getTypeParameters());
+			}
+
+			Declaration ret = typeParameters.get(original.getName());
+			if (ret != null) {
+				return new ErasedSite(ret.getType(), (VariableSite) original);
+			}
+			return original;
 		}
-		Declaration ret = typeParameters.get(original.getName());
-		if (ret != null) {
-			return ret.getType();
-		}
+
 
 		List<Site> parametrisedArguments = new ArrayList<>();
 		for (Declaration argument : original.getTypeParameters()) {
@@ -248,10 +252,6 @@ public class ParametrizedSite implements Site {
 			type = typeReference.get();
 		}
 		return type;
-	}
-
-	public Boolean getErase() {
-		return erase;
 	}
 
 	public String toString() {

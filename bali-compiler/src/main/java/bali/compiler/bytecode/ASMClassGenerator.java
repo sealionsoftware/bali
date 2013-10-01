@@ -108,7 +108,7 @@ public class ASMClassGenerator implements Generator<ClassNode, GeneratedClass> {
 			initv.visitFieldInsn(PUTFIELD,
 					converter.getInternalName(input.getQualifiedClassName()),
 					declaration.getName(),
-					converter.getTypeDescriptor(declaration.getType().getSite()));
+					converter.getTypeDescriptor(declaration.getType()));
 		}
 
 		for (Map.Entry<String, ExpressionNode> valueEntry : values.entrySet()) {
@@ -118,7 +118,7 @@ public class ASMClassGenerator implements Generator<ClassNode, GeneratedClass> {
 			initv.visitFieldInsn(PUTFIELD,
 					converter.getInternalName(input.getQualifiedClassName()),
 					valueEntry.getKey(),
-					converter.getTypeDescriptor(value.getType()));
+					converter.getTypeDescriptor(value.getType().getType()));
 		}
 		initv.visitInsn(POP);
 		initv.visitInsn(RETURN);

@@ -84,10 +84,6 @@ public class VariableSite implements Site {
 		return bound.getType();
 	}
 
-	public Boolean getErase() {
-		return true;
-	}
-
 	public String toString() {
 		return name;
 	}
