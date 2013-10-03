@@ -1,8 +1,11 @@
 package bali.compiler.validation.visitor;
 
 import bali.compiler.parser.tree.UnaryOperationNode;
+import bali.compiler.type.Operator;
 import bali.compiler.type.Site;
+import bali.compiler.type.TypeLibrary;
 import bali.compiler.type.UnaryOperator;
+import bali.compiler.type.VanillaSite;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -21,13 +24,25 @@ import java.util.List;
  */
 public class UnaryOperationValidator implements Validator<UnaryOperationNode> {
 
+	public static final String NULL_CHECK_OPERATOR_NAME = "?";
+
+	private UnaryOperator nullCheck;
+
+	public UnaryOperationValidator(TypeLibrary library) {
+		this.nullCheck = new UnaryOperator(
+				"?",
+				new VanillaSite(library.getType(Boolean.class.getName())),
+				null
+		);
+	}
+
 	public List<ValidationFailure> validate(UnaryOperationNode node) {
 
 		List<ValidationFailure> ret = new ArrayList<>();
 		Site targetType = node.getTarget().getType();
 		String operatorName = node.getOperator();
 
-		UnaryOperator operator = getUnaryOperatorWithName(operatorName, targetType);
+		UnaryOperator operator = operatorName.equals(NULL_CHECK_OPERATOR_NAME) ? nullCheck : getUnaryOperatorWithName(operatorName, targetType);
 
 		if (operator == null) {
 			ret.add(new ValidationFailure(node, "Type " + targetType + " has no method for operator " + operator));

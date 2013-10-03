@@ -44,6 +44,15 @@ public final class CharArrayString implements String {
 		return Arrays.equals(characters, cas.characters) ? IdentityBoolean.TRUE : IdentityBoolean.FALSE;
 	}
 
+	public String uppercase() {
+		char[] upper = new char[characters.length];
+		int i = 0;
+		for(char character : characters){
+			upper[i++] = Character.toUpperCase(character);
+		}
+		return new CharArrayString(upper);
+	}
+
 	public java.lang.String toString() {
 		return new java.lang.String(characters);
 	}

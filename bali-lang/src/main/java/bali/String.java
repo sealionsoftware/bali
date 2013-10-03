@@ -15,4 +15,7 @@ public interface String extends Value<String> {
 	@Operator("+")
 	public String join(String operand);
 
+//	@Operator("^")
+	public String uppercase();
+
 }

@@ -12,4 +12,8 @@ public class StringLiteralExpressionNode extends LiteralExpressionNode {
 	public StringLiteralExpressionNode(Integer line, Integer character) {
 		super(line, character);
 	}
+
+	public String toString(){
+		return "\"" + getSerialization() + "\"";
+	}
 }

@@ -476,9 +476,9 @@ public class ANTLRParserManager implements ParserManager {
 
 		if (context.identifier().size() == 2) {
 			target = getReferenceExpression(context.identifier(0));
-			value.setMethod(context.identifier(1).getText());
+			value.setMethodName(context.identifier(1).getText());
 		} else {
-			value.setMethod(context.identifier(0).getText());
+			value.setMethodName(context.identifier(0).getText());
 			if (context.constantValue() != null) {
 				target = getConstantValue(context.constantValue());
 			} else if (context.invocation() != null) {

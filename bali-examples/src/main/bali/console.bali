@@ -1,0 +1,20 @@
+import bali.Console;
+import bali.String;
+import bali.Executable;
+
+class ConsoleDoer(String greeting) implements Executable {
+
+	method execute(){
+
+		CONSOLE << "What's your name?";
+
+		while (true){
+			String read = << CONSOLE;
+			if (read.uppercase() == "EXIT"){
+				CONSOLE << "Goodbye";
+				break;
+			}
+			CONSOLE << (greeting + " " + read);
+		}
+	}
+}

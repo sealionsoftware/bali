@@ -1,5 +1,7 @@
 package bali.compiler.parser.tree;
 
+import bali.compiler.type.Declaration;
+import bali.compiler.type.Method;
 import bali.compiler.type.Site;
 
 import java.util.ArrayList;
@@ -12,10 +14,10 @@ import java.util.List;
 public class InvocationNode extends ExpressionNode {
 
 	private ExpressionNode target;
-	private String method;
+	private String methodName;
 	private List<ExpressionNode> arguments = new ArrayList<>();
 
-	private Site returnType;
+	private Method resolvedMethod;
 
 	public InvocationNode() {
 	}
@@ -25,19 +27,23 @@ public class InvocationNode extends ExpressionNode {
 	}
 
 	public Site getType() {
-		return returnType;
+		return resolvedMethod.getType();
 	}
 
-	public void setReturnType(Site returnType) {
-		this.returnType = returnType;
+	public Method getResolvedMethod(){
+		return resolvedMethod;
+	}
+
+	public void setResolvedMethod(Method resolvedMethod) {
+		this.resolvedMethod = resolvedMethod;
 	}
 
 	public void setTarget(ExpressionNode target) {
 		this.target = target;
 	}
 
-	public void setMethod(String method) {
-		this.method = method;
+	public void setMethodName(String methodName) {
+		this.methodName = methodName;
 	}
 
 	public void addArgument(ExpressionNode argument) {
@@ -48,8 +54,8 @@ public class InvocationNode extends ExpressionNode {
 		return target;
 	}
 
-	public String getMethod() {
-		return method;
+	public String getMethodName() {
+		return methodName;
 	}
 
 	public List<ExpressionNode> getArguments() {

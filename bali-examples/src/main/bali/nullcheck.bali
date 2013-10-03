@@ -1,0 +1,12 @@
+import bali.String;
+import bali.Executable;
+
+class NullChecker(String greeting) implements Executable {
+
+	method execute(){
+
+		if (?greeting){
+			CONSOLE << greeting;
+		}
+	}
+}

@@ -39,7 +39,6 @@ import bali.compiler.type.Site;
 import bali.compiler.type.Type;
 import bali.compiler.type.TypeLibrary;
 import bali.compiler.type.UnaryOperator;
-import bali.compiler.type.VanillaSite;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -49,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -226,7 +226,7 @@ public class ASMStackManager implements Opcodes {
 		Label start = new Label();
 		v.visitLabel(start);
 		push(statement.getCondition(), v);
-		v.visitFieldInsn(GETSTATIC, "bali/IdentityBoolean", "TRUE", "Lbali/IdentityBoolean;");
+		push(IdentityBoolean.TRUE, v);
 		v.visitJumpInsn(IF_ACMPNE, end);
 		loopContextStack.push(new LoopContext(start, end));
 		execute(statement.getBody(), v);
@@ -427,11 +427,16 @@ public class ASMStackManager implements Opcodes {
 	}
 
 	public void push(InvocationNode value, MethodVisitor v) {
+		List<Site> parameters = new ArrayList<>();
+		for (Declaration declaration : value.getResolvedMethod().getParameters()){
+			parameters.add(declaration.getType());
+		}
 		pushInvocation(
 				value.getTarget(),
 				value.getType(),
+				parameters,
 				value.getArguments(),
-				value.getMethod(),
+				value.getMethodName(),
 				v
 		);
 	}
@@ -440,30 +445,51 @@ public class ASMStackManager implements Opcodes {
 		pushInvocation(
 				value.getTarget(),
 				value.getType(),
+				Collections.<Site>emptyList(),
 				new ArrayList<ExpressionNode>(),
 				value.getResolvedOperator().getMethodName(),
 				v
 		);
 	}
 
+	public void pushNullCheck(ExpressionNode target, MethodVisitor v) {
+		push(target, v);
+		Label isNull = new Label();
+		Label end = new Label();
+		v.visitJumpInsn(IFNULL, isNull);
+		push(IdentityBoolean.TRUE, v);
+		v.visitLabel(isNull);
+		push(IdentityBoolean.FALSE);
+		v.visitJumpInsn(GOTO, end);
+		v.visitLabel(end);
+
+
+	}
+
 	public void push(OperationNode value, MethodVisitor v) {
 		pushInvocation(
 				value.getOne(),
 				value.getType(),
+				Collections.singletonList(value.getResolvedOperator().getParameter()),
 				Collections.singletonList(value.getTwo()),
 				value.getResolvedOperator().getMethodName(),
 				v
 		);
 	}
 
-	public void pushInvocation(ExpressionNode target, Site valueType, List<ExpressionNode> arguments, String methodName, MethodVisitor v) {
+	public void pushInvocation(ExpressionNode target, Site valueType, List<Site> parameterTypes, List<ExpressionNode> arguments, String methodName, MethodVisitor v) {
 		push(target, v);
-		List<Type> argumentsErased = new ArrayList<>();
-		for (ExpressionNode argumentValue : arguments) {
-			push(argumentValue, v);
-			argumentsErased.add(getErasure(argumentValue.getType()));
-		}
 		Type targetType = target.getType().getType();
+		List<Type> argumentsErased = new ArrayList<>();
+
+		Iterator<ExpressionNode> i = arguments.iterator();
+		Iterator<Site> j = parameterTypes.iterator();
+
+		while (i.hasNext()){
+			push(i.next(), v);
+			argumentsErased.add(getErasure(j.next()));
+		}
+
 		Type valueErased = getErasure(valueType);
 		v.visitMethodInsn(invokeInsn(targetType),
 				converter.getInternalName(targetType),
@@ -496,6 +522,10 @@ public class ASMStackManager implements Opcodes {
 		} else {
 			v.visitLdcInsn(i);
 		}
+	}
+
+	private void push(bali.IdentityBoolean b, MethodVisitor v){
+		v.visitFieldInsn(GETSTATIC, "bali/IdentityBoolean", b.name(), "Lbali/IdentityBoolean;");
 	}
 
 }

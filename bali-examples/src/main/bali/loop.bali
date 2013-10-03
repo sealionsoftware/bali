@@ -1,20 +1,20 @@
 import bali.Console;
 import bali.Number;
 import bali.Executable;
+import bali.Value;
 
 class WhileDoer() implements Executable {
 
  	method execute(){
 
-		Number flag = 0;
+		Number i = 0;
 
 	    while (true){
-	        CONSOLE << "Hello";
-	        if (flag == 3){
+	        CONSOLE << ("Hello " + NUMBER_FACTORY.format(i));
+	        if (i == 3){
 	            break;
 	        }
-	        flag = flag + 1;
+	        i = i + 1;
 	    }
  	}
-
 }

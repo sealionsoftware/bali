@@ -22,10 +22,10 @@ class AnObject(String aString, Number aNumber) implements AnInterface {
 	method String getFields(Boolean includeNumber){
 
 		if (includeNumber){
-			return aString + NUMBER_FACTORY.format(aNumber);
+			return aStringField + NUMBER_FACTORY.format(aNumber);
 		}
 
-		return aString;
+		return aStringField;
 	}
 
 }

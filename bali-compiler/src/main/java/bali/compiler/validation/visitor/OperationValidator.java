@@ -3,6 +3,8 @@ package bali.compiler.validation.visitor;
 import bali.compiler.parser.tree.OperationNode;
 import bali.compiler.type.Operator;
 import bali.compiler.type.Site;
+import bali.compiler.type.TypeLibrary;
+import bali.compiler.type.VanillaSite;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;

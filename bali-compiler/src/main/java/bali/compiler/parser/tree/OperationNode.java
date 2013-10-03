@@ -67,4 +67,8 @@ public class OperationNode extends ExpressionNode {
 		children.add(two);
 		return children;
 	}
+
+	public String toString() {
+		return one + " " + operator + " " + two;
+	}
 }

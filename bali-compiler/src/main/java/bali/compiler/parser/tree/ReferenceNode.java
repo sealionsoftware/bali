@@ -76,4 +76,8 @@ public class ReferenceNode extends ExpressionNode {
 	public enum ReferenceScope {
 		STATIC, FIELD, VARIABLE
 	}
+
+	public String toString() {
+		return declaration + " " + name;
+	}
 }
