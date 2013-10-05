@@ -425,7 +425,7 @@ public class ANTLRParserManager implements ParserManager {
 	private UnaryOperationNode buildUnaryOperation(BaliParser.UnaryOperationContext context) {
 		UnaryOperationNode operation = new UnaryOperationNode(l(context), c(context));
 		operation.setOperator(context.OPERATOR().getText());
-		operation.setTarget(buildExpression(context.expressionForOperation()));
+		operation.setTarget(buildExpression(context.expression()));
 		return operation;
 	}
 
@@ -443,6 +443,9 @@ public class ANTLRParserManager implements ParserManager {
 		if (context.operation() != null) {
 			return buildOperation(context.operation());
 		}
+		if (context.unaryOperation() != null) {
+			return buildUnaryOperation(context.unaryOperation());
+		}
 
 		throw new RuntimeException("Could not get value for expression " + context.getText());
 	}
@@ -453,9 +456,6 @@ public class ANTLRParserManager implements ParserManager {
 			return buildExpression(context.expressionForOperation());
 		}
 
-		if (context.unaryOperation() != null) {
-			return buildUnaryOperation(context.unaryOperation());
-		}
 		if (context.operation() != null) {
 			return buildOperation(context.operation());
 		}

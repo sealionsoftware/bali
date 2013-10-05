@@ -2,8 +2,8 @@
 
 class AClass() {
 
-	field Number aField = 1;
-	field String aString = "Hello World";
+	field Number aField = 1
+	field String aString = "Hello World"
 
 	method aVoidMethod(){
 		// Do something
@@ -11,7 +11,7 @@ class AClass() {
 
 	method String aStringMethod(String input){
 		// Do something
-		return "Hello World";
+		return "Hello World"
 	}
 
 }

@@ -15,7 +15,7 @@ STRING_LITERAL:             '"' ~[^"]* '"' ;
 
 NUMBER_LITERAL:             [0-9]+ ('.' [0-9]+)? ;
 
-OPERATOR:                   [\+\-!£$%\^&\*#\~@\?/\\\|<>¬`¦:=]+ ;
+OPERATOR:                   [<>\+\-!£$%\^&\*#\~@\?/\\\|¬`¦:=]+ ;
 
 // Grammar Definition
 
@@ -28,9 +28,9 @@ packageDeclaration:
 	EOF
 ;
 
-importDeclaration:          'import' TYPE_IDENTIFIER ';' ;
+importDeclaration:          'import' TYPE_IDENTIFIER ;
 
-constantDeclaration:        'constant' typeDeclaration CONSTANT_IDENTIFIER '=' constantValue ';' ;
+constantDeclaration:        'constant' typeDeclaration CONSTANT_IDENTIFIER '=' constantValue ;
 
 // functionDeclaration:     'function' typeDeclaration? STANDARD_IDENTIFIER argumentDeclarationList codeBlock ;
 
@@ -40,19 +40,19 @@ classDeclaration:           'class' typeDeclaration argumentDeclarationList ( 'i
 
 beanDeclaration:            'bean' typeDeclaration ( 'extends' typeDeclaration )? '{' propertyDeclaration* '}' ;
 
-fieldDeclaration:           'field' typeDeclaration STANDARD_IDENTIFIER ('=' expression )? ';' ;
+fieldDeclaration:           'field' typeDeclaration STANDARD_IDENTIFIER ('=' expression )? ;
 
 methodDeclaration:          'method' typeDeclaration? STANDARD_IDENTIFIER argumentDeclarationList codeBlock ;
 
-declarationDeclaration:     'declare' typeDeclaration? STANDARD_IDENTIFIER argumentDeclarationList ';' ;
+declarationDeclaration:     'declare' typeDeclaration? STANDARD_IDENTIFIER argumentDeclarationList ;
 
-propertyDeclaration:        'property' typeDeclaration? STANDARD_IDENTIFIER ';' ;
+propertyDeclaration:        'property' typeDeclaration? STANDARD_IDENTIFIER ;
 
 codeBlock:                  '{' statement* '}' ;
 
 statement:                  lineStatement | controlStatement ;
 
-lineStatement:              (variableDeclaration | assignment | returnStatement | throwStatement | breakStatement | continueStatement | expression) ';' ;
+lineStatement:              variableDeclaration | assignment | returnStatement | throwStatement | breakStatement | continueStatement | expression;
 
 controlStatement:           conditionalStatement | tryStatement | whileStatement | forStatement | switchStatement ;
 
@@ -84,7 +84,7 @@ identifier:                 STANDARD_IDENTIFIER | CONSTANT_IDENTIFIER ;
 invocation:                 ((constantValue | identifier) '.')? identifier argumentList
 							|  invocation '.' identifier argumentList ;
 
-unaryOperation:             OPERATOR expressionForOperation ;
+unaryOperation:             OPERATOR expression ;
 
 // Changed due to left recursion
 operation:                  (expressionForOperation OPERATOR)+ expressionForOperation ;
@@ -101,7 +101,7 @@ continueStatement:          'continue' ;
 
 argumentDeclarationList:    '(' (argumentDeclaration ( ',' argumentDeclaration)*)? ')' ;
 
-typeDeclaration:            TYPE_IDENTIFIER ('<'  typeDeclarationList '>')? ;
+typeDeclaration:            TYPE_IDENTIFIER ('['  typeDeclarationList ']')? ;
 
 typeDeclarationList:        typeDeclaration (',' typeDeclaration)* ;
 
@@ -111,9 +111,9 @@ argumentList:               '(' ( expression ( ',' expression)*)? ')' ;
 
 constantValue:              literal | construction ;
 
-expressionForOperation:     constantValue | identifier | invocation | '(' operation ')' ;
+expressionForOperation:     constantValue | identifier | invocation | unaryOperation | '(' unaryOperation ')' | '(' operation ')' ;
 
-expression:                 expressionForOperation | unaryOperation | operation ;
+expression:                 operation | expressionForOperation ;
 
 literal:                    STRING_LITERAL | NUMBER_LITERAL | booleanLiteral | listLiteral ;
 

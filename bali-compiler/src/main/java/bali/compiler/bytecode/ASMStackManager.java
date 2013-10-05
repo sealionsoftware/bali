@@ -39,6 +39,7 @@ import bali.compiler.type.Site;
 import bali.compiler.type.Type;
 import bali.compiler.type.TypeLibrary;
 import bali.compiler.type.UnaryOperator;
+import bali.compiler.validation.visitor.UnaryOperationValidator;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -442,14 +443,19 @@ public class ASMStackManager implements Opcodes {
 	}
 
 	public void push(UnaryOperationNode value, MethodVisitor v) {
-		pushInvocation(
-				value.getTarget(),
-				value.getType(),
-				Collections.<Site>emptyList(),
-				new ArrayList<ExpressionNode>(),
-				value.getResolvedOperator().getMethodName(),
-				v
-		);
+		if (UnaryOperationValidator.NULL_CHECK_OPERATOR_NAME.equals(value.getOperator())){
+			pushNullCheck(value.getTarget(), v);
+
+		} else {
+			pushInvocation(
+					value.getTarget(),
+					value.getType(),
+					Collections.<Site>emptyList(),
+					new ArrayList<ExpressionNode>(),
+					value.getResolvedOperator().getMethodName(),
+					v
+			);
+		}
 	}
 
 	public void pushNullCheck(ExpressionNode target, MethodVisitor v) {
@@ -458,12 +464,10 @@ public class ASMStackManager implements Opcodes {
 		Label end = new Label();
 		v.visitJumpInsn(IFNULL, isNull);
 		push(IdentityBoolean.TRUE, v);
-		v.visitLabel(isNull);
-		push(IdentityBoolean.FALSE);
 		v.visitJumpInsn(GOTO, end);
+		v.visitLabel(isNull);
+		push(IdentityBoolean.FALSE, v);
 		v.visitLabel(end);
-
-
 	}
 
 	public void push(OperationNode value, MethodVisitor v) {

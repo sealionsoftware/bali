@@ -1,6 +1,5 @@
 package bali;
 
-import bali.Boolean;
 import bali.annotation.Operator;
 
 /**

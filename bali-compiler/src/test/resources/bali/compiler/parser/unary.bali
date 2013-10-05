@@ -1,4 +1,4 @@
 {
-	value = !a;
-	value = -a.invoke();
+	value = !a
+	value = -a.invoke()
 }

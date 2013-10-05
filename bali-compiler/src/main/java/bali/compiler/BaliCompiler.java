@@ -143,7 +143,7 @@ public class BaliCompiler {
 						new ListLiteralValidator(library),
 						new ReferenceValidator(library),
 						new InvocationValidator(),
-						new UnaryOperationValidator(),
+						new UnaryOperationValidator(library),
 						new OperationValidator(),
 						new ReturnValueValidator(),
 						new ImplementationValidator(),

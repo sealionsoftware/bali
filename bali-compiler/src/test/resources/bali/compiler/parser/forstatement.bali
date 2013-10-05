@@ -1,6 +1,6 @@
 {
 	for (Type t : iterable) {
-		t.doSomething();
+		t.doSomething()
     }
 
 }

@@ -1,20 +1,20 @@
-import bali.Console;
-import bali.String;
+import bali.Console
+import bali.String
 
-constant String GREETING = "Constant Greeting";
+constant String GREETING = "Constant Greeting"
 
 interface Greeter {
- 	declare greet();
+ 	declare greet()
 }
 
 class ConsoleGreeter() implements Greeter {
 
-	field String greeting = "Field Greeting";
+	field String greeting = "Field Greeting"
 
  	method greet(){
-	    String greetingTwo = "Variable Greeting";
-	    greetingTwo = GREETING;
-		CONSOLE.printLine(greetingTwo);
+	    String greetingTwo = "Variable Greeting"
+	    greetingTwo = GREETING
+		CONSOLE.printLine(greetingTwo)
  	}
 
 }

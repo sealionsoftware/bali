@@ -1,26 +1,26 @@
-import bali.Console;
-import bali.Number;
-import bali.String;
+import bali.Console
+import bali.Number
+import bali.String
 
 interface Doer {
- 	declare goDo();
+ 	declare goDo()
 }
 
 class SwitchDoer() implements Doer {
 
-	field Number operand = 1;
+	field Number operand = 1
 
  	method goDo(){
 
 		switch (operand){
 			case 0: {
-				CONSOLE << "Operand was 0";
+				CONSOLE << "Operand was 0"
 			}
 			case 1: {
-            	CONSOLE << "Operand was 1";
+            	CONSOLE << "Operand was 1"
             }
 			default: {
-				CONSOLE << "?";
+				CONSOLE << "?"
 			}
 		}
 

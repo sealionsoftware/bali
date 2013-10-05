@@ -1,31 +1,31 @@
-import bali.Boolean;
-import bali.Number;
-import bali.String;
-import bali.Executable;
+import bali.Boolean
+import bali.Number
+import bali.String
+import bali.Executable
 
 bean ABean {
 
-	property String aProperty;
+	property String aProperty
 
 }
 
 interface AnInterface {
 
-	declare String getFields(Boolean includeNumber);
+	declare String getFields(Boolean includeNumber)
 
 }
 
 class AnObject(String aString, Number aNumber) implements AnInterface {
 
-	field String aStringField = aString;
+	field String aStringField = aString
 
 	method String getFields(Boolean includeNumber){
 
 		if (includeNumber){
-			return aStringField + NUMBER_FACTORY.format(aNumber);
+			return aStringField + NUMBER_FACTORY.format(aNumber)
 		}
 
-		return aStringField;
+		return aStringField
 	}
 
 }
@@ -34,10 +34,10 @@ class ObjectConstructor() implements Executable {
 
  	method execute(){
 
- 	    AnInterface anObject = new AnObject("TEST", 6);
+ 	    AnInterface anObject = new AnObject("TEST", 6)
 
- 	    CONSOLE << anObject.getFields(false);
- 	    CONSOLE << anObject.getFields(true);
+ 	    CONSOLE << anObject.getFields(false)
+ 	    CONSOLE << anObject.getFields(true)
 
  	}
 

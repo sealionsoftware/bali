@@ -1,13 +1,13 @@
 interface AnInterface {
 
-	declare aVoidMethod();
+	declare aVoidMethod()
 
-	declare String aStringMethod(String input);
+	declare String aStringMethod(String input)
 
 }
 
 interface AnotherInterface {
 
-	declare aVoidAnotherMethod();
+	declare aVoidAnotherMethod()
 
 }

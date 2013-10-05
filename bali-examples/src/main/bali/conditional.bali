@@ -1,23 +1,23 @@
-import bali.Console;
-import bali.Boolean;
+import bali.Console
+import bali.Boolean
 
 interface Doer {
- 	declare goDo();
+ 	declare goDo()
 }
 
 class ConditionalDoer() implements Doer {
 
  	method goDo(){
 
- 	    Boolean one = false;
- 	    Boolean two = true;
+ 	    Boolean one = false
+ 	    Boolean two = true
 
 	    if (one){
-	        CONSOLE << "First Block";
+	        CONSOLE << "First Block"
 	    } else if (two){
-	        CONSOLE << "Second Block";
+	        CONSOLE << "Second Block"
 	    } else {
-	        CONSOLE << "Third Block";
+	        CONSOLE << "Third Block"
 	    }
  	}
 
