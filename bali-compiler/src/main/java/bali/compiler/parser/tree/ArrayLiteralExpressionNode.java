@@ -7,11 +7,11 @@ import java.util.List;
  * User: Richard
  * Date: 02/05/13
  */
-public class ListLiteralExpressionNode extends LiteralExpressionNode {
+public class ArrayLiteralExpressionNode extends LiteralExpressionNode {
 
 	private List<ExpressionNode> values = new ArrayList<>();
 
-	public ListLiteralExpressionNode(Integer line, Integer character) {
+	public ArrayLiteralExpressionNode(Integer line, Integer character) {
 		super(line, character);
 	}
 

@@ -16,7 +16,7 @@ import bali.compiler.parser.tree.DeclarationNode;
 import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.ForStatementNode;
 import bali.compiler.parser.tree.InvocationNode;
-import bali.compiler.parser.tree.ListLiteralExpressionNode;
+import bali.compiler.parser.tree.arrayLiteralExpressionNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.NumberLiteralExpressionNode;
 import bali.compiler.parser.tree.OperationNode;
@@ -342,8 +342,8 @@ public class ASMStackManager implements Opcodes {
 			push((BooleanLiteralExpressionNode) value, v);
 		} else if (value instanceof StringLiteralExpressionNode) {
 			push((StringLiteralExpressionNode) value, v);
-		} else if (value instanceof ListLiteralExpressionNode) {
-			push((ListLiteralExpressionNode) value, v);
+		} else if (value instanceof ArrayLiteralExpressionNode) {
+			push((ArrayLiteralExpressionNode) value, v);
 		} else if (value instanceof ReferenceNode) {
 			push((ReferenceNode) value, v);
 		} else if (value instanceof ConstructionExpressionNode) {
@@ -381,7 +381,7 @@ public class ASMStackManager implements Opcodes {
 		v.visitMethodInsn(INVOKESPECIAL, internalName, "<init>", "([C)V");
 	}
 
-	public void push(ListLiteralExpressionNode value, MethodVisitor v) {
+	public void push(ArrayLiteralExpressionNode value, MethodVisitor v) {
 		String implName = converter.getInternalName(value.getType().getType());
 		v.visitTypeInsn(NEW, implName);
 		v.visitInsn(DUP);

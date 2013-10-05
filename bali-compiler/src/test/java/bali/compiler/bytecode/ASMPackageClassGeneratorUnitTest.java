@@ -13,7 +13,7 @@ import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.ConstantNode;
 import bali.compiler.parser.tree.ConstructionExpressionNode;
 import bali.compiler.parser.tree.ExpressionNode;
-import bali.compiler.parser.tree.ListLiteralExpressionNode;
+import bali.compiler.parser.tree.ArrayLiteralExpressionNode;
 import bali.compiler.parser.tree.NumberLiteralExpressionNode;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.parser.tree.StringLiteralExpressionNode;
@@ -75,7 +75,7 @@ public class ASMPackageClassGeneratorUnitTest {
 		NumberLiteralExpressionNode three = new NumberLiteralExpressionNode(0, 0);
 		three.setSerialization("3");
 
-		ListLiteralExpressionNode llv = new ListLiteralExpressionNode(0, 0);
+		ArrayLiteralExpressionNode llv = new ArrayLiteralExpressionNode(0, 0);
 		llv.addValue(one);
 		llv.addValue(two);
 		llv.addValue(three);

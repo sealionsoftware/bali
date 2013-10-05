@@ -115,8 +115,8 @@ expressionForOperation:     constantValue | identifier | invocation | unaryOpera
 
 expression:                 operation | expressionForOperation ;
 
-literal:                    STRING_LITERAL | NUMBER_LITERAL | booleanLiteral | listLiteral ;
+literal:                    STRING_LITERAL | NUMBER_LITERAL | booleanLiteral | arrayLiteral ;
 
-listLiteral:                '[' (expression (',' expression)*)? ']' ;
+arrayLiteral:                '[' (expression (',' expression)*)? ']' ;
 
 booleanLiteral:             'true' | 'false' ;

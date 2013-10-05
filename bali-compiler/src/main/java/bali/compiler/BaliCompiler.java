@@ -10,7 +10,6 @@ import bali.compiler.module.ModuleWriter;
 import bali.compiler.parser.ANTLRParserManager;
 import bali.compiler.parser.ParserManager;
 import bali.compiler.parser.tree.CompilationUnitNode;
-import bali.compiler.parser.tree.Node;
 import bali.compiler.type.TypeLibrary;
 import bali.compiler.validation.ConfigurableValidationEngine;
 import bali.compiler.validation.ValidationEngine;
@@ -27,7 +26,7 @@ import bali.compiler.validation.visitor.ImplementationValidator;
 import bali.compiler.validation.visitor.ImportsValidator;
 import bali.compiler.validation.visitor.InterfaceValidator;
 import bali.compiler.validation.visitor.InvocationValidator;
-import bali.compiler.validation.visitor.ListLiteralValidator;
+import bali.compiler.validation.visitor.ArrayLiteralValidator;
 import bali.compiler.validation.visitor.NumberLiteralValidator;
 import bali.compiler.validation.visitor.OperationValidator;
 import bali.compiler.validation.visitor.ReferenceValidator;
@@ -36,7 +35,6 @@ import bali.compiler.validation.visitor.StringLiteralValidator;
 import bali.compiler.validation.visitor.ThrowStatementValidator;
 import bali.compiler.validation.visitor.TypeResolvingValidator;
 import bali.compiler.validation.visitor.UnaryOperationValidator;
-import bali.compiler.validation.visitor.Validator;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -130,7 +128,7 @@ public class BaliCompiler {
 
 		BaliCompiler compiler = new BaliCompiler(
 				new ANTLRParserManager(),
-				new ConfigurableValidationEngine(new Array<Validator<? extends Node>>(new Validator<?>[]{
+				new ConfigurableValidationEngine(new ArrayList<>(Arrays.asList(
 						new ImportsValidator(library),
 						new DeclaredTypeValidator(library),
 						new TypeResolvingValidator(library),
@@ -140,7 +138,7 @@ public class BaliCompiler {
 						new BooleanLiteralValidator(library),
 						new NumberLiteralValidator(library),
 						new StringLiteralValidator(library),
-						new ListLiteralValidator(library),
+						new ArrayLiteralValidator(library),
 						new ReferenceValidator(library),
 						new InvocationValidator(),
 						new UnaryOperationValidator(library),
@@ -151,7 +149,7 @@ public class BaliCompiler {
 						new ConstructionValidator(library),
 						new ThrowStatementValidator(library),
 						new BranchStatementValidator()
-				})),
+				))),
 				new ConfigurablePackageGenerator(
 						new ASMPackageClassGenerator(library),
 						new ASMInterfaceGenerator(),

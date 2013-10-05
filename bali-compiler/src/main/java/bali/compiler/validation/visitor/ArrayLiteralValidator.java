@@ -2,7 +2,7 @@ package bali.compiler.validation.visitor;
 
 import bali.collection.Array;
 import bali.compiler.parser.tree.ExpressionNode;
-import bali.compiler.parser.tree.ListLiteralExpressionNode;
+import bali.compiler.parser.tree.ArrayLiteralExpressionNode;
 import bali.compiler.type.ParametrizedSite;
 import bali.compiler.type.Site;
 import bali.compiler.type.Type;
@@ -17,15 +17,15 @@ import java.util.List;
  * User: Richard
  * Date: 14/05/13
  */
-public class ListLiteralValidator implements Validator<ListLiteralExpressionNode> {
+public class ArrayLiteralValidator implements Validator<ArrayLiteralExpressionNode> {
 
 	private Type arrayType;
 
-	public ListLiteralValidator(TypeLibrary library) {
+	public ArrayLiteralValidator(TypeLibrary library) {
 		this.arrayType = library.getType(Array.class.getName());
 	}
 
-	public List<ValidationFailure> validate(ListLiteralExpressionNode literal) {
+	public List<ValidationFailure> validate(ArrayLiteralExpressionNode literal) {
 
 		List<ValidationFailure> failures = new ArrayList<>();
 

@@ -21,7 +21,7 @@ import bali.compiler.parser.tree.ForStatementNode;
 import bali.compiler.parser.tree.ImportNode;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.InvocationNode;
-import bali.compiler.parser.tree.ListLiteralExpressionNode;
+import bali.compiler.parser.tree.ArrayLiteralExpressionNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.MethodNode;
 import bali.compiler.parser.tree.NumberLiteralExpressionNode;
@@ -526,9 +526,9 @@ public class ANTLRParserManager implements ParserManager {
 				nlv.setSerialization(lc.NUMBER_LITERAL().getText());
 				return nlv;
 			}
-			if (lc.listLiteral() != null) {
-				ListLiteralExpressionNode llv = new ListLiteralExpressionNode(l(context), c(context));
-				for (BaliParser.ExpressionContext v : lc.listLiteral().expression()) {
+			if (lc.arrayLiteral() != null) {
+				ArrayLiteralExpressionNode llv = new ArrayLiteralExpressionNode(l(context), c(context));
+				for (BaliParser.ExpressionContext v : lc.arrayLiteral().expression()) {
 					llv.addValue(buildExpression(v));
 				}
 				return llv;
