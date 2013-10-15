@@ -26,7 +26,9 @@ public class InterfaceValidator implements Validator {
 	}
 
 	public List<ValidationFailure> validate(Node node, Control control) {
-		if (node instanceof InterfaceNode){
+		if (node instanceof CompilationUnitNode){
+			library.checkTypesComplete();
+		} else if (node instanceof InterfaceNode){
 			InterfaceNode iface = (InterfaceNode) node;
 			Type resolved = library.addDeclaration(iface);
 			iface.setResolvedType(resolved);
@@ -36,6 +38,5 @@ public class InterfaceValidator implements Validator {
 	}
 
 	public void onCompletion() {
-		library.localInterfacesComplete();
 	}
 }

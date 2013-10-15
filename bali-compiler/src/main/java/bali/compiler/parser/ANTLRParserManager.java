@@ -552,7 +552,6 @@ public class ANTLRParserManager implements ParserManager {
 		if (parameterTypes != null) {
 			for (BaliParser.TypeDeclarationContext typeDeclaration : parameterTypes.typeDeclaration()) {
 				SiteNode parameterType = getType(typeDeclaration);
-				parameterType.setErase(true);
 				returnType.addParameter(parameterType);
 			}
 		}

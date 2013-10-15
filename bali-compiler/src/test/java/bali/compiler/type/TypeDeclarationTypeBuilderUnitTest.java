@@ -49,7 +49,6 @@ public class TypeDeclarationTypeBuilderUnitTest {
 
 		SiteNode superInterface = new SiteNode();
 		superInterface.setClassName("ASuperInterface");
-		superInterface.setErase(false);
 		superInterface.setSite(new VanillaSite(library.getType("test.ASuperInterface")));
 
 		InterfaceNode node = new InterfaceNode();

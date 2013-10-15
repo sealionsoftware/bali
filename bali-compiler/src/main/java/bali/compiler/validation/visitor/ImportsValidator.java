@@ -1,5 +1,6 @@
 package bali.compiler.validation.visitor;
 
+import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.ImportNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.type.Type;
@@ -25,9 +26,9 @@ public class ImportsValidator implements Validator {
 	}
 
 	public List<ValidationFailure> validate(Node node, Control control) {
-
-		if (node instanceof ImportNode){
-			library.checkCompilationTypesComplete();
+		if (node instanceof CompilationUnitNode){
+			library.checkTypesComplete();
+		} else if (node instanceof ImportNode){
 			List<ValidationFailure> failures = new ArrayList<>();
 			ImportNode iport = (ImportNode) node;
 			try {

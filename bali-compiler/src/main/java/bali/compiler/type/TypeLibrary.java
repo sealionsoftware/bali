@@ -1,6 +1,7 @@
 package bali.compiler.type;
 
 import bali.compiler.parser.tree.TypeNode;
+import bali.compiler.reference.BlockingReference;
 import bali.compiler.reference.Reference;
 import bali.compiler.reference.Semaphore;
 import bali.compiler.reference.SimpleReference;
@@ -14,15 +15,13 @@ import java.util.Map;
  */
 public class TypeLibrary {
 
-	private TypeDeclarationTypeBuilder declarationBuilder = new TypeDeclarationTypeBuilder(this);
-	private ClasspathTypeBuilder classpathBuilder = new ClasspathTypeBuilder(this);
-	private Map<String, Reference<Type>> types = new HashMap<>();
-
-	private Semaphore localClassesComplete = new Semaphore();
-	private Semaphore localInterfacesComplete = new Semaphore();
+	private final TypeDeclarationTypeBuilder declarationBuilder = new TypeDeclarationTypeBuilder(this);
+	private final ClasspathTypeBuilder classpathBuilder = new ClasspathTypeBuilder(this);
+	private final Map<String, Reference<Type>> types = new HashMap<>();
+	private Semaphore localTypesComplete = new Semaphore();
 
 	public void notifyOfDeclaration(String qualifiedClassName) {
-		Reference<Type> reference = new SimpleReference<>();
+		Reference<Type> reference = new BlockingReference<>();
 		types.put(qualifiedClassName, reference);
 	}
 
@@ -33,18 +32,12 @@ public class TypeLibrary {
 		return ret;
 	}
 
-	public void localClassesComplete() {
-		localClassesComplete.release();
+	public void localTypesComplete() {
+		localTypesComplete.release();
 	}
 
-	public void localInterfacesComplete() {
-		localInterfacesComplete.release();
-	}
-
-
-	public void checkCompilationTypesComplete(){
-		localClassesComplete.check();
-		localInterfacesComplete.check();
+	public void checkTypesComplete() {
+		localTypesComplete.check();
 	}
 
 	public Type getType(String fullyQualifiedClassName) {
@@ -57,11 +50,10 @@ public class TypeLibrary {
 			return cached;
 		}
 
-		cached = new SimpleReference<>();
+		cached = new BlockingReference<>();
 		types.put(fullyQualifiedClassName, cached);
 		Type built = classpathBuilder.build(fullyQualifiedClassName);
 		cached.set(built);
-
 		return cached;
 	}
 

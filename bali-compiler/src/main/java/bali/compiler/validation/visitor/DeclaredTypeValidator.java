@@ -42,6 +42,7 @@ public class DeclaredTypeValidator implements Validator {
 	}
 
 	public void onCompletion() {
+		library.localTypesComplete();
 	}
 
 }

@@ -43,6 +43,7 @@ public class ClassValidator implements Validator {
 	}
 
 	public List<ValidationFailure> validate(CompilationUnitNode node) {
+		library.checkTypesComplete();
 		unitName = node.getName();
 		return Collections.emptyList();
 	}
@@ -73,6 +74,5 @@ public class ClassValidator implements Validator {
 	}
 
 	public void onCompletion() {
-		library.localClassesComplete();
 	}
 }
