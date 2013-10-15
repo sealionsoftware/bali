@@ -5,6 +5,7 @@ import org.objectweb.asm.ClassReader;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class PackageConstantsBuilder {
 		try {
 			InputStream classFileStream = classLoader.getResourceAsStream(className);
 			if (classFileStream == null){
-				return Collections.emptyList();
+				return new ArrayList<>();
 			}
 			reader = new ClassReader(classFileStream);
 		} catch (IOException e) {

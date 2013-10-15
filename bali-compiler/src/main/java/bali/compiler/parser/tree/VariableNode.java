@@ -21,6 +21,7 @@ public class VariableNode extends StatementNode {
 	}
 
 	public void setDeclaration(DeclarationNode declaration) {
+		children.add(declaration);
 		this.declaration = declaration;
 	}
 
@@ -29,20 +30,12 @@ public class VariableNode extends StatementNode {
 	}
 
 	public void setValue(ExpressionNode value) {
+		children.add(value);
 		this.value = value;
 	}
 
 	public VariableNode(Integer line, Integer character) {
 		super(line, character);
-	}
-
-	public List<Node> getChildren() {
-		List<Node> children = new ArrayList<>();
-		children.add(declaration);
-		if (value != null){
-			children.add(value);
-		}
-		return children;
 	}
 
 }

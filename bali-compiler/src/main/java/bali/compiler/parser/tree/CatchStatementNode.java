@@ -25,6 +25,7 @@ public class CatchStatementNode extends StatementNode {
 
 	public void setDeclaration(DeclarationNode declaration) {
 		this.declaration = declaration;
+		children.add(declaration);
 	}
 
 	public CodeBlockNode getCodeBlock() {
@@ -33,12 +34,7 @@ public class CatchStatementNode extends StatementNode {
 
 	public void setCodeBlock(CodeBlockNode codeBlock) {
 		this.codeBlock = codeBlock;
+		children.add(codeBlock);
 	}
 
-	public List<Node> getChildren() {
-		List<Node> children = new ArrayList<>();
-		children.add(declaration);
-		children.add(codeBlock);
-		return children;
-	}
 }

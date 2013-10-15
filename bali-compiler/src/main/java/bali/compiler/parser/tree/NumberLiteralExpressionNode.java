@@ -8,9 +8,6 @@ import bali.compiler.type.Site;
  */
 public class NumberLiteralExpressionNode extends LiteralExpressionNode {
 
-	private String serialization;
-	private Site type;
-
 	public NumberLiteralExpressionNode() {
 	}
 

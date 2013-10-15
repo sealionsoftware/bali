@@ -14,13 +14,10 @@ import java.util.List;
  * User: Richard
  * Date: 08/07/13
  */
-public class BranchStatementValidator implements Validator<MethodDeclarationNode> {
+public class BranchStatementValidator implements Validator {
 
-	public List<ValidationFailure> validate(MethodDeclarationNode node) {
-		return walk(node);
-	}
+	public List<ValidationFailure> validate(Node node, Control control) {
 
-	private List<ValidationFailure> walk(Node node) {
 		List<ValidationFailure> failures = new ArrayList<>();
 		if (node instanceof LoopStatementNode) {
 			return failures;
@@ -31,10 +28,10 @@ public class BranchStatementValidator implements Validator<MethodDeclarationNode
 		if (node instanceof ContinueStatementNode) {
 			failures.add(new ValidationFailure(node, "Continue statements cannot be used outside of loops"));
 		}
-		for (Node child : node.getChildren()) {
-			walk(child);
-		}
 
 		return failures;
+	}
+
+	public void onCompletion() {
 	}
 }

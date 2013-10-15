@@ -21,11 +21,7 @@ public abstract class LoopStatementNode extends StatementNode {
 
 	public void setBody(CodeBlockNode body) {
 		this.body = body;
+		children.add(body);
 	}
 
-	public List<Node> getChildren() {
-		List<Node> ret = new ArrayList<>();
-		ret.add(body);
-		return ret;
-	}
 }

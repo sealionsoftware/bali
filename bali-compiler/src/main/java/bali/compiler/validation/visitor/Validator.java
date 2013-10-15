@@ -9,8 +9,10 @@ import java.util.List;
  * User: Richard
  * Date: 14/05/13
  */
-public interface Validator<T extends Node> {
+public interface Validator {
 
-	public List<ValidationFailure> validate(T node);
+	public List<ValidationFailure> validate(Node node, Control control);
+
+	public void onCompletion();
 
 }

@@ -10,76 +10,61 @@ import bali.compiler.type.Site;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * User: Richard
  * Date: 14/05/13
  */
-public class AssignmentValidator implements Validator<CompilationUnitNode> {
+public class AssignmentValidator implements Validator {
 
-	private AssignmentAgent assignmentAgent = new AssignmentAgent();
-	private FieldAgent fieldAgent = new FieldAgent();
 
-	public List<ValidationFailure> validate(CompilationUnitNode unit) {
-		return walk(unit);
+	public List<ValidationFailure> validate(Node node, Control control) {
+		if (node instanceof AssignmentNode) {
+			return validate((AssignmentNode) node);
+		} else if (node instanceof FieldNode) {
+			return validate((FieldNode) node);
+		}
+		return Collections.emptyList();
 	}
 
-	public List<ValidationFailure> walk(Node node) {
+	public List<ValidationFailure> validate(AssignmentNode statement) {
+
 		List<ValidationFailure> failures = new ArrayList<>();
-		if (node instanceof AssignmentNode) {
-			failures.addAll(assignmentAgent.validate((AssignmentNode) node));
+
+		ReferenceNode reference = statement.getReference();
+		Site site = reference.getType();
+		Site value = statement.getValue().getType();
+
+		if (value == null || !value.isAssignableTo(site)) {
+			failures.add(new ValidationFailure(statement, "Cannot assign expression of type " + value + " to reference of type " + site));
 		}
-		if (node instanceof FieldNode) {
-			failures.addAll(fieldAgent.validate((FieldNode) node));
+		if (reference.getFinal()) {
+			failures.add(new ValidationFailure(statement, "Cannot assign an expression to a constant reference"));
 		}
-		for (Node child : node.getChildren()) {
-			failures.addAll(walk(child));
-		}
+
 		return failures;
 	}
 
-	public static class AssignmentAgent implements Validator<AssignmentNode> {
+	public List<ValidationFailure> validate(FieldNode field) {
 
-		public List<ValidationFailure> validate(AssignmentNode statement) {
+		List<ValidationFailure> failures = new ArrayList<>();
 
-			List<ValidationFailure> failures = new ArrayList<>();
+		ExpressionNode value = field.getValue();
 
-			ReferenceNode reference = statement.getReference();
-			Site site = reference.getType();
-			Site value = statement.getValue().getType();
+		if (value != null) {
 
-			if (value == null || !value.isAssignableTo(site)) {
-				failures.add(new ValidationFailure(statement, "Cannot assign expression of type " + value + " to reference of type " + site));
+			Site site = field.getType().getSite();
+
+			if (!value.getType().isAssignableTo(site)) {
+				failures.add(new ValidationFailure(field, "Cannot assign expression of type " + value + " to reference of type " + site));
 			}
-			if (reference.getFinal()) {
-				failures.add(new ValidationFailure(statement, "Cannot assign an expression to a constant reference"));
-			}
-
-			return failures;
 		}
 
+		return failures;
 	}
 
-	public static class FieldAgent implements Validator<FieldNode> {
-
-		public List<ValidationFailure> validate(FieldNode field) {
-
-			List<ValidationFailure> failures = new ArrayList<>();
-
-			ExpressionNode value = field.getValue();
-
-			if (value != null) {
-
-				Site site = field.getType().getSite();
-
-				if (!value.getType().isAssignableTo(site)) {
-					failures.add(new ValidationFailure(field, "Cannot assign expression of type " + value + " to reference of type " + site));
-				}
-			}
-
-			return failures;
-		}
-
+	public void onCompletion() {
 	}
 }

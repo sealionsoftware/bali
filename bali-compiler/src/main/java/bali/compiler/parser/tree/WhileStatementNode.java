@@ -19,13 +19,8 @@ public class WhileStatementNode extends LoopStatementNode {
 	}
 
 	public void setCondition(ExpressionNode condition) {
+		this.children.add(condition);
 		this.condition = condition;
 	}
 
-	public List<Node> getChildren() {
-		List<Node> children = super.getChildren();
-		children.add(condition);
-		children.add(body);
-		return children;
-	}
 }

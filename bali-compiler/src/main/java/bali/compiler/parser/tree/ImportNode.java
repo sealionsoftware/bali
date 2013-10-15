@@ -1,5 +1,6 @@
 package bali.compiler.parser.tree;
 
+import bali.compiler.reference.BlockingReference;
 import bali.compiler.type.Type;
 
 import java.util.Collections;
@@ -12,7 +13,8 @@ import java.util.List;
 public class ImportNode extends Node {
 
 	private String name;
-	private Type type;
+
+	private BlockingReference<Type> type = new BlockingReference<>();
 
 	public ImportNode() {
 	}
@@ -30,14 +32,11 @@ public class ImportNode extends Node {
 	}
 
 	public Type getType() {
-		return type;
+		return type.get();
 	}
 
 	public void setType(Type type) {
-		this.type = type;
+		this.type.set(type);
 	}
 
-	public List<Node> getChildren() {
-		return Collections.emptyList();
-	}
 }

@@ -24,18 +24,22 @@ public class CompilationUnitNode extends Node {
 	}
 
 	public void addImport(ImportNode iport){
+		children.add(iport);
 		imports.add(iport);
 	}
 
 	public void addConstant(ConstantNode constant){
+		children.add(constant);
 		constants.add(constant);
 	}
 
 	public void addInterface(InterfaceNode iface){
+		children.add(iface);
 		interfaces.add(iface);
 	}
 
 	public void addClass(ClassNode clazz){
+		children.add(clazz);
 		classes.add(clazz);
 	}
 
@@ -57,14 +61,5 @@ public class CompilationUnitNode extends Node {
 
 	public List<ClassNode> getClasses() {
 		return classes;
-	}
-
-	public List<Node> getChildren() {
-		List<Node> nodes = new ArrayList<>();
-		nodes.addAll(imports);
-		nodes.addAll(constants);
-		nodes.addAll(interfaces);
-		nodes.addAll(classes);
-		return nodes;
 	}
 }

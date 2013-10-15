@@ -1,5 +1,7 @@
 package bali.compiler.type;
 
+import bali.compiler.reference.BlockingReference;
+import bali.compiler.reference.Reference;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;

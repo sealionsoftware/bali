@@ -1,5 +1,8 @@
 package bali.compiler.type;
 
+import bali.compiler.reference.BlockingReference;
+import bali.compiler.reference.Reference;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;

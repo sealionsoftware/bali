@@ -23,12 +23,6 @@
 			<version>4.0</version>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.ow2.asm</groupId>
 			<artifactId>asm</artifactId>
 			<version>4.1</version>
@@ -39,14 +33,16 @@
 			<version>4.1</version>
 		</dependency>
 		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
 			<version>1.8.5</version>
-		</dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.16</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -63,6 +59,9 @@
 						<goals>
 							<goal>antlr4</goal>
 						</goals>
+						<configuration>
+							<listener>false</listener>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

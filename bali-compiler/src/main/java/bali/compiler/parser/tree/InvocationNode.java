@@ -1,5 +1,6 @@
 package bali.compiler.parser.tree;
 
+import bali.compiler.reference.BlockingReference;
 import bali.compiler.type.Declaration;
 import bali.compiler.type.Method;
 import bali.compiler.type.Site;
@@ -17,7 +18,7 @@ public class InvocationNode extends ExpressionNode {
 	private String methodName;
 	private List<ExpressionNode> arguments = new ArrayList<>();
 
-	private Method resolvedMethod;
+	private BlockingReference<Method> resolvedMethod = new BlockingReference<>();
 
 	public InvocationNode() {
 	}
@@ -27,18 +28,19 @@ public class InvocationNode extends ExpressionNode {
 	}
 
 	public Site getType() {
-		return resolvedMethod.getType();
+		return resolvedMethod.get().getType();
 	}
 
 	public Method getResolvedMethod(){
-		return resolvedMethod;
+		return resolvedMethod.get();
 	}
 
 	public void setResolvedMethod(Method resolvedMethod) {
-		this.resolvedMethod = resolvedMethod;
+		this.resolvedMethod.set(resolvedMethod);
 	}
 
 	public void setTarget(ExpressionNode target) {
+		children.add(target);
 		this.target = target;
 	}
 
@@ -47,6 +49,7 @@ public class InvocationNode extends ExpressionNode {
 	}
 
 	public void addArgument(ExpressionNode argument) {
+		children.add(argument);
 		arguments.add(argument);
 	}
 
@@ -62,12 +65,4 @@ public class InvocationNode extends ExpressionNode {
 		return arguments;
 	}
 
-	public List<Node> getChildren() {
-		List<Node> children = new ArrayList<>();
-		if (target != null) {
-			children.add(target);
-		}
-		children.addAll(arguments);
-		return children;
-	}
 }

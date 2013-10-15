@@ -18,6 +18,7 @@ public class MethodDeclarationNode extends MethodNode {
 	}
 
 	public void setBody(CodeBlockNode body) {
+		children.add(body);
 		this.body = body;
 	}
 
@@ -31,11 +32,5 @@ public class MethodDeclarationNode extends MethodNode {
 
 	public void setDeclared(Boolean declared) {
 		isDeclared = declared;
-	}
-
-	public List<Node> getChildren() {
-		List<Node> children = super.getChildren();
-		children.add(body);
-		return children;
 	}
 }

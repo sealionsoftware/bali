@@ -17,10 +17,12 @@ public class ConditionalBlockNode extends Node {
 	}
 
 	public void setCondition(ExpressionNode condition) {
+		children.add(condition);
 		this.condition = condition;
 	}
 
 	public void setBody(CodeBlockNode body) {
+		children.add(body);
 		this.body = body;
 	}
 
@@ -30,12 +32,5 @@ public class ConditionalBlockNode extends Node {
 
 	public CodeBlockNode getBody() {
 		return body;
-	}
-
-	public List<Node> getChildren() {
-		List<Node> children = new ArrayList<>();
-		children.add(condition);
-		children.add(body);
-		return children;
 	}
 }

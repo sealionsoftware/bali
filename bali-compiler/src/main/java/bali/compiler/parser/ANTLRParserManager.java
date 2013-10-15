@@ -108,7 +108,6 @@ public class ANTLRParserManager implements ParserManager {
 		return context.getStart().getCharPositionInLine();
 	}
 
-
 	private ImportNode buildImport(BaliParser.ImportDeclarationContext context) {
 		ImportNode iport = new ImportNode(l(context), c(context));
 		iport.setName(context.TYPE_IDENTIFIER().getText());

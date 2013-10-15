@@ -6,6 +6,7 @@ import bali.compiler.parser.tree.DeclarationNode;
 import bali.compiler.parser.tree.ImportNode;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
+import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.type.Declaration;
 import bali.compiler.type.Method;
@@ -14,6 +15,7 @@ import bali.compiler.type.Type;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,7 +28,18 @@ import java.util.Set;
  * User: Richard
  * Date: 14/05/13
  */
-public class ImplementationValidator implements Validator<CompilationUnitNode> {
+public class ImplementationValidator implements Validator {
+
+	private Set<Type> interfaces;
+
+	public List<ValidationFailure> validate(Node node, Control control) {
+		if (node instanceof CompilationUnitNode){
+			return validate((CompilationUnitNode) node);
+		} else if (node instanceof ClassNode){
+			return validate((ClassNode) node);
+		}
+		return Collections.emptyList();
+	}
 
 	public List<ValidationFailure> validate(CompilationUnitNode unit) {
 
@@ -42,15 +55,11 @@ public class ImplementationValidator implements Validator<CompilationUnitNode> {
 			}
 		}
 
-		List<ValidationFailure> failures = new ArrayList<>();
-		for (ClassNode clazz : unit.getClasses()) {
-			failures.addAll(validate(clazz, interfaces));
-		}
-		return failures;
-
+		this.interfaces = interfaces;
+		return Collections.emptyList();
 	}
 
-	private List<ValidationFailure> validate(ClassNode classNode, Set<Type> interfaces) {
+	private List<ValidationFailure> validate(ClassNode classNode) {
 
 		List<ValidationFailure> failures = new ArrayList<>();
 
@@ -93,6 +102,9 @@ public class ImplementationValidator implements Validator<CompilationUnitNode> {
 
 		}
 		return failures;
+	}
+
+	public void onCompletion() {
 	}
 
 }

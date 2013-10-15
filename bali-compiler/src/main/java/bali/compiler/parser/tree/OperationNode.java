@@ -1,5 +1,6 @@
 package bali.compiler.parser.tree;
 
+import bali.compiler.reference.BlockingReference;
 import bali.compiler.type.Operator;
 import bali.compiler.type.Site;
 
@@ -16,7 +17,7 @@ public class OperationNode extends ExpressionNode {
 	private ExpressionNode two;
 	private String operator;
 
-	private Operator resolvedOperator;
+	private BlockingReference<Operator> resolvedOperator = new BlockingReference<>();
 
 	public OperationNode() {
 	}
@@ -26,10 +27,12 @@ public class OperationNode extends ExpressionNode {
 	}
 
 	public void setOne(ExpressionNode one) {
+		children.add(one);
 		this.one = one;
 	}
 
 	public void setTwo(ExpressionNode two) {
+		children.add(two);
 		this.two = two;
 	}
 
@@ -38,11 +41,11 @@ public class OperationNode extends ExpressionNode {
 	}
 
 	public Operator getResolvedOperator() {
-		return resolvedOperator;
+		return resolvedOperator.get();
 	}
 
 	public void setResolvedOperator(Operator resolvedOperator) {
-		this.resolvedOperator = resolvedOperator;
+		this.resolvedOperator.set(resolvedOperator);
 	}
 
 	public ExpressionNode getOne() {
@@ -58,14 +61,7 @@ public class OperationNode extends ExpressionNode {
 	}
 
 	public Site getType() {
-		return resolvedOperator.getType();
-	}
-
-	public List<Node> getChildren() {
-		List<Node> children = new ArrayList<>();
-		children.add(one);
-		children.add(two);
-		return children;
+		return resolvedOperator.get().getType();
 	}
 
 	public String toString() {

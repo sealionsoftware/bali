@@ -2,6 +2,8 @@ package bali.compiler.type;
 
 import bali.annotation.Name;
 import bali.annotation.Nullable;
+import bali.compiler.reference.BlockingReference;
+import bali.compiler.reference.Reference;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;

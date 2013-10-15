@@ -2,10 +2,13 @@ package bali.compiler.validation.visitor;
 
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.InterfaceNode;
+import bali.compiler.parser.tree.Node;
+import bali.compiler.type.Type;
 import bali.compiler.type.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -14,7 +17,7 @@ import java.util.List;
  * User: Richard
  * Date: 19/06/13
  */
-public class InterfaceValidator implements Validator<CompilationUnitNode>{
+public class InterfaceValidator implements Validator {
 
 	private TypeLibrary library;
 
@@ -22,14 +25,17 @@ public class InterfaceValidator implements Validator<CompilationUnitNode>{
 		this.library = library;
 	}
 
-	public List<ValidationFailure> validate(CompilationUnitNode node) {
-		List<ValidationFailure> failures = new ArrayList<>();
-		for (InterfaceNode iface : node.getInterfaces()) {
-
+	public List<ValidationFailure> validate(Node node, Control control) {
+		if (node instanceof InterfaceNode){
+			InterfaceNode iface = (InterfaceNode) node;
+			Type resolved = library.addDeclaration(iface);
+			iface.setResolvedType(resolved);
 			// TODO: validations
-
-			library.addDeclaration(iface);
 		}
-		return failures;
+		return Collections.emptyList();
+	}
+
+	public void onCompletion() {
+		library.localInterfacesComplete();
 	}
 }

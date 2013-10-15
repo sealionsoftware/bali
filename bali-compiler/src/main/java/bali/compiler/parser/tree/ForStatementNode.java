@@ -20,6 +20,7 @@ public class ForStatementNode extends LoopStatementNode {
 	}
 
 	public void setElement(DeclarationNode element) {
+		children.add(element);
 		this.element = element;
 	}
 
@@ -28,13 +29,7 @@ public class ForStatementNode extends LoopStatementNode {
 	}
 
 	public void setCollection(ExpressionNode collection) {
-		this.collection = collection;
-	}
-
-	public List<Node> getChildren() {
-		List<Node> children = super.getChildren();
-		children.add(element);
 		children.add(collection);
-		return children;
+		this.collection = collection;
 	}
 }

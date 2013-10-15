@@ -22,6 +22,7 @@ public class FieldNode extends DeclarationNode {
 	}
 
 	public void setValue(ExpressionNode value) {
+		children.add(value);
 		this.value = value;
 	}
 
@@ -29,11 +30,4 @@ public class FieldNode extends DeclarationNode {
 		return false;
 	}
 
-	public List<Node> getChildren() {
-		List<Node> children = super.getChildren();
-		if (value != null) {
-			children.add(value);
-		}
-		return children;
-	}
 }

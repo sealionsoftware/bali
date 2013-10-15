@@ -1,5 +1,6 @@
 package bali.compiler.parser.tree;
 
+import bali.compiler.reference.BlockingReference;
 import bali.compiler.type.Type;
 
 import java.util.ArrayList;
@@ -15,8 +16,8 @@ public abstract class TypeNode<M extends MethodNode> extends Node {
 	private List<SiteNode> implementations = new ArrayList<>();
 	private List<TypeParameterNode> typeParameters = new ArrayList<>();
 
-	private String qualifiedClassName;
-	private Type resolvedType;
+	private BlockingReference<String> qualifiedClassName = new BlockingReference<>();
+	private BlockingReference<Type> resolvedType = new BlockingReference<>();
 
 	public TypeNode() {
 	}
@@ -38,6 +39,7 @@ public abstract class TypeNode<M extends MethodNode> extends Node {
 	}
 
 	public void addParameter(TypeParameterNode parameter) {
+		children.add(parameter);
 		typeParameters.add(parameter);
 	}
 
@@ -46,23 +48,24 @@ public abstract class TypeNode<M extends MethodNode> extends Node {
 	}
 
 	public void addImplementation(SiteNode implementation) {
+		children.add(implementation);
 		implementations.add(implementation);
 	}
 
 	public String getQualifiedClassName() {
-		return qualifiedClassName;
+		return qualifiedClassName.get();
 	}
 
 	public void setQualifiedClassName(String qualifiedClassName) {
-		this.qualifiedClassName = qualifiedClassName;
+		this.qualifiedClassName.set(qualifiedClassName);
 	}
 
 	public Type getResolvedType() {
-		return resolvedType;
+		return resolvedType.get();
 	}
 
 	public void setResolvedType(Type type) {
-		this.resolvedType = type;
+		this.resolvedType.set(type);
 	}
 
 	public abstract Boolean getAbstract();
@@ -71,35 +74,4 @@ public abstract class TypeNode<M extends MethodNode> extends Node {
 
 	public abstract void addMethod(M method);
 
-//	public Method getSite(String name, List<TypeReference> suppliedArgumentTypes) {
-//		for (Method declaration : getMethods()) {
-//			List<Declaration> argumentDeclarations = declaration.getTypeParameters();
-//			if (declaration.getName().equals(name)
-//					&& suppliedArgumentTypes.size() == argumentDeclarations.size()
-//					&& typesCompatible(argumentDeclarations, suppliedArgumentTypes)) {
-//				return declaration;
-//			}
-//		}
-//		return null;
-//	}
-
-//	public boolean typesCompatible(List<Declaration> argumentDeclarations, List<TypeReference> suppliedArgumentTypes){
-//		Iterator<TypeReference> i = suppliedArgumentTypes.iterator();
-//		Iterator<Declaration> j = argumentDeclarations.iterator();
-//		while(i.hasNext()){
-//			TypeReference suppliedArgumentType = i.next();
-//			Declaration argumentDeclaration = j.next();
-//			if (!suppliedArgumentType.isAssignableTo(argumentDeclaration.getType())){
-//				return false;
-//			}
-//		}
-//		return true;
-//	}
-
-	public List<Node> getChildren() {
-		List<Node> ret = new ArrayList<>();
-		ret.addAll(typeParameters);
-		ret.addAll(implementations);
-		return ret;
-	}
 }

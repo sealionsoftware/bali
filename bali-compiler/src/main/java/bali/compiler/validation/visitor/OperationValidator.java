@@ -1,5 +1,6 @@
 package bali.compiler.validation.visitor;
 
+import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.OperationNode;
 import bali.compiler.type.Operator;
 import bali.compiler.type.Site;
@@ -8,34 +9,42 @@ import bali.compiler.type.VanillaSite;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * User: Richard
  * Date: 03/07/13
  */
-public class OperationValidator implements Validator<OperationNode> {
+public class OperationValidator implements Validator {
 
-	public List<ValidationFailure> validate(OperationNode node) {
+	public List<ValidationFailure> validate(Node node, Control control) {
 
-		List<ValidationFailure> ret = new ArrayList<>();
-		Site targetType = node.getOne().getType();
-		Site operandType = node.getTwo().getType();
-		String operatorName = node.getOperator();
+		control.validateChildrenNow();
 
-		Operator operator = getOperatorWithName(operatorName, targetType);
+		if (node instanceof OperationNode){
 
-		if (operator == null) {
-			ret.add(new ValidationFailure(node, "Type " + targetType + " has no operator " + operatorName));
-			return ret;
+			OperationNode operation = (OperationNode) node;
+			List<ValidationFailure> ret = new ArrayList<>();
+			Site targetType = operation.getOne().getType();
+			Site operandType = operation.getTwo().getType();
+			String operatorName = operation.getOperator();
+
+			Operator operator = getOperatorWithName(operatorName, targetType);
+
+			if (operator == null) {
+				ret.add(new ValidationFailure(node, "Type " + targetType + " has no operator " + operatorName));
+				return ret;
+			}
+
+			if (!operandType.isAssignableTo(operator.getParameter())) {
+				ret.add(new ValidationFailure(node, "Operator " + operator + " requires an operand of type " + operandType));
+			}
+
+			operation.setResolvedOperator(operator);
 		}
 
-		if (!operandType.isAssignableTo(operator.getParameter())) {
-			ret.add(new ValidationFailure(node, "Operator " + operator + " requires an operand of type " + operandType));
-		}
-
-		node.setResolvedOperator(operator);
-		return ret;
+		return Collections.emptyList();
 	}
 
 	public Operator getOperatorWithName(String name, Site site) {
@@ -53,5 +62,7 @@ public class OperationValidator implements Validator<OperationNode> {
 		return null;
 	}
 
+	public void onCompletion() {
+	}
 
 }

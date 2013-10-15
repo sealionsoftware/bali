@@ -35,6 +35,7 @@ public class ASMClassGeneratorUnitTest {
 	@Before
 	public void setUp() {
 		clazz = new ClassNode();
+		clazz.setSourceFile("bali.test.bali");
 		clazz.setQualifiedClassName("bali.test.AClass");
 	}
 

@@ -1,5 +1,7 @@
 package bali.compiler.parser.tree;
 
+import bali.compiler.reference.BlockingReference;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,11 +11,11 @@ import java.util.List;
  */
 public class ClassNode extends TypeNode<MethodDeclarationNode> {
 
-	private List<ArgumentDeclarationNode> argumentDeclarations = new ArrayList<>();
-	private List<FieldNode> fields = new ArrayList<>();
-	private List<MethodDeclarationNode> methods = new ArrayList<>();
+	private final List<ArgumentDeclarationNode> argumentDeclarations = new ArrayList<>();
+	private final List<FieldNode> fields = new ArrayList<>();
+	private final List<MethodDeclarationNode> methods = new ArrayList<>();
 
-	private String sourceFile;
+	private BlockingReference<String> sourceFile = new BlockingReference<>();
 
 	public ClassNode() {
 		this(null, null);
@@ -29,6 +31,7 @@ public class ClassNode extends TypeNode<MethodDeclarationNode> {
 
 	public void addArgument(ArgumentDeclarationNode argumentDeclaration) {
 		this.argumentDeclarations.add(argumentDeclaration);
+		children.add(argumentDeclaration);
 	}
 
 	public List<MethodDeclarationNode> getMethods() {
@@ -37,6 +40,7 @@ public class ClassNode extends TypeNode<MethodDeclarationNode> {
 
 	public void addMethod(MethodDeclarationNode method) {
 		this.methods.add(method);
+		children.add(method);
 	}
 
 	public List<FieldNode> getFields() {
@@ -45,6 +49,7 @@ public class ClassNode extends TypeNode<MethodDeclarationNode> {
 
 	public void addField(FieldNode field) {
 		this.fields.add(field);
+		children.add(field);
 	}
 
 	public Boolean getAbstract() {
@@ -52,18 +57,10 @@ public class ClassNode extends TypeNode<MethodDeclarationNode> {
 	}
 
 	public void setSourceFile(String sourceFile) {
-		this.sourceFile = sourceFile;
+		this.sourceFile.set(sourceFile);
 	}
 
 	public String getSourceFile() {
-		return sourceFile;
-	}
-
-	public List<Node> getChildren() {
-		List<Node> children = super.getChildren();
-		children.addAll(argumentDeclarations);
-		children.addAll(fields);
-		children.addAll(methods);
-		return children;
+		return sourceFile.get();
 	}
 }

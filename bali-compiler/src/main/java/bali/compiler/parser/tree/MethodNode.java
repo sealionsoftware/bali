@@ -25,6 +25,7 @@ public class MethodNode extends DeclarationNode {
 	}
 
 	public void addArgument(ArgumentDeclarationNode argumentDeclaration) {
+		children.add(argumentDeclaration);
 		this.argumentDeclarations.add(argumentDeclaration);
 	}
 
@@ -40,11 +41,6 @@ public class MethodNode extends DeclarationNode {
 		return true;
 	}
 
-	public List<Node> getChildren() {
-		List<Node> ret = super.getChildren();
-		ret.addAll(argumentDeclarations);
-		return ret;
-	}
 
 	public boolean equals(Object o) {
 		if (this == o) return true;

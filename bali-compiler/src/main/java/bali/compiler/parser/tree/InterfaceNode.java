@@ -24,6 +24,7 @@ public class InterfaceNode extends TypeNode<MethodNode> {
 	}
 
 	public void addMethod(MethodNode methodDeclaration) {
+		children.add(methodDeclaration);
 		this.methodDeclarations.add(methodDeclaration);
 	}
 
@@ -31,9 +32,4 @@ public class InterfaceNode extends TypeNode<MethodNode> {
 		return true;
 	}
 
-	public List<Node> getChildren() {
-		List<Node> children = super.getChildren();
-		children.addAll(methodDeclarations);
-		return children;
-	}
 }

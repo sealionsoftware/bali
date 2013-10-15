@@ -7,6 +7,8 @@ import bali.compiler.parser.tree.MethodNode;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.parser.tree.TypeNode;
 import bali.compiler.parser.tree.TypeParameterNode;
+import bali.compiler.reference.BlockingReference;
+import bali.compiler.reference.Reference;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -133,19 +135,19 @@ public class TypeDeclarationTypeBuilder {
 
 	private Site getType(SiteNode reference) {
 
-		Reference<Type> type = library.getReference(reference.getSite().getName());
+		return reference.getSite();
 
-		List<SiteNode> parameterNodes = reference.getParameters();
-		if (parameterNodes.isEmpty()){
-			return new VanillaSite(type);
-		}
-
-		List<Site> typeArguments = new ArrayList<>();
-		for (SiteNode argumentNode : parameterNodes) {
-			typeArguments.add(getType(argumentNode));
-		}
-		return new ParametrizedSite(type, typeArguments);
+//		BlockingReference<Type> type = library.getReference(reference.getSite().getName());
+//
+//		List<SiteNode> parameterNodes = reference.getParameters();
+//		if (parameterNodes.isEmpty()){
+//			return new VanillaSite(type);
+//		}
+//
+//		List<Site> typeArguments = new ArrayList<>();
+//		for (SiteNode argumentNode : parameterNodes) {
+//			typeArguments.add(getType(argumentNode));
+//		}
+//		return new ParametrizedSite(type, typeArguments);
 	}
-
-
 }

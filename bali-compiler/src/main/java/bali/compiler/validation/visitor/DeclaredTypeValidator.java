@@ -1,11 +1,14 @@
 package bali.compiler.validation.visitor;
 
 import bali.compiler.parser.tree.CompilationUnitNode;
+import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.TypeNode;
 import bali.compiler.type.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
 
+import javax.lang.model.type.DeclaredType;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -17,23 +20,28 @@ import java.util.List;
  * User: Richard
  * Date: 19/06/13
  */
-public class DeclaredTypeValidator implements Validator<CompilationUnitNode> {
+public class DeclaredTypeValidator implements Validator {
 
 	private TypeLibrary library;
+	private String unitName;
 
 	public DeclaredTypeValidator(TypeLibrary library) {
 		this.library = library;
 	}
 
-	public List<ValidationFailure> validate(CompilationUnitNode node) {
-		List<ValidationFailure> failures = new ArrayList<>();
-		List<TypeNode> nodes = new ArrayList<TypeNode>(node.getClasses());
-		nodes.addAll(node.getInterfaces());
-		for (TypeNode clazz : nodes) {
-			clazz.setQualifiedClassName(node.getName() + "." + clazz.getClassName());
-			library.notifyOfDeclaration(clazz);
+	public List<ValidationFailure> validate(Node node, Control control) {
+		if (node instanceof CompilationUnitNode){
+			unitName = ((CompilationUnitNode) node).getName();
+		} else if (node instanceof TypeNode) {
+			TypeNode typeNode = (TypeNode) node;
+			String qualifiedName = unitName + "." + typeNode.getClassName();
+			library.notifyOfDeclaration(qualifiedName);
+			typeNode.setQualifiedClassName(qualifiedName);
 		}
-		return failures;
+		return Collections.emptyList();
+	}
+
+	public void onCompletion() {
 	}
 
 }

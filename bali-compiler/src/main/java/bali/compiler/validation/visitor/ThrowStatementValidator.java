@@ -1,11 +1,12 @@
 package bali.compiler.validation.visitor;
 
-import bali.compiler.parser.tree.SiteNode;
-import bali.compiler.parser.tree.ThrowStatementNode;
+import bali.Exception;
+import bali.compiler.parser.tree.Node;
+import bali.compiler.type.Type;
 import bali.compiler.type.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -14,25 +15,26 @@ import java.util.List;
  * User: Richard
  * Date: 07/07/13
  */
-public class ThrowStatementValidator implements Validator<ThrowStatementNode> {
+public class ThrowStatementValidator implements Validator {
 
-	private SiteNode throwableType;
+	private Type throwableType;
 
 	public ThrowStatementValidator(TypeLibrary library) {
-//		Type throwableType = new Type();
-//		throwableType.setSite(library.getTypeDeclaration(Throwable.class.getName()));
-//		this.throwableType = throwableType;
+		throwableType = library.getType(Exception.class.getName());
 	}
 
 	//TODO
-	public List<ValidationFailure> validate(ThrowStatementNode node) {
+	public List<ValidationFailure> validate(Node node, Control control) {
 
-		List<ValidationFailure> failures = new ArrayList<>();
+//		List<ValidationFailure> failures = new ArrayList<>();
 //		Expression value = node.getValue();
 //		if (node.getValue().getType().isAssignableTo(throwableType)) {
 //			failures.add(new ValidationFailure(node, "Thrown value " + value + " is not of type " + throwableType));
 //		}
 
-		return failures;
+		return Collections.emptyList();
+	}
+
+	public void onCompletion() {
 	}
 }

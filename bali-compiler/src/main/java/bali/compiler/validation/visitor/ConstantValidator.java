@@ -2,6 +2,8 @@ package bali.compiler.validation.visitor;
 
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.ConstantNode;
+import bali.compiler.parser.tree.Node;
+import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.Declaration;
 import bali.compiler.type.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
@@ -14,22 +16,29 @@ import java.util.List;
  * User: Richard
  * Date: 29/09/13
  */
-public class ConstantValidator implements Validator<CompilationUnitNode> {
+public class ConstantValidator implements Validator {
 
-	private TypeLibrary library;
+	private ConstantLibrary library;
+	private String unitName;
 
-	public ConstantValidator(TypeLibrary library) {
+	public ConstantValidator(ConstantLibrary library) {
 		this.library = library;
 	}
 
-	public List<ValidationFailure> validate(CompilationUnitNode node) {
+	public List<ValidationFailure> validate(Node node, Control control) {
 
-		List<Declaration> constantDeclarations = new ArrayList();
-		for (ConstantNode constantNode : node.getConstants()){
-			constantDeclarations.add(new Declaration(constantNode.getName(), constantNode.getType().getSite()));
+		if (node instanceof CompilationUnitNode){
+			unitName = ((CompilationUnitNode) node).getName();
+		} else if (node instanceof ConstantNode){
+			ConstantNode constantNode = (ConstantNode) node;
+			Declaration declaration = new Declaration(constantNode.getName(), constantNode.getType().getSite());
+			library.addConstant(unitName, declaration);
 		}
 
-		library.addConstants(node.getName(), constantDeclarations);
 		return Collections.emptyList();
+	}
+
+	public void onCompletion() {
+		library.constantsComplete();
 	}
 }

@@ -24,9 +24,6 @@ public class CodeBlockNode extends Node {
 
 	public void addStatement(StatementNode statement){
 		statements.add(statement);
-	}
-
-	public List<Node> getChildren() {
-		return new ArrayList<Node>(statements);
+		children.add(statement);
 	}
 }

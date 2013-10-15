@@ -20,6 +20,7 @@ public class ReturnStatementNode extends StatementNode {
 	}
 
 	public void setValue(ExpressionNode value) {
+		children.add(value);
 		this.value = value;
 	}
 
@@ -27,7 +28,4 @@ public class ReturnStatementNode extends StatementNode {
 		return value;
 	}
 
-	public List<Node> getChildren() {
-		return value != null ? Collections.singletonList((Node) value) : new ArrayList<Node>();
-	}
 }

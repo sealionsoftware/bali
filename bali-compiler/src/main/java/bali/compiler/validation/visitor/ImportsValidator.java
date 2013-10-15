@@ -1,11 +1,13 @@
 package bali.compiler.validation.visitor;
 
 import bali.compiler.parser.tree.ImportNode;
+import bali.compiler.parser.tree.Node;
 import bali.compiler.type.Type;
 import bali.compiler.type.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -14,7 +16,7 @@ import java.util.List;
  * User: Richard
  * Date: 14/05/13
  */
-public class ImportsValidator implements Validator<ImportNode> {
+public class ImportsValidator implements Validator {
 
 	private TypeLibrary library;
 
@@ -22,17 +24,26 @@ public class ImportsValidator implements Validator<ImportNode> {
 		this.library = library;
 	}
 
-	public List<ValidationFailure> validate(ImportNode iport) {
-		List<ValidationFailure> failures = new ArrayList<>();
-		try {
-			Type type = library.getType(iport.getName());
-			iport.setType(type);
-		} catch (Exception cnfe) {
-			failures.add(new ValidationFailure(
-					iport,
-					"Could not resolve import " + iport.getName()
-			));
+	public List<ValidationFailure> validate(Node node, Control control) {
+
+		if (node instanceof ImportNode){
+			library.checkCompilationTypesComplete();
+			List<ValidationFailure> failures = new ArrayList<>();
+			ImportNode iport = (ImportNode) node;
+			try {
+				Type type = library.getType(iport.getName());
+				iport.setType(type);
+			} catch (Exception cnfe) {
+				failures.add(new ValidationFailure(
+						iport,
+						"Could not resolve import " + iport.getName()
+				));
+			}
+			return failures;
 		}
-		return failures;
+		return Collections.emptyList();
+	}
+
+	public void onCompletion() {
 	}
 }

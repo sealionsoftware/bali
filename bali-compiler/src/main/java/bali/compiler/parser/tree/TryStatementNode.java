@@ -17,10 +17,12 @@ public class TryStatementNode extends StatementNode {
 	}
 
 	public void setMain(CodeBlockNode main) {
+		children.add(main);
 		this.main = main;
 	}
 
 	public void addCatchStatement(CatchStatementNode catchStatement){
+		children.add(catchStatement);
 		catchStatements.add(catchStatement);
 	}
 
@@ -32,10 +34,4 @@ public class TryStatementNode extends StatementNode {
 		return catchStatements;
 	}
 
-	public List<Node> getChildren() {
-		List<Node> children = new ArrayList<>();
-		children.add(main);
-		children.addAll(catchStatements);
-		return children;
-	}
 }

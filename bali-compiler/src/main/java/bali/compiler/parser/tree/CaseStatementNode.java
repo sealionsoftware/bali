@@ -22,6 +22,7 @@ public class CaseStatementNode extends StatementNode {
 
 	public void setCondition(ExpressionNode condition) {
 		this.condition = condition;
+		children.add(condition);
 	}
 
 	public CodeBlockNode getBody() {
@@ -30,12 +31,6 @@ public class CaseStatementNode extends StatementNode {
 
 	public void setBody(CodeBlockNode body) {
 		this.body = body;
-	}
-
-	public List<Node> getChildren() {
-		List<Node> children = new ArrayList<>();
-		children.add(condition);
 		children.add(body);
-		return children;
 	}
 }

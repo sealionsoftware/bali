@@ -1,5 +1,6 @@
 package bali.compiler.parser.tree;
 
+import bali.compiler.reference.BlockingReference;
 import bali.compiler.type.Site;
 import bali.compiler.type.UnaryOperator;
 
@@ -15,7 +16,7 @@ public class UnaryOperationNode extends ExpressionNode {
 	private ExpressionNode target;
 	private String operator;
 
-	private UnaryOperator resolvedOperator;
+	private BlockingReference<UnaryOperator> resolvedOperator = new BlockingReference<>();
 
 	public UnaryOperationNode() {
 	}
@@ -29,6 +30,7 @@ public class UnaryOperationNode extends ExpressionNode {
 	}
 
 	public void setTarget(ExpressionNode target) {
+		children.add(target);
 		this.target = target;
 	}
 
@@ -41,20 +43,15 @@ public class UnaryOperationNode extends ExpressionNode {
 	}
 
 	public UnaryOperator getResolvedOperator() {
-		return resolvedOperator;
+		return resolvedOperator.get();
 	}
 
 	public void setResolvedOperator(UnaryOperator resolvedOperator) {
-		this.resolvedOperator = resolvedOperator;
+		this.resolvedOperator.set(resolvedOperator);
 	}
 
 	public Site getType() {
-		return resolvedOperator.getType();
+		return resolvedOperator.get().getType();
 	}
 
-	public List<Node> getChildren() {
-		List<Node> children = new ArrayList<>();
-		children.add(target);
-		return children;
-	}
 }

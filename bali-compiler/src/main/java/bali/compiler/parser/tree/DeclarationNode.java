@@ -32,18 +32,11 @@ public abstract class DeclarationNode extends Node {
 	}
 
 	public void setType(SiteNode type) {
+		children.add(type);
 		this.type = type;
 	}
 
 	public abstract Boolean getFinal();
-
-	public List<Node> getChildren() {
-		ArrayList<Node> children = new ArrayList<>();
-		if (type != null) {
-			children.add(type);
-		}
-		return children;
-	}
 
 	public boolean equals(Object o) {
 		if (this == o) return true;

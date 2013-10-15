@@ -17,13 +17,10 @@ public class ArrayLiteralExpressionNode extends LiteralExpressionNode {
 
 	public void addValue(ExpressionNode v) {
 		values.add(v);
+		children.add(v);
 	}
 
 	public List<ExpressionNode> getValues() {
 		return values;
-	}
-
-	public List<Node> getChildren() {
-		return new ArrayList<Node>(values);
 	}
 }

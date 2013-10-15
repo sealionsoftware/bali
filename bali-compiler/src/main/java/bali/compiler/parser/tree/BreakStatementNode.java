@@ -13,7 +13,4 @@ public class BreakStatementNode extends StatementNode {
 		super(line, character);
 	}
 
-	public List<Node> getChildren() {
-		return new ArrayList<>();
-	}
 }

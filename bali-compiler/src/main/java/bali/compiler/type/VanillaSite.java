@@ -1,5 +1,8 @@
 package bali.compiler.type;
 
+import bali.compiler.reference.Reference;
+import bali.compiler.reference.SimpleReference;
+
 import java.util.Iterator;
 import java.util.List;
 
@@ -12,7 +15,7 @@ public class VanillaSite implements Site {
 	private Reference<Type> type;
 
 	public VanillaSite(Type type) {
-		this.type = new Reference<>(type);
+		this.type = new SimpleReference<>(type);
 	}
 
 	public VanillaSite(Reference<Type> typeReference) {

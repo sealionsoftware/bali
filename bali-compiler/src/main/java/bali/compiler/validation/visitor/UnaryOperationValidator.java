@@ -1,6 +1,7 @@
 package bali.compiler.validation.visitor;
 
 import bali.Boolean;
+import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.UnaryOperationNode;
 import bali.compiler.type.Site;
 import bali.compiler.type.TypeLibrary;
@@ -9,6 +10,7 @@ import bali.compiler.type.VanillaSite;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -22,7 +24,7 @@ import java.util.List;
  * User: Richard
  * Date: 03/07/13
  */
-public class UnaryOperationValidator implements Validator<UnaryOperationNode> {
+public class UnaryOperationValidator implements Validator {
 
 	public static final String NULL_CHECK_OPERATOR_NAME = "?";
 
@@ -36,21 +38,26 @@ public class UnaryOperationValidator implements Validator<UnaryOperationNode> {
 		);
 	}
 
-	public List<ValidationFailure> validate(UnaryOperationNode node) {
+	public List<ValidationFailure> validate(Node node, Control control) {
 
-		List<ValidationFailure> ret = new ArrayList<>();
-		Site targetType = node.getTarget().getType();
-		String operatorName = node.getOperator();
+		if (node instanceof UnaryOperationNode){
 
-		UnaryOperator operator = operatorName.equals(NULL_CHECK_OPERATOR_NAME) ? nullCheck : getUnaryOperatorWithName(operatorName, targetType);
+			UnaryOperationNode unary = (UnaryOperationNode) node;
+			List<ValidationFailure> ret = new ArrayList<>();
+			Site targetType = unary.getTarget().getType();
+			String operatorName = unary.getOperator();
 
-		if (operator == null) {
-			ret.add(new ValidationFailure(node, "Type " + targetType + " has no method for operator " + operatorName));
-			return ret;
+			UnaryOperator operator = operatorName.equals(NULL_CHECK_OPERATOR_NAME) ? nullCheck : getUnaryOperatorWithName(operatorName, targetType);
+
+			if (operator == null) {
+				ret.add(new ValidationFailure(node, "Type " + targetType + " has no method for operator " + operatorName));
+				return ret;
+			}
+
+			unary.setResolvedOperator(operator);
 		}
 
-		node.setResolvedOperator(operator);
-		return ret;
+		return Collections.emptyList();
 	}
 
 	public UnaryOperator getUnaryOperatorWithName(String name, Site site) {
@@ -66,6 +73,9 @@ public class UnaryOperationValidator implements Validator<UnaryOperationNode> {
 			}
 		}
 		return null;
+	}
+
+	public void onCompletion() {
 	}
 
 }

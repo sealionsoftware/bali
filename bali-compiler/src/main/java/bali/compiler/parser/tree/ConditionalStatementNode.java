@@ -17,6 +17,7 @@ public class ConditionalStatementNode extends StatementNode {
 	}
 
 	public void addConditionalBlock(ConditionalBlockNode conditionalBlock){
+		children.add(conditionalBlock);
 		this.conditionalBlocks.add(conditionalBlock);
 	}
 
@@ -30,14 +31,6 @@ public class ConditionalStatementNode extends StatementNode {
 
 	public void setAlternate(CodeBlockNode alternate) {
 		this.alternate = alternate;
-	}
-
-	public List<Node> getChildren() {
-		List<Node> children = new ArrayList<>();
-		children.addAll(conditionalBlocks);
-		if (alternate != null){
-			children.add(alternate);
-		}
-		return children;
+		children.add(alternate);
 	}
 }

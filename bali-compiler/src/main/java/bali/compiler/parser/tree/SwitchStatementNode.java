@@ -22,6 +22,7 @@ public class SwitchStatementNode extends StatementNode {
 	}
 
 	public void setValue(ExpressionNode value) {
+		children.add(value);
 		this.value = value;
 	}
 
@@ -30,6 +31,7 @@ public class SwitchStatementNode extends StatementNode {
 	}
 
 	public void addCaseStatement(CaseStatementNode caseStatement) {
+		children.add(caseStatement);
 		this.caseStatements.add(caseStatement);
 	}
 
@@ -38,16 +40,8 @@ public class SwitchStatementNode extends StatementNode {
 	}
 
 	public void setDefaultStatement(CodeBlockNode defaultStatement) {
+		children.add(defaultStatement);
 		this.defaultStatement = defaultStatement;
 	}
 
-	public List<Node> getChildren() {
-		List<Node> children = new ArrayList<>();
-		children.add(value);
-		children.addAll(caseStatements);
-		if (defaultStatement != null){
-			children.add(defaultStatement);
-		}
-		return children;
-	}
 }

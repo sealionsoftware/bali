@@ -25,6 +25,7 @@ public class AssignmentNode extends StatementNode {
 
 	public void setReference(ReferenceNode reference) {
 		this.reference = reference;
+		children.add(reference);
 	}
 
 	public ExpressionNode getValue() {
@@ -33,12 +34,6 @@ public class AssignmentNode extends StatementNode {
 
 	public void setValue(ExpressionNode value) {
 		this.value = value;
-	}
-
-	public List<Node> getChildren() {
-		List<Node> children = new ArrayList<>();
 		children.add(value);
-		children.add(reference);
-		return children;
 	}
 }

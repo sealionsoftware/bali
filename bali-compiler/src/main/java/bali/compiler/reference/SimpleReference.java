@@ -1,17 +1,17 @@
-package bali.compiler.type;
+package bali.compiler.reference;
 
 /**
  * User: Richard
  * Date: 17/09/13
  */
-public class Reference<T> {
+public class SimpleReference<T> implements Reference<T> {
 
 	private T referenced;
 
-	public Reference() {
+	public SimpleReference() {
 	}
 
-	public Reference(T referenced) {
+	public SimpleReference(T referenced) {
 		this.referenced = referenced;
 	}
 

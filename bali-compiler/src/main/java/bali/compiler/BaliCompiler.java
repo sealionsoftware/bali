@@ -10,8 +10,12 @@ import bali.compiler.module.ModuleWriter;
 import bali.compiler.parser.ANTLRParserManager;
 import bali.compiler.parser.ParserManager;
 import bali.compiler.parser.tree.CompilationUnitNode;
+import bali.compiler.parser.tree.Node;
+import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.TypeLibrary;
 import bali.compiler.validation.ConfigurableValidationEngine;
+import bali.compiler.validation.FailedValidationException;
+import bali.compiler.validation.MultiThreadedValidationEngine;
 import bali.compiler.validation.ValidationEngine;
 import bali.compiler.validation.ValidationException;
 import bali.compiler.validation.ValidationFailure;
@@ -42,6 +46,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 /**
@@ -125,21 +132,23 @@ public class BaliCompiler {
 		}
 
 		TypeLibrary library = new TypeLibrary();
+		ConstantLibrary constantLibrary = new ConstantLibrary(library);
+		ExecutorService executorService = Executors.newCachedThreadPool();
 
 		BaliCompiler compiler = new BaliCompiler(
 				new ANTLRParserManager(),
-				new ConfigurableValidationEngine(new ArrayList<>(Arrays.asList(
+				new MultiThreadedValidationEngine(Arrays.asList(
 						new ImportsValidator(library),
 						new DeclaredTypeValidator(library),
 						new TypeResolvingValidator(library),
 						new InterfaceValidator(library),
 						new ClassValidator(library),
-						new ConstantValidator(library),
+						new ConstantValidator(constantLibrary),
 						new BooleanLiteralValidator(library),
 						new NumberLiteralValidator(library),
 						new StringLiteralValidator(library),
 						new ArrayLiteralValidator(library),
-						new ReferenceValidator(library),
+						new ReferenceValidator(constantLibrary),
 						new InvocationValidator(),
 						new UnaryOperationValidator(library),
 						new OperationValidator(),
@@ -149,7 +158,7 @@ public class BaliCompiler {
 						new ConstructionValidator(library),
 						new ThrowStatementValidator(library),
 						new BranchStatementValidator()
-				))),
+				), executorService),
 				new ConfigurablePackageGenerator(
 						new ASMPackageClassGenerator(library),
 						new ASMInterfaceGenerator(),
@@ -173,6 +182,13 @@ public class BaliCompiler {
 					}
 				}
 			}
+		} catch (FailedValidationException fve){
+			System.err.println("Compiler error");
+			for (CancellationException ce : fve.getCancellationExceptions()){
+				ce.printStackTrace(System.err);
+			}
+		} finally {
+			executorService.shutdownNow();
 		}
 
 	}

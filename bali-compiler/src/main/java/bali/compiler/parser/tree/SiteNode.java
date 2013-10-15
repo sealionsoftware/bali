@@ -1,6 +1,7 @@
 package bali.compiler.parser.tree;
 
 
+import bali.compiler.reference.BlockingReference;
 import bali.compiler.type.Site;
 
 import java.util.ArrayList;
@@ -15,8 +16,8 @@ public class SiteNode extends Node {
 
 	private String className;
 	private List<SiteNode> parameters = new ArrayList<>();
-	private Site site;
-	private Boolean erase = false;
+
+	private BlockingReference<Site> site = new BlockingReference<>();
 
 	public SiteNode() {
 	}
@@ -38,27 +39,16 @@ public class SiteNode extends Node {
 	}
 
 	public void addParameter(SiteNode parameter) {
+		children.add(parameter);
 		this.parameters.add(parameter);
 	}
 
-	public List<Node> getChildren() {
-		return new ArrayList<Node>(parameters);
-	}
-
 	public Site getSite() {
-		return site;
+		return site.get();
 	}
 
 	public void setSite(Site site) {
-		this.site = site;
-	}
-
-	public Boolean getErase() {
-		return erase;
-	}
-
-	public void setErase(Boolean erase) {
-		this.erase = erase;
+		this.site.set(site);
 	}
 
 	public boolean equals(Object o) {
@@ -68,7 +58,7 @@ public class SiteNode extends Node {
 
 		SiteNode other = (SiteNode) o;
 
-		if (!site.getName().equals(other.site.getName())) {
+		if (!getSite().getName().equals(other.getSite().getName())) {
 			return false;
 		}
 
@@ -90,6 +80,4 @@ public class SiteNode extends Node {
 		return sb.toString();
 	}
 
-	public static class CouldNotResolveException extends RuntimeException {
-	}
 }

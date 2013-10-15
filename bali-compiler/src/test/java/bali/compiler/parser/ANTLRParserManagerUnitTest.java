@@ -41,11 +41,11 @@ public class ANTLRParserManagerUnitTest {
 	@Test
 	public void testCompilationUnit() {
 		Assert.assertEquals("Package name", "example", unit.getName());
-		Assert.assertEquals("Imports", 2, unit.getImports().size());
+		Assert.assertEquals("Imports", 3, unit.getImports().size());
 		Assert.assertEquals("Constants", 1, unit.getConstants().size());
 		Assert.assertEquals("Interfaces", 2, unit.getInterfaces().size());
 		Assert.assertEquals("Classes", 1, unit.getClasses().size());
-		Assert.assertEquals("Children", 6, unit.getChildren().size());
+		Assert.assertEquals("Children", 7, unit.getChildren().size());
 	}
 
 	@Test
@@ -123,12 +123,12 @@ public class ANTLRParserManagerUnitTest {
 	@Test
 	public void testCodeBlock() {
 		CodeBlockNode body = unit.getClasses().get(0).getMethods().get(0).getBody();
-		Assert.assertEquals("Statements", 4, body.getStatements().size());
-		Assert.assertEquals("Variable", "false", ((BooleanLiteralExpressionNode) ((VariableNode) body.getStatements().get(1)).getValue()).getSerialization());
-		Assert.assertEquals("While", 2, (((WhileStatementNode) body.getStatements().get(2)).getBody().getChildren().size()));
-		Assert.assertEquals("For", 1, ((ForStatementNode) ((WhileStatementNode) body.getStatements().get(2)).getBody().getStatements().get(0)).getBody().getChildren().size());
-		Assert.assertEquals("If", 1, ((ConditionalStatementNode) ((WhileStatementNode) body.getStatements().get(2)).getBody().getStatements().get(1)).getConditionalBlocks().get(0).getBody().getChildren().size());
-		Assert.assertEquals("Return Statement", "anArgument", ((ReferenceNode) ((ReturnStatementNode) body.getStatements().get(3)).getValue()).getName());
+		Assert.assertEquals("Statements", 5, body.getStatements().size());
+		Assert.assertEquals("Variable", "false", ((BooleanLiteralExpressionNode) ((VariableNode) body.getStatements().get(2)).getValue()).getSerialization());
+		Assert.assertEquals("While", 2, (((WhileStatementNode) body.getStatements().get(3)).getBody().getChildren().size()));
+		Assert.assertEquals("For", 1, ((ForStatementNode) ((WhileStatementNode) body.getStatements().get(3)).getBody().getStatements().get(0)).getBody().getChildren().size());
+		Assert.assertEquals("If", 1, ((ConditionalStatementNode) ((WhileStatementNode) body.getStatements().get(3)).getBody().getStatements().get(1)).getConditionalBlocks().get(0).getBody().getChildren().size());
+		Assert.assertEquals("Return Statement", "anArgument", ((ReferenceNode) ((ReturnStatementNode) body.getStatements().get(4)).getValue()).getName());
 	}
 
 
