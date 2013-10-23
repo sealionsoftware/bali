@@ -36,7 +36,7 @@ public final class Console implements ReaderWriter {
 			}
 
 		} catch (IOException e) {
-			throw new RuntimeException("IOException whilst reading from standard in");
+			throw new java.lang.RuntimeException("IOException whilst reading from standard in");
 		}
 		return new CharArrayString(Arrays.copyOf(in, i));
 	}

@@ -9,6 +9,7 @@ import bali.compiler.parser.tree.TypeNode;
 import bali.compiler.parser.tree.TypeParameterNode;
 import bali.compiler.reference.BlockingReference;
 import bali.compiler.reference.Reference;
+import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -2,7 +2,7 @@ package bali.compiler.validation;
 
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.Node;
-import bali.compiler.validation.visitor.Validator;
+import bali.compiler.validation.validator.Validator;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

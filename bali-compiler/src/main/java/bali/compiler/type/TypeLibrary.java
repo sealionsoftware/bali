@@ -18,7 +18,6 @@ public class TypeLibrary {
 	private final TypeDeclarationTypeBuilder declarationBuilder = new TypeDeclarationTypeBuilder(this);
 	private final ClasspathTypeBuilder classpathBuilder = new ClasspathTypeBuilder(this);
 	private final Map<String, Reference<Type>> types = new HashMap<>();
-	private Semaphore localTypesComplete = new Semaphore();
 
 	public void notifyOfDeclaration(String qualifiedClassName) {
 		Reference<Type> reference = new BlockingReference<>();
@@ -32,28 +31,25 @@ public class TypeLibrary {
 		return ret;
 	}
 
-	public void localTypesComplete() {
-		localTypesComplete.release();
-	}
-
-	public void checkTypesComplete() {
-		localTypesComplete.check();
-	}
-
 	public Type getType(String fullyQualifiedClassName) {
 		return getReference(fullyQualifiedClassName).get();
 	}
 
-	public Reference<Type> getReference(String fullyQualifiedClassName) {
+	public synchronized Reference<Type> getReference(String fullyQualifiedClassName) {
 		Reference<Type> cached = types.get(fullyQualifiedClassName);
 		if (cached != null) {
 			return cached;
 		}
 
-		cached = new BlockingReference<>();
+		cached = new SimpleReference<>();
 		types.put(fullyQualifiedClassName, cached);
-		Type built = classpathBuilder.build(fullyQualifiedClassName);
-		cached.set(built);
+		try {
+			cached.set(classpathBuilder.build(fullyQualifiedClassName));
+		} catch (Exception e){
+			types.remove(fullyQualifiedClassName);
+			throw e;
+		}
+
 		return cached;
 	}
 

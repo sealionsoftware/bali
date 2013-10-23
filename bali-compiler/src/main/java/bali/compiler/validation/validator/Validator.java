@@ -1,4 +1,4 @@
-package bali.compiler.validation.visitor;
+package bali.compiler.validation.validator;
 
 import bali.compiler.parser.tree.Node;
 import bali.compiler.validation.ValidationFailure;
@@ -12,7 +12,5 @@ import java.util.List;
 public interface Validator {
 
 	public List<ValidationFailure> validate(Node node, Control control);
-
-	public void onCompletion();
 
 }

@@ -3,8 +3,8 @@ package bali.compiler.parser.tree;
 import bali.compiler.reference.Reference;
 import bali.compiler.reference.SimpleReference;
 import bali.compiler.validation.ValidationFailure;
-import bali.compiler.validation.visitor.Control;
-import bali.compiler.validation.visitor.Validator;
+import bali.compiler.validation.validator.Control;
+import bali.compiler.validation.validator.Validator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,26 +37,18 @@ public abstract class Node {
 
 	public List<ValidationFailure> accept(final Validator validator){
 		final List<ValidationFailure> failures = new ArrayList<>();
-		final Reference<Boolean> cont = new SimpleReference<>(true);
-		failures.addAll(validator.validate(this, new Control() {
-			public void validateChildrenNow() {
-				acceptAll(validator, children);
-				doNotValidateChildren();
-			}
-			public void doNotValidateChildren() {
-				cont.set(false);
-			}
-		}));
-		if (cont.get()){
-			acceptAll(validator, children);
+		try {
+			failures.addAll(validator.validate(this, new Control() {
+				public void validateChildren() {
+					for (Node child : children){
+						failures.addAll(child.accept(validator));
+					}
+				}
+			}));
+		} catch (Exception e){
+			//Do something
 		}
 		return failures;
-	}
-
-	private void acceptAll(final Validator validator, List<Node> nodes){
-		for (Node child : nodes){
-			child.accept(validator);
-		}
 	}
 
 	public List<Node> getChildren() {

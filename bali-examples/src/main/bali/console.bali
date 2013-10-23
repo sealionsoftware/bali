@@ -2,7 +2,7 @@ import bali.Console
 import bali.String
 import bali.Executable
 
-class ConsoleDoer(String greeting) implements Executable {
+class ConsoleExecutable() implements Executable {
 
 	method execute(){
 
@@ -14,7 +14,7 @@ class ConsoleDoer(String greeting) implements Executable {
 				CONSOLE << "Goodbye"
 				break
 			}
-			CONSOLE << (greeting + " " + read)
+			CONSOLE << ("Hello " + read)
 		}
 	}
 }

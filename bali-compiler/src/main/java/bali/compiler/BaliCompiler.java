@@ -10,35 +10,32 @@ import bali.compiler.module.ModuleWriter;
 import bali.compiler.parser.ANTLRParserManager;
 import bali.compiler.parser.ParserManager;
 import bali.compiler.parser.tree.CompilationUnitNode;
-import bali.compiler.parser.tree.Node;
 import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.TypeLibrary;
-import bali.compiler.validation.ConfigurableValidationEngine;
 import bali.compiler.validation.FailedValidationException;
 import bali.compiler.validation.MultiThreadedValidationEngine;
 import bali.compiler.validation.ValidationEngine;
 import bali.compiler.validation.ValidationException;
 import bali.compiler.validation.ValidationFailure;
-import bali.compiler.validation.visitor.AssignmentValidator;
-import bali.compiler.validation.visitor.BooleanLiteralValidator;
-import bali.compiler.validation.visitor.BranchStatementValidator;
-import bali.compiler.validation.visitor.ClassValidator;
-import bali.compiler.validation.visitor.ConstantValidator;
-import bali.compiler.validation.visitor.ConstructionValidator;
-import bali.compiler.validation.visitor.DeclaredTypeValidator;
-import bali.compiler.validation.visitor.ImplementationValidator;
-import bali.compiler.validation.visitor.ImportsValidator;
-import bali.compiler.validation.visitor.InterfaceValidator;
-import bali.compiler.validation.visitor.InvocationValidator;
-import bali.compiler.validation.visitor.ArrayLiteralValidator;
-import bali.compiler.validation.visitor.NumberLiteralValidator;
-import bali.compiler.validation.visitor.OperationValidator;
-import bali.compiler.validation.visitor.ReferenceValidator;
-import bali.compiler.validation.visitor.ReturnValueValidator;
-import bali.compiler.validation.visitor.StringLiteralValidator;
-import bali.compiler.validation.visitor.ThrowStatementValidator;
-import bali.compiler.validation.visitor.TypeResolvingValidator;
-import bali.compiler.validation.visitor.UnaryOperationValidator;
+import bali.compiler.validation.validator.ArrayLiteralValidatorFactory;
+import bali.compiler.validation.validator.AssignmentValidatorFactory;
+import bali.compiler.validation.validator.BooleanLiteralValidatorFactory;
+import bali.compiler.validation.validator.BranchStatementValidatorFactory;
+import bali.compiler.validation.validator.ClassValidatorFactory;
+import bali.compiler.validation.validator.ConstantValidatorFactory;
+import bali.compiler.validation.validator.ConstructionValidatorFactory;
+import bali.compiler.validation.validator.ImplementationValidatorFactory;
+import bali.compiler.validation.validator.ImportsValidatorFactory;
+import bali.compiler.validation.validator.InterfaceValidatorFactory;
+import bali.compiler.validation.validator.InvocationValidatorFactory;
+import bali.compiler.validation.validator.NumberLiteralValidatorFactory;
+import bali.compiler.validation.validator.OperationValidatorFactory;
+import bali.compiler.validation.validator.ReferenceValidatorFactory;
+import bali.compiler.validation.validator.ReturnValueValidatorFactory;
+import bali.compiler.validation.validator.StringLiteralValidatorFactory;
+import bali.compiler.validation.validator.ThrowStatementValidatorFactory;
+import bali.compiler.validation.validator.TypeResolvingValidatorFactory;
+import bali.compiler.validation.validator.UnaryOperationValidatorFactory;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -47,8 +44,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 /**
@@ -133,32 +128,30 @@ public class BaliCompiler {
 
 		TypeLibrary library = new TypeLibrary();
 		ConstantLibrary constantLibrary = new ConstantLibrary(library);
-		ExecutorService executorService = Executors.newCachedThreadPool();
 
 		BaliCompiler compiler = new BaliCompiler(
 				new ANTLRParserManager(),
-				new MultiThreadedValidationEngine(Arrays.asList(
-						new ImportsValidator(library),
-						new DeclaredTypeValidator(library),
-						new TypeResolvingValidator(library),
-						new InterfaceValidator(library),
-						new ClassValidator(library),
-						new ConstantValidator(constantLibrary),
-						new BooleanLiteralValidator(library),
-						new NumberLiteralValidator(library),
-						new StringLiteralValidator(library),
-						new ArrayLiteralValidator(library),
-						new ReferenceValidator(constantLibrary),
-						new InvocationValidator(),
-						new UnaryOperationValidator(library),
-						new OperationValidator(),
-						new ReturnValueValidator(),
-						new ImplementationValidator(),
-						new AssignmentValidator(),
-						new ConstructionValidator(library),
-						new ThrowStatementValidator(library),
-						new BranchStatementValidator()
-				), executorService),
+				new MultiThreadedValidationEngine(library, constantLibrary, Arrays.asList(
+						new ImportsValidatorFactory(library),
+						new TypeResolvingValidatorFactory(library),
+						new InterfaceValidatorFactory(library),
+						new ClassValidatorFactory(library),
+						new ConstantValidatorFactory(constantLibrary),
+						new BooleanLiteralValidatorFactory(library),
+						new NumberLiteralValidatorFactory(library),
+						new StringLiteralValidatorFactory(library),
+						new ArrayLiteralValidatorFactory(library),
+						new ReferenceValidatorFactory(constantLibrary),
+						new InvocationValidatorFactory(),
+						new UnaryOperationValidatorFactory(library),
+						new OperationValidatorFactory(),
+						new ReturnValueValidatorFactory(),
+						new ImplementationValidatorFactory(),
+						new AssignmentValidatorFactory(),
+						new ConstructionValidatorFactory(library),
+						new ThrowStatementValidatorFactory(library),
+						new BranchStatementValidatorFactory()
+				)),
 				new ConfigurablePackageGenerator(
 						new ASMPackageClassGenerator(library),
 						new ASMInterfaceGenerator(),
@@ -187,8 +180,6 @@ public class BaliCompiler {
 			for (CancellationException ce : fve.getCancellationExceptions()){
 				ce.printStackTrace(System.err);
 			}
-		} finally {
-			executorService.shutdownNow();
 		}
 
 	}

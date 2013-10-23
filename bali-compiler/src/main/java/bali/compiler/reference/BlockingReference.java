@@ -22,7 +22,7 @@ public class BlockingReference<T> implements Reference<T> {
 			try {
 				wait();
 			} catch (InterruptedException e) {
-				throw new RuntimeException(e);
+ 				throw new RuntimeException(e);
 			}
 		}
 		return referenced;

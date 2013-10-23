@@ -3,7 +3,11 @@ package bali.compiler;
 import junit.framework.Assert;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.PrintStream;
+import java.io.StringBufferInputStream;
+import java.io.StringWriter;
 import java.net.URL;
 
 /**

@@ -1,11 +1,24 @@
 package bali.compiler.validation;
 
+import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
-import bali.compiler.validation.visitor.Validator;
+import bali.compiler.parser.tree.ImportNode;
+import bali.compiler.parser.tree.MethodDeclarationNode;
+import bali.compiler.parser.tree.TypeNode;
+import bali.compiler.reference.BlockingReference;
+import bali.compiler.reference.Reference;
+import bali.compiler.reference.Semaphore;
+import bali.compiler.reference.SimpleReference;
+import bali.compiler.type.ConstantLibrary;
+import bali.compiler.type.TypeLibrary;
+import bali.compiler.validation.validator.Validator;
+import bali.compiler.validation.validator.ValidatorFactory;
 
+import javax.lang.model.type.DeclaredType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -21,79 +34,67 @@ import java.util.concurrent.Future;
  */
 public class MultiThreadedValidationEngine implements ValidationEngine {
 
-	private List<Validator> validators;
-	private ExecutorService executorService;
+	private TypeLibrary typeLibrary;
+	private ConstantLibrary constantLibrary;
+	private List<ValidatorFactory> validatorFactories;
 
-	public MultiThreadedValidationEngine(List<Validator> validators, ExecutorService executorService) {
-		this.validators = validators;
-		this.executorService = executorService;
+	public MultiThreadedValidationEngine(TypeLibrary typeLibrary, ConstantLibrary constantLibrary, List<ValidatorFactory> validatorFactories) {
+		this.typeLibrary = typeLibrary;
+		this.constantLibrary = constantLibrary;
+		this.validatorFactories = validatorFactories;
 	}
 
 	public Map<String, List<ValidationFailure>> validate(final List<CompilationUnitNode> units) {
 
-		final List<Future<Map<String,List<ValidationFailure>>>> futureFailures = new ArrayList<>();
-
-		for (final Validator validator : validators) {
-
-				Future<Map<String,List<ValidationFailure>>> future = executorService.submit(new Callable<Map<String,List<ValidationFailure>>>() {
-					public Map<String,List<ValidationFailure>> call() throws Exception {
-						Map<String,List<ValidationFailure>> threadFailures = new HashMap<>();
-						for (final CompilationUnitNode unit : units) {
-							List<ValidationFailure> unitFailures = unit.accept(validator);
-							if (!unitFailures.isEmpty()){
-								threadFailures.put(unit.getName(), unitFailures);
-							}
-						}
-						validator.onCompletion();
-						return threadFailures;
-					}
-				});
-				futureFailures.add(future);
+		final Map<String,List<ValidationFailure>> validationFailures = new LinkedHashMap<>();
+		for (CompilationUnitNode compilationUnitNode : units){
+			String unitName = compilationUnitNode.getName();
+			List<TypeNode<?>> declaredTypes = new ArrayList<>();
+			declaredTypes.addAll(compilationUnitNode.getClasses());
+			declaredTypes.addAll(compilationUnitNode.getInterfaces());
+			for (TypeNode typeNode : declaredTypes){
+				String qualifiedClassName = unitName + "." + typeNode.getClassName();
+				typeNode.setQualifiedClassName(qualifiedClassName);
+				typeLibrary.notifyOfDeclaration(qualifiedClassName);
+			}
+			constantLibrary.notifyOfPackage(unitName);
 		}
 
-//		executorService.execute(new Runnable() {
-//			public void run() {
-//				try {
-//					Thread.sleep(10000);
-//					for (Future<Map<String,List<ValidationFailure>>> future : futureFailures){
-//						if (!future.isDone()){
-//							future.cancel(true);
-//						}
-//					}
-//				} catch (InterruptedException e){
-//				}
-//			}
-//		});
-
-		Map<String, List<ValidationFailure>> failures = new HashMap<>();
-
-		List<CancellationException> failedValidators = new ArrayList<>();
-
-		for (Future<Map<String,List<ValidationFailure>>> futureEntry : futureFailures){
-			try {
-				Map<String,List<ValidationFailure>> validationFailures = futureEntry.get();
-				if (validationFailures.size() > 0){
-					for (Map.Entry<String,List<ValidationFailure>> entry : validationFailures.entrySet()){
-						List<ValidationFailure> previousFailures = failures.get(entry.getKey());
-						if (previousFailures == null){
-							previousFailures = new ArrayList<>();
-							failures.put(entry.getKey(), previousFailures);
-						}
-						previousFailures.addAll(entry.getValue());
+		List<Thread> threads = new ArrayList<>();
+		for (final ValidatorFactory validatorFactory : validatorFactories) {
+			for (final CompilationUnitNode unit : units){
+				List<ValidationFailure> existingFailures = validationFailures.get(unit.getName());
+				final List<ValidationFailure> unitFailures = existingFailures != null ? existingFailures : Collections.synchronizedList(new ArrayList<ValidationFailure>());
+				final Validator validator = validatorFactory.createValidator();
+				Thread t =  new Thread(new Runnable() {
+					public void run() {
+						unitFailures.addAll(
+								unit.accept(validator)
+						);
 					}
-				}
-			} catch (CancellationException cancelled){
-				failedValidators.add(cancelled);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
+				}, validator.getClass().getName() + ": " + unit.getName());
+				t.start();
+				threads.add(t);
+				validationFailures.put(unit.getName(), unitFailures);
 			}
 		}
 
-		if (failures.isEmpty() && !failedValidators.isEmpty()){
-			throw new FailedValidationException(failedValidators);
+		for(Thread t : threads){
+			try {
+				t.join();
+			} catch (InterruptedException e) {
+			}
 		}
 
-		return failures;
+		Map<String, List<ValidationFailure>> ret = new HashMap<>();
+		for (Map.Entry<String, List<ValidationFailure>> validationFailure : validationFailures.entrySet()){
+			List<ValidationFailure> unitFailures = validationFailure.getValue();
+			if (!unitFailures.isEmpty()){
+				ret.put(validationFailure.getKey(), validationFailure.getValue());
+			}
+		}
+
+		return ret;
 	}
 
 }

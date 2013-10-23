@@ -39,7 +39,7 @@ import bali.compiler.type.Site;
 import bali.compiler.type.Type;
 import bali.compiler.type.TypeLibrary;
 import bali.compiler.type.UnaryOperator;
-import bali.compiler.validation.visitor.UnaryOperationValidator;
+import bali.compiler.validation.validator.UnaryOperationValidatorFactory;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -443,7 +443,7 @@ public class ASMStackManager implements Opcodes {
 	}
 
 	public void push(UnaryOperationNode value, MethodVisitor v) {
-		if (UnaryOperationValidator.NULL_CHECK_OPERATOR_NAME.equals(value.getOperator())){
+		if (UnaryOperationValidatorFactory.NULL_CHECK_OPERATOR_NAME.equals(value.getOperator())){
 			pushNullCheck(value.getTarget(), v);
 
 		} else {

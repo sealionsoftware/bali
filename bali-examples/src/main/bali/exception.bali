@@ -3,20 +3,21 @@ import bali.Boolean
 import bali.String
 import bali.Executable
 import bali.Exception
+import bali.RuntimeException
 
 class TryDoer() implements Executable {
 
  	method execute(){
 
 		try {
-			throw new Exception("Test")
+			throw new RuntimeException("Test")
 		} catch (Exception e){
-            throw new Exception(e.getMessage() + " 2")
+            throw new RuntimeException(e.getMessage() + " 2")
         } catch (Exception e){
             CONSOLE << e.getMessage()
         }
 
-        throw new Exception("Uncaught")
+        throw new RuntimeException("Uncaught")
  	}
 
 }

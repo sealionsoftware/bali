@@ -46,4 +46,7 @@ public class ConstructionExpressionNode extends ExpressionNode {
 		return arguments;
 	}
 
+	public String toString() {
+		return className;
+	}
 }

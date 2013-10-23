@@ -1,6 +1,9 @@
 package bali.compiler.type;
 
+import bali.compiler.reference.BlockingReference;
+import bali.compiler.reference.Reference;
 import bali.compiler.reference.Semaphore;
+import bali.compiler.reference.SimpleReference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,39 +16,33 @@ import java.util.Map;
  */
 public class ConstantLibrary {
 
-	private Map<String, List<Declaration>> constants = new HashMap<>();
+	private Map<String, Reference<List<Declaration>>> constants = new HashMap<>();
 	private PackageConstantsBuilder constantsBuilder;
-
-	private Semaphore constantsComplete = new Semaphore();
 
 	public ConstantLibrary(TypeLibrary library) {
 		constantsBuilder = new PackageConstantsBuilder(library);
 	}
 
-	public void constantsComplete() {
-		constantsComplete.release();
-	}
-
-	public void checkConstantsComplete() {
-		constantsComplete.check();
-	}
-
-	public void addConstant(String name, Declaration declaration) {
-		List<Declaration> declarations = constants.get(name);
-		if (declarations == null){
-			declarations = new ArrayList<>();
-			constants.put(name, declarations);
+	public void notifyOfPackage(String name) {
+		Reference<List<Declaration>> reference = constants.get(name);
+		if (reference == null){
+			reference = new BlockingReference<>();
+			constants.put(name, reference);
 		}
-		declarations.add(declaration);
+	}
+
+	public void addPackageConstants(String name, List<Declaration> declarations) {
+		Reference<List<Declaration>> reference = constants.get(name);
+		reference.set(declarations);
 	}
 
 	public List<Declaration> getConstants(String fullyQualifiedPackageName) {
-		List<Declaration> cached = constants.get(fullyQualifiedPackageName);
-		if (cached != null) {
-			return cached;
+		Reference<List<Declaration>> reference = constants.get(fullyQualifiedPackageName);
+		if (reference != null) {
+			return reference.get();
 		}
 		List<Declaration> packageConstants = constantsBuilder.buildPackageConstants(fullyQualifiedPackageName);
-		constants.put(fullyQualifiedPackageName, packageConstants);
+		constants.put(fullyQualifiedPackageName, new SimpleReference<>(packageConstants));
 		return packageConstants;
 	}
 

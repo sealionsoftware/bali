@@ -1,4 +1,4 @@
-package bali.compiler.validation.visitor;
+package bali.compiler.validation.validator;
 
 import bali.Number;
 import bali.compiler.parser.tree.BooleanLiteralExpressionNode;
@@ -18,23 +18,27 @@ import java.util.List;
  * User: Richard
  * Date: 14/05/13
  */
-public class NumberLiteralValidator implements Validator {
+public class NumberLiteralValidatorFactory implements ValidatorFactory {
 
 	private Site site;
 
-	public NumberLiteralValidator(TypeLibrary library) {
+	public NumberLiteralValidatorFactory(TypeLibrary library) {
 		this.site = new VanillaSite(library.getType(Number.class.getName()));
 	}
 
-	public List<ValidationFailure> validate(Node node, Control control) {
-		if (node instanceof NumberLiteralExpressionNode){
-			NumberLiteralExpressionNode literal = (NumberLiteralExpressionNode) node;
-			//TODO: validate number literals
-			literal.setType(site);
-		}
-		return Collections.emptyList();
+	public Validator createValidator() {
+		return new Validator() {
+			public List<ValidationFailure> validate(Node node, Control control) {
+				if (node instanceof NumberLiteralExpressionNode){
+					NumberLiteralExpressionNode literal = (NumberLiteralExpressionNode) node;
+					//TODO: validate number literals
+					literal.setType(site);
+				} else {
+					control.validateChildren();
+				}
+				return Collections.emptyList();
+			}
+		};
 	}
 
-	public void onCompletion() {
-	}
 }
