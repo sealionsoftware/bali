@@ -1,0 +1,15 @@
+// Bean Declarations
+
+bean ABean {
+
+	property Number aNumber
+	property String aNumber
+
+}
+
+//bean AParametrizedBean[Number T, V] {
+//
+//	property T aNumber
+//	property V aV
+//
+//}

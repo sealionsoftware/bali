@@ -1,5 +1,6 @@
 package bali.compiler;
 
+import bali.compiler.bytecode.ASMBeanGenerator;
 import bali.compiler.bytecode.ASMClassGenerator;
 import bali.compiler.bytecode.ASMInterfaceGenerator;
 import bali.compiler.bytecode.ASMPackageClassGenerator;
@@ -154,6 +155,7 @@ public class BaliCompiler {
 				)),
 				new ConfigurablePackageGenerator(
 						new ASMPackageClassGenerator(library),
+						new ASMBeanGenerator(),
 						new ASMInterfaceGenerator(),
 						new ASMClassGenerator(library)
 				),

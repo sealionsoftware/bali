@@ -14,7 +14,7 @@ import java.util.Collections;
 public class TypeDeclarationTypeBuilderUnitTest {
 
 	private TypeLibrary library = new TypeLibrary();
-	private TypeDeclarationTypeBuilder builder = new TypeDeclarationTypeBuilder(library);
+	private TypeDeclarationTypeBuilder builder = new TypeDeclarationTypeBuilder();
 
 	@Test
 	public void testBuildSimpleInterface(){

@@ -22,9 +22,11 @@ OPERATOR:                   [<>\+\-!£$%\^&\*#\~@\?/\\\|¬`¦:=]+ ;
 packageDeclaration:
 	importDeclaration*
 	constantDeclaration*
-	beanDeclaration*
-	interfaceDeclaration*
-	classDeclaration*
+	(
+		beanDeclaration |
+		interfaceDeclaration |
+		classDeclaration
+	)*
 	EOF
 ;
 
@@ -74,20 +76,22 @@ defaultStatement:           'default' ':' codeBlock ;
 
 variableDeclaration:        typeDeclaration identifier ('=' expression)? ;
 
-assignment:                 identifier '=' expression ;
+assignment:                 (identifier | propertyReference) '=' expression ;
 
 identifier:                 STANDARD_IDENTIFIER | CONSTANT_IDENTIFIER ;
 
 // Changed due to left recursion
-//invocation:                 (expressionForInvocation '.')? identifier argumentList;
+invocation:                 (expressionBase '.')? identifier argumentList;
 
-invocation:                 ((constantValue | identifier) '.')? identifier argumentList
-							|  invocation '.' identifier argumentList ;
+//invocation:                 ((constantValue | identifier) '.')? identifier argumentList
+//							|  invocation '.' identifier argumentList ;
+
+propertyReference:          (expressionBase '.')+ identifier ;
 
 unaryOperation:             OPERATOR expression ;
 
 // Changed due to left recursion
-operation:                  (expressionForOperation OPERATOR)+ expressionForOperation ;
+operation:                  (expressionBase OPERATOR)+ expressionBase ;
 
 construction:               'new' TYPE_IDENTIFIER argumentList ;
 
@@ -111,9 +115,9 @@ argumentList:               '(' ( expression ( ',' expression)*)? ')' ;
 
 constantValue:              literal | construction ;
 
-expressionForOperation:     constantValue | identifier | invocation | unaryOperation | '(' unaryOperation ')' | '(' operation ')' ;
+expressionBase:             constantValue | identifier | invocation | unaryOperation | '(' unaryOperation ')' | '(' operation ')' ;
 
-expression:                 operation | expressionForOperation ;
+expression:                 operation | expressionBase | propertyReference ;
 
 literal:                    STRING_LITERAL | NUMBER_LITERAL | booleanLiteral | arrayLiteral ;
 

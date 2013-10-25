@@ -12,6 +12,7 @@ public class CompilationUnitNode extends Node {
 	private String name;
 	private List<ImportNode> imports = new ArrayList<>();
 	private List<ConstantNode> constants = new ArrayList<>();
+	private List<BeanNode> beans = new ArrayList<>();
 	private List<InterfaceNode> interfaces = new ArrayList<>();
 	private List<ClassNode> classes = new ArrayList<>();
 
@@ -31,6 +32,11 @@ public class CompilationUnitNode extends Node {
 	public void addConstant(ConstantNode constant){
 		children.add(constant);
 		constants.add(constant);
+	}
+
+	public void addBean(BeanNode bean){
+		children.add(bean);
+		beans.add(bean);
 	}
 
 	public void addInterface(InterfaceNode iface){
@@ -57,6 +63,10 @@ public class CompilationUnitNode extends Node {
 
 	public List<InterfaceNode> getInterfaces() {
 		return interfaces;
+	}
+
+	public List<BeanNode> getBeans() {
+		return beans;
 	}
 
 	public List<ClassNode> getClasses() {

@@ -1,5 +1,6 @@
 package bali.compiler.parser;
 
+import bali.compiler.parser.tree.BeanNode;
 import bali.compiler.parser.tree.BooleanLiteralExpressionNode;
 import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.parser.tree.CodeBlockNode;
@@ -41,17 +42,18 @@ public class ANTLRParserManagerUnitTest {
 	@Test
 	public void testCompilationUnit() {
 		Assert.assertEquals("Package name", "example", unit.getName());
-		Assert.assertEquals("Imports", 3, unit.getImports().size());
+		Assert.assertEquals("Imports", 4, unit.getImports().size());
 		Assert.assertEquals("Constants", 1, unit.getConstants().size());
+		Assert.assertEquals("Beans", 2, unit.getBeans().size());
 		Assert.assertEquals("Interfaces", 2, unit.getInterfaces().size());
 		Assert.assertEquals("Classes", 1, unit.getClasses().size());
-		Assert.assertEquals("Children", 7, unit.getChildren().size());
+		Assert.assertEquals("Children", 10, unit.getChildren().size());
 	}
 
 	@Test
 	public void testImport() {
 		ImportNode iport = unit.getImports().get(0);
-		Assert.assertEquals("Import name", "bali.Number", iport.getName());
+		Assert.assertEquals("Import name", "bali.String", iport.getName());
 		Assert.assertEquals("Children", 0, iport.getChildren().size());
 	}
 
@@ -85,6 +87,14 @@ public class ANTLRParserManagerUnitTest {
 		Assert.assertEquals("Fields", 1, clazz.getFields().size());
 		Assert.assertEquals("Methods", 2, clazz.getMethods().size());
 		Assert.assertEquals("Children", 5, clazz.getChildren().size());
+	}
+
+	@Test
+	public void testBean() {
+		BeanNode bean = unit.getBeans().get(1);
+		Assert.assertEquals("Name", "AnotherBean", bean.getClassName());
+		Assert.assertEquals("Super Class", "ABean", bean.getSuperType().getClassName());
+		Assert.assertEquals("Properties", 1, bean.getProperties().size());
 	}
 
 	@Test

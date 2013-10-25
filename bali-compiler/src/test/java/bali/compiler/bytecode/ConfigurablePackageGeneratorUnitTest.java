@@ -2,6 +2,7 @@ package bali.compiler.bytecode;
 
 import bali.compiler.GeneratedClass;
 import bali.compiler.GeneratedPackage;
+import bali.compiler.parser.tree.BeanNode;
 import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.InterfaceNode;
@@ -17,11 +18,13 @@ import org.mockito.Mockito;
 public class ConfigurablePackageGeneratorUnitTest {
 
 	private static Generator<CompilationUnitNode, GeneratedClass> packageClassGenerator = Mockito.mock(Generator.class);
+	private static Generator<BeanNode, GeneratedClass> beanGenerator = Mockito.mock(Generator.class);
 	private static Generator<InterfaceNode, GeneratedClass> interfaceGenerator = Mockito.mock(Generator.class);
 	private static Generator<ClassNode, GeneratedClass> classGenerator = Mockito.mock(Generator.class);
 
 	private static ConfigurablePackageGenerator generator = new ConfigurablePackageGenerator(
 			packageClassGenerator,
+			beanGenerator,
 			interfaceGenerator,
 			classGenerator
 	);

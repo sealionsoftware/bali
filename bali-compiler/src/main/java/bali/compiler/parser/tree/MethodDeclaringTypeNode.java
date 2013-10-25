@@ -10,18 +10,17 @@ import java.util.List;
  * User: Richard
  * Date: 29/04/13
  */
-public abstract class TypeNode extends Node {
+public abstract class MethodDeclaringTypeNode<M extends MethodNode> extends TypeNode {
 
 	private String className;
+	private List<SiteNode> implementations = new ArrayList<>();
 	private List<TypeParameterNode> typeParameters = new ArrayList<>();
+	private List<M> methods = new ArrayList<>();
 
-	private BlockingReference<String> qualifiedClassName = new BlockingReference<>();
-	private BlockingReference<Type> resolvedType = new BlockingReference<>();
-
-	public TypeNode() {
+	public MethodDeclaringTypeNode() {
 	}
 
-	public TypeNode(Integer line, Integer character) {
+	public MethodDeclaringTypeNode(Integer line, Integer character) {
 		super(line, character);
 	}
 
@@ -42,20 +41,22 @@ public abstract class TypeNode extends Node {
 		typeParameters.add(parameter);
 	}
 
-	public String getQualifiedClassName() {
-		return qualifiedClassName.get();
+	public List<SiteNode> getImplementations() {
+		return implementations;
 	}
 
-	public void setQualifiedClassName(String qualifiedClassName) {
-		this.qualifiedClassName.set(qualifiedClassName);
+	public void addImplementation(SiteNode implementation) {
+		children.add(implementation);
+		implementations.add(implementation);
 	}
 
-	public Type getResolvedType() {
-		return resolvedType.get();
+	public List<M> getMethods() {
+		return methods;
 	}
 
-	public void setResolvedType(Type type) {
-		this.resolvedType.set(type);
+	public void addMethod(M method) {
+		this.methods.add(method);
+		children.add(method);
 	}
 
 }

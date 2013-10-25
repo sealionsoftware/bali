@@ -3,6 +3,7 @@ package bali.compiler.type;
 import bali.compiler.parser.tree.ArgumentDeclarationNode;
 import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.parser.tree.InterfaceNode;
+import bali.compiler.parser.tree.MethodDeclaringTypeNode;
 import bali.compiler.parser.tree.MethodNode;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.parser.tree.TypeNode;
@@ -22,12 +23,6 @@ import java.util.List;
  * Date: 28/08/13
  */
 public class TypeDeclarationTypeBuilder {
-
-	private TypeLibrary library;
-
-	public TypeDeclarationTypeBuilder(TypeLibrary library) {
-		this.library = library;
-	}
 
 	public Type build(TypeNode declaration) {
 		if (declaration instanceof ClassNode) {
@@ -67,7 +62,7 @@ public class TypeDeclarationTypeBuilder {
 		);
 	}
 
-	private List<Declaration> getTypeParameters(TypeNode<?> declaration) {
+	private List<Declaration> getTypeParameters(TypeNode declaration) {
 
 		List<Declaration> parameters = new ArrayList<>();
 		for (TypeParameterNode declaredParameter : declaration.getTypeParameters()) {
@@ -90,7 +85,7 @@ public class TypeDeclarationTypeBuilder {
 		return arguments;
 	}
 
-	private List<Method> getMethods(TypeNode<? extends MethodNode> declaration) {
+	private List<Method> getMethods(MethodDeclaringTypeNode<? extends MethodNode> declaration) {
 		List<Method> methods = new ArrayList<>();
 		for (MethodNode declaredMethod : declaration.getMethods()) {
 			List<Declaration> arguments = new ArrayList<>();
@@ -110,7 +105,7 @@ public class TypeDeclarationTypeBuilder {
 		return methods;
 	}
 
-	private List<Site> getInterfaces(TypeNode<? extends MethodNode> declaration) {
+	private List<Site> getInterfaces(MethodDeclaringTypeNode<? extends MethodNode> declaration) {
 		List<Site> ret = new ArrayList<>();
 		for (SiteNode typeReference : declaration.getImplementations()) {
 			ret.add(getType(typeReference));
@@ -135,20 +130,6 @@ public class TypeDeclarationTypeBuilder {
 	}
 
 	private Site getType(SiteNode reference) {
-
 		return reference.getSite();
-
-//		BlockingReference<Type> type = library.getReference(reference.getSite().getName());
-//
-//		List<SiteNode> parameterNodes = reference.getParameters();
-//		if (parameterNodes.isEmpty()){
-//			return new VanillaSite(type);
-//		}
-//
-//		List<Site> typeArguments = new ArrayList<>();
-//		for (SiteNode argumentNode : parameterNodes) {
-//			typeArguments.add(getType(argumentNode));
-//		}
-//		return new ParametrizedSite(type, typeArguments);
 	}
 }

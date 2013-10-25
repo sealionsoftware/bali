@@ -33,6 +33,11 @@ public class BaliParserUnitTest {
 //	}
 
 	@Test
+	public void testBeansDeclaration() throws Exception {
+		parsePackageDeclaration("beans.bali");
+	}
+
+	@Test
 	public void testInterfacesDeclaration() throws Exception {
 		parsePackageDeclaration("interfaces.bali");
 	}
@@ -75,6 +80,16 @@ public class BaliParserUnitTest {
 	@Test
 	public void testForStatement() throws Exception {
 		parseCodeBlock("forstatement.bali");
+	}
+
+	@Test
+	public void testInvocations() throws Exception {
+		parseCodeBlock("invocations.bali");
+	}
+
+	@Test
+	public void testPropertyReference() throws Exception {
+		parseCodeBlock("propertyReference.bali");
 	}
 
 	private void parseCodeBlock(String filename) throws IOException {

@@ -1,11 +1,13 @@
 package bali.compiler.bytecode;
 
+import bali.compiler.parser.tree.ArgumentDeclarationNode;
 import bali.compiler.parser.tree.DeclarationNode;
 import bali.compiler.parser.tree.MethodNode;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.type.Site;
 import org.objectweb.asm.Type;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,12 +35,12 @@ public class ASMConverter {
 	}
 
 	public String getMethodDescriptor(MethodNode method) {
-		Type[] argTypes = new Type[method.getArguments().size()];
-		int i = 0;
-		for (DeclarationNode argument : method.getArguments()) {
-			argTypes[i++] = Type.getType(getTypeDescriptor(argument.getType().getSite().getType()));
+		List<bali.compiler.type.Type> argumentTypes = new ArrayList<>(method.getArguments().size());
+		for (ArgumentDeclarationNode argument : method.getArguments()){
+			argumentTypes.add(argument.getType().getSite().getType());
 		}
-		return Type.getMethodType(Type.getType(getTypeDescriptor(method.getType())), argTypes).getDescriptor();
+		SiteNode returnType = method.getType();
+		return getMethodDescriptor(returnType != null ? returnType.getSite().getType() : null, argumentTypes);
 	}
 
 	public String getTypeDescriptor(String className) {

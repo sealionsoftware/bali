@@ -49,9 +49,10 @@ public class MultiThreadedValidationEngine implements ValidationEngine {
 		final Map<String,List<ValidationFailure>> validationFailures = new LinkedHashMap<>();
 		for (CompilationUnitNode compilationUnitNode : units){
 			String unitName = compilationUnitNode.getName();
-			List<TypeNode<?>> declaredTypes = new ArrayList<>();
+			List<TypeNode> declaredTypes = new ArrayList<>();
 			declaredTypes.addAll(compilationUnitNode.getClasses());
 			declaredTypes.addAll(compilationUnitNode.getInterfaces());
+			declaredTypes.addAll(compilationUnitNode.getBeans());
 			for (TypeNode typeNode : declaredTypes){
 				String qualifiedClassName = unitName + "." + typeNode.getClassName();
 				typeNode.setQualifiedClassName(qualifiedClassName);

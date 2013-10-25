@@ -1,5 +1,6 @@
 // Imports
 
+import bali.String
 import bali.Number
 import bali.Boolean
 import bali.Iterable
@@ -14,14 +15,32 @@ constant Number GLOBAL_CONSTANT = 2
 //	return GLOBAL_CONSTANT.add(argument)
 //}
 
+// Beans
+
+bean ABean {
+
+	property Number aNumber
+
+}
+
+bean AnotherBean extends ABean {
+
+	property Number aNumber
+
+}
+
 // Interfaces
 
 interface ASuperInterface {
+
 	declare Number aMethod(Number anArgument)
+
 }
 
 interface AnInterface extends ASuperInterface {
+
 	declare Number anotherMethod(Number anArgument)
+
 }
 
 // Classes

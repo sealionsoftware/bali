@@ -1,0 +1,5 @@
+{
+	aReference.invoke()
+	aReference.invoke().invokeAgain()
+		.andAgain()
+}

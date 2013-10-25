@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class TypeLibrary {
 
-	private final TypeDeclarationTypeBuilder declarationBuilder = new TypeDeclarationTypeBuilder(this);
+	private final TypeDeclarationTypeBuilder declarationBuilder = new TypeDeclarationTypeBuilder();
 	private final ClasspathTypeBuilder classpathBuilder = new ClasspathTypeBuilder(this);
 	private final Map<String, Reference<Type>> types = new HashMap<>();
 
