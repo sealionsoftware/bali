@@ -75,13 +75,6 @@ public class AssignmentValidatorFactory implements ValidatorFactory {
 				return failures;
 			}
 
-//			private Declaration findWithName(List<Declaration> declarations, String name){
-//				for (Declaration declaration : declarations) if (declaration.getName().equals(name)){
-//					return declaration;
-//				}
-//				return null;
-//			}
-
 		};
 	}
 }

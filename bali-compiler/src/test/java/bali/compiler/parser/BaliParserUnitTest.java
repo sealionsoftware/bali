@@ -88,6 +88,11 @@ public class BaliParserUnitTest {
 	}
 
 	@Test
+	public void testProperties() throws Exception {
+		parseCodeBlock("properties.bali");
+	}
+
+	@Test
 	public void testPropertyReference() throws Exception {
 		parseCodeBlock("propertyReference.bali");
 	}
