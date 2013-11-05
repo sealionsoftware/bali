@@ -6,6 +6,7 @@ import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.FieldNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.ReferenceNode;
+import bali.compiler.type.Declaration;
 import bali.compiler.type.Site;
 import bali.compiler.validation.ValidationFailure;
 
@@ -39,6 +40,7 @@ public class AssignmentValidatorFactory implements ValidatorFactory {
 				List<ValidationFailure> failures = new ArrayList<>();
 
 				ReferenceNode reference = statement.getReference();
+				String name = reference.getName();
 				Site site = reference.getType();
 				Site value = statement.getValue().getType();
 
@@ -47,6 +49,9 @@ public class AssignmentValidatorFactory implements ValidatorFactory {
 				}
 				if (reference.getFinal()) {
 					failures.add(new ValidationFailure(statement, "Cannot assign an expression to a constant reference"));
+				}
+				if (reference.getTarget() != null){
+					statement.setSetterName("set" + name.substring(0,1).toUpperCase() + name.substring(1));
 				}
 
 				return failures;
@@ -69,6 +74,13 @@ public class AssignmentValidatorFactory implements ValidatorFactory {
 
 				return failures;
 			}
+
+//			private Declaration findWithName(List<Declaration> declarations, String name){
+//				for (Declaration declaration : declarations) if (declaration.getName().equals(name)){
+//					return declaration;
+//				}
+//				return null;
+//			}
 
 		};
 	}

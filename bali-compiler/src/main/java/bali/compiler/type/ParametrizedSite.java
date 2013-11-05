@@ -112,6 +112,17 @@ public class ParametrizedSite implements Site {
 		return ret;
 	}
 
+	private List<Declaration> parametriseProperties(List<Declaration> properties) {
+		List<Declaration> ret = new ArrayList<>();
+		for (Declaration property : properties) {
+			ret.add(new Declaration(
+					property.getName(),
+					parametriseSite(property.getType())
+			));
+		}
+		return ret;
+	}
+
 	private List<Operator> parametriseOperators(List<Operator> operators) {
 
 		List<Operator> ret = new ArrayList<>();
@@ -223,7 +234,6 @@ public class ParametrizedSite implements Site {
 
 	public List<Site> getInterfaces() {
 		if (interfaces == null){
-			this.interfaces = getType().getInterfaces();
 			this.interfaces = parametriseSites(getType().getInterfaces());
 		}
 		return interfaces;
@@ -245,7 +255,7 @@ public class ParametrizedSite implements Site {
 
 	public List<Declaration> getProperties() {
 		if (properties == null){
-			this.properties = parametriseDeclarations(getType().getProperties());
+			this.properties = parametriseProperties(getType().getProperties());
 		}
 		return properties;
 	}

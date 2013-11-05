@@ -56,9 +56,9 @@ statement:                  lineStatement | controlStatement ;
 
 lineStatement:              variableDeclaration | assignment | returnStatement | throwStatement | breakStatement | continueStatement | expression;
 
-controlStatement:           conditionalStatement | tryStatement | whileStatement | forStatement | switchStatement ;
+controlStatement:           conditionalStatement | tryStatement | whileStatement | forStatement | switchStatement | runStatement ;
 
-conditionalStatement:       'if' '(' expression ')' codeBlock ('else if' '(' expression ')' codeBlock)* ('else' codeBlock)? ;
+conditionalStatement:       'if' '(' expression ')' codeBlock ('else' 'if' '(' expression ')' codeBlock)* ('else' codeBlock)? ;
 
 tryStatement:               'try' codeBlock catchStatement+ ;
 
@@ -74,24 +74,29 @@ caseStatement:              'case' expression ':' codeBlock ;
 
 defaultStatement:           'default' ':' codeBlock ;
 
+runStatement:               'run' codeBlock ;
+
 variableDeclaration:        typeDeclaration identifier ('=' expression)? ;
 
-assignment:                 (identifier | propertyReference) '=' expression ;
+assignment:                 reference '=' expression ;
 
 identifier:                 STANDARD_IDENTIFIER | CONSTANT_IDENTIFIER ;
 
-// Changed due to left recursion
-invocation:                 (expressionBase '.')? identifier argumentList;
+call:                       identifier argumentList;
 
-//invocation:                 ((constantValue | identifier) '.')? identifier argumentList
-//							|  invocation '.' identifier argumentList ;
+invocation:                 call |
+							expressionBase '.' call |
+							reference '.' call |
+							invocation '.' call ;
 
-propertyReference:          (expressionBase '.')+ identifier ;
+reference:                  identifier |
+							expressionBase '.' identifier |
+							reference '.' identifier ;
 
 unaryOperation:             OPERATOR expression ;
 
 // Changed due to left recursion
-operation:                  (expressionBase OPERATOR)+ expressionBase ;
+operation:                  expressionForOperation OPERATOR expressionForOperation ;
 
 construction:               'new' TYPE_IDENTIFIER argumentList ;
 
@@ -115,9 +120,11 @@ argumentList:               '(' ( expression ( ',' expression)*)? ')' ;
 
 constantValue:              literal | construction ;
 
-expressionBase:             constantValue | identifier | invocation | unaryOperation | '(' unaryOperation ')' | '(' operation ')' ;
+expressionBase:             constantValue | '(' unaryOperation ')' | '(' operation ')' ;
 
-expression:                 operation | expressionBase | propertyReference ;
+expressionForOperation:     expressionBase | reference | invocation | unaryOperation;
+
+expression:                 operation | expressionForOperation ;
 
 literal:                    STRING_LITERAL | NUMBER_LITERAL | booleanLiteral | arrayLiteral ;
 

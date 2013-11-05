@@ -37,12 +37,7 @@ public class BeanNode extends TypeNode {
 	}
 
 	public void setSuperType(SiteNode superType) {
-		this.superType = superType;
 		children.add(superType);
+		this.superType = superType;
 	}
-
-	public Boolean getAbstract() {
-		return false;
-	}
-
 }

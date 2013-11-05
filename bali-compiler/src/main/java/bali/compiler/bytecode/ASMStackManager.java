@@ -198,9 +198,21 @@ public class ASMStackManager implements Opcodes {
 	}
 
 	private void execute(AssignmentNode statement, MethodVisitor v) {
-		Integer index = declaredVariables.get(statement.getReference().getName()).getIndex();
-		push(statement.getValue(), v);
-		v.visitVarInsn(ASTORE, index);
+
+		ReferenceNode referenceNode = statement.getReference();
+		ExpressionNode targetNode = referenceNode.getTarget();
+		if (targetNode == null){
+			Integer index = declaredVariables.get(statement.getReference().getName()).getIndex();
+			push(statement.getValue(), v);
+			v.visitVarInsn(ASTORE, index);
+		} else {
+			Type targetType = targetNode.getType().getType();
+			push(targetNode, v);
+			push(statement.getValue(), v);
+			v.visitMethodInsn(invokeInsn(targetType), converter.getInternalName(targetType), statement.getSetterName(), converter.getMethodDescriptor(null, Collections.singletonList(referenceNode.getType().getType())));
+		}
+
+
 	}
 
 	private void execute(ConditionalStatementNode statement, MethodVisitor v) {

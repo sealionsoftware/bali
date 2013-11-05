@@ -46,7 +46,9 @@ public abstract class Node {
 				}
 			}));
 		} catch (Exception e){
-			//Do something
+			//failures.add(new ValidationFailure(this, e.getMessage()));
+			e.printStackTrace(System.err);
+//			.println(validator.getClass() + " failed, " + e.getClass() + (e.getMessage() != null ? ": " + e.getMessage() : ""));
 		}
 		return failures;
 	}

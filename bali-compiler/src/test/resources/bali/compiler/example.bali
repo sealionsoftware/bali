@@ -25,7 +25,7 @@ bean ABean {
 
 bean AnotherBean extends ABean {
 
-	property Number aNumber
+	property String aString
 
 }
 
@@ -54,6 +54,8 @@ class AnImplementation(Number aParameter) implements AnInterface {
  	    Number aVariable = anArgument + GLOBAL_CONSTANT
 		Iterable[Number] numbers = [3,4,5]
  	    Boolean stop = false
+ 	    ABean aBean = new AnotherBean()
+ 	    aBean.aNumber = 3
 
  	    while(!stop){
 	        for (Number number : numbers){
@@ -63,6 +65,7 @@ class AnImplementation(Number aParameter) implements AnInterface {
 	            stop = true
 	        }
  	    }
+
 		return anArgument
  	}
 

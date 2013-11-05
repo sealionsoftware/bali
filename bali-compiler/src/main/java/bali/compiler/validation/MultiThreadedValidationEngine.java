@@ -5,6 +5,7 @@ import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.ImportNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.TypeNode;
+import bali.compiler.reference.BlockDeclaringThread;
 import bali.compiler.reference.BlockingReference;
 import bali.compiler.reference.Reference;
 import bali.compiler.reference.Semaphore;
@@ -27,6 +28,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * User: Richard
@@ -61,24 +63,64 @@ public class MultiThreadedValidationEngine implements ValidationEngine {
 			constantLibrary.notifyOfPackage(unitName);
 		}
 
-		List<Thread> threads = new ArrayList<>();
+		final ReentrantLock lock = new ReentrantLock();
+		final List<BlockDeclaringThread> threads = new ArrayList<>();
 		for (final ValidatorFactory validatorFactory : validatorFactories) {
 			for (final CompilationUnitNode unit : units){
 				List<ValidationFailure> existingFailures = validationFailures.get(unit.getName());
 				final List<ValidationFailure> unitFailures = existingFailures != null ? existingFailures : Collections.synchronizedList(new ArrayList<ValidationFailure>());
 				final Validator validator = validatorFactory.createValidator();
-				Thread t =  new Thread(new Runnable() {
+				BlockDeclaringThread t =  new BlockDeclaringThread(new Runnable() {
 					public void run() {
 						unitFailures.addAll(
 								unit.accept(validator)
 						);
 					}
-				}, validator.getClass().getName() + ": " + unit.getName());
+				}, validator.getClass().getName() + ": " + unit.getName(), lock);
 				t.start();
 				threads.add(t);
 				validationFailures.put(unit.getName(), unitFailures);
 			}
 		}
+
+		final Reference<Boolean> killReaper = new SimpleReference<>(false);
+		final Reference<Boolean> failed = new SimpleReference<>(false);
+		Thread reaper = new Thread(new Runnable(){
+			public void run() {
+				List<BlockDeclaringThread> liveThreads = new ArrayList<>(threads);
+				try {
+					while(!killReaper.get()){
+						Thread.sleep(2000);
+						lock.lock();
+						try {
+							boolean forceEnd = true;
+							for (BlockDeclaringThread t : new ArrayList<>(liveThreads)){
+								if (!t.isAlive()){
+									liveThreads.remove(t);
+									continue;
+								}
+								if (!t.checkBlocked()){
+									forceEnd = false;
+									break;
+								}
+							}
+							if (forceEnd){
+								failed.set(true);
+								killReaper.set(true);
+								for (BlockDeclaringThread t : new ArrayList<>(liveThreads)){
+									t.interrupt();
+								}
+							}
+						} finally {
+							lock.unlock();
+						}
+					}
+				} catch (InterruptedException ie){
+					// Whatever
+				}
+			}
+		}, "Validator Reaper");
+		reaper.start();
 
 		for(Thread t : threads){
 			try {
@@ -86,6 +128,7 @@ public class MultiThreadedValidationEngine implements ValidationEngine {
 			} catch (InterruptedException e) {
 			}
 		}
+		killReaper.set(true);
 
 		Map<String, List<ValidationFailure>> ret = new HashMap<>();
 		for (Map.Entry<String, List<ValidationFailure>> validationFailure : validationFailures.entrySet()){
@@ -93,6 +136,10 @@ public class MultiThreadedValidationEngine implements ValidationEngine {
 			if (!unitFailures.isEmpty()){
 				ret.put(validationFailure.getKey(), validationFailure.getValue());
 			}
+		}
+
+		if (failed.get() && ret.size() == 0){
+			throw new RuntimeException("Validation forcibly terminated but no failures were recorded");
 		}
 
 		return ret;

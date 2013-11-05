@@ -1,10 +1,12 @@
 package bali.compiler.type;
 
 import bali.compiler.parser.tree.ArgumentDeclarationNode;
+import bali.compiler.parser.tree.BeanNode;
 import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.MethodDeclaringTypeNode;
 import bali.compiler.parser.tree.MethodNode;
+import bali.compiler.parser.tree.PropertyNode;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.parser.tree.TypeNode;
 import bali.compiler.parser.tree.TypeParameterNode;
@@ -30,6 +32,9 @@ public class TypeDeclarationTypeBuilder {
 		}
 		if (declaration instanceof InterfaceNode) {
 			return build((InterfaceNode) declaration);
+		}
+		if (declaration instanceof BeanNode){
+			return build((BeanNode) declaration);
 		}
 		throw new RuntimeException("Cannot build MetaTypes like " + declaration);
 	}
@@ -60,6 +65,28 @@ public class TypeDeclarationTypeBuilder {
 				Collections.<Declaration>emptyList(),
 				true
 		);
+	}
+
+	public Type build(BeanNode declaration) {
+		return new Type(
+				declaration.getQualifiedClassName(),
+				getTypeParameters(declaration),
+				Collections.<Site>emptyList(),
+				Collections.<Declaration>emptyList(),
+				Collections.<Method>emptyList(),
+				Collections.<Operator>emptyList(),
+				Collections.<UnaryOperator>emptyList(),
+				getProperties(declaration),
+				false
+		);
+	}
+
+	private List<Declaration> getProperties(BeanNode declaration) {
+		List<Declaration> ret = new ArrayList<>();
+		for (PropertyNode node : declaration.getProperties()){
+			ret.add(new Declaration(node.getName(), node.getType().getSite()));
+		}
+		return ret;
 	}
 
 	private List<Declaration> getTypeParameters(TypeNode declaration) {

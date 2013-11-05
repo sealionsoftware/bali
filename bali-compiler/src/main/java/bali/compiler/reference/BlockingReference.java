@@ -18,8 +18,9 @@ public class BlockingReference<T> implements Reference<T> {
 	}
 
 	public synchronized T get() {
-		if (!isSet){
+		while (!isSet){
 			try {
+				BlockDeclaringThread.setCurrentBlocked(true);
 				wait();
 			} catch (InterruptedException e) {
  				throw new RuntimeException(e);
@@ -31,6 +32,7 @@ public class BlockingReference<T> implements Reference<T> {
 	public synchronized void set(T referenced) {
 		this.referenced = referenced;
 		isSet = true;
+		BlockDeclaringThread.setCurrentBlocked(false);
 		notifyAll();
 	}
 }

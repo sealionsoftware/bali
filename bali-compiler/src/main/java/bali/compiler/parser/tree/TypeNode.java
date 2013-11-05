@@ -58,4 +58,8 @@ public abstract class TypeNode extends Node {
 		this.resolvedType.set(type);
 	}
 
+	public String toString() {
+		return className;
+	}
+
 }

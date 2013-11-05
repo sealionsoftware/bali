@@ -32,7 +32,7 @@ public class ConstructionValidatorFactory implements ValidatorFactory {
 					// TODO: Check constructor type signature
 
 					if (expressionType.isAbstract()) {
-						failures = Collections.singletonList(new ValidationFailure(expression, "Cannot instancate an interface type"));
+						failures = Collections.singletonList(new ValidationFailure(expression, "Cannot instanciate an interface type"));
 					} else {
 						failures = Collections.emptyList();
 					}

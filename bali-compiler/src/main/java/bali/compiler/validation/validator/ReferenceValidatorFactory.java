@@ -5,6 +5,7 @@ import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.parser.tree.CodeBlockNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.DeclarationNode;
+import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.ForStatementNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.Node;
@@ -56,6 +57,7 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 				} else if (node instanceof VariableNode) {
 					validate((VariableNode) node, control);
 				} else if (node instanceof ReferenceNode) {
+					control.validateChildren();
 					return validate((ReferenceNode) node);
 				} else {
 					control.validateChildren();
@@ -176,24 +178,46 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 				List<ValidationFailure> failures = new ArrayList<>();
 				Site declaration = null;
 				Scope declarationScope = null;
+				ExpressionNode target = value.getTarget();
 
-				for (Scope scope : scopeStack) {
-					declaration = scope.find(value.getName());
-					if (declaration != null) {
-						declarationScope = scope;
-						break;
+				if (target == null){
+
+					for (Scope scope : scopeStack) {
+						declaration = scope.find(value.getName());
+						if (declaration != null) {
+							declarationScope = scope;
+							break;
+						}
 					}
+
+					if (declaration == null) {
+						failures.add(new ValidationFailure(value, "Could not resolve reference " + value.getName()));
+						return failures;
+					}
+
+					value.setFinal(declarationScope.getFinal());
+					value.setDeclaration(declaration);
+					value.setHostClass(declarationScope.getClassName());
+					value.setScope(declarationScope.getScope());
+
+				} else {
+					String name = value.getName();
+					Site site = target.getType();
+					Declaration property = null;
+					if (site != null)
+						for (Declaration p : site.getProperties())
+							if(p.getName().equals(name))
+								property = p;
+					if (property == null){
+						failures.add(new ValidationFailure(value, "Could not resolve reference " + site.getType() + "." + value.getName()));
+						return failures;
+					}
+					value.setFinal(false);
+					value.setDeclaration(property.getType());
+					value.setHostClass(site.getType().getName());
+					value.setScope(ReferenceNode.ReferenceScope.FIELD);
 				}
 
-				if (declaration == null) {
-					failures.add(new ValidationFailure(value, "Could not resolve reference " + value.getName()));
-					return failures;
-				}
-
-				value.setFinal(declarationScope.getFinal());
-				value.setDeclaration(declaration);
-				value.setHostClass(declarationScope.getClassName());
-				value.setScope(declarationScope.getScope());
 				return failures;
 			}
 

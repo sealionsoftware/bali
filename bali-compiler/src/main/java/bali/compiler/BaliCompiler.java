@@ -20,6 +20,7 @@ import bali.compiler.validation.ValidationException;
 import bali.compiler.validation.ValidationFailure;
 import bali.compiler.validation.validator.ArrayLiteralValidatorFactory;
 import bali.compiler.validation.validator.AssignmentValidatorFactory;
+import bali.compiler.validation.validator.BeanValidatorFactory;
 import bali.compiler.validation.validator.BooleanLiteralValidatorFactory;
 import bali.compiler.validation.validator.BranchStatementValidatorFactory;
 import bali.compiler.validation.validator.ClassValidatorFactory;
@@ -135,6 +136,7 @@ public class BaliCompiler {
 				new MultiThreadedValidationEngine(library, constantLibrary, Arrays.asList(
 						new ImportsValidatorFactory(library),
 						new TypeResolvingValidatorFactory(library),
+						new BeanValidatorFactory(library),
 						new InterfaceValidatorFactory(library),
 						new ClassValidatorFactory(library),
 						new ConstantValidatorFactory(constantLibrary),

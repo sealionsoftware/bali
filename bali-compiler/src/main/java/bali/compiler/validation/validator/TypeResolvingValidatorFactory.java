@@ -7,6 +7,7 @@ import bali.compiler.parser.tree.ImportNode;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.SiteNode;
+import bali.compiler.parser.tree.TypeNode;
 import bali.compiler.reference.SimpleReference;
 import bali.compiler.type.ParametrizedSite;
 import bali.compiler.reference.Reference;
@@ -43,45 +44,43 @@ public class TypeResolvingValidatorFactory implements ValidatorFactory {
 
 		return new Validator() {
 
-			private Map<String, Reference<Type>> resolvables;
+			private Map<String, Reference<Type>> resolvables = new HashMap<>();
 
 			public List<ValidationFailure> validate(Node node, Control control) {
 
-				if (node instanceof CompilationUnitNode){
-					List<ValidationFailure> failures =  validate((CompilationUnitNode) node);
-					control.validateChildren();
-					return failures;
+				List<ValidationFailure> failures = Collections.emptyList();
+
+				if (node instanceof ImportNode){
+					failures =  validate((ImportNode) node);
+				} else if (node instanceof TypeNode){
+					failures =  validate((TypeNode) node);
 				}
 
 				control.validateChildren();
 
 				if (node instanceof SiteNode){
-					return validate((SiteNode) node);
+					failures =  validate((SiteNode) node);
 				} else if (node instanceof ConstructionExpressionNode){
-					return validate((ConstructionExpressionNode) node);
+					failures =  validate((ConstructionExpressionNode) node);
 				}
+
+				return failures;
+			}
+
+			public List<ValidationFailure> validate(TypeNode node){
+				resolvables.put(node.getClassName(), library.getReference(node.getQualifiedClassName()));
 				return Collections.emptyList();
 			}
 
 			// Engages at the root of the AST, constructs a lookup table of unqualified names to declarations
-			public List<ValidationFailure> validate(CompilationUnitNode unit) {
+			public List<ValidationFailure> validate(ImportNode iport) {
 
-				Map<String, Reference<Type>> resolvables = new HashMap<>();
-				for (InterfaceNode iface : unit.getInterfaces()) {
-					resolvables.put(iface.getClassName(), library.getReference(iface.getQualifiedClassName()));
-				}
-				for (ClassNode clazz : unit.getClasses()) {
-					resolvables.put(clazz.getClassName(), library.getReference(clazz.getQualifiedClassName()));
-				}
-				for (ImportNode iport : unit.getImports()) {
-					String name = iport.getName();
-					Type iportType = iport.getType();
-					if (iportType != null){
-						resolvables.put(name.substring(name.lastIndexOf(".") + 1),  new SimpleReference<>(iport.getType()));
-					}
+				String name = iport.getName();
+				Type iportType = iport.getType();
+				if (iportType != null){
+					resolvables.put(name.substring(name.lastIndexOf(".") + 1),  new SimpleReference<>(iport.getType()));
 				}
 
-				this.resolvables = resolvables;
 				return Collections.emptyList();
 			}
 

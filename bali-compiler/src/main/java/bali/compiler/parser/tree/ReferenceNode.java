@@ -13,6 +13,7 @@ import java.util.List;
 public class ReferenceNode extends ExpressionNode {
 
 	private String name;
+	private ExpressionNode target;
 
 	private BlockingReference<String> hostClass = new BlockingReference<>();
 	private BlockingReference<ReferenceScope> scope = new BlockingReference<>();
@@ -68,6 +69,15 @@ public class ReferenceNode extends ExpressionNode {
 
 	public void setFinal(Boolean aFinal) {
 		isFinal.set(aFinal);
+	}
+
+	public ExpressionNode getTarget() {
+		return target;
+	}
+
+	public void setTarget(ExpressionNode target) {
+		children.add(target);
+		this.target = target;
 	}
 
 	public enum ReferenceScope {

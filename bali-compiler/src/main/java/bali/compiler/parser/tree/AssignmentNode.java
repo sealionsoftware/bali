@@ -1,5 +1,7 @@
 package bali.compiler.parser.tree;
 
+import bali.compiler.reference.BlockingReference;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,8 @@ public class AssignmentNode extends StatementNode {
 
 	private ReferenceNode reference;
 	private ExpressionNode value;
+
+	private BlockingReference<String> setterName = new BlockingReference<>();
 
 	public AssignmentNode() {
 	}
@@ -30,6 +34,14 @@ public class AssignmentNode extends StatementNode {
 
 	public ExpressionNode getValue() {
 		return value;
+	}
+
+	public void setSetterName(String setterName) {
+		this.setterName.set(setterName);
+	}
+
+	public String getSetterName() {
+		return setterName.get();
 	}
 
 	public void setValue(ExpressionNode value) {
