@@ -4,4 +4,5 @@
 	anotherReference.aProperty.anotherProperty
 	aReference.aProperty = anotherReference.aProperty
 	// aReference.invoke().aProperty TODO
+	(anOperand + anotherOperand).aProperty
 }
