@@ -26,11 +26,6 @@ import java.util.Map;
 public class ASMClassGenerator implements Generator<ClassNode, GeneratedClass> {
 
 	private ASMConverter converter = new ASMConverter();
-	private TypeLibrary library;
-
-	public ASMClassGenerator(TypeLibrary library) {
-		this.library = library;
-	}
 
 	public GeneratedClass build(ClassNode input) throws Exception {
 
@@ -89,7 +84,7 @@ public class ASMClassGenerator implements Generator<ClassNode, GeneratedClass> {
 
 	private void buildConstructor(Map<String, ExpressionNode> values, ClassWriter cw, ClassNode input) {
 
-		ASMStackManager manager = new ASMStackManager(converter, library);
+		ASMStackManager manager = new ASMStackManager(converter);
 
 		List<SiteNode> argumentTypes = new ArrayList<>();
 		for (DeclarationNode argument : input.getArgumentDeclarations()) {
@@ -136,7 +131,7 @@ public class ASMClassGenerator implements Generator<ClassNode, GeneratedClass> {
 
 	private void buildMethod(MethodDeclarationNode method, ClassWriter cw) {
 
-		ASMStackManager manager = new ASMStackManager(converter, library);
+		ASMStackManager manager = new ASMStackManager(converter);
 		int flags = (method.getDeclared() ? ACC_PUBLIC : ACC_PRIVATE);
 		if (method.getFinal()) {
 			flags += ACC_FINAL;

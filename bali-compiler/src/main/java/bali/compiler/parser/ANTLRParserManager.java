@@ -415,7 +415,7 @@ public class ANTLRParserManager implements ParserManager {
 
 		OperationNode operation = new OperationNode(l(context), c(context));
 		operation.setOne(buildExpression(context.expressionForOperation().get(0)));
-		operation.setTwo(buildExpression(context.expressionForOperation().get(0)));
+		operation.setTwo(buildExpression(context.expressionForOperation().get(1)));
 		operation.setOperator(context.OPERATOR().getText());
 		return operation;
 	}
@@ -497,11 +497,14 @@ public class ANTLRParserManager implements ParserManager {
 
 		BaliParser.ExpressionBaseContext expressionTarget = context.expressionBase();
 		BaliParser.InvocationContext invocationTarget = context.invocation();
+		BaliParser.ReferenceContext referenceTarget = context.reference();
 
 		if (expressionTarget != null){
 			value.setTarget(buildExpression(expressionTarget));
 		} else if (invocationTarget != null) {
 			value.setTarget(buildInvocation(invocationTarget));
+		} else if (referenceTarget != null){
+			value.setTarget(buildReferenceExpression(referenceTarget));
 		}
 
 		value.setMethodName(getIdentifier(context.call().identifier()));

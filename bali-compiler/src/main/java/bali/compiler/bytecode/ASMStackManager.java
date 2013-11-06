@@ -69,7 +69,7 @@ public class ASMStackManager implements Opcodes {
 
 	private Type erasedType;
 
-	public ASMStackManager(ASMConverter converter, TypeLibrary library) {
+	public ASMStackManager(ASMConverter converter) {
 		this.converter = converter;
 		erasedType = new Type(Object.class.getName(),
 				Collections.<Declaration>emptyList(),

@@ -31,7 +31,7 @@ import static bali.number.NumberFactory.NUMBER_FACTORY;
  */
 public class ASMPackageClassGeneratorUnitTest {
 
-	private static ASMPackageClassGenerator generator = new ASMPackageClassGenerator(new TypeLibrary());
+	private static ASMPackageClassGenerator generator = new ASMPackageClassGenerator();
 
 	private CompilationUnitNode unit;
 

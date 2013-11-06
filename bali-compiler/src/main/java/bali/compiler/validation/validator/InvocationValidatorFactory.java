@@ -1,11 +1,14 @@
 package bali.compiler.validation.validator;
 
+import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.InvocationNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.type.Declaration;
 import bali.compiler.type.Method;
 import bali.compiler.type.Site;
+import bali.compiler.type.Type;
+import bali.compiler.type.VanillaSite;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -23,15 +26,24 @@ public class InvocationValidatorFactory implements ValidatorFactory {
 
 		return new Validator() {
 
+			private Site thisSite;
+
 			public List<ValidationFailure> validate(Node node, Control control) {
+
+				if (node instanceof ClassNode){
+					thisSite = new VanillaSite(((ClassNode) node).getResolvedType());
+				}
+
 				control.validateChildren();
+
 				if (node instanceof InvocationNode){
 
 					InvocationNode invocation = (InvocationNode) node;
 
 					List<ValidationFailure> ret = new ArrayList<>();
+					ExpressionNode target = invocation.getTarget();
 
-					Site targetType = invocation.getTarget().getType();
+					Site targetType = target != null ? target.getType() : thisSite;
 					Method method = getMethodWithName(invocation.getMethodName(), targetType);
 					if (method == null){
 						ret.add(new ValidationFailure(invocation, "Could not resolve method with name " + invocation.getMethodName()));

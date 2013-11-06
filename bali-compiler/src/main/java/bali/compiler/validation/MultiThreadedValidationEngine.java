@@ -108,7 +108,7 @@ public class MultiThreadedValidationEngine implements ValidationEngine {
 								failed.set(true);
 								killReaper.set(true);
 								for (BlockDeclaringThread t : new ArrayList<>(liveThreads)){
-									t.interrupt();
+									t.stop(); // TODO: I know this is unsafe, but interrupting doesn't always get the thread killed
 								}
 							}
 						} finally {

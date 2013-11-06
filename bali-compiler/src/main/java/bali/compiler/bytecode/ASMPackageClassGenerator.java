@@ -18,15 +18,10 @@ import java.util.Map;
 public class ASMPackageClassGenerator implements Generator<CompilationUnitNode, GeneratedClass> {
 
 	private ASMConverter converter = new ASMConverter();
-	private TypeLibrary library;
-
-	public ASMPackageClassGenerator(TypeLibrary library) {
-		this.library = library;
-	}
 
 	public GeneratedClass build(CompilationUnitNode input) throws Exception {
 
-		ASMStackManager manager = new ASMStackManager(converter, library);
+		ASMStackManager manager = new ASMStackManager(converter);
 
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 		String qualified = converter.getInternalName(input.getName() + "." + PACKAGE_CLASS_NAME);

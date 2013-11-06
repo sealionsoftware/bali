@@ -16,7 +16,7 @@ import org.objectweb.asm.Opcodes;
  */
 public class ASMStackManagerUnitTest implements Opcodes {
 
-	private ASMStackManager manager = new ASMStackManager(new ASMConverter(), new TypeLibrary());
+	private ASMStackManager manager = new ASMStackManager(new ASMConverter());
 	private MethodVisitor v = Mockito.mock(MethodVisitor.class);
 
 	@Test

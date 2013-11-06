@@ -156,10 +156,10 @@ public class BaliCompiler {
 						new BranchStatementValidatorFactory()
 				)),
 				new ConfigurablePackageGenerator(
-						new ASMPackageClassGenerator(library),
+						new ASMPackageClassGenerator(),
 						new ASMBeanGenerator(),
 						new ASMInterfaceGenerator(),
-						new ASMClassGenerator(library)
+						new ASMClassGenerator()
 				),
 				new JarPackager()
 		);

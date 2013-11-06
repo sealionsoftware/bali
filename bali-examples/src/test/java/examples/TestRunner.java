@@ -1,4 +1,4 @@
-package greetings;
+package examples;
 
 import bali.Executable;
 

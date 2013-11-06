@@ -28,7 +28,7 @@ import java.lang.reflect.Modifier;
  */
 public class ASMClassGeneratorUnitTest {
 
-	private static ASMClassGenerator generator = new ASMClassGenerator(new TypeLibrary());
+	private static ASMClassGenerator generator = new ASMClassGenerator();
 
 	private ClassNode clazz;
 
