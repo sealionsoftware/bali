@@ -2,11 +2,14 @@ package bali.collection;
 
 import bali.Boolean;
 import bali.Value;
+import bali.annotation.MetaType;
+import bali.annotation.MetaTypes;
 
 /**
  * User: Richard
  * Date: 14/08/13
  */
+@MetaType(MetaTypes.INTERFACE)
 public interface Map<K extends Value<K>, V> extends Collection<Entry<K, V>> {
 
 	public V get(K key);

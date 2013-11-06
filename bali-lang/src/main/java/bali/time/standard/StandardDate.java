@@ -2,12 +2,15 @@ package bali.time.standard;
 
 import bali.Number;
 import bali.String;
+import bali.annotation.MetaType;
+import bali.annotation.MetaTypes;
 import bali.time.Date;
 
 /**
  * User: Richard
  * Date: 11/07/13
  */
+@MetaType(MetaTypes.CLASS)
 public final class StandardDate implements Date {
 
 	private String epoch;

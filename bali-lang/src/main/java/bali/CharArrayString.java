@@ -1,5 +1,7 @@
 package bali;
 
+import bali.annotation.MetaType;
+import bali.annotation.MetaTypes;
 import bali.collection.Array;
 import bali.number.NumberFactory;
 
@@ -9,6 +11,7 @@ import java.util.Arrays;
  * User: Richard
  * Date: 02/05/13
  */
+@MetaType(MetaTypes.CLASS)
 public final class CharArrayString implements String {
 
 	final char[] characters;

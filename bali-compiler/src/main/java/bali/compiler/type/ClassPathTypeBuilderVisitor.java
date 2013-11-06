@@ -1,5 +1,6 @@
 package bali.compiler.type;
 
+import bali.annotation.MetaTypes;
 import bali.annotation.Name;
 import bali.annotation.Nullable;
 import bali.compiler.reference.BlockingReference;
@@ -32,7 +33,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 	private TypeLibrary library;
 
 	private Type classpathType;
-	private MetaType metaType;
+	private MetaTypes metaType;
 
 	private String className;
 	private List<Declaration> typeParameters = new ArrayList<>();
@@ -54,11 +55,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 
 		className = name.replaceAll("/", ".");
 
-		if ((Opcodes.ACC_INTERFACE & access) > 0) {
-			metaType = MetaType.INTERFACE;
-		} else {
-			metaType = MetaType.CLASS;
-		}
+
 
 		if (signature != null) {
 			ClassSignatureVisitor visitor = new ClassSignatureVisitor(library, typeVariableBounds);
@@ -80,6 +77,17 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 	}
 
 	public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+
+		if (desc.equals("Lbali/annotation/MetaType;")){
+			return new AnnotationVisitor(Opcodes.ASM4) {
+				public void visitEnum(String name, String desc, String value) {
+					if (name.equals("value")){
+						metaType = MetaTypes.valueOf(value);
+					}
+				}
+			};
+		}
+
 		return super.visitAnnotation(desc, visible);
 	}
 
@@ -195,6 +203,11 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 
 	public void visitEnd() {
 		super.visitEnd();
+
+		if (metaType == null){
+			throw new RuntimeException("The type " + className + " has no @MetaType annotation and is therefore not a valid Bali type");
+		}
+
 		switch (metaType) {
 			case CLASS:
 				classpathType = new Type(
@@ -237,9 +250,4 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 		return classpathType;
 	}
 
-	private enum MetaType {
-		CLASS,
-		INTERFACE,
-		BEAN
-	}
 }

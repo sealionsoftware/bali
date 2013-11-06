@@ -3,11 +3,14 @@ package bali.number;
 import bali.Boolean;
 import bali.IdentityBoolean;
 import bali.Number;
+import bali.annotation.MetaType;
+import bali.annotation.MetaTypes;
 
 /**
  * User: Richard
  * Date: 10/06/13
  */
+@MetaType(MetaTypes.CLASS)
 public final class Fraction implements Number {
 
 	final Number numerator;

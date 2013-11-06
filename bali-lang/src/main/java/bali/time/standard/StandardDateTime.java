@@ -2,6 +2,8 @@ package bali.time.standard;
 
 import bali.Number;
 import bali.String;
+import bali.annotation.MetaType;
+import bali.annotation.MetaTypes;
 import bali.time.Date;
 import bali.time.DateTime;
 import bali.time.Time;
@@ -10,6 +12,7 @@ import bali.time.Time;
  * User: Richard
  * Date: 15/07/13
  */
+@MetaType(MetaTypes.CLASS)
 public final class StandardDateTime implements DateTime {
 
 	private Date date;

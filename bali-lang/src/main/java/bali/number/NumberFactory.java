@@ -5,12 +5,15 @@ import bali.CharArrayString;
 import bali.Number;
 import bali.Serializer;
 import bali.String;
+import bali.annotation.MetaType;
+import bali.annotation.MetaTypes;
 
 
 /**
  * User: Richard
  * Date: 11/06/13
  */
+@MetaType(MetaTypes.CLASS)
 public class NumberFactory implements Serializer<Number> {
 
 	public static final NumberFactory NUMBER_FACTORY = new NumberFactory();

@@ -1,12 +1,15 @@
 package bali.time.standard;
 
 import bali.Number;
+import bali.annotation.MetaType;
+import bali.annotation.MetaTypes;
 import bali.time.Time;
 
 /**
  * User: Richard
  * Date: 11/07/13
  */
+@MetaType(MetaTypes.CLASS)
 public final class StandardTime implements Time {
 
 	private Number hour;

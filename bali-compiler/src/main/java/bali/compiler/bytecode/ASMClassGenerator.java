@@ -1,5 +1,7 @@
 package bali.compiler.bytecode;
 
+import bali.annotation.MetaType;
+import bali.annotation.MetaTypes;
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.parser.tree.DeclarationNode;
@@ -8,6 +10,7 @@ import bali.compiler.parser.tree.FieldNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.type.TypeLibrary;
+import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
@@ -46,6 +49,10 @@ public class ASMClassGenerator implements Generator<ClassNode, GeneratedClass> {
 				interfaceNames);
 
 		cw.visitSource(input.getSourceFile(), null);
+
+		AnnotationVisitor av = cw.visitAnnotation(converter.getTypeDescriptor(MetaType.class.getName()), false);
+		av.visitEnum("value", converter.getTypeDescriptor(MetaTypes.class.getName()), MetaTypes.CLASS.name());
+		av.visitEnd();
 
 		Map<String, ExpressionNode> values = new HashMap<>();
 		for (FieldNode field : input.getFields()) {

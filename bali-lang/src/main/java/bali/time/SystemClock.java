@@ -1,6 +1,8 @@
 package bali.time;
 
 import bali.Number;
+import bali.annotation.MetaType;
+import bali.annotation.MetaTypes;
 import bali.time.standard.StandardDateTime;
 import bali.time.standard.StandardInstant;
 
@@ -10,6 +12,7 @@ import static bali.number.NumberFactory.NUMBER_FACTORY;
  * User: Richard
  * Date: 12/07/13
  */
+@MetaType(MetaTypes.CLASS)
 public final class SystemClock implements Clock {
 
 	private final CalendarSystem calendar;

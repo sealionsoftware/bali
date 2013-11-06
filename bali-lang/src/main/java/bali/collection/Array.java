@@ -5,6 +5,8 @@ import bali.IdentityBoolean;
 import bali.Iterator;
 import bali.Number;
 import bali.Value;
+import bali.annotation.MetaType;
+import bali.annotation.MetaTypes;
 import bali.number.Integer;
 
 import java.util.Arrays;
@@ -15,6 +17,7 @@ import static bali.number.NumberFactory.NUMBER_FACTORY;
  * User: Richard
  * Date: 08/05/13
  */
+@MetaType(MetaTypes.CLASS)
 public final class Array<E extends Value<?>> implements Collection<E>, Value<Array<E>> {
 
 	private final E[] elements;

@@ -2,6 +2,8 @@ package bali.collection.standard;
 
 import bali.IdentityBoolean;
 import bali.Iterator;
+import bali.annotation.MetaType;
+import bali.annotation.MetaTypes;
 import bali.collection.Collection;
 import bali.collection.List;
 import bali.number.Integer;
@@ -10,6 +12,7 @@ import bali.number.Integer;
  * User: Richard
  * Date: 27/08/13
  */
+@MetaType(MetaTypes.CLASS)
 public final class LinkedList<T> implements List<T> {
 
 	public LinkedList(){}

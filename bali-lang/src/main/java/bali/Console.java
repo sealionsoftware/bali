@@ -1,5 +1,8 @@
 package bali;
 
+import bali.annotation.MetaType;
+import bali.annotation.MetaTypes;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -9,6 +12,7 @@ import java.util.Arrays;
  * User: Richard
  * Date: 05/05/13
  */
+@MetaType(MetaTypes.CLASS)
 public final class Console implements ReaderWriter {
 
 	private static final int BUFFER_SIZE = 256;

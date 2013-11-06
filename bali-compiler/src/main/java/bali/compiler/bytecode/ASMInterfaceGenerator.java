@@ -1,9 +1,12 @@
 package bali.compiler.bytecode;
 
+import bali.annotation.MetaType;
+import bali.annotation.MetaTypes;
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.MethodNode;
 import bali.compiler.parser.tree.SiteNode;
+import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
 
 /**
@@ -23,6 +26,10 @@ public class ASMInterfaceGenerator implements Generator<InterfaceNode, Generated
 		}
 
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+
+		AnnotationVisitor av = cw.visitAnnotation(converter.getTypeDescriptor(MetaType.class.getName()), false);
+		av.visitEnum("value", converter.getTypeDescriptor(MetaTypes.class.getName()), MetaTypes.INTERFACE.name());
+		av.visitEnd();
 
 		cw.visit(V1_7,
 				ACC_PUBLIC + ACC_ABSTRACT + ACC_INTERFACE,
