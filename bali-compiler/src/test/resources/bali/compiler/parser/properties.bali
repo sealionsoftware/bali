@@ -3,6 +3,6 @@
 	aReference = anotherReference.aProperty
 	anotherReference.aProperty.anotherProperty
 	aReference.aProperty = anotherReference.aProperty
-	// aReference.invoke().aProperty TODO
+	aReference.invoke().aProperty
 	(anOperand + anotherOperand).aProperty
 }

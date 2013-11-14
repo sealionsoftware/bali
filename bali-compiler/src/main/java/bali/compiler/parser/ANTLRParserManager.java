@@ -30,6 +30,7 @@ import bali.compiler.parser.tree.OperationNode;
 import bali.compiler.parser.tree.PropertyNode;
 import bali.compiler.parser.tree.ReferenceNode;
 import bali.compiler.parser.tree.ReturnStatementNode;
+import bali.compiler.parser.tree.RunStatementNode;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.parser.tree.StatementNode;
 import bali.compiler.parser.tree.StringLiteralExpressionNode;
@@ -48,7 +49,9 @@ import org.antlr.v4.runtime.Token;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Parser manager that uses a generated ANTLR Parser to construct an AST
@@ -222,6 +225,8 @@ public class ANTLRParserManager implements ParserManager {
 					codeBlock.addStatement(buildSwitchStatement(csc.switchStatement()));
 				} else if (csc.tryStatement() != null) {
 					codeBlock.addStatement(buildTryStatement(csc.tryStatement()));
+				} else if (csc.runStatement() != null) {
+					codeBlock.addStatement(buildRunStatement(csc.runStatement()));
 				} else {
 					throw new Exception("Unrecognised control statement type: " + statementContext.getText());
 				}
@@ -255,6 +260,14 @@ public class ANTLRParserManager implements ParserManager {
 		}
 
 		return codeBlock;
+	}
+
+	private StatementNode buildRunStatement(BaliParser.RunStatementContext context) throws Exception {
+
+		RunStatementNode runStatement = new RunStatementNode(l(context), c(context));
+		runStatement.setBody(buildCodeBlock(context.codeBlock()));
+		return runStatement;
+
 	}
 
 	private StatementNode buildWhileStatement(BaliParser.WhileStatementContext context) throws Exception {
@@ -414,8 +427,8 @@ public class ANTLRParserManager implements ParserManager {
 	private OperationNode buildOperation(BaliParser.OperationContext context) {
 
 		OperationNode operation = new OperationNode(l(context), c(context));
-		operation.setOne(buildExpression(context.expressionForOperation().get(0)));
-		operation.setTwo(buildExpression(context.expressionForOperation().get(1)));
+		operation.setOne(buildExpression(context.expressionForOperation()));
+		operation.setTwo(buildExpression(context.expression()));
 		operation.setOperator(context.OPERATOR().getText());
 		return operation;
 	}
@@ -423,7 +436,7 @@ public class ANTLRParserManager implements ParserManager {
 	private UnaryOperationNode buildUnaryOperation(BaliParser.UnaryOperationContext context) {
 		UnaryOperationNode operation = new UnaryOperationNode(l(context), c(context));
 		operation.setOperator(context.OPERATOR().getText());
-		operation.setTarget(buildExpression(context.expression()));
+		operation.setTarget(buildExpression(context.expressionForOperation()));
 		return operation;
 	}
 
@@ -432,30 +445,44 @@ public class ANTLRParserManager implements ParserManager {
 		if (context.constantValue() != null) {
 			return getConstantValue(context.constantValue());
 		}
-		if (context.operation() != null) {
-			return buildOperation(context.operation());
-		}
 		if (context.unaryOperation() != null) {
 			return buildUnaryOperation(context.unaryOperation());
 		}
+		if (context.operation() != null) {
+			return buildOperation(context.operation());
+		}
+		if (context.memberName() != null){
+			return getMemberName(context.memberName());
+		}
+
 
 		throw new RuntimeException("Could not get value for expression " + context.getText());
 	}
 
+	private ExpressionNode getMemberName(BaliParser.MemberNameContext context) {
+		if (context.identifier() != null){
+			ReferenceNode ref = new ReferenceNode(l(context), c(context));
+			ref.setName(getIdentifier(context.identifier()));
+			return ref;
+		}
+		return null;
+	}
+
 	private ExpressionNode buildExpression(BaliParser.ExpressionForOperationContext context) {
 
-		if (context.expressionBase() != null) {
-			return buildExpression(context.expressionBase());
-		}
 		if (context.invocation() != null) {
 			return buildInvocation(context.invocation());
-		}
-		if (context.unaryOperation() != null) {
-			return buildUnaryOperation(context.unaryOperation());
 		}
 		if (context.reference() != null) {
 			return buildReferenceExpression(context.reference());
 		}
+		if (context.unaryOperation() != null) {
+			return buildUnaryOperation(context.unaryOperation());
+		}
+		if (context.expressionBase() != null) {
+			return buildExpression(context.expressionBase());
+		}
+
 
 		throw new RuntimeException("Could not get value for expression " + context.getText());
 	}
@@ -465,9 +492,6 @@ public class ANTLRParserManager implements ParserManager {
 		if (context.operation() != null) {
 			return buildOperation(context.operation());
 		}
-//		if (context.unaryOperation() != null) {
-//			return buildUnaryOperation(context.unaryOperation());
-//		}
 		if (context.expressionForOperation() != null){
 			return buildExpression(context.expressionForOperation());
 		}
@@ -478,33 +502,45 @@ public class ANTLRParserManager implements ParserManager {
 	private ReferenceNode buildReferenceExpression(BaliParser.ReferenceContext context) {
 
 		ReferenceNode value = new ReferenceNode(l(context), c(context));
-		BaliParser.ExpressionBaseContext expressionTarget = context.expressionBase();
-		BaliParser.ReferenceContext referenceTarget = context.reference();
 
-		if (expressionTarget != null){
-			value.setTarget(buildExpression(expressionTarget));
-		} else if (referenceTarget != null){
-			value.setTarget(buildReferenceExpression(referenceTarget));
+		if (context.target() != null){
+			value.setTarget(buildExpression(context.target()));
 		}
-
 		value.setName(getIdentifier(context.identifier()));
+
 		return value;
+	}
+
+	private ExpressionNode buildExpression(BaliParser.TargetContext target) {
+		if (target.memberName().size() == 0){
+			return buildExpression(target.expressionBase());
+		} else {
+			ExpressionNode retarget = buildExpression(target.expressionBase());
+			for(BaliParser.MemberNameContext memberNameContext : target.memberName()){
+				if (memberNameContext.identifier() != null){
+					ReferenceNode referenceNode = new ReferenceNode(l(target),c(target));
+					referenceNode.setName(getIdentifier(memberNameContext.identifier()));
+					referenceNode.setTarget(retarget);
+					retarget = referenceNode;
+				} else if (memberNameContext.call() != null){
+					InvocationNode invocationNode = new InvocationNode(l(target),c(target));
+					invocationNode.setMethodName(getIdentifier(memberNameContext.call().identifier()));
+					for (BaliParser.ExpressionContext vc : memberNameContext.call().argumentList().expression()) {
+						invocationNode.addArgument(buildExpression(vc));
+					}
+					invocationNode.setTarget(retarget);
+					retarget = invocationNode;
+				}
+			}
+			return retarget;
+		}
 	}
 
 	private InvocationNode buildInvocation(BaliParser.InvocationContext context) {
 
 		InvocationNode value = new InvocationNode(l(context), c(context));
-
-		BaliParser.ExpressionBaseContext expressionTarget = context.expressionBase();
-		BaliParser.InvocationContext invocationTarget = context.invocation();
-		BaliParser.ReferenceContext referenceTarget = context.reference();
-
-		if (expressionTarget != null){
-			value.setTarget(buildExpression(expressionTarget));
-		} else if (invocationTarget != null) {
-			value.setTarget(buildInvocation(invocationTarget));
-		} else if (referenceTarget != null){
-			value.setTarget(buildReferenceExpression(referenceTarget));
+		if (context.target() != null){
+			value.setTarget(buildExpression(context.target()));
 		}
 
 		value.setMethodName(getIdentifier(context.call().identifier()));

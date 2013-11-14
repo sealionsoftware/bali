@@ -1,7 +1,7 @@
 import bali.CharArrayString;
 import bali.Console;
 import bali.Number;
-import bali.ReaderWriter;
+import bali.ReaderWriterMonitor;
 import bali.Serializer;
 import bali.number.NumberFactory;
 import bali.time.Clock;
@@ -17,7 +17,7 @@ import bali.time.standard.StandardTimeZone;
  */
 public final class _ {
 
-	public static final ReaderWriter CONSOLE = new Console();
+	public static final ReaderWriterMonitor CONSOLE = new Console();
 
 	public static final Serializer<Number> NUMBER_FACTORY = NumberFactory.NUMBER_FACTORY;
 

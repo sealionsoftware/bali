@@ -24,6 +24,10 @@ public class ErasedSite implements Site {
 		return replacement.getName();
 	}
 
+	public Site getSuperType() {
+		return replacement.getSuperType();
+	}
+
 	public List<Declaration> getTypeParameters() {
 		return replacement.getTypeParameters();
 	}
@@ -58,5 +62,9 @@ public class ErasedSite implements Site {
 
 	public Type getBoundType(){
 		return replacedVariable.getType();
+	}
+
+	public String toString() {
+		return replacement.toString();
 	}
 }

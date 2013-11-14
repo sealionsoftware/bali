@@ -1,0 +1,25 @@
+import bali.Console
+import bali.Number
+import bali.Integer
+import bali.String
+import bali.Executable
+import bali.Count
+import bali.Counter
+
+constant String GREETING = "Hello World"
+
+class ThreadedExecutable() implements Executable {
+
+ 	method execute(){
+
+		Count i = new Counter()
+		while (++i < 100) {
+			Integer imm = #i
+			run {
+				CONSOLE << (GREETING + ": " + NUMBER_FACTORY.format(imm))
+			}
+		}
+
+ 	}
+
+}

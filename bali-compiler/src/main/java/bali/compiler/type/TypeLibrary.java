@@ -3,7 +3,6 @@ package bali.compiler.type;
 import bali.compiler.parser.tree.TypeNode;
 import bali.compiler.reference.BlockingReference;
 import bali.compiler.reference.Reference;
-import bali.compiler.reference.Semaphore;
 import bali.compiler.reference.SimpleReference;
 
 import java.util.HashMap;

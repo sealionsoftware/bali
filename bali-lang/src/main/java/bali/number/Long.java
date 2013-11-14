@@ -1,6 +1,7 @@
 package bali.number;
 
 import bali.Boolean;
+import bali.Integer;
 import bali.Number;
 import bali.annotation.MetaType;
 import bali.annotation.MetaTypes;
@@ -14,7 +15,7 @@ import static bali.number.NumberFactory.NUMBER_FACTORY;
  * Date: 11/06/13
  */
 @MetaType(MetaTypes.CLASS)
-class Long implements Integer {
+class Long implements bali.Integer {
 
 	static final long MAX_VALUE = java.lang.Long.MAX_VALUE;
 	static final long MIN_VALUE = java.lang.Long.MIN_VALUE;

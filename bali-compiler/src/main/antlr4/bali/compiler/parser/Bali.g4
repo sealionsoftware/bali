@@ -54,53 +54,53 @@ codeBlock:                  '{' statement* '}' ;
 
 statement:                  lineStatement | controlStatement ;
 
-lineStatement:              variableDeclaration | assignment | returnStatement | throwStatement | breakStatement | continueStatement | expression;
+lineStatement:              variableDeclaration | assignment | returnStatement | assignStatement | throwStatement | breakStatement | continueStatement | expression;
 
 controlStatement:           conditionalStatement | tryStatement | whileStatement | forStatement | switchStatement | runStatement ;
 
-conditionalStatement:       'if' '(' expression ')' codeBlock ('else' 'if' '(' expression ')' codeBlock)* ('else' codeBlock)? ;
+controlExpression:          codeBlock | controlStatement
 
-tryStatement:               'try' codeBlock catchStatement+ ;
+conditionalStatement:       'if' '(' expression ')' controlExpression ('else' controlStatement)* ;
 
-catchStatement:             'catch' '(' argumentDeclaration ')' codeBlock ;
+tryStatement:               'try' controlExpression catchStatement+ ;
 
-whileStatement:             'while' '(' expression ')' codeBlock ;
+catchStatement:             'catch' '(' argumentDeclaration ')' controlExpression ;
 
-forStatement:               'for' '(' argumentDeclaration ':' expression ')' codeBlock ;
+whileStatement:             'while' '(' expression ')' controlExpression ;
+
+forStatement:               'for' '(' argumentDeclaration ':' expression ')' controlExpression ;
 
 switchStatement:            'switch' '(' expression ')' '{' caseStatement+ defaultStatement? '}' ;
 
-caseStatement:              'case' expression ':' codeBlock ;
+caseStatement:              'case' expression ':' controlExpression ;
 
-defaultStatement:           'default' ':' codeBlock ;
+defaultStatement:           'default' ':' controlExpression ;
 
-runStatement:               'run' codeBlock ;
+runStatement:               'run' controlStatement ;
 
-variableDeclaration:        typeDeclaration identifier ('=' expression)? ;
+variableDeclaration:        typeDeclaration identifier ('=' (expression | controlStatement))? ;
 
-assignment:                 reference '=' expression ;
+assignment:                 reference '=' (expression | controlStatement) ;
 
 identifier:                 STANDARD_IDENTIFIER | CONSTANT_IDENTIFIER ;
 
 call:                       identifier argumentList;
 
-invocation:                 call |
-							expressionBase '.' call |
-							reference '.' call |
-							invocation '.' call ;
+target:                     expressionBase ('.' memberName)* ;
 
-reference:                  identifier |
-							expressionBase '.' identifier |
-							reference '.' identifier ;
+invocation:                 (target '.')? call ;
 
-unaryOperation:             OPERATOR expression ;
+reference:                  (target '.')? identifier ;
 
-// Changed due to left recursion
-operation:                  expressionForOperation OPERATOR expressionForOperation ;
+unaryOperation:             OPERATOR expressionForOperation ;
+
+operation:                  expressionForOperation OPERATOR expression ;
 
 construction:               'new' TYPE_IDENTIFIER argumentList ;
 
 returnStatement:            'return' expression? ;
+
+assignStatement:            'assign' expression? ;
 
 throwStatement:             'throw' expression ;
 
@@ -108,21 +108,23 @@ breakStatement:             'break' ;
 
 continueStatement:          'continue' ;
 
-argumentDeclarationList:    '(' (argumentDeclaration ( ',' argumentDeclaration)*)? ')' ;
-
-typeDeclaration:            TYPE_IDENTIFIER ('['  typeDeclarationList ']')? ;
+typeDeclaration:            TYPE_IDENTIFIER ('['  typeDeclarationList ']')? '?'? '*'? ;
 
 typeDeclarationList:        typeDeclaration (',' typeDeclaration)* ;
 
 argumentDeclaration:        typeDeclaration STANDARD_IDENTIFIER ;
 
+argumentDeclarationList:    '(' (argumentDeclaration ( ',' argumentDeclaration)*)? ')' ;
+
 argumentList:               '(' ( expression ( ',' expression)*)? ')' ;
 
 constantValue:              literal | construction ;
 
-expressionBase:             constantValue | '(' unaryOperation ')' | '(' operation ')' ;
+memberName:                 call | identifier;
 
-expressionForOperation:     expressionBase | reference | invocation | unaryOperation;
+expressionBase:             constantValue | '(' unaryOperation ')' | '(' operation ')' | memberName ;
+
+expressionForOperation:     unaryOperation | invocation | reference | expressionBase ;
 
 expression:                 operation | expressionForOperation ;
 

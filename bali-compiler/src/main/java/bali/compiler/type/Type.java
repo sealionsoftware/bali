@@ -10,6 +10,7 @@ import java.util.List;
 public class Type {
 
 	private String name;
+	private Site superType;
 	private List<Declaration> typeParameters;
 	private List<Site> interfaces;
 	private List<Declaration> parameters;
@@ -19,8 +20,11 @@ public class Type {
 	private List<Declaration> properties;
 
 	private Boolean isAbstract;
+	private Boolean isImmutable;
+	private Boolean isMonitor;
 
 	public Type(String name,
+	            Site superType,
 	            List<Declaration> typeParameters,
 	            List<Site> interfaces,
 	            List<Declaration> parameters,
@@ -28,8 +32,11 @@ public class Type {
 	            List<Operator> operators,
 	            List<UnaryOperator> unaryOperators,
 	            List<Declaration> properties,
-	            Boolean isAbstract) {
+	            Boolean isAbstract,
+	            Boolean isImmutable,
+	            Boolean isMonitor) {
 		this.name = name;
+		this.superType = superType;
 		this.typeParameters = typeParameters;
 		this.methods = methods;
 		this.interfaces = interfaces;
@@ -38,10 +45,16 @@ public class Type {
 		this.parameters = parameters;
 		this.properties = properties;
 		this.isAbstract = isAbstract;
+		this.isImmutable = isImmutable;
+		this.isMonitor = isMonitor;
 	}
 
 	public String getName() {
 		return name;
+	}
+
+	public Site getSuperType() {
+		return superType;
 	}
 
 	public List<Declaration> getTypeParameters() {
@@ -74,6 +87,30 @@ public class Type {
 
 	public boolean isAbstract(){
 		return isAbstract;
+	}
+
+	public boolean isImmutable() {
+		if (isImmutable){
+			return true;
+		}
+		for (Site iface : getInterfaces()){
+			if (iface.getType().isImmutable()){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isMonitor() {
+		if (isMonitor){
+			return true;
+		}
+		for (Site iface : getInterfaces()){
+			if (iface.getType().isMonitor()){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean equals(Object o) {

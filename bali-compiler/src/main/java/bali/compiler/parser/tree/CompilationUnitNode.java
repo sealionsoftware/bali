@@ -1,7 +1,13 @@
 package bali.compiler.parser.tree;
 
+import bali.compiler.reference.BlockingReference;
+import bali.compiler.reference.Reference;
+import bali.compiler.type.Type;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: Richard
@@ -15,6 +21,9 @@ public class CompilationUnitNode extends Node {
 	private List<BeanNode> beans = new ArrayList<>();
 	private List<InterfaceNode> interfaces = new ArrayList<>();
 	private List<ClassNode> classes = new ArrayList<>();
+
+	private BlockingReference<Map<String, Reference<Type>>> resolvables = new BlockingReference<>();
+	private BlockingReference<List<RunStatementNode>> runStatements = new BlockingReference<>();
 
 	public CompilationUnitNode(Integer line, Integer character) {
 		super(line, character);
@@ -71,5 +80,21 @@ public class CompilationUnitNode extends Node {
 
 	public List<ClassNode> getClasses() {
 		return classes;
+	}
+
+	public Map<String, Reference<Type>> getResolvables() {
+		return resolvables.get();
+	}
+
+	public void setResolvables(Map<String, Reference<Type>> resolvables) {
+		this.resolvables.set(resolvables);
+	}
+
+	public List<RunStatementNode> getRunStatements() {
+		return runStatements.get();
+	}
+
+	public void setRunStatements(List<RunStatementNode> runStatements) {
+		this.runStatements.set(runStatements);
 	}
 }

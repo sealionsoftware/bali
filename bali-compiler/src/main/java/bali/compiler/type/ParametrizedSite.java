@@ -20,6 +20,7 @@ public class ParametrizedSite implements Site {
 
 	private Type type;
 
+	private Site superType;
 	private Map<String, Declaration> typeParameters;
 	private List<Site> interfaces;
 	private List<Declaration> parameters;
@@ -76,6 +77,7 @@ public class ParametrizedSite implements Site {
 
 		return ret;
 	}
+
 
 	private List<Site> parametriseSites(List<Site> interfaces) {
 
@@ -179,8 +181,6 @@ public class ParametrizedSite implements Site {
 		);
 	}
 
-
-
 	public boolean isAssignableTo(Site t) {
 
 		if (t == null) {
@@ -209,6 +209,14 @@ public class ParametrizedSite implements Site {
 
 	public String getName() {
 		return getType().getName();
+	}
+
+	public Site getSuperType() {
+		Site typeSuperType = getType().getSuperType();
+		if (superType == null && typeSuperType != null){
+			this.superType = parametriseSite(typeSuperType);
+		}
+		return superType;
 	}
 
 	public List<Declaration> getTypeParameters() {

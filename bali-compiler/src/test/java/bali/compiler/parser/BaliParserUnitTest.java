@@ -83,6 +83,11 @@ public class BaliParserUnitTest {
 	}
 
 	@Test
+	public void testRunStatement() throws Exception {
+		parseCodeBlock("concurrent.bali");
+	}
+
+	@Test
 	public void testInvocations() throws Exception {
 		parseCodeBlock("invocations.bali");
 	}

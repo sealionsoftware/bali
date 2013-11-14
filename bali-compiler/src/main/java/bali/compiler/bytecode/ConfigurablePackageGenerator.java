@@ -6,6 +6,7 @@ import bali.compiler.parser.tree.BeanNode;
 import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.InterfaceNode;
+import bali.compiler.parser.tree.RunStatementNode;
 
 /**
  * User: Richard
@@ -17,15 +18,24 @@ public class ConfigurablePackageGenerator implements Generator<CompilationUnitNo
 	private Generator<BeanNode, GeneratedClass> beanGenerator;
 	private Generator<InterfaceNode, GeneratedClass> interfaceGenerator;
 	private Generator<ClassNode, GeneratedClass> classGenerator;
+	private Generator<RunStatementNode, GeneratedClass> runStatementGenerator;
 
-	public ConfigurablePackageGenerator(Generator<CompilationUnitNode, GeneratedClass> packageClassGenerator, Generator<BeanNode, GeneratedClass> beanGenerator, Generator<InterfaceNode, GeneratedClass> interfaceGenerator, Generator<ClassNode, GeneratedClass> classGenerator) {
+	public ConfigurablePackageGenerator(
+			Generator<CompilationUnitNode, GeneratedClass> packageClassGenerator,
+			Generator<BeanNode, GeneratedClass> beanGenerator,
+			Generator<InterfaceNode, GeneratedClass> interfaceGenerator,
+			Generator<ClassNode, GeneratedClass> classGenerator,
+	        Generator<RunStatementNode, GeneratedClass> runStatementGenerator
+	) {
 		this.packageClassGenerator = packageClassGenerator;
 		this.beanGenerator = beanGenerator;
 		this.interfaceGenerator = interfaceGenerator;
 		this.classGenerator = classGenerator;
+		this.runStatementGenerator = runStatementGenerator;
 	}
 
 	public GeneratedPackage build(CompilationUnitNode compilationUnit) throws Exception {
+
 		GeneratedPackage pkg = new GeneratedPackage(compilationUnit.getName());
 
 		pkg.addClass(packageClassGenerator.build(compilationUnit));
@@ -40,6 +50,10 @@ public class ConfigurablePackageGenerator implements Generator<CompilationUnitNo
 
 		for (ClassNode clazz : compilationUnit.getClasses()){
 			pkg.addClass(classGenerator.build(clazz));
+		}
+
+		for (RunStatementNode runStatementNode : compilationUnit.getRunStatements()){
+			pkg.addClass(runStatementGenerator.build(runStatementNode));
 		}
 
 		return pkg;

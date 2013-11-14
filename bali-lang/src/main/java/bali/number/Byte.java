@@ -14,7 +14,7 @@ import static bali.number.NumberFactory.NUMBER_FACTORY;
  * Date: 11/06/13
  */
 @MetaType(MetaTypes.CLASS)
-public final class Byte implements Integer {
+public final class Byte implements bali.Integer {
 
 	static final byte MAX_VALUE = java.lang.Byte.MAX_VALUE;
 	static final byte MIN_VALUE = java.lang.Byte.MIN_VALUE;

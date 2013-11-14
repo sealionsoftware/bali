@@ -1,16 +1,13 @@
 package bali.compiler.validation.validator;
 
-import bali.Number;
-import bali.compiler.parser.tree.BooleanLiteralExpressionNode;
+import bali.Integer;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.NumberLiteralExpressionNode;
-import bali.compiler.type.ParametrizedSite;
 import bali.compiler.type.Site;
 import bali.compiler.type.TypeLibrary;
 import bali.compiler.type.VanillaSite;
 import bali.compiler.validation.ValidationFailure;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,7 +20,7 @@ public class NumberLiteralValidatorFactory implements ValidatorFactory {
 	private Site site;
 
 	public NumberLiteralValidatorFactory(TypeLibrary library) {
-		this.site = new VanillaSite(library.getType(Number.class.getName()));
+		this.site = new VanillaSite(library.getType(Integer.class.getName()));
 	}
 
 	public Validator createValidator() {

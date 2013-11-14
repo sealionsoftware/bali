@@ -45,6 +45,10 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 
 	private Map<String, Site> typeVariableBounds = new HashMap<>();
 
+	private boolean isImmutable = false;
+	private boolean isMonitor = false;
+
+
 	public ClassPathTypeBuilderVisitor(TypeLibrary library) {
 		super(Opcodes.ASM4);
 		this.library = library;
@@ -86,6 +90,10 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 					}
 				}
 			};
+		} else if (desc.equals("Lbali/annotation/Immutable;")){
+			isImmutable = true;
+		} else if (desc.equals("Lbali/annotation/Monitor;")){
+			isMonitor = true;
 		}
 
 		return super.visitAnnotation(desc, visible);
@@ -152,7 +160,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 					org.objectweb.asm.Type methodType = org.objectweb.asm.Type.getMethodType(desc);
 					org.objectweb.asm.Type methodReturnType = methodType.getReturnType();
 					if (!methodReturnType.getClassName().equals(void.class.getName())) {
-						returnType = new VanillaSite(library.getReference(methodReturnType.getClassName())); //TODO
+						returnType = new VanillaSite(library.getReference(methodReturnType.getClassName())); //TODO - parameterized return types
 					}
 					parameterDeclarations = new ArrayList<>();
 					int i = 0;
@@ -212,6 +220,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 			case CLASS:
 				classpathType = new Type(
 						className,
+						null,
 						typeParameters,
 						interfaces,
 						constructorParameters,
@@ -219,20 +228,15 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 						Collections.<Operator>emptyList(),
 						Collections.<UnaryOperator>emptyList(),
 						Collections.<Declaration>emptyList(),
-						false
+						false,
+						isImmutable,
+						isMonitor
 				);
 				break;
 			case INTERFACE:
-
-//				for (Site implementation : new ArrayList<>(interfaces)){
-//					interfaces.addAll(implementation.getInterfaces());
-//					methods.addAll(implementation.getMethods());
-//					operators.addAll(implementation.getOperators());
-//					unaryOperators.addAll(implementation.getUnaryOperators());
-//				}
-
 				classpathType = new Type(
 						className,
+						null,
 						typeParameters,
 						interfaces,
 						Collections.<Declaration>emptyList(),
@@ -240,10 +244,11 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 						operators,
 						unaryOperators,
 						Collections.<Declaration>emptyList(),
-						true
+						true,
+						isImmutable,
+						isMonitor
 				);
 		}
-
 	}
 
 	public Type getClasspathType() {

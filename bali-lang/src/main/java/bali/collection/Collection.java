@@ -3,7 +3,7 @@ package bali.collection;
 import bali.Iterable;
 import bali.annotation.MetaType;
 import bali.annotation.MetaTypes;
-import bali.number.Integer;
+import bali.Integer;
 
 /**
  * User: Richard

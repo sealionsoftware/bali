@@ -159,7 +159,7 @@ public class ASMClassGenerator implements Generator<ClassNode, GeneratedClass> {
 			);
 		}
 
-		methodVisitor.visitMaxs(10, 10);
+		methodVisitor.visitMaxs(1, 1);
 		methodVisitor.visitEnd();
 
 	}

@@ -2,6 +2,7 @@ package bali.number;
 
 
 import bali.CharArrayString;
+import bali.Integer;
 import bali.Number;
 import bali.Serializer;
 import bali.String;
@@ -94,7 +95,7 @@ public class NumberFactory implements Serializer<Number> {
 		return negative ? ret.negative() : ret;
 	}
 
-	public Integer forLong(long o) {
+	public bali.Integer forLong(long o) {
 		if (o <= INTEGER_CEILING && o >= INTEGER_FLOOR) {
 			return forInt((int) o);
 		}

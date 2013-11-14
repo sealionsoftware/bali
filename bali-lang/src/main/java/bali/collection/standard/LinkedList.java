@@ -6,7 +6,7 @@ import bali.annotation.MetaType;
 import bali.annotation.MetaTypes;
 import bali.collection.Collection;
 import bali.collection.List;
-import bali.number.Integer;
+import bali.Integer;
 
 /**
  * User: Richard

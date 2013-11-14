@@ -20,6 +20,8 @@ public class ReferenceNode extends ExpressionNode {
 	private BlockingReference<Site> declaration = new BlockingReference<>();
 	private BlockingReference<Boolean> isFinal = new BlockingReference<>();
 
+	private BlockingReference<String> getterName = new BlockingReference<>();
+
 	public ReferenceNode() {
 	}
 
@@ -80,11 +82,19 @@ public class ReferenceNode extends ExpressionNode {
 		this.target = target;
 	}
 
+	public String getGetterName() {
+		return getterName.get();
+	}
+
+	public void setGetterName(String getterName) {
+		this.getterName.set(getterName);
+	}
+
 	public enum ReferenceScope {
 		STATIC, FIELD, VARIABLE
 	}
 
 	public String toString() {
-		return declaration + " " + name;
+		return declaration.get() + " " + name;
 	}
 }

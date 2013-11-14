@@ -12,6 +12,8 @@ public interface Site {
 
 	String getName();
 
+	Site getSuperType();
+
 	List<Declaration> getTypeParameters();
 
 	List<Declaration> getParameters();

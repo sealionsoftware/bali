@@ -6,10 +6,13 @@ import bali.compiler.parser.tree.BeanNode;
 import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.InterfaceNode;
+import bali.compiler.parser.tree.RunStatementNode;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import java.util.Collections;
 
 /**
  * User: Richard
@@ -21,12 +24,14 @@ public class ConfigurablePackageGeneratorUnitTest {
 	private static Generator<BeanNode, GeneratedClass> beanGenerator = Mockito.mock(Generator.class);
 	private static Generator<InterfaceNode, GeneratedClass> interfaceGenerator = Mockito.mock(Generator.class);
 	private static Generator<ClassNode, GeneratedClass> classGenerator = Mockito.mock(Generator.class);
+	private static Generator<RunStatementNode, GeneratedClass> runStatementGenerator = Mockito.mock(Generator.class);
 
 	private static ConfigurablePackageGenerator generator = new ConfigurablePackageGenerator(
 			packageClassGenerator,
 			beanGenerator,
 			interfaceGenerator,
-			classGenerator
+			classGenerator,
+			runStatementGenerator
 	);
 
 	private CompilationUnitNode unit;
@@ -34,6 +39,7 @@ public class ConfigurablePackageGeneratorUnitTest {
 	@Before
 	public void setUp() throws Exception{
 		unit = new CompilationUnitNode(0,0);
+		unit.setRunStatements(Collections.<RunStatementNode>emptyList());
 		unit.setName("bali.test");
 
 	}

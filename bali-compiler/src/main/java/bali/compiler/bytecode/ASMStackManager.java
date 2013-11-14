@@ -22,6 +22,7 @@ import bali.compiler.parser.tree.NumberLiteralExpressionNode;
 import bali.compiler.parser.tree.OperationNode;
 import bali.compiler.parser.tree.ReferenceNode;
 import bali.compiler.parser.tree.ReturnStatementNode;
+import bali.compiler.parser.tree.RunStatementNode;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.parser.tree.StatementNode;
 import bali.compiler.parser.tree.StringLiteralExpressionNode;
@@ -72,6 +73,7 @@ public class ASMStackManager implements Opcodes {
 	public ASMStackManager(ASMConverter converter) {
 		this.converter = converter;
 		erasedType = new Type(Object.class.getName(),
+				null,
 				Collections.<Declaration>emptyList(),
 				Collections.<Site>emptyList(),
 				Collections.<Declaration>emptyList(),
@@ -79,6 +81,8 @@ public class ASMStackManager implements Opcodes {
 				Collections.<Operator>emptyList(),
 				Collections.<UnaryOperator>emptyList(),
 				Collections.<Declaration>emptyList(),
+				false,
+				false,
 				false
 		);
 	}
@@ -150,6 +154,8 @@ public class ASMStackManager implements Opcodes {
 			execute((SwitchStatementNode) statement, v);
 		} else if (statement instanceof TryStatementNode) {
 			execute((TryStatementNode) statement, v);
+		} else if (statement instanceof RunStatementNode) {
+			execute((RunStatementNode) statement, v);
 		} else {
 			throw new RuntimeException("Cannot handle Statement type: " + statement);
 		}
@@ -201,6 +207,7 @@ public class ASMStackManager implements Opcodes {
 
 		ReferenceNode referenceNode = statement.getReference();
 		ExpressionNode targetNode = referenceNode.getTarget();
+
 		if (targetNode == null){
 			Integer index = declaredVariables.get(statement.getReference().getName()).getIndex();
 			push(statement.getValue(), v);
@@ -326,6 +333,38 @@ public class ASMStackManager implements Opcodes {
 		v.visitLabel(end);
 	}
 
+	private void execute(RunStatementNode statement, MethodVisitor v) {
+
+		String runnableClassName = converter.getInternalName(statement.getRunnableClassName());
+
+		v.visitTypeInsn(NEW, "java/lang/Thread");
+		v.visitInsn(DUP);
+		v.visitTypeInsn(NEW, runnableClassName);
+		v.visitInsn(DUP);
+
+		List<Type> parameterTypes = new ArrayList<>();
+		for (RunStatementNode.RunArgument argument : statement.getArguments()){
+			Type parameterType = argument.getType().getType();
+			parameterTypes.add(parameterType);
+			switch (argument.getScope()) {
+				case FIELD: {
+					v.visitVarInsn(ALOAD, 0);
+					v.visitFieldInsn(GETFIELD, converter.getInternalName(argument.getHostClassName()), argument.getName(), converter.getTypeDescriptor(parameterType));
+				}
+				break;
+				case VARIABLE: {
+					v.visitVarInsn(ALOAD, declaredVariables.get(argument.getName()).getIndex());
+				}
+				break;
+			}
+		}
+
+		v.visitMethodInsn(INVOKESPECIAL, runnableClassName, "<init>", converter.getMethodDescriptor(null, parameterTypes));
+		v.visitMethodInsn(INVOKESPECIAL, "java/lang/Thread", "<init>", "(Ljava/lang/Runnable;)V");
+		v.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Thread", "start", "()V");
+
+	}
+
 	private void addToVariables(DeclarationNode declaration, Label start, Label end, MethodVisitor v) {
 		String variableName = declaration.getName();
 		Integer variableIndex = declaredVariables.size() + 1;
@@ -410,6 +449,20 @@ public class ASMStackManager implements Opcodes {
 	}
 
 	public void push(ReferenceNode value, MethodVisitor v) {
+
+		ExpressionNode target = value.getTarget();
+		if (target != null){
+			pushInvocation(
+				target,
+				value.getType(),
+				Collections.<Site>emptyList(),
+				Collections.<ExpressionNode>emptyList(),
+				value.getGetterName(),
+				v
+			);
+			return;
+		}
+
 		switch (value.getScope()) {
 			case STATIC: {
 				v.visitFieldInsn(GETSTATIC, converter.getInternalName(value.getHostClass()), value.getName(), converter.getTypeDescriptor(value.getType().getType()));

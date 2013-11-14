@@ -28,6 +28,13 @@ public class VariableSite implements Site {
 		return bound.isAssignableTo(t);
 	}
 
+	public Site getSuperType() {
+		if (bound == null){
+			return null;
+		}
+		return bound.getSuperType();
+	}
+
 	public List<Declaration> getTypeParameters() {
 		if (bound == null){
 			return Collections.emptyList();

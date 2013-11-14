@@ -7,7 +7,7 @@ import bali.Number;
 import bali.Value;
 import bali.annotation.MetaType;
 import bali.annotation.MetaTypes;
-import bali.number.Integer;
+import bali.Integer;
 
 import java.util.Arrays;
 

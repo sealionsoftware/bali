@@ -1,33 +1,21 @@
 package bali.compiler.validation;
 
-import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
-import bali.compiler.parser.tree.ImportNode;
-import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.TypeNode;
 import bali.compiler.reference.BlockDeclaringThread;
-import bali.compiler.reference.BlockingReference;
 import bali.compiler.reference.Reference;
-import bali.compiler.reference.Semaphore;
 import bali.compiler.reference.SimpleReference;
 import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.TypeLibrary;
 import bali.compiler.validation.validator.Validator;
 import bali.compiler.validation.validator.ValidatorFactory;
 
-import javax.lang.model.type.DeclaredType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**

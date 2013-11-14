@@ -42,6 +42,7 @@ public class TypeDeclarationTypeBuilder {
 	public Type build(ClassNode declaration) {
 		return new Type(
 				declaration.getQualifiedClassName(),
+				null,
 				getTypeParameters(declaration),
 				getInterfaces(declaration),
 				getParameters(declaration),
@@ -49,6 +50,8 @@ public class TypeDeclarationTypeBuilder {
 				Collections.<Operator>emptyList(),
 				Collections.<UnaryOperator>emptyList(),
 				Collections.<Declaration>emptyList(),
+				false,
+				false,
 				false
 		);
 	}
@@ -56,6 +59,7 @@ public class TypeDeclarationTypeBuilder {
 	public Type build(InterfaceNode declaration) {
 		return new Type(
 				declaration.getQualifiedClassName(),
+				null,
 				getTypeParameters(declaration),
 				getInterfaces(declaration),
 				Collections.<Declaration>emptyList(),
@@ -63,13 +67,17 @@ public class TypeDeclarationTypeBuilder {
 				getOperators(declaration),
 				getUnaryOperators(declaration),
 				Collections.<Declaration>emptyList(),
-				true
-		);
+				true,
+				false,
+				false
+		); // TODO - self declared immutables, monitors
 	}
 
 	public Type build(BeanNode declaration) {
+		SiteNode superType = declaration.getSuperType();
 		return new Type(
 				declaration.getQualifiedClassName(),
+				superType != null ? superType.getSite() : null ,
 				getTypeParameters(declaration),
 				Collections.<Site>emptyList(),
 				Collections.<Declaration>emptyList(),
@@ -77,6 +85,8 @@ public class TypeDeclarationTypeBuilder {
 				Collections.<Operator>emptyList(),
 				Collections.<UnaryOperator>emptyList(),
 				getProperties(declaration),
+				false,
+				false,
 				false
 		);
 	}
@@ -86,6 +96,12 @@ public class TypeDeclarationTypeBuilder {
 		for (PropertyNode node : declaration.getProperties()){
 			ret.add(new Declaration(node.getName(), node.getType().getSite()));
 		}
+//		SiteNode superSite = declaration.getSuperType();
+//		if (superSite != null){
+//			for (Declaration property : superSite.getSite().getProperties()){
+//				ret.add(property);
+//			}
+//		}
 		return ret;
 	}
 

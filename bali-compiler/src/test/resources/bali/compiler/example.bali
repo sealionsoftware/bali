@@ -67,6 +67,10 @@ class AnImplementation(Number aParameter) implements AnInterface {
  	    ABean aBean = new AnotherBean()
         aBean.aNumber = 3
 
+        run {
+            CONSOLE << "Hello World"
+        }
+
 		return anArgument
  	}
 

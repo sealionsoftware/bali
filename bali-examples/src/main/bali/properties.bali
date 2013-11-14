@@ -1,0 +1,31 @@
+import bali.Console
+import bali.Number
+import bali.String
+import bali.Executable
+
+bean Bean extends SuperBean {
+	property SubBean aSubBean
+}
+
+bean SuperBean {
+	property String aString
+}
+
+bean SubBean  {
+	property Number aNumber
+}
+
+class BeanExecutable() implements Executable {
+
+ 	method execute(){
+
+	    Bean aBean = new Bean()
+	    aBean.aString = "aString"
+	    aBean.aSubBean = new SubBean()
+	    aBean.aSubBean.aNumber = 42
+
+	    CONSOLE << aBean.aString
+	    CONSOLE << NUMBER_FACTORY.format(aBean.aSubBean.aNumber)
+ 	}
+
+}

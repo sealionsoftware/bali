@@ -13,7 +13,7 @@ import java.util.Arrays;
  * Date: 05/05/13
  */
 @MetaType(MetaTypes.CLASS)
-public final class Console implements ReaderWriter {
+public final class Console implements ReaderWriterMonitor {
 
 	private static final int BUFFER_SIZE = 256;
 
@@ -22,12 +22,12 @@ public final class Console implements ReaderWriter {
 
 	public Console() {}
 
-	public void writeLine(String in){
+	public synchronized void writeLine(String in){
 		CharArrayString cas = (CharArrayString) in;
 		ps.println(cas.characters);
 	}
 
-	public String readLine(){
+	public synchronized String readLine(){
 		char[] in = new char[BUFFER_SIZE];
 		int i = 0;
 		try {

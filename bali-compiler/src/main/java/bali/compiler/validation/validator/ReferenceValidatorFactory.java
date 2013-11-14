@@ -10,6 +10,7 @@ import bali.compiler.parser.tree.ForStatementNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.ReferenceNode;
+import bali.compiler.parser.tree.RunStatementNode;
 import bali.compiler.parser.tree.VariableNode;
 import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.Declaration;
@@ -52,6 +53,8 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 					validate((ForStatementNode) node, control);
 				} else if (node instanceof CatchStatementNode) {
 					validate((CatchStatementNode) node, control);
+				} else if (node instanceof RunStatementNode) {
+					validate((RunStatementNode) node, control);
 				} else if (node instanceof CodeBlockNode) {
 					validate((CodeBlockNode) node, control);
 				} else if (node instanceof VariableNode) {
@@ -152,6 +155,46 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 				pushAndWalk(agent, scope);
 			}
 
+			private void validate(RunStatementNode statement, Control agent) {
+				Scope scope = new Scope(
+						ReferenceNode.ReferenceScope.FIELD,
+						statement.getRunnableClassName(),
+						true
+				);
+
+				for (Scope superScope : scopeStack){
+					if (!ReferenceNode.ReferenceScope.STATIC.equals(superScope.getScope())){
+						for (Declaration declaration : superScope.getDeclarations()){
+							scope.add(declaration.getName(), declaration.getType());
+						}
+					}
+				}
+
+				pushAndWalk(agent, scope);
+
+				List<RunStatementNode.RunArgument> arguments = new ArrayList();
+				for (Declaration declaration : scope.getDeclarations()){
+
+					Scope originalScope = getScopeForReference(declaration.getName());
+					arguments.add(new RunStatementNode.RunArgument(
+							declaration.getName(),
+							declaration.getType(),
+							originalScope.getScope(),
+							originalScope.getClassName()
+					));
+				}
+				statement.setArguments(arguments);
+			}
+
+			private Scope getScopeForReference(String name){
+				for (Scope parentScope : scopeStack) {
+					if (parentScope.find(name) != null) {
+						return parentScope;
+					}
+				}
+				return null;
+			}
+
 			private void validate(CodeBlockNode codeBlock, Control agent) {
 				Scope scope = new Scope(
 						ReferenceNode.ReferenceScope.VARIABLE,
@@ -176,53 +219,70 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 			public List<ValidationFailure> validate(ReferenceNode value) {
 
 				List<ValidationFailure> failures = new ArrayList<>();
-				Site declaration = null;
-				Scope declarationScope = null;
 				ExpressionNode target = value.getTarget();
 
 				if (target == null){
 
-					for (Scope scope : scopeStack) {
-						declaration = scope.find(value.getName());
-						if (declaration != null) {
-							declarationScope = scope;
-							break;
-						}
-					}
+					Scope declarationScope = getScopeForReference(value.getName());
 
-					if (declaration == null) {
+					if (declarationScope == null) {
 						failures.add(new ValidationFailure(value, "Could not resolve reference " + value.getName()));
 						return failures;
 					}
 
 					value.setFinal(declarationScope.getFinal());
-					value.setDeclaration(declaration);
+					value.setDeclaration( declarationScope.find(value.getName()));
 					value.setHostClass(declarationScope.getClassName());
 					value.setScope(declarationScope.getScope());
+					value.setGetterName(null);
 
 				} else {
 					String name = value.getName();
 					Site site = target.getType();
-					Declaration property = null;
-					if (site != null)
-						for (Declaration p : site.getProperties())
-							if(p.getName().equals(name))
-								property = p;
-					if (property == null){
-						failures.add(new ValidationFailure(value, "Could not resolve reference " + site.getType() + "." + value.getName()));
+					PropertyData propertyData = getProperty(site, name);
+					if (propertyData == null){
+						failures.add(new ValidationFailure(value, "Could not resolve reference " + site.getType().getName() + "." + name));
 						return failures;
 					}
 					value.setFinal(false);
-					value.setDeclaration(property.getType());
-					value.setHostClass(site.getType().getName());
+					value.setDeclaration(propertyData.getProperty().getType());
+					value.setHostClass(propertyData.getHostClass());
 					value.setScope(ReferenceNode.ReferenceScope.FIELD);
+					value.setGetterName("get" + name.substring(0, 1).toUpperCase() + name.substring(1));
 				}
 
 				return failures;
 			}
-
-
 		};
+	}
+
+	private PropertyData getProperty(Site site, String name){
+		for (Declaration p : site.getProperties())
+			if(p.getName().equals(name))
+				return new PropertyData(p, site.getType().getName());
+		Site superType = site.getSuperType();
+		if (superType != null)
+			return getProperty(superType, name);
+		return null;
+	}
+
+	private static class PropertyData {
+
+		private Declaration property;
+		private String hostClass;
+
+		public PropertyData(Declaration property, String hostClass) {
+			this.property = property;
+			this.hostClass = hostClass;
+		}
+
+		private Declaration getProperty() {
+			return property;
+		}
+
+		private String getHostClass() {
+			return hostClass;
+		}
 	}
 
 	public static class Scope {
@@ -256,6 +316,14 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 
 		public Site find(String name) {
 			return declarations.get(name);
+		}
+
+		public List<Declaration> getDeclarations() {
+			List<Declaration> ret = new ArrayList<>();
+			for (Map.Entry<String, Site> entry : declarations.entrySet()){
+				ret.add(new Declaration(entry.getKey(), entry.getValue()));
+			}
+			return ret;
 		}
 	}
 

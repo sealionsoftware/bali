@@ -44,16 +44,14 @@ public class TypeResolvingValidatorFactory implements ValidatorFactory {
 
 		return new Validator() {
 
-			private Map<String, Reference<Type>> resolvables = new HashMap<>();
+			private Map<String, Reference<Type>> resolvables;
 
 			public List<ValidationFailure> validate(Node node, Control control) {
 
 				List<ValidationFailure> failures = Collections.emptyList();
 
-				if (node instanceof ImportNode){
-					failures =  validate((ImportNode) node);
-				} else if (node instanceof TypeNode){
-					failures =  validate((TypeNode) node);
+				if (node instanceof CompilationUnitNode){
+					resolvables = ((CompilationUnitNode) node).getResolvables();
 				}
 
 				control.validateChildren();
@@ -67,23 +65,6 @@ public class TypeResolvingValidatorFactory implements ValidatorFactory {
 				return failures;
 			}
 
-			public List<ValidationFailure> validate(TypeNode node){
-				resolvables.put(node.getClassName(), library.getReference(node.getQualifiedClassName()));
-				return Collections.emptyList();
-			}
-
-			// Engages at the root of the AST, constructs a lookup table of unqualified names to declarations
-			public List<ValidationFailure> validate(ImportNode iport) {
-
-				String name = iport.getName();
-				Type iportType = iport.getType();
-				if (iportType != null){
-					resolvables.put(name.substring(name.lastIndexOf(".") + 1),  new SimpleReference<>(iport.getType()));
-				}
-
-				return Collections.emptyList();
-			}
-
 			public List<ValidationFailure> validate(SiteNode type) {
 
 				List<ValidationFailure> ret = new ArrayList<>();
@@ -94,7 +75,6 @@ public class TypeResolvingValidatorFactory implements ValidatorFactory {
 						reference = library.getReference(type.getClassName());
 					} catch (Exception e) {
 						ret.add(new ValidationFailure(type, "Cannot resolve type " + type));
-						type.setSite(null);
 						return ret;
 					}
 				}
@@ -122,7 +102,6 @@ public class TypeResolvingValidatorFactory implements ValidatorFactory {
 					try {
 						reference = library.getReference(type.getClassName());
 					} catch (Exception e) {
-						type.setType(null);
 						ret.add(new ValidationFailure(type, "Cannot resolve type " + type));
 						return ret;
 					}

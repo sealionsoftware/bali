@@ -18,7 +18,7 @@ import static bali.number.NumberFactory.NUMBER_FACTORY;
  * Date: 04/05/13
  */
 @MetaType(MetaTypes.CLASS)
-public final class BigInteger implements Integer {
+public final class BigInteger implements bali.Integer {
 
 	private static final java.lang.String INVALID_NUMBER_TYPE = "Invalid Number Type";
 

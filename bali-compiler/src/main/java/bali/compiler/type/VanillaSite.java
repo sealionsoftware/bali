@@ -51,6 +51,10 @@ public class VanillaSite implements Site {
 		return type.get().getName();
 	}
 
+	public Site getSuperType() {
+		return type.get().getSuperType();
+	}
+
 	public List<Declaration> getTypeParameters() {
 		return type.get().getTypeParameters();
 	}

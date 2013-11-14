@@ -4,6 +4,7 @@ import bali.compiler.bytecode.ASMBeanGenerator;
 import bali.compiler.bytecode.ASMClassGenerator;
 import bali.compiler.bytecode.ASMInterfaceGenerator;
 import bali.compiler.bytecode.ASMPackageClassGenerator;
+import bali.compiler.bytecode.ASMRunStatementGenerator;
 import bali.compiler.bytecode.ConfigurablePackageGenerator;
 import bali.compiler.bytecode.Generator;
 import bali.compiler.module.JarPackager;
@@ -11,6 +12,7 @@ import bali.compiler.module.ModuleWriter;
 import bali.compiler.parser.ANTLRParserManager;
 import bali.compiler.parser.ParserManager;
 import bali.compiler.parser.tree.CompilationUnitNode;
+import bali.compiler.parser.tree.Node;
 import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.TypeLibrary;
 import bali.compiler.validation.FailedValidationException;
@@ -33,7 +35,9 @@ import bali.compiler.validation.validator.InvocationValidatorFactory;
 import bali.compiler.validation.validator.NumberLiteralValidatorFactory;
 import bali.compiler.validation.validator.OperationValidatorFactory;
 import bali.compiler.validation.validator.ReferenceValidatorFactory;
+import bali.compiler.validation.validator.ResolvablesValidatorFactory;
 import bali.compiler.validation.validator.ReturnValueValidatorFactory;
+import bali.compiler.validation.validator.RunStatementValidatorFactory;
 import bali.compiler.validation.validator.StringLiteralValidatorFactory;
 import bali.compiler.validation.validator.ThrowStatementValidatorFactory;
 import bali.compiler.validation.validator.TypeResolvingValidatorFactory;
@@ -135,6 +139,7 @@ public class BaliCompiler {
 				new ANTLRParserManager(),
 				new MultiThreadedValidationEngine(library, constantLibrary, Arrays.asList(
 						new ImportsValidatorFactory(library),
+						new ResolvablesValidatorFactory(library),
 						new TypeResolvingValidatorFactory(library),
 						new BeanValidatorFactory(library),
 						new InterfaceValidatorFactory(library),
@@ -153,13 +158,15 @@ public class BaliCompiler {
 						new AssignmentValidatorFactory(),
 						new ConstructionValidatorFactory(library),
 						new ThrowStatementValidatorFactory(library),
-						new BranchStatementValidatorFactory()
+						new BranchStatementValidatorFactory(),
+						new RunStatementValidatorFactory()
 				)),
 				new ConfigurablePackageGenerator(
 						new ASMPackageClassGenerator(),
 						new ASMBeanGenerator(),
 						new ASMInterfaceGenerator(),
-						new ASMClassGenerator()
+						new ASMClassGenerator(),
+						new ASMRunStatementGenerator()
 				),
 				new JarPackager()
 		);
@@ -175,7 +182,8 @@ public class BaliCompiler {
 				if (failures.size() > 0) {
 					System.err.println("Unit " + failedFile + BALI_SOURCE_FILE_EXTENSION + " failed with " + failures.size() + " errors");
 					for (ValidationFailure failure : failures) {
-						System.err.println("\t" + failure.getNode().getLine() + ": " + failure.getMessage());
+						Node node = failure.getNode();
+						System.err.println("\t" + node.getLine() + ":" + node.getCharacter() + " " + failure.getMessage());
 					}
 				}
 			}
