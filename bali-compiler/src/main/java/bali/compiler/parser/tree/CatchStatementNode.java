@@ -7,10 +7,10 @@ import java.util.List;
  * User: Richard
  * Date: 25/06/13
  */
-public class CatchStatementNode extends StatementNode {
+public class CatchStatementNode extends Node {
 
 	private DeclarationNode declaration;
-	private CodeBlockNode codeBlock;
+	private ControlExpressionNode body;
 
 	public CatchStatementNode() {
 	}
@@ -28,13 +28,13 @@ public class CatchStatementNode extends StatementNode {
 		children.add(declaration);
 	}
 
-	public CodeBlockNode getCodeBlock() {
-		return codeBlock;
+	public ControlExpressionNode getBody() {
+		return body;
 	}
 
-	public void setCodeBlock(CodeBlockNode codeBlock) {
-		this.codeBlock = codeBlock;
-		children.add(codeBlock);
+	public void setBody(ControlExpressionNode body) {
+		this.body = body;
+		children.add(body);
 	}
 
 }

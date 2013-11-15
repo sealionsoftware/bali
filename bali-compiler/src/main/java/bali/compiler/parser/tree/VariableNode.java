@@ -11,9 +11,14 @@ public class VariableNode extends StatementNode {
 
 	private DeclarationNode declaration;
 	private ExpressionNode value;
+	private ControlExpressionNode assignable;
 
 	public VariableNode() {
 		super();
+	}
+
+	public VariableNode(Integer line, Integer character) {
+		super(line, character);
 	}
 
 	public DeclarationNode getDeclaration() {
@@ -34,8 +39,12 @@ public class VariableNode extends StatementNode {
 		this.value = value;
 	}
 
-	public VariableNode(Integer line, Integer character) {
-		super(line, character);
+	public ControlExpressionNode getAssignable() {
+		return assignable;
 	}
 
+	public void setAssignable(ControlExpressionNode assignable) {
+		children.add(assignable);
+		this.assignable = assignable;
+	}
 }

@@ -7,7 +7,7 @@ import java.util.List;
  * User: Richard
  * Date: 29/04/13
  */
-public class CodeBlockNode extends Node {
+public class CodeBlockNode extends ControlExpressionNode {
 
 	private List<StatementNode> statements = new ArrayList<>();
 

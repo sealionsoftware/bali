@@ -7,29 +7,39 @@ import java.util.List;
  * User: Richard
  * Date: 02/05/13
  */
-public class ConditionalStatementNode extends StatementNode {
+public class ConditionalStatementNode extends ControlExpressionNode {
 
-	private List<ConditionalBlockNode> conditionalBlocks = new ArrayList<>();
-	private CodeBlockNode alternate;
+	private ExpressionNode condition;
+	private ControlExpressionNode conditional;
+	private ControlExpressionNode alternate;
 
 	public ConditionalStatementNode(Integer line, Integer character) {
 		super(line, character);
 	}
 
-	public void addConditionalBlock(ConditionalBlockNode conditionalBlock){
-		children.add(conditionalBlock);
-		this.conditionalBlocks.add(conditionalBlock);
+	public ExpressionNode getCondition() {
+		return condition;
 	}
 
-	public List<ConditionalBlockNode> getConditionalBlocks() {
-		return conditionalBlocks;
+	public void setCondition(ExpressionNode condition) {
+		children.add(condition);
+		this.condition = condition;
 	}
 
-	public CodeBlockNode getAlternate() {
+	public ControlExpressionNode getConditional() {
+		return conditional;
+	}
+
+	public void setConditional(ControlExpressionNode conditional) {
+		children.add(conditional);
+		this.conditional = conditional;
+	}
+
+	public ControlExpressionNode getAlternate() {
 		return alternate;
 	}
 
-	public void setAlternate(CodeBlockNode alternate) {
+	public void setAlternate(ControlExpressionNode alternate) {
 		this.alternate = alternate;
 		children.add(alternate);
 	}

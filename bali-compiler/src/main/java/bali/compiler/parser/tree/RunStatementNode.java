@@ -10,9 +10,9 @@ import java.util.List;
  * User: Richard
  * Date: 07/11/13
  */
-public class RunStatementNode extends StatementNode {
+public class RunStatementNode extends ControlExpressionNode {
 
-	private CodeBlockNode body;
+	private ControlExpressionNode body;
 
 	private BlockingReference<String> runnableClassName = new BlockingReference<>();
 	private BlockingReference<String> sourceFileName = new BlockingReference<>();
@@ -22,11 +22,11 @@ public class RunStatementNode extends StatementNode {
 		super(line, character);
 	}
 
-	public CodeBlockNode getBody() {
+	public ControlExpressionNode getBody() {
 		return body;
 	}
 
-	public void setBody(CodeBlockNode body) {
+	public void setBody(ControlExpressionNode body) {
 		children.add(body);
 		this.body = body;
 	}

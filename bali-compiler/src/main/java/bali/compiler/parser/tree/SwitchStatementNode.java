@@ -7,11 +7,11 @@ import java.util.List;
  * User: Richard
  * Date: 09/05/13
  */
-public class SwitchStatementNode extends StatementNode {
+public class SwitchStatementNode extends ControlExpressionNode {
 
 	private ExpressionNode value;
 	private List<CaseStatementNode> caseStatements = new ArrayList<>();
-	private CodeBlockNode defaultStatement;
+	private ControlExpressionNode defaultStatement;
 
 	public SwitchStatementNode(Integer line, Integer character) {
 		super(line, character);
@@ -35,11 +35,11 @@ public class SwitchStatementNode extends StatementNode {
 		this.caseStatements.add(caseStatement);
 	}
 
-	public CodeBlockNode getDefaultStatement() {
+	public ControlExpressionNode getDefaultStatement() {
 		return defaultStatement;
 	}
 
-	public void setDefaultStatement(CodeBlockNode defaultStatement) {
+	public void setDefaultStatement(ControlExpressionNode defaultStatement) {
 		children.add(defaultStatement);
 		this.defaultStatement = defaultStatement;
 	}

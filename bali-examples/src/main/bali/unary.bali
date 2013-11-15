@@ -1,0 +1,18 @@
+import bali.Console
+import bali.Number
+import bali.String
+import bali.Executable
+
+class UnaryDoer() implements Executable {
+
+ 	method execute(){
+
+ 	    Number n = 1
+ 	    n = -n // Now -1
+ 	    n = |n // Now 1
+
+ 	    CONSOLE << ("Calc: " + NUMBER_FACTORY.format(n))
+
+ 	}
+
+}

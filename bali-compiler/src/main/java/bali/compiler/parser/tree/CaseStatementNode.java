@@ -10,7 +10,7 @@ import java.util.List;
 public class CaseStatementNode extends StatementNode {
 
 	private ExpressionNode condition;
-	private CodeBlockNode body;
+	private ControlExpressionNode body;
 
 	public CaseStatementNode(Integer line, Integer character) {
 		super(line, character);
@@ -25,11 +25,11 @@ public class CaseStatementNode extends StatementNode {
 		children.add(condition);
 	}
 
-	public CodeBlockNode getBody() {
+	public ControlExpressionNode getBody() {
 		return body;
 	}
 
-	public void setBody(CodeBlockNode body) {
+	public void setBody(ControlExpressionNode body) {
 		this.body = body;
 		children.add(body);
 	}

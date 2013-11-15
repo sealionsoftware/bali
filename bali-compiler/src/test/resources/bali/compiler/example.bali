@@ -52,7 +52,7 @@ class AnImplementation(Number aParameter) implements AnInterface {
  	method Number aMethod(Number anArgument){
 
  	    Number aVariable = anArgument + GLOBAL_CONSTANT
-		Iterable[Number] numbers = [3,4,5]
+		Iterable<Number> numbers = [3,4,5]
  	    Boolean stop = false
 
  	    while(!stop){

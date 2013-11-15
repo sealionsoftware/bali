@@ -13,6 +13,7 @@ public class AssignmentNode extends StatementNode {
 
 	private ReferenceNode reference;
 	private ExpressionNode value;
+	private ControlExpressionNode assignable;
 
 	private BlockingReference<String> setterName = new BlockingReference<>();
 
@@ -48,4 +49,14 @@ public class AssignmentNode extends StatementNode {
 		this.value = value;
 		children.add(value);
 	}
+
+	public ControlExpressionNode getAssignable() {
+		return assignable;
+	}
+
+	public void setAssignable(ControlExpressionNode assignable) {
+		this.assignable = assignable;
+		children.add(assignable);
+	}
+
 }

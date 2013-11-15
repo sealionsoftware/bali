@@ -15,7 +15,13 @@ STRING_LITERAL:             '"' ~[^"]* '"' ;
 
 NUMBER_LITERAL:             [0-9]+ ('.' [0-9]+)? ;
 
-OPERATOR:                   [<>\+\-!£$%\^&\*#\~@\?/\\\|¬`¦:=]+ ;
+EQ:                         '=';
+QM:                         '?';
+LT:                         '<';
+GT:                         '>';
+EX:                         '!';
+
+OPERATOR:                   [\+\-£$%\^&\*#\~@/\\\|¬`¦:=\?<>\!]+ ;
 
 // Grammar Definition
 
@@ -32,9 +38,7 @@ packageDeclaration:
 
 importDeclaration:          'import' TYPE_IDENTIFIER ;
 
-constantDeclaration:        'constant' typeDeclaration CONSTANT_IDENTIFIER '=' constantValue ;
-
-// functionDeclaration:     'function' typeDeclaration? STANDARD_IDENTIFIER argumentDeclarationList codeBlock ;
+constantDeclaration:        'constant' typeDeclaration CONSTANT_IDENTIFIER EQ constantValue ;
 
 interfaceDeclaration:       'interface' typeDeclaration ('extends' typeDeclarationList)? '{' (declarationDeclaration)* '}' ;
 
@@ -42,7 +46,7 @@ classDeclaration:           'class' typeDeclaration argumentDeclarationList ( 'i
 
 beanDeclaration:            'bean' typeDeclaration ( 'extends' typeDeclaration )? '{' propertyDeclaration* '}' ;
 
-fieldDeclaration:           'field' typeDeclaration STANDARD_IDENTIFIER ('=' expression )? ;
+fieldDeclaration:           'field' typeDeclaration STANDARD_IDENTIFIER (EQ expression )? ;
 
 methodDeclaration:          'method' typeDeclaration? STANDARD_IDENTIFIER argumentDeclarationList codeBlock ;
 
@@ -58,9 +62,9 @@ lineStatement:              variableDeclaration | assignment | returnStatement |
 
 controlStatement:           conditionalStatement | tryStatement | whileStatement | forStatement | switchStatement | runStatement ;
 
-controlExpression:          codeBlock | controlStatement
+controlExpression:          codeBlock | controlStatement ;
 
-conditionalStatement:       'if' '(' expression ')' controlExpression ('else' controlStatement)* ;
+conditionalStatement:       'if' '(' expression ')' controlExpression ('else' controlExpression)? ;
 
 tryStatement:               'try' controlExpression catchStatement+ ;
 
@@ -76,15 +80,17 @@ caseStatement:              'case' expression ':' controlExpression ;
 
 defaultStatement:           'default' ':' controlExpression ;
 
-runStatement:               'run' controlStatement ;
+runStatement:               'run' controlExpression ;
 
-variableDeclaration:        typeDeclaration identifier ('=' (expression | controlStatement))? ;
+assignable:                 expression | controlExpression;
 
-assignment:                 reference '=' (expression | controlStatement) ;
+variableDeclaration:        typeDeclaration identifier (EQ assignable)? ;
+
+assignment:                 reference EQ assignable ;
 
 identifier:                 STANDARD_IDENTIFIER | CONSTANT_IDENTIFIER ;
 
-call:                       identifier argumentList;
+call:                       identifier argumentList ;
 
 target:                     expressionBase ('.' memberName)* ;
 
@@ -92,9 +98,11 @@ invocation:                 (target '.')? call ;
 
 reference:                  (target '.')? identifier ;
 
-unaryOperation:             OPERATOR expressionForOperation ;
+operator:                   QM | LT | GT | EX | OPERATOR ;
 
-operation:                  expressionForOperation OPERATOR expression ;
+unaryOperation:             operator expressionForOperation ;
+
+operation:                  expressionForOperation operator expression ;
 
 construction:               'new' TYPE_IDENTIFIER argumentList ;
 
@@ -108,7 +116,7 @@ breakStatement:             'break' ;
 
 continueStatement:          'continue' ;
 
-typeDeclaration:            TYPE_IDENTIFIER ('['  typeDeclarationList ']')? '?'? '*'? ;
+typeDeclaration:            TYPE_IDENTIFIER (LT  typeDeclarationList GT)? QM? ;
 
 typeDeclarationList:        typeDeclaration (',' typeDeclaration)* ;
 
@@ -120,7 +128,7 @@ argumentList:               '(' ( expression ( ',' expression)*)? ')' ;
 
 constantValue:              literal | construction ;
 
-memberName:                 call | identifier;
+memberName:                 call | identifier ;
 
 expressionBase:             constantValue | '(' unaryOperation ')' | '(' operation ')' | memberName ;
 

@@ -7,19 +7,19 @@ import java.util.List;
  * User: Richard
  * Date: 08/07/13
  */
-public abstract class LoopStatementNode extends StatementNode {
+public abstract class LoopStatementNode extends ControlExpressionNode {
 
-	protected CodeBlockNode body;
+	protected ControlExpressionNode body;
 
 	public LoopStatementNode(Integer line, Integer character) {
 		super(line, character);
 	}
 
-	public CodeBlockNode getBody() {
+	public ControlExpressionNode getBody() {
 		return body;
 	}
 
-	public void setBody(CodeBlockNode body) {
+	public void setBody(ControlExpressionNode body) {
 		this.body = body;
 		children.add(body);
 	}

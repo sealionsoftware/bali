@@ -8,10 +8,10 @@ import bali.compiler.parser.tree.BreakStatementNode;
 import bali.compiler.parser.tree.CaseStatementNode;
 import bali.compiler.parser.tree.CatchStatementNode;
 import bali.compiler.parser.tree.CodeBlockNode;
-import bali.compiler.parser.tree.ConditionalBlockNode;
 import bali.compiler.parser.tree.ConditionalStatementNode;
 import bali.compiler.parser.tree.ConstructionExpressionNode;
 import bali.compiler.parser.tree.ContinueStatementNode;
+import bali.compiler.parser.tree.ControlExpressionNode;
 import bali.compiler.parser.tree.DeclarationNode;
 import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.ForStatementNode;
@@ -38,7 +38,6 @@ import bali.compiler.type.Method;
 import bali.compiler.type.Operator;
 import bali.compiler.type.Site;
 import bali.compiler.type.Type;
-import bali.compiler.type.TypeLibrary;
 import bali.compiler.type.UnaryOperator;
 import bali.compiler.validation.validator.UnaryOperationValidatorFactory;
 import org.objectweb.asm.Label;
@@ -144,6 +143,8 @@ public class ASMStackManager implements Opcodes {
 			execute((VariableNode) statement, v);
 		} else if (statement instanceof AssignmentNode) {
 			execute((AssignmentNode) statement, v);
+		} else if (statement instanceof CodeBlockNode) {
+			execute((CodeBlockNode) statement, v);
 		} else if (statement instanceof ConditionalStatementNode) {
 			execute((ConditionalStatementNode) statement, v);
 		} else if (statement instanceof WhileStatementNode) {
@@ -219,22 +220,20 @@ public class ASMStackManager implements Opcodes {
 			v.visitMethodInsn(invokeInsn(targetType), converter.getInternalName(targetType), statement.getSetterName(), converter.getMethodDescriptor(null, Collections.singletonList(referenceNode.getType().getType())));
 		}
 
-
 	}
 
 	private void execute(ConditionalStatementNode statement, MethodVisitor v) {
 
 		Label end = new Label();
 		Label next = new Label();
-		for (ConditionalBlockNode block : statement.getConditionalBlocks()) {
-			push(block.getCondition(), v);
-			v.visitFieldInsn(GETSTATIC, "bali/IdentityBoolean", "TRUE", "Lbali/IdentityBoolean;");
-			v.visitJumpInsn(IF_ACMPNE, next);
-			execute(block.getBody(), v);
-			v.visitJumpInsn(GOTO, end);
-			v.visitLabel(next);
-			next = new Label();
-		}
+
+		push(statement.getCondition(), v);
+		v.visitFieldInsn(GETSTATIC, "bali/IdentityBoolean", "TRUE", "Lbali/IdentityBoolean;");
+		v.visitJumpInsn(IF_ACMPNE, next);
+		execute(statement.getConditional(), v);
+		v.visitJumpInsn(GOTO, end);
+		v.visitLabel(next);
+
 		if (statement.getAlternate() != null) {
 			execute(statement.getAlternate(), v);
 		}
@@ -325,7 +324,7 @@ public class ASMStackManager implements Opcodes {
 			Label catchEnd = new Label();
 			v.visitLabel(catchStart);
 			addToVariables(entry.getValue().getDeclaration(), catchStart, catchEnd, v);
-			execute(entry.getValue().getCodeBlock(), v);
+			execute(entry.getValue().getBody(), v);
 			v.visitLabel(catchEnd);
 			v.visitJumpInsn(GOTO, end);
 		}

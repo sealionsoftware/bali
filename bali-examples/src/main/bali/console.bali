@@ -1,0 +1,20 @@
+import bali.Console
+import bali.String
+import bali.Executable
+
+class ConsoleExecutable() implements Executable {
+
+	method execute(){
+
+		CONSOLE << "What's your name?"
+
+		while (true){
+			String read = << CONSOLE
+			if ("EXIT" == ^read ){
+				CONSOLE << "Goodbye"
+				break
+			}
+			CONSOLE << ("Hello " + read)
+		}
+	}
+}

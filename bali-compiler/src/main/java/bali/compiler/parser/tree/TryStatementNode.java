@@ -7,16 +7,16 @@ import java.util.List;
  * User: Richard
  * Date: 09/05/13
  */
-public class TryStatementNode extends StatementNode {
+public class TryStatementNode extends ControlExpressionNode {
 
-	private CodeBlockNode main;
+	private ControlExpressionNode main;
 	private List<CatchStatementNode> catchStatements = new ArrayList<>();
 
 	public TryStatementNode(Integer line, Integer character) {
 		super(line, character);
 	}
 
-	public void setMain(CodeBlockNode main) {
+	public void setMain(ControlExpressionNode main) {
 		children.add(main);
 		this.main = main;
 	}
@@ -26,7 +26,7 @@ public class TryStatementNode extends StatementNode {
 		catchStatements.add(catchStatement);
 	}
 
-	public CodeBlockNode getMain() {
+	public ControlExpressionNode getMain() {
 		return main;
 	}
 
