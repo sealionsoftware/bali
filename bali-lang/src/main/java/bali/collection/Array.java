@@ -18,7 +18,7 @@ import static bali.number.NumberFactory.NUMBER_FACTORY;
  * Date: 08/05/13
  */
 @MetaType(MetaTypes.CLASS)
-public final class Array<E extends Value<?>> implements Collection<E>, Value<Array<E>> {
+public final class Array<E extends Value<E>> implements Collection<E>, Value<Array<E>> {
 
 	private final E[] elements;
 
@@ -53,6 +53,15 @@ public final class Array<E extends Value<?>> implements Collection<E>, Value<Arr
 
 	public E get(Number index) {
 		return elements[NUMBER_FACTORY.valueOf(index)];
+	}
+
+	public Boolean contains(E value) {
+		for (int i = 0 ; i < elements.length ; i++){
+			if (elements[i].equalTo(value) == IdentityBoolean.TRUE){
+				return IdentityBoolean.TRUE;
+			}
+		}
+		return IdentityBoolean.FALSE;
 	}
 
 	public Boolean equalTo(Array<E> operand) {

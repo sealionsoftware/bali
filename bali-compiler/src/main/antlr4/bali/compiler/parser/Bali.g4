@@ -102,7 +102,7 @@ operator:                   QM | LT | GT | EX | OPERATOR ;
 
 unaryOperation:             operator expressionForOperation ;
 
-operation:                  expressionForOperation operator expression ;
+operation:                  expressionForOperation (operator expressionForOperation)+ ;
 
 construction:               'new' TYPE_IDENTIFIER argumentList ;
 

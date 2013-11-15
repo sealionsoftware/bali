@@ -44,6 +44,12 @@ public class InvocationValidatorFactory implements ValidatorFactory {
 					ExpressionNode target = invocation.getTarget();
 
 					Site targetType = target != null ? target.getType() : thisSite;
+
+					if (targetType == null){
+						ret.add(new ValidationFailure(node, "The target of invocation " + invocation.getMethodName() + " is void"));
+						return ret;
+					}
+
 					Method method = getMethodWithName(invocation.getMethodName(), targetType);
 					if (method == null){
 						ret.add(new ValidationFailure(invocation, "Could not resolve method with name " + invocation.getMethodName()));

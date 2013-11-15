@@ -50,6 +50,9 @@ import org.antlr.v4.runtime.Token;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -440,9 +443,31 @@ public class ANTLRParserManager implements ParserManager {
 	private OperationNode build(BaliParser.OperationContext context) {
 
 		OperationNode operation = new OperationNode(l(context), c(context));
-		operation.setOne(build(context.expressionForOperation()));
-		operation.setTwo(build(context.expression()));
-		operation.setOperator(context.operator().getText());
+		List<BaliParser.ExpressionForOperationContext> operands = new ArrayList<>(context.expressionForOperation());
+		List<BaliParser.OperatorContext> operators = new ArrayList<>(context.operator());
+		Collections.reverse(operands);
+		Collections.reverse(operators);
+		Iterator<BaliParser.ExpressionForOperationContext> i = operands.iterator();
+		Iterator<BaliParser.OperatorContext> j = operators.iterator();
+
+		operation.setTwo(build(i.next()));
+		OperationNode currentOperation = operation;
+
+		while (i.hasNext()) {
+			BaliParser.ExpressionForOperationContext expressionForOperationContext = i.next();
+			ExpressionNode next = build(expressionForOperationContext);
+			currentOperation.setOperator(j.next().getText());
+
+			if (i.hasNext()) {
+				OperationNode newOperation = new OperationNode(l(expressionForOperationContext), c(expressionForOperationContext));
+				newOperation.setTwo(next);
+				currentOperation.setOne(newOperation);
+				currentOperation = newOperation;
+			} else {
+				currentOperation.setOne(next);
+			}
+		}
+
 		return operation;
 	}
 
@@ -467,7 +492,6 @@ public class ANTLRParserManager implements ParserManager {
 		if (context.memberName() != null){
 			return build(context.memberName());
 		}
-
 
 		throw new RuntimeException("Could not get value for expression " + context.getText());
 	}
@@ -507,7 +531,6 @@ public class ANTLRParserManager implements ParserManager {
 		if (context.expressionBase() != null) {
 			return build(context.expressionBase());
 		}
-
 
 		throw new RuntimeException("Could not get value for expression " + context.getText());
 	}

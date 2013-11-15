@@ -32,6 +32,11 @@ public class OperationValidatorFactory implements ValidatorFactory {
 					Site operandType = operation.getTwo().getType();
 					String operatorName = operation.getOperator();
 
+					if (targetType == null){
+						ret.add(new ValidationFailure(node, "The target of operator " + operatorName + " is void"));
+						return ret;
+					}
+
 					Operator operator = getOperatorWithName(operatorName, targetType);
 
 					if (operator == null) {

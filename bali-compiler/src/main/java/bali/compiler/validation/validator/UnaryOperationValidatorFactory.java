@@ -52,6 +52,11 @@ public class UnaryOperationValidatorFactory implements ValidatorFactory {
 					Site targetType = unary.getTarget().getType();
 					String operatorName = unary.getOperator();
 
+					if (targetType == null){
+						ret.add(new ValidationFailure(node, "The target of operator " + operatorName + " is void"));
+						return ret;
+					}
+
 					UnaryOperator operator = operatorName.equals(NULL_CHECK_OPERATOR_NAME) ? nullCheck : getUnaryOperatorWithName(operatorName, targetType);
 
 					if (operator == null) {

@@ -155,6 +155,10 @@ public class ParametrizedSite implements Site {
 	}
 
 	private Site parametriseSite(Site original) {
+		return parametriseSite(original, new HashMap<String, Site>());
+	}
+
+	private Site parametriseSite(Site original, Map<String, Site> alreadyParametrised) {
 
 		if (original instanceof VariableSite){
 
@@ -169,10 +173,20 @@ public class ParametrizedSite implements Site {
 			return original;
 		}
 
-
 		List<Site> parametrisedArguments = new ArrayList<>();
+		Site ret = new ParametrizedSite(
+				original.getType(),
+				parametrisedArguments
+		);
+
 		for (Declaration argument : original.getTypeParameters()) {
-			parametrisedArguments.add(parametriseSite(argument.getType()));
+			Site already = alreadyParametrised.get(argument.getName());
+			if (already != null){
+				parametrisedArguments.add(already);
+			} else {
+				alreadyParametrised.put(argument.getName(), ret);
+				parametrisedArguments.add(parametriseSite(argument.getType(), alreadyParametrised));
+			}
 		}
 
 		return new ParametrizedSite(
