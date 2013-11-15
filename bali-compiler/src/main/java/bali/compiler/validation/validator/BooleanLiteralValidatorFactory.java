@@ -8,7 +8,6 @@ import bali.compiler.type.TypeLibrary;
 import bali.compiler.type.VanillaSite;
 import bali.compiler.validation.ValidationFailure;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 

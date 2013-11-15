@@ -1,7 +1,6 @@
 package bali.compiler.bytecode;
 
 import bali.Number;
-import bali.annotation.MetaType;
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.BeanNode;
 import bali.compiler.parser.tree.PropertyNode;

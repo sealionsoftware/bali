@@ -5,7 +5,6 @@ import bali.compiler.parser.tree.ConstantNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.Declaration;
-import bali.compiler.type.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;

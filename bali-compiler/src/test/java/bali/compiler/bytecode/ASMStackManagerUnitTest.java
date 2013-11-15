@@ -2,7 +2,6 @@ package bali.compiler.bytecode;
 
 import bali.compiler.parser.tree.ReturnStatementNode;
 import bali.compiler.parser.tree.StatementNode;
-import bali.compiler.type.TypeLibrary;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.objectweb.asm.MethodVisitor;

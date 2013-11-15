@@ -1,6 +1,6 @@
 package bali.compiler.bytecode.types;
 
-import bali.*;
+import bali.CharArrayString;
 import bali.String;
 
 /**

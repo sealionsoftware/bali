@@ -1,6 +1,5 @@
 package bali.compiler.type;
 
-import bali.compiler.reference.BlockingReference;
 import bali.compiler.reference.Reference;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureVisitor;

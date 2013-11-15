@@ -1,7 +1,5 @@
 package bali.compiler.parser.tree;
 
-import bali.compiler.reference.Reference;
-import bali.compiler.reference.SimpleReference;
 import bali.compiler.validation.ValidationFailure;
 import bali.compiler.validation.validator.Control;
 import bali.compiler.validation.validator.Validator;

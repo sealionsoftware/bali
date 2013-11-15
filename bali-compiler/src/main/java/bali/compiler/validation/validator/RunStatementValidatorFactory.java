@@ -1,26 +1,13 @@
 package bali.compiler.validation.validator;
 
-import bali.Value;
-import bali.collection.Array;
-import bali.compiler.parser.tree.ArrayLiteralExpressionNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
-import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.ReferenceNode;
 import bali.compiler.parser.tree.RunStatementNode;
-import bali.compiler.type.Declaration;
-import bali.compiler.type.ParametrizedSite;
-import bali.compiler.type.Site;
 import bali.compiler.type.Type;
-import bali.compiler.type.TypeLibrary;
-import bali.compiler.type.VanillaSite;
 import bali.compiler.validation.ValidationFailure;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.Iterator;
 import java.util.List;
 
 /**

@@ -9,7 +9,6 @@ import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.FieldNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.SiteNode;
-import bali.compiler.type.TypeLibrary;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;

@@ -1,12 +1,10 @@
 package bali.compiler.validation.validator;
 
 import bali.compiler.parser.tree.AssignmentNode;
-import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.FieldNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.ReferenceNode;
-import bali.compiler.type.Declaration;
 import bali.compiler.type.Site;
 import bali.compiler.validation.ValidationFailure;
 

@@ -1,8 +1,8 @@
 package bali.compiler.validation.validator;
 
 import bali.collection.Array;
-import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.ArrayLiteralExpressionNode;
+import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.type.ParametrizedSite;
 import bali.compiler.type.Site;

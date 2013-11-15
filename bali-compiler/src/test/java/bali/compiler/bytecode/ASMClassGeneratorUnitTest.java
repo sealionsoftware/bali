@@ -12,7 +12,6 @@ import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.NumberLiteralExpressionNode;
 import bali.compiler.parser.tree.ReturnStatementNode;
 import bali.compiler.parser.tree.SiteNode;
-import bali.compiler.type.TypeLibrary;
 import bali.number.Byte;
 import junit.framework.Assert;
 import org.junit.Before;

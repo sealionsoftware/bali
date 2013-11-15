@@ -1,7 +1,6 @@
 package bali.compiler.parser.tree;
 
 import bali.compiler.reference.BlockingReference;
-import bali.compiler.type.Declaration;
 import bali.compiler.type.Method;
 import bali.compiler.type.Site;
 

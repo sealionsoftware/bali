@@ -4,25 +4,14 @@ import bali.annotation.MetaType;
 import bali.annotation.MetaTypes;
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.BeanNode;
-import bali.compiler.parser.tree.ClassNode;
-import bali.compiler.parser.tree.DeclarationNode;
-import bali.compiler.parser.tree.ExpressionNode;
-import bali.compiler.parser.tree.FieldNode;
-import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.PropertyNode;
-import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.type.Type;
-import bali.compiler.type.TypeLibrary;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * User: Richard

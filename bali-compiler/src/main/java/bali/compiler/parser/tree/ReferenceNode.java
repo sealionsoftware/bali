@@ -3,9 +3,6 @@ package bali.compiler.parser.tree;
 import bali.compiler.reference.BlockingReference;
 import bali.compiler.type.Site;
 
-import java.util.Collections;
-import java.util.List;
-
 /**
  * User: Richard
  * Date: 02/05/13
