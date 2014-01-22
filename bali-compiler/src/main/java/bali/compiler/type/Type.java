@@ -20,8 +20,6 @@ public class Type {
 	private List<Declaration> properties;
 
 	private Boolean isAbstract;
-	private Boolean isImmutable;
-	private Boolean isMonitor;
 
 	public Type(String name,
 	            Site superType,
@@ -32,9 +30,7 @@ public class Type {
 	            List<Operator> operators,
 	            List<UnaryOperator> unaryOperators,
 	            List<Declaration> properties,
-	            Boolean isAbstract,
-	            Boolean isImmutable,
-	            Boolean isMonitor) {
+	            Boolean isAbstract) {
 		this.name = name;
 		this.superType = superType;
 		this.typeParameters = typeParameters;
@@ -45,8 +41,6 @@ public class Type {
 		this.parameters = parameters;
 		this.properties = properties;
 		this.isAbstract = isAbstract;
-		this.isImmutable = isImmutable;
-		this.isMonitor = isMonitor;
 	}
 
 	public String getName() {
@@ -87,30 +81,6 @@ public class Type {
 
 	public boolean isAbstract(){
 		return isAbstract;
-	}
-
-	public boolean isImmutable() {
-		if (isImmutable){
-			return true;
-		}
-		for (Site iface : getInterfaces()){
-			if (iface.getType().isImmutable()){
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public boolean isMonitor() {
-		if (isMonitor){
-			return true;
-		}
-		for (Site iface : getInterfaces()){
-			if (iface.getType().isMonitor()){
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public boolean equals(Object o) {

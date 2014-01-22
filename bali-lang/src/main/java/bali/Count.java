@@ -3,6 +3,7 @@ package bali;
 import bali.annotation.MetaType;
 import bali.annotation.MetaTypes;
 import bali.annotation.Operator;
+import bali.annotation.ThreadSafe;
 
 /**
  * User: Richard
@@ -12,12 +13,15 @@ import bali.annotation.Operator;
 public interface Count {
 
 	@Operator("++")
+	@ThreadSafe
 	public Integer increment();
 
 	@Operator("--")
+	@ThreadSafe
 	public Integer decrement();
 
 	@Operator("#")
+	@ThreadSafe
 	public Integer value();
 
 

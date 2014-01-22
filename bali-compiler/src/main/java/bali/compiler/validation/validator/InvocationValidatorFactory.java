@@ -57,7 +57,7 @@ public class InvocationValidatorFactory implements ValidatorFactory {
 					List<ExpressionNode> arguments = invocation.getArguments();
 					List<Declaration> parameters = method.getParameters();
 					if (arguments.size() != parameters.size()){
-						ret.add(new ValidationFailure(invocation, "Invalid arguments " + arguments + " for method " + method + "."));
+						ret.add(new ValidationFailure(invocation, "Invalid number of arguments (" + arguments.size() + ") for method " + method + "."));
 						return ret;
 					}
 					Iterator<ExpressionNode> i = arguments.iterator();
@@ -66,7 +66,7 @@ public class InvocationValidatorFactory implements ValidatorFactory {
 						ExpressionNode argument = i.next();
 						Declaration parameter = j.next();
 						if (!argument.getType().isAssignableTo(parameter.getType())){
-							ret.add(new ValidationFailure(invocation, "Invalid argument " + argument + " for parameter " + parameter + "."));
+							ret.add(new ValidationFailure(invocation, "Invalid argument type " + argument.getType() + " for parameter " + parameter + "."));
 						}
 					}
 					invocation.setResolvedMethod(method);

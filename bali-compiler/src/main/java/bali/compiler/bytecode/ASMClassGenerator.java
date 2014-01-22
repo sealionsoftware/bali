@@ -147,10 +147,9 @@ public class ASMClassGenerator implements Generator<ClassNode, GeneratedClass> {
 		manager.execute(method, methodVisitor);
 
 		for (VariableInfo variable : manager.getDeclaredVariables()) {
-			DeclarationNode declaration = variable.getDeclaration();
 			methodVisitor.visitLocalVariable(
-					declaration.getName(),
-					converter.getTypeDescriptor(declaration.getType()),
+					variable.getName(),
+					converter.getTypeDescriptor(variable.getType().getType()),
 					null,
 					variable.getStart(),
 					variable.getEnd(),

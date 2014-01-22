@@ -61,7 +61,9 @@ public class ArrayLiteralValidatorFactory implements ValidatorFactory {
 
 					literal.setType(new ParametrizedSite(
 							arrayType,
-							params
+							params,
+							false,
+							true
 					));
 
 					return failures;

@@ -49,4 +49,5 @@ public class ClassNode extends MethodDeclaringTypeNode<MethodDeclarationNode> {
 	public String getSourceFile() {
 		return sourceFile.get();
 	}
+
 }

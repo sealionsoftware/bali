@@ -3,6 +3,7 @@ package bali.compiler.type;
 import bali.annotation.MetaTypes;
 import bali.annotation.Name;
 import bali.annotation.Nullable;
+import bali.annotation.ThreadSafe;
 import bali.compiler.reference.Reference;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
@@ -11,6 +12,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureReader;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +28,8 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 			org.objectweb.asm.Type.getType(bali.annotation.Operator.class).getDescriptor();
 	private static String NULLABLE_ANNOTATION_DESC =
 			org.objectweb.asm.Type.getType(Nullable.class).getDescriptor();
+	private static String THREADSAFE_ANNOTATION_DESC =
+			org.objectweb.asm.Type.getType(ThreadSafe.class).getDescriptor();
 	private static String PARAM_NAME_ANNOTATION_DESC =
 			org.objectweb.asm.Type.getType(Name.class).getDescriptor();
 
@@ -44,10 +48,6 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 
 	private Map<String, Site> typeVariableBounds = new HashMap<>();
 
-	private boolean isImmutable = false;
-	private boolean isMonitor = false;
-
-
 	public ClassPathTypeBuilderVisitor(TypeLibrary library) {
 		super(Opcodes.ASM4);
 		this.library = library;
@@ -57,8 +57,6 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 		super.visit(version, access, name, signature, superName, interfaces);
 
 		className = name.replaceAll("/", ".");
-
-
 
 		if (signature != null) {
 			ClassSignatureVisitor visitor = new ClassSignatureVisitor(library, typeVariableBounds);
@@ -89,10 +87,6 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 					}
 				}
 			};
-		} else if (desc.equals("Lbali/annotation/Immutable;")){
-			isImmutable = true;
-		} else if (desc.equals("Lbali/annotation/Monitor;")){
-			isMonitor = true;
 		}
 
 		return super.visitAnnotation(desc, visible);
@@ -104,11 +98,18 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 			return null;
 		}
 
+		final int numberOfParameters = org.objectweb.asm.Type.getArgumentTypes(desc).length;
+
 		return new MethodVisitor(Opcodes.ASM4, super.visitMethod(access, name, desc, signature, exceptions)) {
 
 			private boolean isOperator;
 			private String operatorName;
-			private Map<Integer, String> parameterNames = new HashMap<>();
+			private TypeData returnData = new TypeData();
+			private List<ParameterData> parameterData = new ArrayList<>(numberOfParameters);{
+				for (int i = 0 ; i < numberOfParameters ; i++){
+					parameterData.add(new ParameterData());
+				}
+			}
 
 			public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
 
@@ -120,6 +121,10 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 							operatorName = (String) value;
 						}
 					};
+				} else if (NULLABLE_ANNOTATION_DESC.equals(desc)){
+					returnData.nullable = true;
+				} else if (THREADSAFE_ANNOTATION_DESC.equals(desc)){
+					returnData.threadSafe = true;
 				}
 
 				return super.visitAnnotation(desc, visible);
@@ -131,9 +136,13 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 					return new AnnotationVisitor(Opcodes.ASM4, super.visitAnnotation(desc, visible)) {
 						public void visit(String name, Object value) {
 							super.visit(name, value);
-							parameterNames.put(index, (String) value);
+							parameterData.get(index).name = (String) value;
 						}
 					};
+				} else if (NULLABLE_ANNOTATION_DESC.equals(desc)){
+					parameterData.get(index).nullable = true;
+				} else if (THREADSAFE_ANNOTATION_DESC.equals(desc)){
+					parameterData.get(index).threadSafe = true;
 				}
 
 				return super.visitAnnotation(desc, visible);
@@ -146,27 +155,27 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 				Site returnType = null;
 
 				if (signature != null) {
-					MethodSignatureVisitor visitor = new MethodSignatureVisitor(library, typeVariableBounds);
+					MethodSignatureVisitor visitor = new MethodSignatureVisitor(library, typeVariableBounds, returnData, parameterData);
 					new SignatureReader(signature).accept(visitor);
 
 					returnType = visitor.getReturnType();
 					int i = 0;
 					parameterDeclarations = new ArrayList<>();
 					for (Site parameterType : visitor.getParameterTypes()) {
-						parameterDeclarations.add(new Declaration(parameterNames.get(i++), parameterType));
+						parameterDeclarations.add(new Declaration(parameterData.get(i++).name, parameterType));
 					}
 				} else {
 					org.objectweb.asm.Type methodType = org.objectweb.asm.Type.getMethodType(desc);
 					org.objectweb.asm.Type methodReturnType = methodType.getReturnType();
 					if (!methodReturnType.getClassName().equals(void.class.getName())) {
-						returnType = new VanillaSite(library.getReference(methodReturnType.getClassName())); //TODO - parameterized return types
+						returnType = new VanillaSite(library.getReference(methodReturnType.getClassName()), returnData.nullable, returnData.threadSafe); //TODO - parameterized return types
 					}
 					parameterDeclarations = new ArrayList<>();
 					int i = 0;
 					for (org.objectweb.asm.Type parameterType : methodType.getArgumentTypes()) {
 						Site parameterSite = new VanillaSite(library.getReference(parameterType.getClassName()));
 						parameterDeclarations.add(new Declaration(
-								parameterNames.get(i++),
+								parameterData.get(i++).name,
 								parameterSite
 						));
 					}
@@ -227,9 +236,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 						Collections.<Operator>emptyList(),
 						Collections.<UnaryOperator>emptyList(),
 						Collections.<Declaration>emptyList(),
-						false,
-						isImmutable,
-						isMonitor
+						false
 				);
 				break;
 			case INTERFACE:
@@ -243,9 +250,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 						operators,
 						unaryOperators,
 						Collections.<Declaration>emptyList(),
-						true,
-						isImmutable,
-						isMonitor
+						true
 				);
 		}
 	}
@@ -253,5 +258,4 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 	public Type getClasspathType() {
 		return classpathType;
 	}
-
 }

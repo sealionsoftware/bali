@@ -20,7 +20,7 @@ public class BooleanLiteralValidatorFactory implements ValidatorFactory {
 	private Site site;
 
 	public BooleanLiteralValidatorFactory(TypeLibrary library) {
-		this.site = new VanillaSite(library.getType(Boolean.class.getName()));
+		this.site = new VanillaSite(library.getType(Boolean.class.getName()), false, true);
 	}
 
 	public Validator createValidator() {

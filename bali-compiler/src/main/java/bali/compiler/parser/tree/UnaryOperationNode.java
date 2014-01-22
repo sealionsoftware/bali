@@ -51,4 +51,8 @@ public class UnaryOperationNode extends ExpressionNode {
 		return resolvedOperator.get().getType();
 	}
 
+	public String toString(){
+		return getOperator() + getTarget();
+	}
+
 }

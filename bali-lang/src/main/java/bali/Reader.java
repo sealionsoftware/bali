@@ -2,7 +2,6 @@ package bali;
 
 import bali.annotation.MetaType;
 import bali.annotation.MetaTypes;
-import bali.annotation.Monitor;
 import bali.annotation.Operator;
 
 /**

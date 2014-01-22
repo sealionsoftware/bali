@@ -37,7 +37,7 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 	}
 
 	public SignatureVisitor visitClassBound() {
-		SiteSignatureVisitor typeParameterVisitor = new SiteSignatureVisitor(library, typeVariableBounds);
+		SiteSignatureVisitor typeParameterVisitor = new SiteSignatureVisitor(library, typeVariableBounds, false, false);
 		typeParamStack.peek().typeVisitor = typeParameterVisitor;
 		return typeParameterVisitor;
 	}
@@ -47,7 +47,7 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 	}
 
 	public SignatureVisitor visitInterface() {
-		SiteSignatureVisitor interfaceVisitor = new SiteSignatureVisitor(library, typeVariableBounds);
+		SiteSignatureVisitor interfaceVisitor = new SiteSignatureVisitor(library, typeVariableBounds, false, false);
 		interfaceVisitors.add(interfaceVisitor);
 		return interfaceVisitor;
 	}

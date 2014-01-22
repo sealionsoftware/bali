@@ -59,7 +59,7 @@ class AnImplementation(Number aParameter) implements AnInterface {
 	        for (Number number : numbers){
 	            aVariable = aVariable + number
 	        }
-	        if (aVariable == 100){
+	        if (aVariable > 100){
 	            stop = true
 	        }
  	    }

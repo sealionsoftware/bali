@@ -3,7 +3,6 @@ package bali.compiler.bytecode;
 import bali.CharArrayString;
 import bali.IdentityBoolean;
 import bali.compiler.parser.tree.ArrayLiteralExpressionNode;
-import bali.compiler.parser.tree.AssignmentNode;
 import bali.compiler.parser.tree.BooleanLiteralExpressionNode;
 import bali.compiler.parser.tree.BreakStatementNode;
 import bali.compiler.parser.tree.CaseStatementNode;
@@ -12,6 +11,7 @@ import bali.compiler.parser.tree.CodeBlockNode;
 import bali.compiler.parser.tree.ConditionalStatementNode;
 import bali.compiler.parser.tree.ConstructionExpressionNode;
 import bali.compiler.parser.tree.ContinueStatementNode;
+import bali.compiler.parser.tree.ControlExpressionNode;
 import bali.compiler.parser.tree.DeclarationNode;
 import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.ForStatementNode;
@@ -19,6 +19,7 @@ import bali.compiler.parser.tree.InvocationNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.NumberLiteralExpressionNode;
 import bali.compiler.parser.tree.OperationNode;
+import bali.compiler.parser.tree.ReferenceAssignmentNode;
 import bali.compiler.parser.tree.ReferenceNode;
 import bali.compiler.parser.tree.ReturnStatementNode;
 import bali.compiler.parser.tree.RunStatementNode;
@@ -79,8 +80,6 @@ public class ASMStackManager implements Opcodes {
 				Collections.<Operator>emptyList(),
 				Collections.<UnaryOperator>emptyList(),
 				Collections.<Declaration>emptyList(),
-				false,
-				false,
 				false
 		);
 	}
@@ -99,7 +98,8 @@ public class ASMStackManager implements Opcodes {
 			declaredVariables.put(
 					declaration.getName(),
 					new VariableInfo(
-							declaration,
+							declaration.getName(),
+							declaration.getType().getSite(),
 							start,
 							end,
 							declaredVariables.size() + 1
@@ -140,9 +140,18 @@ public class ASMStackManager implements Opcodes {
 			execute((ExpressionNode) statement, v);
 		} else if (statement instanceof VariableNode) {
 			execute((VariableNode) statement, v);
-		} else if (statement instanceof AssignmentNode) {
-			execute((AssignmentNode) statement, v);
-		} else if (statement instanceof CodeBlockNode) {
+		} else if (statement instanceof ReferenceAssignmentNode) {
+			execute((ReferenceAssignmentNode) statement, v);
+		} else if (statement instanceof ControlExpressionNode) {
+			execute((ControlExpressionNode) statement, v);
+		} else {
+			throw new RuntimeException("Cannot handle Statement type: " + statement);
+		}
+	}
+
+	public void execute(ControlExpressionNode statement, MethodVisitor v) {
+
+		if (statement instanceof CodeBlockNode) {
 			execute((CodeBlockNode) statement, v);
 		} else if (statement instanceof ConditionalStatementNode) {
 			execute((ConditionalStatementNode) statement, v);
@@ -157,7 +166,7 @@ public class ASMStackManager implements Opcodes {
 		} else if (statement instanceof RunStatementNode) {
 			execute((RunStatementNode) statement, v);
 		} else {
-			throw new RuntimeException("Cannot handle Statement type: " + statement);
+			throw new RuntimeException("Cannot handle Control Expression type: " + statement);
 		}
 	}
 
@@ -200,25 +209,49 @@ public class ASMStackManager implements Opcodes {
 		}
 		Label varStart = new Label();
 		v.visitLabel(varStart);
-		addToVariables(variable.getDeclaration(), varStart, scopeHorizonStack.peek(), v);
+		DeclarationNode declaration = variable.getDeclaration();
+		addToVariables(declaration.getName(), declaration.getType().getSite(), varStart, scopeHorizonStack.peek(), v);
 	}
 
-	private void execute(AssignmentNode statement, MethodVisitor v) {
+	private void execute(ReferenceAssignmentNode statement, MethodVisitor v) {
 
 		ReferenceNode referenceNode = statement.getReference();
 		ExpressionNode targetNode = referenceNode.getTarget();
+		ExpressionNode value = statement.getValue();
 
 		if (targetNode == null){
-			Integer index = declaredVariables.get(statement.getReference().getName()).getIndex();
-			push(statement.getValue(), v);
-			v.visitVarInsn(ASTORE, index);
+
+			switch (referenceNode.getScope()){
+				case FIELD: {
+					v.visitVarInsn(ALOAD, 0);
+					push(statement.getValue(), v);
+					v.visitFieldInsn(PUTFIELD,
+							converter.getInternalName(referenceNode.getHostClass()),
+							referenceNode.getName(),
+							converter.getTypeDescriptor(referenceNode.getType().getType())
+					);
+				} break;
+				case VARIABLE: {
+					Integer index = declaredVariables.get(referenceNode.getName()).getIndex();
+					push(statement.getValue(), v);
+					v.visitVarInsn(ASTORE, index);
+				} break;
+				default: {
+					throw new RuntimeException("Cannot compile assignment to variable in scope " + referenceNode.getScope());
+				}
+			}
+
 		} else {
 			Type targetType = targetNode.getType().getType();
 			push(targetNode, v);
-			push(statement.getValue(), v);
+			if (value != null){
+				push(statement.getValue(), v);
+			} else {
+				throw new RuntimeException("Reference assignment requires a value");
+			}
+
 			v.visitMethodInsn(invokeInsn(targetType), converter.getInternalName(targetType), statement.getSetterName(), converter.getMethodDescriptor(null, Collections.singletonList(referenceNode.getType().getType())));
 		}
-
 	}
 
 	private void execute(ConditionalStatementNode statement, MethodVisitor v) {
@@ -271,7 +304,7 @@ public class ASMStackManager implements Opcodes {
 		DeclarationNode element = statement.getElement();
 		SiteNode variableType = element.getType();
 		v.visitTypeInsn(CHECKCAST, converter.getInternalName(variableType.getSite().getName()));
-		addToVariables(element, start, end, v);
+		addToVariables(element.getName(), element.getType().getSite(), start, end, v);
 		loopContextStack.push(new LoopContext(start, end));
 		execute(statement.getBody(), v);
 		loopContextStack.pop();
@@ -322,7 +355,8 @@ public class ASMStackManager implements Opcodes {
 			Label catchStart = entry.getKey();
 			Label catchEnd = new Label();
 			v.visitLabel(catchStart);
-			addToVariables(entry.getValue().getDeclaration(), catchStart, catchEnd, v);
+			DeclarationNode declarationNode = entry.getValue().getDeclaration();
+			addToVariables(declarationNode.getName(), declarationNode.getType().getSite(), catchStart, catchEnd, v);
 			execute(entry.getValue().getBody(), v);
 			v.visitLabel(catchEnd);
 			v.visitJumpInsn(GOTO, end);
@@ -363,13 +397,13 @@ public class ASMStackManager implements Opcodes {
 
 	}
 
-	private void addToVariables(DeclarationNode declaration, Label start, Label end, MethodVisitor v) {
-		String variableName = declaration.getName();
+	private void addToVariables(String name, Site type, Label start, Label end, MethodVisitor v) {
 		Integer variableIndex = declaredVariables.size() + 1;
 		declaredVariables.put(
-				variableName,
+				name,
 				new VariableInfo(
-						declaration,
+						name,
+						type,
 						start,
 						end,
 						variableIndex

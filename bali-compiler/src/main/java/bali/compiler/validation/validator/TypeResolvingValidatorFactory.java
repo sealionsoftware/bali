@@ -75,7 +75,7 @@ public class TypeResolvingValidatorFactory implements ValidatorFactory {
 
 				List<SiteNode> parameterNodes = type.getParameters();
 				if (parameterNodes.isEmpty()){
-					type.setSite(new VanillaSite(reference));
+					type.setSite(new VanillaSite(reference, type.getNullable(), type.getThreadSafe()));
 				}
 
 				List<Site> parameterSites = new ArrayList<>(parameterNodes.size());
@@ -83,7 +83,7 @@ public class TypeResolvingValidatorFactory implements ValidatorFactory {
 					parameterSites.add(parameterNode.getSite());
 				}
 
-				type.setSite(new ParametrizedSite(reference, parameterSites));
+				type.setSite(new ParametrizedSite(reference, parameterSites, type.getNullable(), type.getThreadSafe()));
 				return ret;
 			}
 

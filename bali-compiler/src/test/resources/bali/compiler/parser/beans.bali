@@ -7,9 +7,9 @@ bean ABean {
 
 }
 
-//bean AParametrizedBean[Number T, V] {
-//
-//	property T aNumber
-//	property V aV
-//
-//}
+bean AParametrizedBean<Number T, V> {
+
+	property T aNumber
+	property V aV
+
+}

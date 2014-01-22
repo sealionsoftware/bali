@@ -45,7 +45,7 @@ public class TestType extends Type {
 	}
 
 	public TestType(String className, List<Declaration> typeParameters, List<Site> interfaces, List<Declaration> parameters, List<Method> methods, List<Operator> operators, List<UnaryOperator> unaryOperators, List<Declaration> properties) {
-		super(className, null, typeParameters, interfaces, parameters, methods, operators, unaryOperators, properties, false, false, false);
+		super(className, null, typeParameters, interfaces, parameters, methods, operators, unaryOperators, properties, false);
 	}
 
 	public boolean isAbstract() {

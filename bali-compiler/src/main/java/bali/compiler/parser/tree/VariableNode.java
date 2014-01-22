@@ -1,14 +1,14 @@
 package bali.compiler.parser.tree;
 
+import bali.compiler.type.Site;
+
 /**
  * User: Richard
  * Date: 29/04/13
  */
-public class VariableNode extends StatementNode {
+public class VariableNode extends AssignmentNode {
 
 	private DeclarationNode declaration;
-	private ExpressionNode value;
-	private ControlExpressionNode assignable;
 
 	public VariableNode() {
 		super();
@@ -27,21 +27,7 @@ public class VariableNode extends StatementNode {
 		this.declaration = declaration;
 	}
 
-	public ExpressionNode getValue() {
-		return value;
-	}
-
-	public void setValue(ExpressionNode value) {
-		children.add(value);
-		this.value = value;
-	}
-
-	public ControlExpressionNode getAssignable() {
-		return assignable;
-	}
-
-	public void setAssignable(ControlExpressionNode assignable) {
-		children.add(assignable);
-		this.assignable = assignable;
+	public Site getType() {
+		return declaration.getType().getSite();
 	}
 }

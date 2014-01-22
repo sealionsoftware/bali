@@ -1,0 +1,13 @@
+import bali.String
+import bali.Executable
+
+class Test() implements Executable {
+
+ 	method execute(){
+ 	    String one = "G'Day"
+ 	    if (?one) {
+ 	        String two = one
+ 	    }
+ 	}
+
+}

@@ -20,7 +20,7 @@ public class StringLiteralValidatorFactory implements ValidatorFactory {
 	private Site site;
 
 	public StringLiteralValidatorFactory(TypeLibrary library) {
-		this.site = new VanillaSite(library.getType(String.class.getName()));
+		this.site = new VanillaSite(library.getType(String.class.getName()), false, true);
 	}
 
 	public Validator createValidator() {

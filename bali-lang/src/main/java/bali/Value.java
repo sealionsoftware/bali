@@ -3,6 +3,7 @@ package bali;
 import bali.annotation.Immutable;
 import bali.annotation.MetaType;
 import bali.annotation.MetaTypes;
+import bali.annotation.Name;
 import bali.annotation.Operator;
 
 /**
@@ -14,6 +15,6 @@ import bali.annotation.Operator;
 public interface Value<T extends Value> {
 
 	@Operator("==")
-	public Boolean equalTo(T operand);
+	public Boolean equalTo(@Name("operand")T operand);
 
 }

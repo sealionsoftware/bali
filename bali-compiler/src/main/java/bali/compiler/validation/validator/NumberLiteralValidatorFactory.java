@@ -20,7 +20,7 @@ public class NumberLiteralValidatorFactory implements ValidatorFactory {
 	private Site site;
 
 	public NumberLiteralValidatorFactory(TypeLibrary library) {
-		this.site = new VanillaSite(library.getType(Integer.class.getName()));
+		this.site = new VanillaSite(library.getType(Integer.class.getName()), false, true);
 	}
 
 	public Validator createValidator() {

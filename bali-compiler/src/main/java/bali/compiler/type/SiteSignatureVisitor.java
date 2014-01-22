@@ -1,6 +1,7 @@
 package bali.compiler.type;
 
 import bali.compiler.reference.Reference;
+import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureVisitor;
 
@@ -21,11 +22,15 @@ public class SiteSignatureVisitor extends SignatureVisitor {
 
 	private String className;
 	private List<SiteSignatureVisitor> typeArgumentVisitors = new LinkedList<>();
+	private boolean nullable;
+	private boolean threadSafe;
 
-	public SiteSignatureVisitor(TypeLibrary library, Map<String, Site> typeVariableBounds) {
+	public SiteSignatureVisitor(TypeLibrary library, Map<String, Site> typeVariableBounds, Boolean nullable, Boolean threadSafe) {
 		super(Opcodes.ASM4);
 		this.library = library;
 		this.typeVariableBounds = typeVariableBounds;
+		this.nullable = nullable;
+		this.threadSafe = threadSafe;
 	}
 
 	public void visitEnd() {
@@ -41,8 +46,16 @@ public class SiteSignatureVisitor extends SignatureVisitor {
 			typeArguments.add(visitor.getSite());
 		}
 
-		site = typeArguments.isEmpty() ? new VanillaSite(typeReference) : new ParametrizedSite(typeReference, typeArguments);
+		site = buildSite(typeReference, typeArguments);
 		super.visitEnd();
+	}
+
+	private Site buildSite(Reference<Type> typeReference, List<Site> typeArguments){
+		if (typeArguments.isEmpty()){
+			return new VanillaSite(typeReference, nullable, threadSafe);
+		} else {
+			return new ParametrizedSite(typeReference, typeArguments, nullable, threadSafe);
+		}
 	}
 
 	public void visitTypeVariable(String name) {
@@ -55,7 +68,7 @@ public class SiteSignatureVisitor extends SignatureVisitor {
 	}
 
 	public SignatureVisitor visitTypeArgument(char wildcard) {
-		SiteSignatureVisitor visitor = new SiteSignatureVisitor(library, typeVariableBounds);
+		SiteSignatureVisitor visitor = new SiteSignatureVisitor(library, typeVariableBounds, false, false); //TODO Java 8 Type annotations so type arguments can be nullable, threadsafe
 		typeArgumentVisitors.add(visitor);
 		return visitor;
 	}

@@ -22,9 +22,12 @@ public class BaliCompilerUnitTest {
 		Assert.assertNotNull(fileUrl);
 		File inputs = new File(fileUrl.toURI()).getParentFile();
 		File outputs = new File(inputs, TEST_OUTPUT_NAME);
-		outputs.mkdirs();
-		BaliCompiler.main(new String[]{inputs.getAbsolutePath(), outputs.getAbsolutePath()});
 
+		outputs.delete();
+		outputs.mkdirs();
+
+		BaliCompiler compiler = new BaliCompiler();
+		compiler.compile(inputs, outputs);
 		File[] outputFiles = outputs.listFiles();
 		Assert.assertEquals(1, outputFiles.length);
 		Assert.assertEquals("compiler.jar", outputFiles[0].getName());

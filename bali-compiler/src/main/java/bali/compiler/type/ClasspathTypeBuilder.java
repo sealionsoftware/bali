@@ -33,10 +33,7 @@ public class ClasspathTypeBuilder {
 
 		ClassPathTypeBuilderVisitor visitor = new ClassPathTypeBuilderVisitor(library);
 		reader.accept(visitor, ClassReader.SKIP_FRAMES);
-
-		Type ret = visitor.getClasspathType();
-
-		return ret;
+		return visitor.getClasspathType();
 	}
 
 }

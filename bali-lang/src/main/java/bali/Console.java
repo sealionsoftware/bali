@@ -13,7 +13,7 @@ import java.util.Arrays;
  * Date: 05/05/13
  */
 @MetaType(MetaTypes.CLASS)
-public final class Console implements ReaderWriterMonitor {
+public final class Console implements ReaderWriter {
 
 	private static final int BUFFER_SIZE = 256;
 

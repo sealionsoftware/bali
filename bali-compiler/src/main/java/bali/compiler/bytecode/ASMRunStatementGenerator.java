@@ -102,10 +102,9 @@ public class ASMRunStatementGenerator implements Generator<RunStatementNode, Gen
 		methodVisitor.visitInsn(RETURN);
 
 		for (VariableInfo variable : manager.getDeclaredVariables()) {
-			DeclarationNode declaration = variable.getDeclaration();
 			methodVisitor.visitLocalVariable(
-					declaration.getName(),
-					converter.getTypeDescriptor(declaration.getType()),
+					variable.getName(),
+					converter.getTypeDescriptor(variable.getType().getType()),
 					null,
 					variable.getStart(),
 					variable.getEnd(),

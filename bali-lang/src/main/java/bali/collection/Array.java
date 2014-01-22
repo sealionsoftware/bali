@@ -8,6 +8,7 @@ import bali.Value;
 import bali.annotation.MetaType;
 import bali.annotation.MetaTypes;
 import bali.Integer;
+import bali.annotation.Name;
 
 import java.util.Arrays;
 
@@ -55,7 +56,7 @@ public final class Array<E extends Value<E>> implements Collection<E>, Value<Arr
 		return elements[NUMBER_FACTORY.valueOf(index)];
 	}
 
-	public Boolean contains(E value) {
+	public Boolean contains(@Name("value") E value) {
 		for (int i = 0 ; i < elements.length ; i++){
 			if (elements[i].equalTo(value) == IdentityBoolean.TRUE){
 				return IdentityBoolean.TRUE;

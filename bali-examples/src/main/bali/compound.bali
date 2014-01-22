@@ -1,29 +1,23 @@
 import bali.Console
 import bali.Number
 import bali.Integer
+import bali.Iterable
 import bali.String
 import bali.Executable
 import bali.Count
 import bali.Counter
+import bali.RuntimeException
 
 class CompoundExecutable() implements Executable {
 
+	field Count? i
+
  	method execute(){
 
- 	    Count i = new Counter()
+	    i = new Counter()
 
 		while (++i < 10) if ([3,5,7,8].contains(#i)) {
 			CONSOLE << ("Hi" + NUMBER_FACTORY.format(#i + 1))
 		}
-
-		Integer divFive = {
-			for (Integer i : [1,6,25,67]) if (i / 5 == 5) {
-				assign i
-			} else {
-				CONSOLE << "Not div 5"
-			}
-		}
-
-		CONSOLE << NUMBER_FACTORY.format(divFive)
  	}
 }

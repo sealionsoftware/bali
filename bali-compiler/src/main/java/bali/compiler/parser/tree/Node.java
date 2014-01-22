@@ -33,20 +33,24 @@ public abstract class Node {
 		return character;
 	}
 
-	public List<ValidationFailure> accept(final Validator validator){
+	public List<ValidationFailure> accept(final Validator validator) throws TerminatedException {
 		final List<ValidationFailure> failures = new ArrayList<>();
 		try {
 			failures.addAll(validator.validate(this, new Control() {
-				public void validateChildren() {
+				public void validateChildren() throws TerminatedException {
 					for (Node child : children){
 						failures.addAll(child.accept(validator));
 					}
 				}
 			}));
-		} catch (Exception e){
-			//failures.add(new ValidationFailure(this, e.getMessage()));
-			e.printStackTrace(System.err);
-//			.println(validator.getClass() + " failed, " + e.getClass() + (e.getMessage() != null ? ": " + e.getMessage() : ""));
+		} catch (RuntimeException e){
+			if (e instanceof TerminatedException){
+				throw e;
+			}
+			Throwable cause = e.getCause();
+			if (cause instanceof InterruptedException){
+				throw new TerminatedException(failures);
+			}
 		}
 		return failures;
 	}

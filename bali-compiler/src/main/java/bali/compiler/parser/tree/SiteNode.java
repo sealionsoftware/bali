@@ -16,6 +16,8 @@ public class SiteNode extends Node {
 
 	private String className;
 	private List<SiteNode> parameters = new ArrayList<>();
+	private boolean nullable = false;
+	private boolean threadSafe = false;
 
 	private BlockingReference<Site> site = new BlockingReference<>();
 
@@ -32,6 +34,22 @@ public class SiteNode extends Node {
 
 	public String getClassName() {
 		return className;
+	}
+
+	public Boolean getNullable() {
+		return nullable;
+	}
+
+	public void setNullable(Boolean nullable) {
+		this.nullable = nullable;
+	}
+
+	public boolean getThreadSafe() {
+		return threadSafe;
+	}
+
+	public void setThreadSafe(boolean threadSafe) {
+		this.threadSafe = threadSafe;
 	}
 
 	public List<SiteNode> getParameters() {
@@ -51,19 +69,23 @@ public class SiteNode extends Node {
 		this.site.set(site);
 	}
 
-	public boolean equals(Object o) {
-
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		SiteNode other = (SiteNode) o;
-
-		if (!getSite().getName().equals(other.getSite().getName())) {
-			return false;
-		}
-
-		return parameters.equals(other.parameters);
-	}
+//	public boolean equals(Object o) {
+//
+//		if (this == o) return true;
+//		if (o == null || getClass() != o.getClass()) return false;
+//
+//		SiteNode other = (SiteNode) o;
+//
+//		if (!getSite().getName().equals(other.getSite().getName())) {
+//			return false;
+//		}
+//
+//		if (){
+//
+//		}
+//
+//		return parameters.equals(other.parameters);
+//	}
 
 	public String toString() {
 
@@ -76,6 +98,9 @@ public class SiteNode extends Node {
 				sb.append(",").append(i.next());
 			}
 			sb.append(">");
+		}
+		if (nullable){
+			sb.append("?");
 		}
 		return sb.toString();
 	}

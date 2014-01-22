@@ -4,6 +4,7 @@ import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.ReferenceNode;
 import bali.compiler.parser.tree.RunStatementNode;
+import bali.compiler.type.Site;
 import bali.compiler.type.Type;
 import bali.compiler.validation.ValidationFailure;
 
@@ -53,9 +54,9 @@ public class RunStatementValidatorFactory implements ValidatorFactory {
 					ReferenceNode referenceNode = (ReferenceNode) node;
 
 					if (!ReferenceNode.ReferenceScope.VARIABLE.equals(referenceNode.getScope())){
-						Type type = referenceNode.getType().getType();
-						if (!type.isImmutable() && !type.isMonitor()){
-							failures.add(new ValidationFailure(node, "References to objects outside a run block must be immutable values or synchronized montiors"));
+						Site type = referenceNode.getType();
+						if (!type.isThreadSafe()){
+							failures.add(new ValidationFailure(node, "References to objects outside a run block must be thread-safe"));
 						}
 					}
 				}

@@ -7,9 +7,7 @@ grammar Bali;
 WHITESPACE:                 [ \t\r\n]+ -> skip ;
 LINE_COMMENT:               '//' ~[\r\n]* ('\r'? '\n' | EOF) -> skip ;
 
-STANDARD_IDENTIFIER:        [a-z][a-zA-Z]* ;
-CONSTANT_IDENTIFIER:        [A-Z][A-Z_]* ;
-TYPE_IDENTIFIER:            ([a-z]+ '.')*[A-Z][a-zA-Z]* ;
+IDENTIFIER:                 [a-zA-Z_]+ ;
 
 STRING_LITERAL:             '"' ~[^"]* '"' ;
 
@@ -36,29 +34,31 @@ packageDeclaration:
 	EOF
 ;
 
-importDeclaration:          'import' TYPE_IDENTIFIER ;
+typeIdentifier:             (IDENTIFIER '.')* IDENTIFIER ;
 
-constantDeclaration:        'constant' typeDeclaration CONSTANT_IDENTIFIER EQ constantValue ;
+importDeclaration:          'import' typeIdentifier ;
 
-interfaceDeclaration:       'interface' typeDeclaration ('extends' typeDeclarationList)? '{' (declarationDeclaration)* '}' ;
+constantDeclaration:        'constant' typeDeclaration IDENTIFIER EQ constantValue ;
 
-classDeclaration:           'class' typeDeclaration argumentDeclarationList ( 'implements' typeDeclarationList )? '{' fieldDeclaration* methodDeclaration* '}' ;
+interfaceDeclaration:       'interface' classDefinition ('extends' typeDeclarationList)? '{' (declarationDeclaration)* '}' ;
 
-beanDeclaration:            'bean' typeDeclaration ( 'extends' typeDeclaration )? '{' propertyDeclaration* '}' ;
+classDeclaration:           'class' classDefinition argumentDeclarationList ( 'implements' typeDeclarationList )? '{' fieldDeclaration* methodDeclaration* '}' ;
 
-fieldDeclaration:           'field' typeDeclaration STANDARD_IDENTIFIER (EQ expression )? ;
+beanDeclaration:            'bean' classDefinition ( 'extends' typeDeclaration )? '{' propertyDeclaration* '}' ;
 
-methodDeclaration:          'method' typeDeclaration? STANDARD_IDENTIFIER argumentDeclarationList codeBlock ;
+fieldDeclaration:           'field' typeDeclaration IDENTIFIER (EQ expression )? ;
 
-declarationDeclaration:     'declare' typeDeclaration? STANDARD_IDENTIFIER argumentDeclarationList ;
+methodDeclaration:          'method' typeDeclaration? IDENTIFIER argumentDeclarationList codeBlock ;
 
-propertyDeclaration:        'property' typeDeclaration? STANDARD_IDENTIFIER ;
+declarationDeclaration:     'declare' typeDeclaration? IDENTIFIER argumentDeclarationList ;
+
+propertyDeclaration:        'property' typeDeclaration IDENTIFIER ;
 
 codeBlock:                  '{' statement* '}' ;
 
 statement:                  lineStatement | controlStatement ;
 
-lineStatement:              variableDeclaration | assignment | returnStatement | assignStatement | throwStatement | breakStatement | continueStatement | expression;
+lineStatement:              variableDeclaration | assignment | returnStatement | throwStatement | breakStatement | continueStatement | expression;
 
 controlStatement:           conditionalStatement | tryStatement | whileStatement | forStatement | switchStatement | runStatement ;
 
@@ -82,21 +82,17 @@ defaultStatement:           'default' ':' controlExpression ;
 
 runStatement:               'run' controlExpression ;
 
-assignable:                 expression | controlExpression;
+variableDeclaration:        typeDeclaration IDENTIFIER (EQ expression)? ;
 
-variableDeclaration:        typeDeclaration identifier (EQ assignable)? ;
+assignment:                 reference EQ expression ;
 
-assignment:                 reference EQ assignable ;
-
-identifier:                 STANDARD_IDENTIFIER | CONSTANT_IDENTIFIER ;
-
-call:                       identifier argumentList ;
+call:                       IDENTIFIER argumentList ;
 
 target:                     expressionBase ('.' memberName)* ;
 
 invocation:                 (target '.')? call ;
 
-reference:                  (target '.')? identifier ;
+reference:                  (target '.')? IDENTIFIER ;
 
 operator:                   QM | LT | GT | EX | OPERATOR ;
 
@@ -104,11 +100,9 @@ unaryOperation:             operator expressionForOperation ;
 
 operation:                  expressionForOperation (operator expressionForOperation)+ ;
 
-construction:               'new' TYPE_IDENTIFIER argumentList ;
+construction:               'new' typeIdentifier argumentList ;
 
 returnStatement:            'return' expression? ;
-
-assignStatement:            'assign' expression? ;
 
 throwStatement:             'throw' expression ;
 
@@ -116,11 +110,17 @@ breakStatement:             'break' ;
 
 continueStatement:          'continue' ;
 
-typeDeclaration:            TYPE_IDENTIFIER (LT  typeDeclarationList GT)? QM? ;
+typeDeclaration:            typeIdentifier (LT  typeDeclarationList GT)? QM? EX? ;
 
 typeDeclarationList:        typeDeclaration (',' typeDeclaration)* ;
 
-argumentDeclaration:        typeDeclaration STANDARD_IDENTIFIER ;
+classDefinition:            typeIdentifier (LT  typeVarDeclarationList GT)? ;
+
+typeVarDeclaration:         typeIdentifier? IDENTIFIER ;
+
+typeVarDeclarationList:     typeVarDeclaration (',' typeVarDeclaration)* ;
+
+argumentDeclaration:        typeDeclaration IDENTIFIER ;
 
 argumentDeclarationList:    '(' (argumentDeclaration ( ',' argumentDeclaration)*)? ')' ;
 
@@ -128,7 +128,7 @@ argumentList:               '(' ( expression ( ',' expression)*)? ')' ;
 
 constantValue:              literal | construction ;
 
-memberName:                 call | identifier ;
+memberName:                 call | IDENTIFIER ;
 
 expressionBase:             constantValue | '(' unaryOperation ')' | '(' operation ')' | memberName ;
 

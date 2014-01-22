@@ -1,6 +1,7 @@
 package bali.compiler.bytecode;
 
 import bali.compiler.parser.tree.DeclarationNode;
+import bali.compiler.type.Site;
 import org.objectweb.asm.Label;
 
 /**
@@ -9,20 +10,26 @@ import org.objectweb.asm.Label;
  */
 public class VariableInfo {
 
-	private DeclarationNode declaration;
+	private String name;
+	private Site type;
 	private Label start;
 	private Label end;
 	private Integer index;
 
-	public VariableInfo(DeclarationNode declaration, Label start, Label end, Integer index) {
-		this.declaration = declaration;
+	public VariableInfo(String name, Site type, Label start, Label end, Integer index) {
+		this.name = name;
+		this.type = type;
 		this.start = start;
 		this.end = end;
 		this.index = index;
 	}
 
-	public DeclarationNode getDeclaration() {
-		return declaration;
+	public String getName() {
+		return name;
+	}
+
+	public Site getType() {
+		return type;
 	}
 
 	public Label getStart() {

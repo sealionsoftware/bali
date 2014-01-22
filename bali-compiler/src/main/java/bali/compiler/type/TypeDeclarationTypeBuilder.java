@@ -47,8 +47,6 @@ public class TypeDeclarationTypeBuilder {
 				Collections.<Operator>emptyList(),
 				Collections.<UnaryOperator>emptyList(),
 				Collections.<Declaration>emptyList(),
-				false,
-				false,
 				false
 		);
 	}
@@ -64,10 +62,8 @@ public class TypeDeclarationTypeBuilder {
 				getOperators(declaration),
 				getUnaryOperators(declaration),
 				Collections.<Declaration>emptyList(),
-				true,
-				false,
-				false
-		); // TODO - self declared immutables, monitors
+				true
+		); // TODO - self declared values, monitors
 	}
 
 	public Type build(BeanNode declaration) {
@@ -82,8 +78,6 @@ public class TypeDeclarationTypeBuilder {
 				Collections.<Operator>emptyList(),
 				Collections.<UnaryOperator>emptyList(),
 				getProperties(declaration),
-				false,
-				false,
 				false
 		);
 	}
@@ -93,12 +87,6 @@ public class TypeDeclarationTypeBuilder {
 		for (PropertyNode node : declaration.getProperties()){
 			ret.add(new Declaration(node.getName(), node.getType().getSite()));
 		}
-//		SiteNode superSite = declaration.getSuperType();
-//		if (superSite != null){
-//			for (Declaration property : superSite.getSite().getProperties()){
-//				ret.add(property);
-//			}
-//		}
 		return ret;
 	}
 

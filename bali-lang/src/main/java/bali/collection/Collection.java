@@ -4,6 +4,7 @@ import bali.Iterable;
 import bali.annotation.MetaType;
 import bali.annotation.MetaTypes;
 import bali.Integer;
+import bali.Boolean;
 
 /**
  * User: Richard

@@ -28,6 +28,20 @@ public class VariableSite implements Site {
 		return bound.isAssignableTo(t);
 	}
 
+	public boolean isNullable() {
+		if (bound == null){
+			return false;
+		}
+		return bound.isNullable();
+	}
+
+	public boolean isThreadSafe() {
+		if (bound == null){
+			return false;
+		}
+		return bound.isThreadSafe();
+	}
+
 	public Site getSuperType() {
 		if (bound == null){
 			return null;

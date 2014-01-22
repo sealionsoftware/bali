@@ -6,6 +6,6 @@ package bali.annotation;
  */
 public enum MetaTypes {
 
-	CLASS, INTERFACE, BEAN, ENUM, XML, TABLE, WEB_SERVICE
+	CLASS, INTERFACE, BEAN, MONITOR, ENUM, XML, TABLE, WEB_SERVICE
 
 }

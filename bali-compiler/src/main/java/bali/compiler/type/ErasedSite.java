@@ -20,6 +20,14 @@ public class ErasedSite implements Site {
 		return replacement.isAssignableTo(t);
 	}
 
+	public boolean isNullable() {
+		return replacement.isNullable();
+	}
+
+	public boolean isThreadSafe() {
+		return replacement.isThreadSafe();
+	}
+
 	public String getName() {
 		return replacement.getName();
 	}

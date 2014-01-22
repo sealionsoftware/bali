@@ -16,6 +16,8 @@ public class ParametrizedSite implements Site {
 
 	private Reference<Type> typeReference;
 	private List<Site> typeArguments;
+	private boolean nullable;
+	private boolean threadSafe;
 
 	private Type type;
 
@@ -30,14 +32,28 @@ public class ParametrizedSite implements Site {
 
 	// Used by standard type infrastructure
 	public ParametrizedSite(Type type, List<Site> typeArguments) {
-		this.type = type;
-		this.typeArguments = typeArguments;
+		this(type, typeArguments, false, false);
 	}
 
 	// Used inside type construction (to avoid infinite loops)
 	public ParametrizedSite(Reference<Type> typeReference, List<Site> typeArguments) {
+		this(typeReference, typeArguments, false, false);
+	}
+
+	// Used by standard type infrastructure
+	public ParametrizedSite(Type type, List<Site> typeArguments, Boolean nullable, Boolean threadSafe) {
+		this.type = type;
+		this.typeArguments = typeArguments;
+		this.nullable = nullable;
+		this.threadSafe = threadSafe;
+	}
+
+	// Used inside type construction (to avoid infinite loops)
+	public ParametrizedSite(Reference<Type> typeReference, List<Site> typeArguments, Boolean nullable, Boolean threadSafe) {
 		this.typeReference = typeReference;
 		this.typeArguments = typeArguments;
+		this.nullable = nullable;
+		this.threadSafe = threadSafe;
 	}
 
 	private Map<String, Declaration> parametriseTypeDeclarations(List<Declaration> parameterDeclarations) {
@@ -175,7 +191,9 @@ public class ParametrizedSite implements Site {
 		List<Site> parametrisedArguments = new ArrayList<>();
 		Site ret = new ParametrizedSite(
 				original.getType(),
-				parametrisedArguments
+				parametrisedArguments,
+				original.isNullable(),
+				original.isThreadSafe()
 		);
 
 		for (Declaration argument : original.getTypeParameters()) {
@@ -190,7 +208,9 @@ public class ParametrizedSite implements Site {
 
 		return new ParametrizedSite(
 				original.getType(),
-				parametrisedArguments
+				parametrisedArguments,
+				original.isNullable(),
+				original.isThreadSafe()
 		);
 	}
 
@@ -198,6 +218,18 @@ public class ParametrizedSite implements Site {
 
 		if (t == null) {
 			return true;
+		}
+
+		// Ensures initialisation for error messages
+		getType();
+		t.getType();
+
+		if (nullable && !t.isNullable()){
+			return false;
+		}
+
+		if (t.isThreadSafe() && !threadSafe){
+			return false;
 		}
 
 		if (getName().equals(t.getName())) {
@@ -211,6 +243,11 @@ public class ParametrizedSite implements Site {
 			return true;
 		}
 
+		Site superType = getSuperType();
+		if (superType != null && getSuperType().isAssignableTo(t)){
+			return true;
+		}
+
 		for (Site iface : getInterfaces()) {
 			if (iface.isAssignableTo(t)) {
 				return true;
@@ -218,6 +255,14 @@ public class ParametrizedSite implements Site {
 		}
 
 		return false;
+	}
+
+	public boolean isNullable() {
+		return nullable;
+	}
+
+	public boolean isThreadSafe() {
+		return threadSafe;
 	}
 
 	public String getName() {
@@ -290,23 +335,27 @@ public class ParametrizedSite implements Site {
 
 	public String toString() {
 
-		if(type == null){
-			return "Not initialised";
+		if (type == null) {
+			getType();
 		}
 
-		if (typeArguments.isEmpty()){
-			return type.getName();
-		}
-
-		Iterator<Site> i = typeArguments.iterator();
-		StringBuilder sb = new StringBuilder(type.getName())
-				.append("<")
-				.append(i.next());
-		while(i.hasNext()){
-			sb.append(",")
+		StringBuilder sb = new StringBuilder(type.getName());
+		if (!typeArguments.isEmpty()) {
+			Iterator<Site> i = typeArguments.iterator();
+			sb.append("<")
 					.append(i.next());
+			while (i.hasNext()) {
+				sb.append(",")
+						.append(i.next());
+			}
+			sb.append(">");
 		}
-		sb.append(">");
+		if (nullable) {
+			sb.append("?");
+		}
+		if (threadSafe) {
+			sb.append("!");
+		}
 		return sb.toString();
 	}
 }

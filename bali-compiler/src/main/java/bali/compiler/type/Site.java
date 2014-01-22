@@ -10,6 +10,10 @@ public interface Site {
 
 	boolean isAssignableTo(Site t);
 
+	boolean isNullable();
+
+	boolean isThreadSafe();
+
 	String getName();
 
 	Site getSuperType();

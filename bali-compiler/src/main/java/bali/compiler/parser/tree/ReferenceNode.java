@@ -92,6 +92,6 @@ public class ReferenceNode extends ExpressionNode {
 	}
 
 	public String toString() {
-		return declaration.get() + " " + name;
+		return name;
 	}
 }

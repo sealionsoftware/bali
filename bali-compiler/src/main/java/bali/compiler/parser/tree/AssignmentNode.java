@@ -1,18 +1,15 @@
 package bali.compiler.parser.tree;
 
 import bali.compiler.reference.BlockingReference;
+import bali.compiler.type.Site;
 
 /**
  * User: Richard
  * Date: 29/04/13
  */
-public class AssignmentNode extends StatementNode {
+public abstract class AssignmentNode extends StatementNode {
 
-	private ReferenceNode reference;
 	private ExpressionNode value;
-	private ControlExpressionNode assignable;
-
-	private BlockingReference<String> setterName = new BlockingReference<>();
 
 	public AssignmentNode() {
 	}
@@ -21,25 +18,8 @@ public class AssignmentNode extends StatementNode {
 		super(line, character);
 	}
 
-	public ReferenceNode getReference() {
-		return reference;
-	}
-
-	public void setReference(ReferenceNode reference) {
-		this.reference = reference;
-		children.add(reference);
-	}
-
 	public ExpressionNode getValue() {
 		return value;
-	}
-
-	public void setSetterName(String setterName) {
-		this.setterName.set(setterName);
-	}
-
-	public String getSetterName() {
-		return setterName.get();
 	}
 
 	public void setValue(ExpressionNode value) {
@@ -47,13 +27,6 @@ public class AssignmentNode extends StatementNode {
 		children.add(value);
 	}
 
-	public ControlExpressionNode getAssignable() {
-		return assignable;
-	}
-
-	public void setAssignable(ControlExpressionNode assignable) {
-		this.assignable = assignable;
-		children.add(assignable);
-	}
+	public abstract Site getType();
 
 }

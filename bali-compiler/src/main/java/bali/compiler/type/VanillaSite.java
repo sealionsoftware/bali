@@ -13,18 +13,38 @@ import java.util.List;
 public class VanillaSite implements Site {
 
 	private Reference<Type> type;
+	private boolean nullable;
+	private boolean threadSafe;
 
 	public VanillaSite(Type type) {
-		this.type = new SimpleReference<>(type);
+		this(type, false, false);
 	}
 
 	public VanillaSite(Reference<Type> typeReference) {
+		this(typeReference, false, false);
+	}
+
+	public VanillaSite(Type type, Boolean nullable, Boolean threadSafe) {
+		this(new SimpleReference<>(type), nullable, threadSafe);
+	}
+
+	public VanillaSite(Reference<Type> typeReference, Boolean nullable, Boolean threadSafe) {
 		this.type = typeReference;
+		this.nullable = nullable;
+		this.threadSafe = threadSafe;
 	}
 
 	public boolean isAssignableTo(Site t) {
 		if (t == null) {
 			return true;
+		}
+
+		if (nullable && !t.isNullable()){
+			return false;
+		}
+
+		if (t.isThreadSafe() && !threadSafe){
+			return false;
 		}
 
 		if (getName().equals(t.getName())) {
@@ -38,6 +58,11 @@ public class VanillaSite implements Site {
 			return true;
 		}
 
+		Site superType = getSuperType();
+		if (superType != null && getSuperType().isAssignableTo(t)){
+			return true;
+		}
+
 		for (Site iface : getInterfaces()) {
 			if (iface.isAssignableTo(t)) {
 				return true;
@@ -45,6 +70,14 @@ public class VanillaSite implements Site {
 		}
 
 		return false;
+	}
+
+	public boolean isNullable() {
+		return nullable;
+	}
+
+	public boolean isThreadSafe() {
+		return threadSafe;
 	}
 
 	public String getName() {
@@ -88,6 +121,13 @@ public class VanillaSite implements Site {
 	}
 
 	public String toString() {
-		return type.get().getName();
+		StringBuilder sb = new StringBuilder(getName());
+		if (nullable) {
+			sb.append("?");
+		}
+		if (threadSafe) {
+			sb.append("!");
+		}
+		return sb.toString();
 	}
 }

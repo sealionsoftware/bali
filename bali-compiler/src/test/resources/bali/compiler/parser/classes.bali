@@ -9,14 +9,14 @@ class AClass() {
 		// Do something
 	}
 
-	method String aStringMethod(String input){
+	method String aStringMethod(String parameter){
 		// Do something
 		return "Hello World"
 	}
 
 }
 
-class AnotherClass(String constructionArgument) implements AnInterface {
+class AnotherClass(String parameter) implements AnInterface {
 
 	method aVoidAnotherMethod(){
 		// Do something

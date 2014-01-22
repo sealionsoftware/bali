@@ -47,6 +47,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
@@ -59,7 +60,6 @@ import java.util.concurrent.CancellationException;
 public class BaliCompiler {
 
 	private static final String BALI_SOURCE_FILE_EXTENSION = ".bali";
-
 	private ParserManager parserManager;
 	private ValidationEngine validator;
 	private Generator<CompilationUnitNode, GeneratedPackage> packageBuilder;
@@ -72,39 +72,46 @@ public class BaliCompiler {
 		this.moduleWriter = moduleWriter;
 	}
 
-	public void compile(File in, File out) throws Exception {
+	public BaliCompiler() {
 
-		List<File> sourceFiles = Arrays.asList(in.listFiles(new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				return name.endsWith(BALI_SOURCE_FILE_EXTENSION);
-			}
-		}));
+		TypeLibrary library = new TypeLibrary();
+		ConstantLibrary constantLibrary = new ConstantLibrary(library);
 
-		if (sourceFiles.isEmpty()) {
-			throw new Exception("No Bali Source files found in directory " + in);
-		}
+		parserManager = new ANTLRParserManager();
 
-		List<CompilationUnitNode> compilationUnits = new ArrayList<>();
+		validator = new MultiThreadedValidationEngine(library, constantLibrary, Arrays.asList(
+				new ImportsValidatorFactory(library),
+				new ResolvablesValidatorFactory(library),
+				new TypeResolvingValidatorFactory(library),
+				new BeanValidatorFactory(library),
+				new InterfaceValidatorFactory(library),
+				new ClassValidatorFactory(library),
+				new ConstantValidatorFactory(constantLibrary),
+				new BooleanLiteralValidatorFactory(library),
+				new NumberLiteralValidatorFactory(library),
+				new StringLiteralValidatorFactory(library),
+				new ArrayLiteralValidatorFactory(library),
+				new ReferenceValidatorFactory(constantLibrary),
+				new InvocationValidatorFactory(),
+				new UnaryOperationValidatorFactory(library),
+				new OperationValidatorFactory(),
+				new ReturnValueValidatorFactory(),
+				new ImplementationValidatorFactory(),
+				new AssignmentValidatorFactory(),
+				new ConstructionValidatorFactory(library),
+				new ThrowStatementValidatorFactory(library),
+				new BranchStatementValidatorFactory(),
+				new RunStatementValidatorFactory()
+		));
+		packageBuilder = new ConfigurablePackageGenerator(
+				new ASMPackageClassGenerator(),
+				new ASMBeanGenerator(),
+				new ASMInterfaceGenerator(),
+				new ASMClassGenerator(),
+				new ASMRunStatementGenerator()
+		);
+		moduleWriter = new JarPackager();
 
-		for (File sourceFile : sourceFiles) {
-			String fileName = sourceFile.getName();
-			String packageName = fileName.substring(0, fileName.length() - BALI_SOURCE_FILE_EXTENSION.length());
-			CompilationUnitNode compilationUnit = parserManager.parse(sourceFile, packageName);
-			compilationUnits.add(compilationUnit);
-		}
-
-		Map<String, List<ValidationFailure>> packageFailures = validator.validate(compilationUnits);
-		if (packageFailures.size() > 0) {
-			throw new ValidationException(packageFailures);
-		}
-
-		List<GeneratedPackage> packages = new ArrayList<>();
-		for (CompilationUnitNode compilationUnit : compilationUnits) {
-			GeneratedPackage pkg = packageBuilder.build(compilationUnit);
-			packages.add(pkg);
-		}
-
-		moduleWriter.writeModule(in.getAbsoluteFile().getName(), packages, out);
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -132,44 +139,8 @@ public class BaliCompiler {
 				throw new Exception("Usage: bali.compiler.BaliCompiler (in directory) (out directory)");
 		}
 
-		TypeLibrary library = new TypeLibrary();
-		ConstantLibrary constantLibrary = new ConstantLibrary(library);
 
-		BaliCompiler compiler = new BaliCompiler(
-				new ANTLRParserManager(),
-				new MultiThreadedValidationEngine(library, constantLibrary, Arrays.asList(
-						new ImportsValidatorFactory(library),
-						new ResolvablesValidatorFactory(library),
-						new TypeResolvingValidatorFactory(library),
-						new BeanValidatorFactory(library),
-						new InterfaceValidatorFactory(library),
-						new ClassValidatorFactory(library),
-						new ConstantValidatorFactory(constantLibrary),
-						new BooleanLiteralValidatorFactory(library),
-						new NumberLiteralValidatorFactory(library),
-						new StringLiteralValidatorFactory(library),
-						new ArrayLiteralValidatorFactory(library),
-						new ReferenceValidatorFactory(constantLibrary),
-						new InvocationValidatorFactory(),
-						new UnaryOperationValidatorFactory(library),
-						new OperationValidatorFactory(),
-						new ReturnValueValidatorFactory(),
-						new ImplementationValidatorFactory(),
-						new AssignmentValidatorFactory(),
-						new ConstructionValidatorFactory(library),
-						new ThrowStatementValidatorFactory(library),
-						new BranchStatementValidatorFactory(),
-						new RunStatementValidatorFactory()
-				)),
-				new ConfigurablePackageGenerator(
-						new ASMPackageClassGenerator(),
-						new ASMBeanGenerator(),
-						new ASMInterfaceGenerator(),
-						new ASMClassGenerator(),
-						new ASMRunStatementGenerator()
-				),
-				new JarPackager()
-		);
+		BaliCompiler compiler = new BaliCompiler();
 
 		try {
 			compiler.compile(in, out);
@@ -187,9 +158,9 @@ public class BaliCompiler {
 					}
 				}
 			}
-		} catch (FailedValidationException fve){
+		} catch (FailedValidationException fve) {
 			System.err.println("Compiler error");
-			for (CancellationException ce : fve.getCancellationExceptions()){
+			for (CancellationException ce : fve.getCancellationExceptions()) {
 				ce.printStackTrace(System.err);
 			}
 		}
@@ -204,5 +175,48 @@ public class BaliCompiler {
 			throw new Exception("Supplied file argument " + dir + " is not a directory");
 		}
 		return dir;
+	}
+
+	//TODO: this should really be able to work from an InputStream
+	public void compile(File in, File out) throws Exception {
+
+		List<File> sourceFiles;
+		if (!in.isDirectory()){
+			if (!in.getName().endsWith(BALI_SOURCE_FILE_EXTENSION)){
+				throw new Exception("Not a valid bali source file " + in);
+			}
+			sourceFiles = Collections.singletonList(in);
+		} else {
+			sourceFiles = Arrays.asList(in.listFiles(new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					return name.endsWith(BALI_SOURCE_FILE_EXTENSION);
+				}
+			}));
+			if (sourceFiles.isEmpty()) {
+				throw new Exception("No Bali Source files found in directory " + in);
+			}
+		}
+
+		List<CompilationUnitNode> compilationUnits = new ArrayList<>();
+
+		for (File sourceFile : sourceFiles) {
+			String fileName = sourceFile.getName();
+			String packageName = fileName.substring(0, fileName.length() - BALI_SOURCE_FILE_EXTENSION.length());
+			CompilationUnitNode compilationUnit = parserManager.parse(sourceFile, packageName);
+			compilationUnits.add(compilationUnit);
+		}
+
+		Map<String, List<ValidationFailure>> packageFailures = validator.validate(compilationUnits);
+		if (packageFailures.size() > 0) {
+			throw new ValidationException(packageFailures);
+		}
+
+		List<GeneratedPackage> packages = new ArrayList<>();
+		for (CompilationUnitNode compilationUnit : compilationUnits) {
+			GeneratedPackage pkg = packageBuilder.build(compilationUnit);
+			packages.add(pkg);
+		}
+
+		moduleWriter.writeModule(in.getAbsoluteFile().getName(), packages, out);
 	}
 }
