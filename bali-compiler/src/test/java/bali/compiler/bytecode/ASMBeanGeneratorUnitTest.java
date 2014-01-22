@@ -35,10 +35,6 @@ public class ASMBeanGeneratorUnitTest {
 		Class loadedClass = build();
 		Assert.assertEquals("Number of setters", 0, getSetters(loadedClass).size());
 		Assert.assertEquals("Number of getters", 0, getGetters(loadedClass).size());
-
-		//TODO: Need an ASM method to get compile time annotations
-//		Assert.assertEquals("Has Bean MetaType Annotation", 0, loadedClass.getAnnotation(MetaType.class));
-
 	}
 
 	@Test
