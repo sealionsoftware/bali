@@ -26,8 +26,7 @@ public class BaliCompilerUnitTest {
 		outputs.delete();
 		outputs.mkdirs();
 
-		BaliCompiler compiler = new BaliCompiler();
-		compiler.compile(inputs, outputs);
+		BaliCompiler.main(new String[]{inputs.toString(), outputs.toString()});
 		File[] outputFiles = outputs.listFiles();
 		Assert.assertEquals(1, outputFiles.length);
 		Assert.assertEquals("compiler.jar", outputFiles[0].getName());

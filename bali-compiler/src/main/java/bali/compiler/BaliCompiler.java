@@ -15,7 +15,6 @@ import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.TypeLibrary;
-import bali.compiler.validation.FailedValidationException;
 import bali.compiler.validation.MultiThreadedValidationEngine;
 import bali.compiler.validation.ValidationEngine;
 import bali.compiler.validation.ValidationException;
@@ -44,14 +43,15 @@ import bali.compiler.validation.validator.TypeResolvingValidatorFactory;
 import bali.compiler.validation.validator.UnaryOperationValidatorFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CancellationException;
-
 
 /**
  * User: Richard
@@ -139,46 +139,7 @@ public class BaliCompiler {
 				throw new Exception("Usage: bali.compiler.BaliCompiler (in directory) (out directory)");
 		}
 
-
-		BaliCompiler compiler = new BaliCompiler();
-
-		try {
-			compiler.compile(in, out);
-		} catch (ValidationException e) {
-			List<String> failedFiles = e.getFailedFiles();
-			System.err.println("Compilation failed");
-			System.err.println();
-			for (String failedFile : failedFiles) {
-				List<ValidationFailure> failures = e.getFailures(failedFile);
-				if (failures.size() > 0) {
-					System.err.println("Unit " + failedFile + BALI_SOURCE_FILE_EXTENSION + " failed with " + failures.size() + " errors");
-					for (ValidationFailure failure : failures) {
-						Node node = failure.getNode();
-						System.err.println("\t" + node.getLine() + ":" + node.getCharacter() + " " + failure.getMessage());
-					}
-				}
-			}
-		} catch (FailedValidationException fve) {
-			System.err.println("Compiler error");
-			for (CancellationException ce : fve.getCancellationExceptions()) {
-				ce.printStackTrace(System.err);
-			}
-		}
-
-	}
-
-	private static File check(String name) throws Exception {
-		File dir = new File(name);
-		if (!dir.exists()) {
-			throw new Exception("Supplied file argument " + dir + " does not exist");
-		} else if (!dir.isDirectory()) {
-			throw new Exception("Supplied file argument " + dir + " is not a directory");
-		}
-		return dir;
-	}
-
-	//TODO: this should really be able to work from an InputStream
-	public void compile(File in, File out) throws Exception {
+		String moduleName = in.getName();
 
 		List<File> sourceFiles;
 		if (!in.isDirectory()){
@@ -197,12 +158,57 @@ public class BaliCompiler {
 			}
 		}
 
-		List<CompilationUnitNode> compilationUnits = new ArrayList<>();
-
+		List<PackageDescription> packageDescriptions = new ArrayList<>();
 		for (File sourceFile : sourceFiles) {
 			String fileName = sourceFile.getName();
 			String packageName = fileName.substring(0, fileName.length() - BALI_SOURCE_FILE_EXTENSION.length());
-			CompilationUnitNode compilationUnit = parserManager.parse(sourceFile, packageName);
+			packageDescriptions.add(new PackageDescription(
+					packageName,
+					new FileInputStream(sourceFile)
+			));
+		}
+
+		BaliCompiler compiler = new BaliCompiler();
+
+
+		try {
+
+			OutputStream os = new FileOutputStream(new File(out, moduleName + BALI_SOURCE_FILE_EXTENSION));
+			compiler.compile(packageDescriptions, os);
+
+		} catch (ValidationException e) {
+			List<String> failedFiles = e.getFailedFiles();
+			System.err.println("Compilation failed");
+			System.err.println();
+			for (String failedFile : failedFiles) {
+				List<ValidationFailure> failures = e.getFailures(failedFile);
+				if (failures.size() > 0) {
+					System.err.println("Unit " + failedFile + BALI_SOURCE_FILE_EXTENSION + " failed with " + failures.size() + " errors");
+					for (ValidationFailure failure : failures) {
+						Node node = failure.getNode();
+						System.err.println("\t" + node.getLine() + ":" + node.getCharacter() + " " + failure.getMessage());
+					}
+				}
+			}
+		}
+	}
+
+	private static File check(String name) throws Exception {
+		File dir = new File(name);
+		if (!dir.exists()) {
+			throw new Exception("Supplied file argument " + dir + " does not exist");
+		} else if (!dir.isDirectory()) {
+			throw new Exception("Supplied file argument " + dir + " is not a directory");
+		}
+		return dir;
+	}
+
+	public void compile(List<PackageDescription> packageDescriptions, OutputStream output) throws Exception {
+
+		List<CompilationUnitNode> compilationUnits = new ArrayList<>();
+
+		for (PackageDescription packageDescription : packageDescriptions) {
+			CompilationUnitNode compilationUnit = parserManager.parse(packageDescription.file, packageDescription.name);
 			compilationUnits.add(compilationUnit);
 		}
 
@@ -217,6 +223,6 @@ public class BaliCompiler {
 			packages.add(pkg);
 		}
 
-		moduleWriter.writeModule(in.getAbsoluteFile().getName(), packages, out);
+		moduleWriter.writeModule(packages, output);
 	}
 }

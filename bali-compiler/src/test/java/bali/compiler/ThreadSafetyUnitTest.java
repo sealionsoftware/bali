@@ -4,9 +4,14 @@ import bali.compiler.validation.ValidationException;
 import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mockito;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
+import java.util.Collections;
 
 /**
  * User: Richard
@@ -14,35 +19,23 @@ import java.net.URL;
  */
 public class ThreadSafetyUnitTest {
 
-	private static final String TEST_TARGETS_NAME = "bali/compiler/threadsafe";
-	private static final File OUTPUT = new File("/../../../unittests");
-
-	private static File failTestTargets;
-	private static File passTestTargets;
+	private static final String TEST_TARGETS_NAME = "bali/compiler/threadsafe/";
+	private static final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
 	private BaliCompiler compiler = new BaliCompiler();
 
-	@BeforeClass
-	public static void setup() throws Exception {
-		OUTPUT.delete();
-		OUTPUT.mkdirs();
-
-		URL fileUrl = Thread.currentThread().getContextClassLoader().getResource(TEST_TARGETS_NAME);
-		Assert.assertTrue(fileUrl != null);
-		File testTargets = new File(fileUrl.toURI());
-		failTestTargets = new File(testTargets, "fail");
-		passTestTargets =  new File(testTargets, "pass");
-
-	}
-
 	@Test(expected = ValidationException.class)
 	public void testVariableAssignFail() throws Exception {
-		compiler.compile(new File(failTestTargets, "varassign.bali"), OUTPUT);
+		InputStream is = classLoader.getResourceAsStream(TEST_TARGETS_NAME + "/fail/varassign.bali");
+		compiler.compile(Collections.singletonList(new PackageDescription("fail", is)), Mockito.mock(OutputStream.class));
 	}
 
 	@Test
 	public void testVariableAssignPass() throws Exception {
-		compiler.compile(new File(passTestTargets, "varassign.bali"), OUTPUT);
+		InputStream is = classLoader.getResourceAsStream(TEST_TARGETS_NAME + "/pass/varassign.bali");
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		compiler.compile(Collections.singletonList(new PackageDescription("pass", is)), os);
+		Assert.assertTrue(os.toByteArray().length > 1024);
 	}
 
 }

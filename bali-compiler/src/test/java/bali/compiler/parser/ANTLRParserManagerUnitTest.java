@@ -36,7 +36,7 @@ public class ANTLRParserManagerUnitTest {
 
 	@BeforeClass
 	public static void setUp() throws Exception {
-		unit = parserManager.parse(new File(ANTLRParserManager.class.getResource("../example.bali").toURI()), "example");
+		unit = parserManager.parse(ANTLRParserManager.class.getResourceAsStream("../example.bali"), "example");
 	}
 
 	@Test

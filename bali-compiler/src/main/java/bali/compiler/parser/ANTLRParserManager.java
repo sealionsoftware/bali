@@ -46,10 +46,11 @@ import org.antlr.v4.runtime.DefaultErrorStrategy;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.tree.TerminalNode;
 
-import java.io.File;
 import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -63,9 +64,9 @@ import java.util.List;
  */
 public class ANTLRParserManager implements ParserManager {
 
-	public CompilationUnitNode parse(File compilationUnit, String name) throws Exception {
+	public CompilationUnitNode parse(InputStream compilationUnit, String name) throws Exception {
 
-		ANTLRInputStream input = new ANTLRInputStream(new FileReader(compilationUnit));
+		ANTLRInputStream input = new ANTLRInputStream(new InputStreamReader(compilationUnit));
 		Lexer lexer = new BaliLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		tokens.fill();
@@ -75,7 +76,7 @@ public class ANTLRParserManager implements ParserManager {
 
 		int errors = parser.getNumberOfSyntaxErrors();
 		if (errors > 0) {
-			throw new Exception("Could not compile " + compilationUnit.getName() + " [" + errors + " errors]");
+			throw new Exception("Could not parse " + name + " [" + errors + " errors]");
 		}
 
 		return build(context, name);

@@ -1,11 +1,12 @@
 package bali.compiler.module;
 
 import bali.compiler.GeneratedClass;
-import bali.compiler.GeneratedModule;
 import bali.compiler.GeneratedPackage;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,21 +21,15 @@ import java.util.jar.Manifest;
  */
 public class JarPackager implements ModuleWriter {
 
-	public GeneratedModule writeModule(String name, List<GeneratedPackage> packages, File directory) throws Exception {
-
-		File out = new File(directory, name + ".jar");
-		GeneratedModule module = new GeneratedModule(name);
-
-		out.delete();
-		out.createNewFile();
-		JarOutputStream jos = null;
+	public void writeModule(List<GeneratedPackage> packages, OutputStream outputStream) throws Exception {
 
 		Manifest manifest = new Manifest();
 		manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
 
+		JarOutputStream jos = new JarOutputStream(outputStream, manifest);
+
 		try {
 
-			jos = new JarOutputStream(new FileOutputStream(out), manifest);
 			Set<String> createdDirectories = new HashSet<>();
 
 			for (GeneratedPackage generatedPackage : packages) {
@@ -58,14 +53,10 @@ public class JarPackager implements ModuleWriter {
 					jos.write(code);
 					jos.closeEntry();
 				}
-				module.addPackage(generatedPackage);
 			}
 
 		} finally {
-			if (jos != null)
-				jos.close();
+			jos.close();
 		}
-
-		return module;
 	}
 }

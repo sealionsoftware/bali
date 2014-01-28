@@ -3,6 +3,7 @@ package bali.compiler.parser;
 import bali.compiler.parser.tree.CompilationUnitNode;
 
 import java.io.File;
+import java.io.InputStream;
 
 /**
  * User: Richard
@@ -10,6 +11,6 @@ import java.io.File;
  */
 public interface ParserManager {
 
-	public CompilationUnitNode parse(File compilationUnit, String name) throws Exception;
+	public CompilationUnitNode parse(InputStream compilationUnit, String name) throws Exception;
 
 }
