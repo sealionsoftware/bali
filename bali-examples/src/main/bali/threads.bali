@@ -6,7 +6,7 @@ import bali.Executable
 import bali.Count
 import bali.Counter
 
-constant String GREETING = "Hello World"
+constant String! GREETING = "Hello World"
 
 class ThreadedExecutable() implements Executable {
 
@@ -14,7 +14,7 @@ class ThreadedExecutable() implements Executable {
 
 		Count i = new Counter()
 		while (++i < 100) {
-			Integer imm = #i
+			Integer! imm = #i
 			run {
 				CONSOLE << (GREETING + ": " + NUMBER_FACTORY.format(imm))
 			}

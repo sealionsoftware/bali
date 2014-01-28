@@ -170,10 +170,9 @@ public class BaliCompiler {
 
 		BaliCompiler compiler = new BaliCompiler();
 
-
 		try {
 
-			OutputStream os = new FileOutputStream(new File(out, moduleName + BALI_SOURCE_FILE_EXTENSION));
+			OutputStream os = new FileOutputStream(new File(out, moduleName + ".jar"));
 			compiler.compile(packageDescriptions, os);
 
 		} catch (ValidationException e) {
