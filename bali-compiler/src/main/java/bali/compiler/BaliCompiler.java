@@ -59,7 +59,7 @@ import java.util.Map;
  */
 public class BaliCompiler {
 
-	private static final String BALI_SOURCE_FILE_EXTENSION = ".bali";
+	public static final String BALI_SOURCE_FILE_EXTENSION = ".bali";
 	private ParserManager parserManager;
 	private ValidationEngine validator;
 	private Generator<CompilationUnitNode, GeneratedPackage> packageBuilder;

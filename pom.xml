@@ -14,7 +14,9 @@
 
 	<modules>
 		<module>bali-lang</module>
+		<module>bali-runtime</module>
 		<module>bali-compiler</module>
+		<module>bali-maven-plugin</module>
 		<module>bali-examples</module>
 	</modules>
 

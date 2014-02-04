@@ -1,6 +1,6 @@
 :: Keywords
 
-import constant function interface class method field declare new throw try catch return run sleep true false null
+import constant function interface class method field declare new throw try catch return run sleep true false
 
 Operators
 
