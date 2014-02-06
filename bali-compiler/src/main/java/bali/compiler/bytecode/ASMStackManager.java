@@ -486,6 +486,7 @@ public class ASMStackManager implements Opcodes {
 		if (target != null){
 			pushInvocation(
 				target,
+				target.getType().getType(),
 				value.getType(),
 				Collections.<Site>emptyList(),
 				Collections.<ExpressionNode>emptyList(),
@@ -531,6 +532,7 @@ public class ASMStackManager implements Opcodes {
 		}
 		pushInvocation(
 				value.getTarget(),
+				value.getTargetType().getType(),
 				value.getType(),
 				parameters,
 				value.getArguments(),
@@ -546,6 +548,7 @@ public class ASMStackManager implements Opcodes {
 		} else {
 			pushInvocation(
 					value.getTarget(),
+					value.getTarget().getType().getType(),
 					value.getType(),
 					Collections.<Site>emptyList(),
 					new ArrayList<ExpressionNode>(),
@@ -570,6 +573,7 @@ public class ASMStackManager implements Opcodes {
 	public void push(OperationNode value, MethodVisitor v) {
 		pushInvocation(
 				value.getOne(),
+				value.getOne().getType().getType(),
 				value.getType(),
 				Collections.singletonList(value.getResolvedOperator().getParameter()),
 				Collections.singletonList(value.getTwo()),
@@ -578,9 +582,13 @@ public class ASMStackManager implements Opcodes {
 		);
 	}
 
-	public void pushInvocation(ExpressionNode target, Site valueType, List<Site> parameterTypes, List<ExpressionNode> arguments, String methodName, MethodVisitor v) {
-		push(target, v);
-		Type targetType = target.getType().getType();
+	public void pushInvocation(ExpressionNode target, Type targetType, Site valueType, List<Site> parameterTypes, List<ExpressionNode> arguments, String methodName, MethodVisitor v) {
+		if (target != null){
+			push(target, v);
+		} else {
+			v.visitVarInsn(ALOAD, 0);
+		}
+
 		List<Type> argumentsErased = new ArrayList<>();
 
 		Iterator<ExpressionNode> i = arguments.iterator();

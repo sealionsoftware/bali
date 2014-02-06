@@ -1,11 +1,11 @@
 // Class Declarations
 
-class AClass() {
+class AClass {
 
 	field Number aField = 1
 	field String aString = "Hello World"
 
-	method aVoidMethod(){
+	method aVoidMethod {
 		// Do something
 	}
 
@@ -18,7 +18,7 @@ class AClass() {
 
 class AnotherClass(String parameter) implements AnInterface {
 
-	method aVoidAnotherMethod(){
+	method aVoidAnotherMethod {
 		// Do something
 	}
 

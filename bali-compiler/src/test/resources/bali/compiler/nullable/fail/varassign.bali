@@ -2,9 +2,9 @@ import bali.Console
 import bali.String
 import bali.Executable
 
-class Test() implements Executable {
+class Test implements Executable {
 
- 	method execute(){
+ 	method execute {
  	    String? one = "G'Day"
 		String two = one
  	}

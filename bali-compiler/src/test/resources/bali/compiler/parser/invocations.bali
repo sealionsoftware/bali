@@ -1,9 +1,9 @@
 {
-	aReference.invoke()
-	aReference.invoke().invokeAgain()
-		.andAgain()
-	aReference.aProperty.invoke()
+	aReference.invoke
+	aReference.invoke.invokeAgain
+		.andAgain
+	aReference.aProperty.invoke
 	aReference.invokeWithArgument(anArgument)
 	aReference.invokeWithArguments(anArgument, anotherArgument)
-	(operandOne + operandTwo).invoke()
+	(operandOne + operandTwo).invoke
 }

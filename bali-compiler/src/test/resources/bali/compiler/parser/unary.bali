@@ -1,5 +1,5 @@
 {
 	#hashme
 	value = !a
-	value = -a.invoke()
+	value = -a.invoke
 }

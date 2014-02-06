@@ -2,8 +2,8 @@
 	// Declaration
 	String aString = "Hello World"
 	String anotherString = aString
-	String anotherString = aFactory.getString()
-	String anotherString = aMethodOrFunction()
+	String anotherString = aFactory.getString
+	String anotherString = aMethodOrFunction
 	String anotherString = STRING_CONSTANT
 
 	// Assignment

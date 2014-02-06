@@ -2,12 +2,12 @@ import bali.Console
 import bali.Boolean
 
 interface Doer {
- 	declare goDo()
+ 	declare goDo
 }
 
-class ConditionalDoer() implements Doer {
+class ConditionalDoer implements Doer {
 
- 	method goDo(){
+ 	method goDo {
 
  	    Boolean one = false
  	    Boolean two = false

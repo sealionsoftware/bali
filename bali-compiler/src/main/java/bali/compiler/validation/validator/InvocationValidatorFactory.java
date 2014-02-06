@@ -41,8 +41,8 @@ public class InvocationValidatorFactory implements ValidatorFactory {
 
 					List<ValidationFailure> ret = new ArrayList<>();
 					ExpressionNode target = invocation.getTarget();
-
 					Site targetType = target != null ? target.getType() : thisSite;
+					invocation.setTargetType(targetType);
 
 					if (targetType == null){
 						ret.add(new ValidationFailure(node, "The target of invocation " + invocation.getMethodName() + " is void"));

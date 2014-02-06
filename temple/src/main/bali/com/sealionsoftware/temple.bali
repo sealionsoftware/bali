@@ -1,0 +1,58 @@
+import bali.Executable
+import bali.Boolean
+import bali.String
+import bali.Exception
+import bali.io.ServerSocket
+import bali.io.Socket
+
+class TempleServer implements Executable {
+
+	method execute {
+
+		CONSOLE << "Starting Temple"
+
+		ServerSocket port = NETWORK_MANAGER.openPort(8080)
+
+		while (true){
+
+			Socket connection = port.getConnection()
+//			try {
+				handleConnection(connection)
+//			} catch (Exception e){
+//				CONSOLE << ("Error: " + e.getMessage())
+//			}
+			connection.close()
+		}
+
+		port.close()
+
+		CONSOLE << "Temple Exiting"
+
+	}
+
+	method handleConnection(Socket connection){
+
+		CONSOLE << "Receiving Request"
+
+		while (true) {
+
+			String? read = << connection
+
+            if (?read) if (!(read.length() == 0)){
+        		CONSOLE << read
+        	} else {
+        		break
+        	}
+
+        }
+
+        connection << "HTTP/1.1 200 OK"
+        connection << "Content-Type: text/html;"
+        connection << ""
+        connection << "Hello World"
+
+        CONSOLE << "Response Completed"
+
+	}
+
+}

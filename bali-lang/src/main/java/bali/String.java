@@ -13,7 +13,7 @@ public interface String extends Value<String> {
 
 	public Iterable<String> getCharacters();
 
-	public Number length();
+	public Integer length();
 
 	@Operator("+")
 	public String join(String operand);

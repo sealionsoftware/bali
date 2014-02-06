@@ -1,6 +1,6 @@
 interface AnInterface {
 
-	declare aVoidMethod()
+	declare aVoidMethod
 
 	declare String aStringMethod(String input)
 
@@ -8,6 +8,6 @@ interface AnInterface {
 
 interface AnotherInterface {
 
-	declare aVoidAnotherMethod()
+	declare aVoidAnotherMethod
 
 }

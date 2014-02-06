@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component-set>
+	<components>
+		<component>
+			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+			<role-hint>bar</role-hint>
+			<implementation>
+				org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping
+			</implementation>
+			<configuration>
+				<phases>
+					<compile>
+						com.sealionsoftware:bali-maven-plugin:compile-bali
+					</compile>
+					<install>
+						org.apache.maven.plugins:maven-install-plugin:install
+					</install>
+				</phases>
+			</configuration>
+		</component>
+	</components>
+</component-set>

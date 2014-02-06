@@ -34,10 +34,10 @@ public class ImportsValidatorFactory implements ValidatorFactory {
 					try {
 						Type type = library.getType(iport.getName());
 						iport.setType(type);
-					} catch (Exception cnfe) {
+					} catch (Exception e) {
 						failures.add(new ValidationFailure(
 								iport,
-								"Could not resolve import " + iport.getName()
+								"Could not resolve import " + iport.getName() + " because " + e.getMessage()
 						));
 						iport.setType(null);
 					}

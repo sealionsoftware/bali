@@ -2,6 +2,7 @@ package bali;
 
 import bali.annotation.MetaType;
 import bali.annotation.MetaTypes;
+import bali.annotation.Nullable;
 import bali.annotation.Operator;
 
 /**
@@ -12,6 +13,7 @@ import bali.annotation.Operator;
 public interface Reader {
 
 	@Operator("<<")
-	public String readLine();
+	@Nullable
+	public String readLine() throws java.lang.Exception;
 
 }

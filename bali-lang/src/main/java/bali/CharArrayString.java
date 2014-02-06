@@ -29,7 +29,7 @@ public final class CharArrayString implements String {
 		return new Array<>(characterStrings);
 	}
 
-	public Number length(){
+	public Integer length(){
 		return NumberFactory.NUMBER_FACTORY.forInt(characters.length);
 	}
 

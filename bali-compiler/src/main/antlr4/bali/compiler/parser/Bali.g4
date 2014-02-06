@@ -42,15 +42,15 @@ constantDeclaration:        'constant' typeDeclaration IDENTIFIER EQ constantVal
 
 interfaceDeclaration:       'interface' classDefinition ('extends' typeDeclarationList)? '{' (declarationDeclaration)* '}' ;
 
-classDeclaration:           'class' classDefinition argumentDeclarationList ( 'implements' typeDeclarationList )? '{' fieldDeclaration* methodDeclaration* '}' ;
+classDeclaration:           'class' classDefinition argumentDeclarationList? ( 'implements' typeDeclarationList )? '{' fieldDeclaration* methodDeclaration* '}' ;
 
 beanDeclaration:            'bean' classDefinition ( 'extends' typeDeclaration )? '{' propertyDeclaration* '}' ;
 
 fieldDeclaration:           'field' typeDeclaration IDENTIFIER (EQ expression )? ;
 
-methodDeclaration:          'method' typeDeclaration? IDENTIFIER argumentDeclarationList codeBlock ;
+methodDeclaration:          'method' typeDeclaration? IDENTIFIER argumentDeclarationList? codeBlock ;
 
-declarationDeclaration:     'declare' typeDeclaration? IDENTIFIER argumentDeclarationList ;
+declarationDeclaration:     'declare' typeDeclaration? IDENTIFIER argumentDeclarationList? ;
 
 propertyDeclaration:        'property' typeDeclaration IDENTIFIER ;
 

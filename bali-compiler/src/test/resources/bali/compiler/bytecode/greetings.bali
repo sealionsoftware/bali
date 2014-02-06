@@ -4,14 +4,14 @@ import bali.String
 constant String GREETING = "Constant Greeting"
 
 interface Greeter {
- 	declare greet()
+ 	declare greet
 }
 
-class ConsoleGreeter() implements Greeter {
+class ConsoleGreeter implements Greeter {
 
 	field String greeting = "Field Greeting"
 
- 	method greet(){
+ 	method greet {
 	    String greetingTwo = "Variable Greeting"
 	    greetingTwo = GREETING
 		CONSOLE.printLine(greetingTwo)

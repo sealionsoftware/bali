@@ -181,7 +181,8 @@ public class ANTLRParserManager implements ParserManager {
 				clazz.addImplementation(build(typeDeclaration));
 			}
 		}
-		for (BaliParser.ArgumentDeclarationContext adc : context.argumentDeclarationList().argumentDeclaration()) {
+		BaliParser.ArgumentDeclarationListContext adlc = context.argumentDeclarationList();
+		if (adlc != null) for (BaliParser.ArgumentDeclarationContext adc : adlc.argumentDeclaration()) {
 			clazz.addArgument(build(adc));
 		}
 		for (BaliParser.FieldDeclarationContext fdc : context.fieldDeclaration()) {
@@ -201,7 +202,8 @@ public class ANTLRParserManager implements ParserManager {
 		if (typeDeclaration != null) {
 			method.setType(build(typeDeclaration));
 		}
-		for (BaliParser.ArgumentDeclarationContext adc : context.argumentDeclarationList().argumentDeclaration()) {
+		BaliParser.ArgumentDeclarationListContext adlc = context.argumentDeclarationList();
+		if (adlc != null) for (BaliParser.ArgumentDeclarationContext adc : adlc.argumentDeclaration()) {
 			method.addArgument(build(adc));
 		}
 		method.setBody(build(context.codeBlock()));

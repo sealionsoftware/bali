@@ -18,6 +18,7 @@ public class InvocationNode extends ExpressionNode {
 	private List<ExpressionNode> arguments = new ArrayList<>();
 
 	private BlockingReference<Method> resolvedMethod = new BlockingReference<>();
+	private BlockingReference<Site> targetType = new BlockingReference<>();
 
 	public InvocationNode() {
 	}
@@ -36,6 +37,14 @@ public class InvocationNode extends ExpressionNode {
 
 	public void setResolvedMethod(Method resolvedMethod) {
 		this.resolvedMethod.set(resolvedMethod);
+	}
+
+	public Site getTargetType(){
+		return targetType.get();
+	}
+
+	public void setTargetType(Site targetType) {
+		this.targetType.set(targetType);
 	}
 
 	public void setTarget(ExpressionNode target) {

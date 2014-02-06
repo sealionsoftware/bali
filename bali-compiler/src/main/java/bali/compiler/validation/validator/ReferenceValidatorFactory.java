@@ -49,7 +49,7 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 			public List<ValidationFailure> validate(Node node, Control control) {
 
 				if (node instanceof CompilationUnitNode) {
-					validate((CompilationUnitNode) node, control);
+					return validate((CompilationUnitNode) node, control);
 				} else if (node instanceof ClassNode) {
 					validate((ClassNode) node, control);
 				} else if (node instanceof MethodDeclarationNode) {
@@ -103,24 +103,28 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 
 				Deque<Scope> unitLevelScopes = new ArrayDeque<>();
 				String pkgName = "_";
-				List<Declaration> packageConstants = library.getConstants(pkgName);
-				Scope scope = new Scope(
-						ReferenceNode.ReferenceScope.STATIC,
-						pkgName,
-						true
-				);
-				for (Declaration declaration : packageConstants) {
-					scope.add(declaration.getName(), declaration.getType());
+				try {
+					List<Declaration> packageConstants = library.getConstants(pkgName);
+					Scope scope = new Scope(
+							ReferenceNode.ReferenceScope.STATIC,
+							pkgName,
+							true
+					);
+					for (Declaration declaration : packageConstants) {
+						scope.add(declaration.getName(), declaration.getType());
+					}
+					unitLevelScopes.push(scope);
+				} catch (Exception e){
+					return Collections.singletonList(new ValidationFailure(unit, "Could not load constants from " + pkgName + ": " + e.getMessage()));
 				}
-				unitLevelScopes.push(scope);
 
 				String compilationUnitName = unit.getName();
 				int i = -1;
 				do {
 					i = compilationUnitName.indexOf('.', i);
 					pkgName = i > 0 ? compilationUnitName.substring(0, i) : compilationUnitName;
-					packageConstants = library.getConstants(pkgName);
-					scope = new Scope(
+					List<Declaration> packageConstants = library.getConstants(pkgName);
+					Scope scope = new Scope(
 							ReferenceNode.ReferenceScope.STATIC,
 							pkgName + "._",
 							true
