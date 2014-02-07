@@ -78,7 +78,7 @@ public class TypeDeclarationTypeBuilder {
 				Collections.<Operator>emptyList(),
 				Collections.<UnaryOperator>emptyList(),
 				getProperties(declaration),
-				false
+				true
 		);
 	}
 

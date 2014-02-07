@@ -252,6 +252,9 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 						Collections.<Declaration>emptyList(),
 						true
 				);
+				break;
+			default:
+				throw new RuntimeException("Cannot load classes of metatype " + metaType + " from the classpath yet");
 		}
 	}
 

@@ -1,6 +1,7 @@
 package bali.compiler.validation.validator;
 
 import bali.compiler.parser.tree.CompilationUnitNode;
+import bali.compiler.parser.tree.InvocationNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.ReferenceNode;
 import bali.compiler.parser.tree.RunStatementNode;
@@ -49,14 +50,22 @@ public class RunStatementValidatorFactory implements ValidatorFactory {
 
 					runContextSize++;
 
-				} else if (node instanceof ReferenceNode && runContextSize > 0){
+				} else if (node instanceof InvocationNode){
+					if (runContextSize > 0){
+						InvocationNode invocationNode = (InvocationNode) node;
+						if (invocationNode.getTarget() == null){
+							failures.add(new ValidationFailure(node, "Cannot call local methods from within a run block - they may not be thread-safe"));
+						}
+					}
+				} else if (node instanceof ReferenceNode){
+					if (runContextSize > 0){
+						ReferenceNode referenceNode = (ReferenceNode) node;
 
-					ReferenceNode referenceNode = (ReferenceNode) node;
-
-					if (!ReferenceNode.ReferenceScope.VARIABLE.equals(referenceNode.getScope())){
-						Site type = referenceNode.getType();
-						if (!type.isThreadSafe()){
-							failures.add(new ValidationFailure(node, "References to objects outside a run block must be thread-safe"));
+						if (!ReferenceNode.ReferenceScope.VARIABLE.equals(referenceNode.getScope())){
+							Site type = referenceNode.getType();
+							if (!type.isThreadSafe()){
+								failures.add(new ValidationFailure(node, "References to objects outside a run block must be thread-safe"));
+							}
 						}
 					}
 				}

@@ -2,17 +2,13 @@ package bali.io;
 
 import bali.CharArrayString;
 import bali.Initialisable;
-import bali.Reader;
 import bali.String;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.lang.Exception;
 
 /**
@@ -29,16 +25,16 @@ public class StandardSocket implements Socket, Initialisable {
 		this.delegate = delegate;
 	}
 
-	public void intitalise() throws Exception {
+	public synchronized void initalise() throws Exception {
 		input = new BufferedReader(new InputStreamReader(delegate.getInputStream()));
 		output = new BufferedWriter(new OutputStreamWriter(delegate.getOutputStream()));
 	}
 
-	public void close() throws Exception {
+	public synchronized void close() throws Exception {
 		delegate.close();
 	}
 
-	public String readLine() throws Exception {
+	public synchronized String readLine() throws Exception {
 		final StringBuilder sb = new StringBuilder();
 		int i = input.read();
 		if (i < 0){
@@ -54,7 +50,7 @@ public class StandardSocket implements Socket, Initialisable {
 		return new CharArrayString(sb.toString().toCharArray());
 	}
 
-	public void writeLine(String in) throws IOException {
+	public synchronized void writeLine(String in) throws IOException {
 		output.write(in.toString());
 		output.write("\r\n");
 		output.flush();

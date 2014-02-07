@@ -18,6 +18,7 @@
 		<module>bali-compiler</module>
 		<module>bali-maven-plugin</module>
 		<module>bali-examples</module>
+		<module>temple</module>
 	</modules>
 
 </project>

@@ -10,6 +10,6 @@ import bali.annotation.MetaTypes;
 @MetaType(MetaTypes.INTERFACE)
 public interface Initialisable {
 
-	public void intitalise() throws java.lang.Exception;
+	public void initalise() throws java.lang.Exception;
 
 }

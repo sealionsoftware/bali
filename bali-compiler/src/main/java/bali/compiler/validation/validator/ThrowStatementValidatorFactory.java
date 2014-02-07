@@ -1,11 +1,17 @@
 package bali.compiler.validation.validator;
 
 import bali.Exception;
+import bali.compiler.parser.tree.CatchStatementNode;
+import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.Node;
-import bali.compiler.type.Type;
+import bali.compiler.parser.tree.SiteNode;
+import bali.compiler.parser.tree.ThrowStatementNode;
+import bali.compiler.type.Site;
 import bali.compiler.type.TypeLibrary;
+import bali.compiler.type.VanillaSite;
 import bali.compiler.validation.ValidationFailure;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,25 +23,50 @@ import java.util.List;
  */
 public class ThrowStatementValidatorFactory implements ValidatorFactory {
 
-	private Type throwableType;
+	private Site throwableType;
 
 	public ThrowStatementValidatorFactory(TypeLibrary library) {
-		throwableType = library.getType(Exception.class.getName());
+		throwableType = new VanillaSite(library.getType(Exception.class.getName()));
 	}
 
 	public Validator createValidator() {
 		return new Validator() {
-			//TODO
+
 			public List<ValidationFailure> validate(Node node, Control control) {
+				List<ValidationFailure> ret = new ArrayList<>();
+				if (node instanceof ThrowStatementNode){
+					ret.addAll(validate((ThrowStatementNode) node));
+				} else if (node instanceof CatchStatementNode){
+					ret.addAll(validate((CatchStatementNode) node));
+				}
+				control.validateChildren();
+				return ret;
+			}
 
-	//		List<ValidationFailure> failures = new ArrayList<>();
-	//		Expression value = node.getValue();
-	//		if (node.getValue().getType().isAssignableTo(throwableType)) {
-	//			failures.add(new ValidationFailure(node, "Thrown value " + value + " is not of type " + throwableType));
-	//		}
-
+			public List<ValidationFailure> validate(ThrowStatementNode node) {
+				ExpressionNode value = node.getValue();
+				if (!value.getType().isAssignableTo(throwableType)){
+					return Collections.singletonList(new ValidationFailure(
+							value,
+							"throw statement requires an argument that implements " + throwableType.getName()
+					));
+				}
 				return Collections.emptyList();
 			}
+
+			public List<ValidationFailure> validate(CatchStatementNode node) {
+				SiteNode type = node.getDeclaration().getType();
+				List<ValidationFailure> ret = new ArrayList<>();
+				if (!type.getSite().isAssignableTo(throwableType)){
+					ret.add(new ValidationFailure(
+							type,
+							"catch block requires a parameter that implements " + throwableType.getName()
+					));
+				}
+				return ret;
+			}
+
+
 		};
 	}
 

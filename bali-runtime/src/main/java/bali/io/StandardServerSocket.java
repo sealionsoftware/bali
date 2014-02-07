@@ -1,5 +1,7 @@
 package bali.io;
 
+import bali.annotation.ThreadSafe;
+
 /**
  * User: Richard
  * Date: 06/02/14
@@ -12,10 +14,11 @@ public class StandardServerSocket implements ServerSocket {
 		this.delegate = delegate;
 	}
 
+	@ThreadSafe
 	public Socket getConnection() throws Exception {
 		java.net.Socket socket = delegate.accept();
 		StandardSocket ret =  new StandardSocket(socket);
-		ret.intitalise();
+		ret.initalise();
 		return ret;
 	}
 

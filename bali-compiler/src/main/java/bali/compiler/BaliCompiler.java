@@ -37,6 +37,7 @@ import bali.compiler.validation.validator.ReferenceValidatorFactory;
 import bali.compiler.validation.validator.ResolvablesValidatorFactory;
 import bali.compiler.validation.validator.ReturnValueValidatorFactory;
 import bali.compiler.validation.validator.RunStatementValidatorFactory;
+import bali.compiler.validation.validator.SiteValidatorFactory;
 import bali.compiler.validation.validator.StringLiteralValidatorFactory;
 import bali.compiler.validation.validator.ThrowStatementValidatorFactory;
 import bali.compiler.validation.validator.TypeResolvingValidatorFactory;
@@ -101,7 +102,8 @@ public class BaliCompiler {
 				new ConstructionValidatorFactory(library),
 				new ThrowStatementValidatorFactory(library),
 				new BranchStatementValidatorFactory(),
-				new RunStatementValidatorFactory()
+				new RunStatementValidatorFactory(),
+				new SiteValidatorFactory()
 		));
 		packageBuilder = new ConfigurablePackageGenerator(
 				new ASMPackageClassGenerator(),

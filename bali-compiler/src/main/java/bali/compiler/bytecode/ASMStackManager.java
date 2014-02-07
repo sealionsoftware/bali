@@ -181,7 +181,10 @@ public class ASMStackManager implements Opcodes {
 	}
 
 	private void execute(ThrowStatementNode statement, MethodVisitor v) {
+		v.visitTypeInsn(NEW, "bali/BaliThrowable");
+		v.visitInsn(DUP);
 		push(statement.getValue(), v);
+		v.visitMethodInsn(INVOKESPECIAL, "bali/BaliThrowable", "<init>", "(Lbali/Exception;)V");
 		v.visitInsn(ATHROW);
 	}
 
@@ -340,28 +343,36 @@ public class ASMStackManager implements Opcodes {
 
 	public void execute(TryStatementNode statement, MethodVisitor v) {
 		Label start = new Label();
+		Label mainCatchStart = new Label();
 		Label end = new Label();
-		Map<Label, CatchStatementNode> markers = new LinkedHashMap<>();
-		for (CatchStatementNode catchStatement : statement.getCatchStatements()) {
-			Label catchStart = new Label();
-			markers.put(catchStart, catchStatement);
-			v.visitTryCatchBlock(start, catchStart, catchStart, converter.getInternalName(catchStatement.getDeclaration().getType()));
-		}
+		v.visitTryCatchBlock(start, mainCatchStart, mainCatchStart, "bali/BaliThrowable");
 		v.visitLabel(start);
 		execute(statement.getMain(), v);
 		v.visitJumpInsn(GOTO, end);
+		v.visitLabel(mainCatchStart);
+		v.visitInsn(DUP);
+		v.visitFieldInsn(GETFIELD, "bali/BaliThrowable", "thrown", "Lbali/Exception;");
 
-		for (Map.Entry<Label, CatchStatementNode> entry : markers.entrySet()) {
-			Label catchStart = entry.getKey();
+		for (CatchStatementNode catchStatement : statement.getCatchStatements()) {
+			Label catchStart = new Label();
 			Label catchEnd = new Label();
+			DeclarationNode declaration = catchStatement.getDeclaration();
+			Site site = declaration.getType().getSite();
+			String name = declaration.getName();
+			v.visitInsn(DUP);
+			v.visitTypeInsn(INSTANCEOF, converter.getInternalName(site.getType()));
+			v.visitJumpInsn(IFEQ, catchEnd);
+			v.visitInsn(DUP);
+			addToVariables(name, site, catchStart, catchEnd, v);
 			v.visitLabel(catchStart);
-			DeclarationNode declarationNode = entry.getValue().getDeclaration();
-			addToVariables(declarationNode.getName(), declarationNode.getType().getSite(), catchStart, catchEnd, v);
-			execute(entry.getValue().getBody(), v);
+			execute(catchStatement.getBody(), v);
 			v.visitLabel(catchEnd);
+			v.visitInsn(POP);
+			v.visitInsn(POP);
 			v.visitJumpInsn(GOTO, end);
 		}
-
+		v.visitInsn(POP);
+		v.visitInsn(ATHROW);
 		v.visitLabel(end);
 	}
 

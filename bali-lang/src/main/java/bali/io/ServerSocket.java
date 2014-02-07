@@ -3,6 +3,7 @@ package bali.io;
 import bali.Closable;
 import bali.annotation.MetaType;
 import bali.annotation.MetaTypes;
+import bali.annotation.ThreadSafe;
 
 /**
  * User: Richard
@@ -11,6 +12,7 @@ import bali.annotation.MetaTypes;
 @MetaType(MetaTypes.INTERFACE)
 public interface ServerSocket extends Closable {
 
+	@ThreadSafe
 	public Socket getConnection() throws Exception;
 
 }
