@@ -47,6 +47,8 @@ public class TypeDeclarationTypeBuilder {
 				Collections.<Operator>emptyList(),
 				Collections.<UnaryOperator>emptyList(),
 				Collections.<Declaration>emptyList(),
+				false,
+				true,
 				false
 		);
 	}
@@ -62,7 +64,9 @@ public class TypeDeclarationTypeBuilder {
 				getOperators(declaration),
 				getUnaryOperators(declaration),
 				Collections.<Declaration>emptyList(),
-				true
+				true,
+				false,
+				false
 		); // TODO - self declared values, monitors
 	}
 
@@ -78,7 +82,9 @@ public class TypeDeclarationTypeBuilder {
 				Collections.<Operator>emptyList(),
 				Collections.<UnaryOperator>emptyList(),
 				getProperties(declaration),
-				true
+				true,
+				true,
+				false
 		);
 	}
 

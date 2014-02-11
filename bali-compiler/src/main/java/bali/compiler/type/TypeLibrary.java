@@ -5,6 +5,7 @@ import bali.compiler.reference.BlockingReference;
 import bali.compiler.reference.Reference;
 import bali.compiler.reference.SimpleReference;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +18,22 @@ public class TypeLibrary {
 	private final TypeDeclarationTypeBuilder declarationBuilder = new TypeDeclarationTypeBuilder();
 	private final ClasspathTypeBuilder classpathBuilder = new ClasspathTypeBuilder(this);
 	private final Map<String, Reference<Type>> types = new HashMap<>();
+
+	{
+		types.put("java.lang.Object", new SimpleReference<>(new Type(Object.class.getName(),
+				null,
+				Collections.<Declaration>emptyList(),
+				Collections.<Site>emptyList(),
+				Collections.<Declaration>emptyList(),
+				Collections.<Method>emptyList(),
+				Collections.<Operator>emptyList(),
+				Collections.<UnaryOperator>emptyList(),
+				Collections.<Declaration>emptyList(),
+				false,
+				false,
+				false
+		)));
+	}
 
 	public void notifyOfDeclaration(String qualifiedClassName) {
 		Reference<Type> reference = new BlockingReference<>();

@@ -2,9 +2,11 @@ import bali.Executable
 import bali.Boolean
 import bali.String
 import bali.Exception
-import bali.io.ServerSocket
 import bali.io.Socket
-import bali.RuntimeException
+import bali.io.ServerSocket
+import bali.io.SocketMonitor
+import bali.monitor.ConnectionMonitor
+
 
 class TempleServer implements Executable {
 
@@ -12,18 +14,26 @@ class TempleServer implements Executable {
 
 		CONSOLE << "Starting Temple"
 		ServerSocket port = NETWORK_MANAGER.openPort(8080)
+		ConnectionMonitor[Socket]! monitor = new SocketMonitor(port)
 
 		while (true){
 
-			Socket! connection = port.getConnection()
+			monitor.waitForConnection()
+
 			run {
+
+				Socket connection = monitor.getConnection()
+
 				try {
+
 					CONSOLE << "Receiving Request"
 
 	                while (true) {
                         String? read = << connection
-                        if (?read) if (!(read.length() == 0)){
+                        if (?read) if (~(read.length() == 0)){
                             CONSOLE << read
+                        } else {
+                            break
                         } else {
                             break
                         }

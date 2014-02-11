@@ -14,7 +14,6 @@ public class StandardServerSocket implements ServerSocket {
 		this.delegate = delegate;
 	}
 
-	@ThreadSafe
 	public Socket getConnection() throws Exception {
 		java.net.Socket socket = delegate.accept();
 		StandardSocket ret =  new StandardSocket(socket);

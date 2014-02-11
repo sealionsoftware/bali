@@ -13,13 +13,10 @@ STRING_LITERAL:             '"' ~[^"]* '"' ;
 
 NUMBER_LITERAL:             [0-9]+ ('.' [0-9]+)? ;
 
-EQ:                         '=';
 QM:                         '?';
-LT:                         '<';
-GT:                         '>';
 EX:                         '!';
 
-OPERATOR:                   [\+\-£$%\^&\*#\~@/\\\|¬`¦:=\?<>\!]+ ;
+OPERATOR:                   [\+\-$%\^&\*#\~@/\\\|=<>]+ ;
 
 // Grammar Definition
 
@@ -38,21 +35,21 @@ typeIdentifier:             (IDENTIFIER '.')* IDENTIFIER ;
 
 importDeclaration:          'import' typeIdentifier ;
 
-constantDeclaration:        'constant' typeDeclaration IDENTIFIER EQ constantValue ;
+constantDeclaration:        'constant' siteDefinition IDENTIFIER '=' constantValue ;
 
-interfaceDeclaration:       'interface' classDefinition ('extends' typeDeclarationList)? '{' (declarationDeclaration)* '}' ;
+interfaceDeclaration:       'interface' typeDefinition ('extends' siteDefinitionList)? '{' (declarationDeclaration)* '}' ;
 
-classDeclaration:           'class' classDefinition argumentDeclarationList? ( 'implements' typeDeclarationList )? '{' fieldDeclaration* methodDeclaration* '}' ;
+classDeclaration:           'class' typeDefinition argumentDeclarationList? ( 'implements' siteDefinitionList )? '{' fieldDeclaration* methodDeclaration* '}' ;
 
-beanDeclaration:            'bean' classDefinition ( 'extends' typeDeclaration )? '{' propertyDeclaration* '}' ;
+beanDeclaration:            'bean' typeDefinition ( 'extends' siteDefinition )? '{' propertyDeclaration* '}' ;
 
-fieldDeclaration:           'field' typeDeclaration IDENTIFIER (EQ expression )? ;
+fieldDeclaration:           'field' siteDefinition IDENTIFIER ('=' expression )? ;
 
-methodDeclaration:          'method' typeDeclaration? IDENTIFIER argumentDeclarationList? codeBlock ;
+methodDeclaration:          'method' siteDefinition? IDENTIFIER argumentDeclarationList? codeBlock ;
 
-declarationDeclaration:     'declare' typeDeclaration? IDENTIFIER argumentDeclarationList? ;
+declarationDeclaration:     'declare' siteDefinition? IDENTIFIER argumentDeclarationList? ;
 
-propertyDeclaration:        'property' typeDeclaration IDENTIFIER ;
+propertyDeclaration:        'property' siteDefinition IDENTIFIER ;
 
 codeBlock:                  '{' statement* '}' ;
 
@@ -82,9 +79,9 @@ defaultStatement:           'default' ':' controlExpression ;
 
 runStatement:               'run' controlExpression ;
 
-variableDeclaration:        typeDeclaration IDENTIFIER (EQ expression)? ;
+variableDeclaration:        siteDefinition IDENTIFIER ('=' expression)? ;
 
-assignment:                 reference EQ expression ;
+assignment:                 reference '=' expression ;
 
 call:                       IDENTIFIER argumentList ;
 
@@ -94,7 +91,7 @@ invocation:                 (target '.')? call ;
 
 reference:                  (target '.')? IDENTIFIER ;
 
-operator:                   QM | LT | GT | EX | OPERATOR ;
+operator:                   QM | OPERATOR ;
 
 unaryOperation:             operator expressionForOperation ;
 
@@ -110,17 +107,17 @@ breakStatement:             'break' ;
 
 continueStatement:          'continue' ;
 
-typeDeclaration:            typeIdentifier (LT  typeDeclarationList GT)? QM? EX? ;
+siteDefinition:            typeIdentifier ('['  siteDefinitionList ']')? EX? QM? ;
 
-typeDeclarationList:        typeDeclaration (',' typeDeclaration)* ;
+siteDefinitionList:        siteDefinition (',' siteDefinition)* ;
 
-classDefinition:            typeIdentifier (LT  typeVarDeclarationList GT)? ;
+typeDefinition:            typeIdentifier ('['  typeVarDeclarationList ']')? ;
 
 typeVarDeclaration:         typeIdentifier? IDENTIFIER ;
 
 typeVarDeclarationList:     typeVarDeclaration (',' typeVarDeclaration)* ;
 
-argumentDeclaration:        typeDeclaration IDENTIFIER ;
+argumentDeclaration:        siteDefinition IDENTIFIER ;
 
 argumentDeclarationList:    '(' (argumentDeclaration ( ',' argumentDeclaration)*)? ')' ;
 

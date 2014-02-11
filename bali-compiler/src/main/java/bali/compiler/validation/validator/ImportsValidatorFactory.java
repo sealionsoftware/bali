@@ -37,7 +37,7 @@ public class ImportsValidatorFactory implements ValidatorFactory {
 					} catch (Exception e) {
 						failures.add(new ValidationFailure(
 								iport,
-								"Could not resolve import " + iport.getName() + " because " + e.getMessage()
+								"Could not resolve import " + iport.getName() + "; " + e.getMessage()
 						));
 						iport.setType(null);
 					}

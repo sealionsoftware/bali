@@ -22,8 +22,8 @@ public class CopySite implements Site {
 	private List<UnaryOperator> unaryOperators;
 	private List<Declaration> properties;
 
-	public CopySite(boolean nullable, Type type, Site superType, List<Declaration> typeParameters, List<Site> interfaces, List<Declaration> parameters, List<Method> methods, List<Operator> operators, List<UnaryOperator> unaryOperators, List<Declaration> properties, boolean threadSafe) {
-		this.nullable = nullable;
+	public CopySite(Type type, Site superType, List<Declaration> typeParameters, List<Site> interfaces, List<Declaration> parameters, List<Method> methods, List<Operator> operators, List<UnaryOperator> unaryOperators, List<Declaration> properties, boolean nullable, boolean threadSafe) {
+
 		this.type = type;
 		this.superType = superType;
 		this.typeParameters = typeParameters;
@@ -33,6 +33,7 @@ public class CopySite implements Site {
 		this.operators = operators;
 		this.unaryOperators = unaryOperators;
 		this.properties = properties;
+		this.nullable = nullable;
 		this.threadSafe = threadSafe;
 	}
 

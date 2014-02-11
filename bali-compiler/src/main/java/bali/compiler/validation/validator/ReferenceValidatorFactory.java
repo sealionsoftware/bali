@@ -180,7 +180,6 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 							String name = referenceNode.getName();
 							Site original = getSiteForReference(name);
 							Site newSite = new CopySite(
-									false,
 									original.getType(),
 									original.getSuperType(),
 									original.getTypeParameters(),
@@ -190,6 +189,7 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 									original.getOperators(),
 									original.getUnaryOperators(),
 									original.getProperties(),
+									false,
 									original.isThreadSafe()
 							);
 							ControlExpressionNode conditional = statement.getConditional();

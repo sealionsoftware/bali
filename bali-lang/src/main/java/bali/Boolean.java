@@ -11,7 +11,7 @@ import bali.annotation.Operator;
 @MetaType(MetaTypes.INTERFACE)
 public interface Boolean extends Value<Boolean> {
 
-	@Operator("!")
+	@Operator("~")
 	Boolean not();
 
 	@Operator("&")

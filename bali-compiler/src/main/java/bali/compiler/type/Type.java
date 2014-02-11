@@ -20,6 +20,8 @@ public class Type {
 	private List<Declaration> properties;
 
 	private Boolean isAbstract;
+	private Boolean isConstrucable;
+	private Boolean isMonitor;
 
 	public Type(String name,
 	            Site superType,
@@ -30,7 +32,9 @@ public class Type {
 	            List<Operator> operators,
 	            List<UnaryOperator> unaryOperators,
 	            List<Declaration> properties,
-	            Boolean isAbstract) {
+	            Boolean isAbstract,
+	            Boolean isConstrucable,
+	            Boolean isMonitor) {
 		this.name = name;
 		this.superType = superType;
 		this.typeParameters = typeParameters;
@@ -41,6 +45,8 @@ public class Type {
 		this.parameters = parameters;
 		this.properties = properties;
 		this.isAbstract = isAbstract;
+		this.isConstrucable = isConstrucable;
+		this.isMonitor = isMonitor;
 	}
 
 	public String getName() {
@@ -79,8 +85,16 @@ public class Type {
 		return methods;
 	}
 
-	public boolean isAbstract(){
+	public Boolean isAbstract(){
 		return isAbstract;
+	}
+
+	public Boolean isConstrucable() {
+		return isConstrucable;
+	}
+
+	public Boolean isMonitor() {
+		return isMonitor;
 	}
 
 	public boolean equals(Object o) {

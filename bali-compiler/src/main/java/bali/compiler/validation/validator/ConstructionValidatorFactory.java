@@ -15,12 +15,6 @@ import java.util.List;
  */
 public class ConstructionValidatorFactory implements ValidatorFactory {
 
-	private TypeLibrary library = new TypeLibrary();
-
-	public ConstructionValidatorFactory(TypeLibrary library) {
-		this.library = library;
-	}
-
 	public Validator createValidator() {
 		return new Validator() {
 			public List<ValidationFailure> validate(Node node, Control control) {
@@ -28,10 +22,10 @@ public class ConstructionValidatorFactory implements ValidatorFactory {
 				List<ValidationFailure> failures;
 				if (node instanceof ConstructionExpressionNode){
 					ConstructionExpressionNode expression = (ConstructionExpressionNode) node;
-					Type expressionType = library.getType(expression.getType().getName());
+					Type expressionType = expression.getType().getType();
 					// TODO: Check constructor type signature
 
-					if (expressionType.isAbstract()) {
+					if (!expressionType.isConstrucable()) {
 						failures = Collections.singletonList(new ValidationFailure(expression, "Cannot instanciate an interface type"));
 					} else {
 						failures = Collections.emptyList();

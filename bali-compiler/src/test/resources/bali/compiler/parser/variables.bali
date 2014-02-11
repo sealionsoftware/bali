@@ -22,10 +22,10 @@
 	aBoolean = aBoolean & true
 	aBoolean = aBoolean | false
 	aBoolean = aBoolean ^ false
-	aBoolean = !aBoolean
+	aBoolean = ~aBoolean
 	aBoolean = ?anObject
 	aBoolean = 1.0 == 1
-	aBoolean = 2 != 1
+	aBoolean = 2 ~= 1
 
 	// String Expressions
 	String one = "whats up $aBoolean"

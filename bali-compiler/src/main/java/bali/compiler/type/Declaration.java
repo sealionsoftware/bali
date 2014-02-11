@@ -35,6 +35,6 @@ public class Declaration {
 	}
 
 	public String toString() {
-		return type + " " + name;
+		return name;
 	}
 }

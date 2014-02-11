@@ -21,6 +21,7 @@ import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.CopySite;
 import bali.compiler.type.Declaration;
 import bali.compiler.type.Site;
+import bali.compiler.type.Type;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayDeque;
@@ -42,13 +43,25 @@ public class SiteValidatorFactory implements ValidatorFactory {
 			public List<ValidationFailure> validate(Node node, Control control) {
 				List<ValidationFailure> failures = new ArrayList<>();
 				if (node instanceof SiteNode){
+
 					SiteNode siteNode = (SiteNode) node;
-					if (!siteNode.getSite().getType().isAbstract()){
+					Site site = siteNode.getSite();
+					Type type = site.getType();
+
+					if (!type.isAbstract()){
 						failures.add(new ValidationFailure(
 							siteNode,
-							"Declared site must be of abstract types"
+							"Declared site must be of abstract type"
 						));
 					}
+
+					if (siteNode.getParameters().size() != type.getTypeParameters().size()){
+						failures.add(new ValidationFailure(
+								siteNode,
+								"Invalid parameterisation: " + siteNode.getParameters() + " => " + type.getTypeParameters()
+						));
+					}
+
 				}
 				control.validateChildren();
 				return failures;

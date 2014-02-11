@@ -59,31 +59,30 @@ public class TypeResolvingValidatorFactory implements ValidatorFactory {
 				return failures;
 			}
 
-			public List<ValidationFailure> validate(SiteNode type) {
+			public List<ValidationFailure> validate(SiteNode siteNode) {
 
 				List<ValidationFailure> ret = new ArrayList<>();
-				Reference<Type> reference = resolvables.get(type.getClassName());
+				Reference<Type> reference = resolvables.get(siteNode.getClassName());
 
 				if (reference == null) {
 					try {
-						reference = library.getReference(type.getClassName());
+						reference = library.getReference(siteNode.getClassName());
 					} catch (Exception e) {
-						ret.add(new ValidationFailure(type, "Cannot resolve type " + type));
+						ret.add(new ValidationFailure(siteNode, "Cannot resolve type " + siteNode));
 						return ret;
 					}
 				}
 
-				List<SiteNode> parameterNodes = type.getParameters();
+				List<SiteNode> parameterNodes = siteNode.getParameters();
 				if (parameterNodes.isEmpty()){
-					type.setSite(new VanillaSite(reference, type.getNullable(), type.getThreadSafe()));
+					siteNode.setSite(new VanillaSite(reference, siteNode.getNullable(), siteNode.getThreadSafe()));
 				}
-
 				List<Site> parameterSites = new ArrayList<>(parameterNodes.size());
 				for (SiteNode parameterNode : parameterNodes) {
 					parameterSites.add(parameterNode.getSite());
 				}
 
-				type.setSite(new ParametrizedSite(reference, parameterSites, type.getNullable(), type.getThreadSafe()));
+				siteNode.setSite(new ParametrizedSite(reference, parameterSites, siteNode.getNullable(), siteNode.getThreadSafe()));
 				return ret;
 			}
 
@@ -101,7 +100,7 @@ public class TypeResolvingValidatorFactory implements ValidatorFactory {
 					}
 				}
 
-				type.setType(new VanillaSite(reference));
+				type.setType(new VanillaSite(reference, false, reference.get().isMonitor()));
 				return ret;
 			}
 		};

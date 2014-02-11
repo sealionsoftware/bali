@@ -123,7 +123,7 @@ public class ANTLRParserManager implements ParserManager {
 	private ConstantNode build(BaliParser.ConstantDeclarationContext context) {
 		ConstantNode constant = new ConstantNode(l(context), c(context));
 		constant.setName(context.IDENTIFIER().getText());
-		constant.setType(build(context.typeDeclaration()));
+		constant.setType(build(context.siteDefinition()));
 		constant.setValue(build(context.constantValue()));
 		return constant;
 	}
@@ -131,10 +131,10 @@ public class ANTLRParserManager implements ParserManager {
 	private BeanNode build(BaliParser.BeanDeclarationContext context) {
 		BeanNode bean = new BeanNode(l(context), c(context));
 
-		bean.setClassName(context.classDefinition().getText());
+		bean.setClassName(context.typeDefinition().getText());
 
-		if(context.typeDeclaration()!= null){
-			bean.setSuperType(build(context.typeDeclaration()));
+		if(context.siteDefinition()!= null){
+			bean.setSuperType(build(context.siteDefinition()));
 		}
 
 //		for (BaliParser.TypeDeclarationContext typeIdentifier : context.typeDeclaration()){
@@ -151,13 +151,13 @@ public class ANTLRParserManager implements ParserManager {
 	private InterfaceNode build(BaliParser.InterfaceDeclarationContext context) {
 		InterfaceNode iface = new InterfaceNode(l(context), c(context));
 
-		iface.setClassName(context.classDefinition().getText());
+		iface.setClassName(context.typeDefinition().getText());
 
 //		for (TerminalNode typeIdentifier : context.typeDeclarationList().typeIdentifier()){
 //			iface.addParameter(getType(typeIdentifier));
 //		}
-		if (context.typeDeclarationList() != null) {
-			for (BaliParser.TypeDeclarationContext typeDeclaration : context.typeDeclarationList().typeDeclaration()) {
+		if (context.siteDefinitionList() != null) {
+			for (BaliParser.SiteDefinitionContext typeDeclaration : context.siteDefinitionList().siteDefinition()) {
 				iface.addImplementation(build(typeDeclaration));
 			}
 		}
@@ -170,14 +170,14 @@ public class ANTLRParserManager implements ParserManager {
 
 	private ClassNode build(BaliParser.ClassDeclarationContext context) throws Exception {
 		ClassNode clazz = new ClassNode(l(context), c(context));
-		clazz.setClassName(context.classDefinition().typeIdentifier().getText());
+		clazz.setClassName(context.typeDefinition().typeIdentifier().getText());
 
 
 //		for (TerminalNode typeIdentifier : context.typeDeclarationList().typeIdentifier()){
 //			clazz.addParameter(getType(typeIdentifier));
 //		}
-		if (context.typeDeclarationList() != null) {
-			for (BaliParser.TypeDeclarationContext typeDeclaration : context.typeDeclarationList().typeDeclaration()) {
+		if (context.siteDefinitionList() != null) {
+			for (BaliParser.SiteDefinitionContext typeDeclaration : context.siteDefinitionList().siteDefinition()) {
 				clazz.addImplementation(build(typeDeclaration));
 			}
 		}
@@ -198,7 +198,7 @@ public class ANTLRParserManager implements ParserManager {
 	private MethodDeclarationNode build(BaliParser.MethodDeclarationContext context) throws Exception {
 		MethodDeclarationNode method = new MethodDeclarationNode(l(context), c(context));
 		method.setName(context.IDENTIFIER().getText());
-		BaliParser.TypeDeclarationContext typeDeclaration = context.typeDeclaration();
+		BaliParser.SiteDefinitionContext typeDeclaration = context.siteDefinition();
 		if (typeDeclaration != null) {
 			method.setType(build(typeDeclaration));
 		}
@@ -365,7 +365,7 @@ public class ANTLRParserManager implements ParserManager {
 		VariableNode variable = new VariableNode(l(context), c(context));
 		DeclarationNode declaration = new FieldNode(); // A Variable is not really a field, but it has the same structure
 		declaration.setName(context.IDENTIFIER().getText());
-		declaration.setType(build(context.typeDeclaration()));
+		declaration.setType(build(context.siteDefinition()));
 		variable.setDeclaration(declaration);
 		if (context.expression() != null){
 			variable.setValue(build(context.expression()));
@@ -390,7 +390,7 @@ public class ANTLRParserManager implements ParserManager {
 	private FieldNode build(BaliParser.FieldDeclarationContext context) {
 		FieldNode field = new FieldNode(l(context), c(context));
 		field.setName(context.IDENTIFIER().getText());
-		field.setType(build(context.typeDeclaration()));
+		field.setType(build(context.siteDefinition()));
 		if (context.expression() != null) {
 			field.setValue(build(context.expression()));
 		}
@@ -400,21 +400,21 @@ public class ANTLRParserManager implements ParserManager {
 	private ArgumentDeclarationNode build(BaliParser.ArgumentDeclarationContext context) {
 		ArgumentDeclarationNode argumentDeclaration = new ArgumentDeclarationNode(l(context), c(context));
 		argumentDeclaration.setName(context.IDENTIFIER().getText());
-		argumentDeclaration.setType(build(context.typeDeclaration()));
+		argumentDeclaration.setType(build(context.siteDefinition()));
 		return argumentDeclaration;
 	}
 
 	private PropertyNode build(BaliParser.PropertyDeclarationContext context) {
 		PropertyNode propertyNode = new PropertyNode(l(context), c(context));
 		propertyNode.setName(context.IDENTIFIER().getText());
-		propertyNode.setType(build(context.typeDeclaration()));
+		propertyNode.setType(build(context.siteDefinition()));
 		return propertyNode;
 	}
 
 	private MethodNode build(BaliParser.DeclarationDeclarationContext context) {
 		MethodNode method = new MethodNode(l(context), c(context));
 		method.setName(context.IDENTIFIER().getText());
-		BaliParser.TypeDeclarationContext typeDeclaration = context.typeDeclaration();
+		BaliParser.SiteDefinitionContext typeDeclaration = context.siteDefinition();
 		if (typeDeclaration != null) {
 			method.setType(build(typeDeclaration));
 		}
@@ -622,15 +622,15 @@ public class ANTLRParserManager implements ParserManager {
 		throw new RuntimeException("Could not get value for constant expression " + context.getText());
 	}
 
-	private SiteNode build(BaliParser.TypeDeclarationContext typeContext) {
+	private SiteNode build(BaliParser.SiteDefinitionContext typeContext) {
 
 		BaliParser.TypeIdentifierContext tic = typeContext.typeIdentifier();
 		Token start = tic.IDENTIFIER(0).getSymbol();
 		SiteNode returnType = new SiteNode(start.getLine(), start.getCharPositionInLine());
 		returnType.setClassName(tic.getText());
-		BaliParser.TypeDeclarationListContext parameterTypes = typeContext.typeDeclarationList();
+		BaliParser.SiteDefinitionListContext parameterTypes = typeContext.siteDefinitionList();
 		if (parameterTypes != null) {
-			for (BaliParser.TypeDeclarationContext typeDeclaration : parameterTypes.typeDeclaration()) {
+			for (BaliParser.SiteDefinitionContext typeDeclaration : parameterTypes.siteDefinition()) {
 				SiteNode parameterType = build(typeDeclaration);
 				returnType.addParameter(parameterType);
 			}

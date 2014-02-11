@@ -12,7 +12,6 @@ import bali.annotation.ThreadSafe;
 @MetaType(MetaTypes.INTERFACE)
 public interface ServerSocket extends Closable {
 
-	@ThreadSafe
 	public Socket getConnection() throws Exception;
 
 }

@@ -88,7 +88,6 @@ public class BaliMavenPlugin implements Mojo {
 
 		} catch (ValidationException e) {
 			List<String> failedFiles = e.getFailedFiles();
-			log.error("Compilation failed");
 			for (String failedFile : failedFiles) {
 				List<ValidationFailure> failures = e.getFailures(failedFile);
 				if (failures.size() > 0) {
@@ -99,15 +98,16 @@ public class BaliMavenPlugin implements Mojo {
 					}
 				}
 			}
+			throw new MojoExecutionException("Compilation failed");
 		} catch (Exception e) {
 			throw new MojoFailureException("An Exception occured whilst compiling", e);
 		}
-
 	}
 
 	private List<File> findBaliFiles(File directory){
 		List<File> sourceFiles = new ArrayList<>();
-		for (File file : directory.listFiles()){
+		File[] files = directory.listFiles();
+		if (files != null) for (File file : files){
 			if (file.isFile() && file.getName().endsWith(BaliCompiler.BALI_SOURCE_FILE_EXTENSION)){
 				sourceFiles.add(file);
 			} else if (file.isDirectory()){

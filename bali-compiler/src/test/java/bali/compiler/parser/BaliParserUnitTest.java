@@ -102,6 +102,11 @@ public class BaliParserUnitTest {
 		parseCodeBlock("propertyReference.bali");
 	}
 
+	@Test
+	public void testComplexVariable() throws Exception {
+		parseCodeBlock("complex.bali");
+	}
+
 	private void parseCodeBlock(String filename) throws IOException {
 		BaliParser parser = parse(filename);
 		checkSucceeded(parser, parser.codeBlock());

@@ -80,6 +80,8 @@ public class ASMStackManager implements Opcodes {
 				Collections.<Operator>emptyList(),
 				Collections.<UnaryOperator>emptyList(),
 				Collections.<Declaration>emptyList(),
+				false,
+				false,
 				false
 		);
 	}

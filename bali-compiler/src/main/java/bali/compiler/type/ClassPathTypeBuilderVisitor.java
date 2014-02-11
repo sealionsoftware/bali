@@ -71,7 +71,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 			List<Site> ifaces = new ArrayList<>();
 			for (String iface : interfaces){
 				Reference<Type> ref = library.getReference(iface.replaceAll("/", "."));
-				ifaces.add(new VanillaSite(ref));
+				ifaces.add(new VanillaSite(ref, true, true));
 			}
 			this.interfaces = ifaces;
 		}
@@ -236,7 +236,25 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 						Collections.<Operator>emptyList(),
 						Collections.<UnaryOperator>emptyList(),
 						Collections.<Declaration>emptyList(),
+						false,
+						true,
 						false
+					);
+				break;
+			case MONITOR:
+				classpathType = new Type(
+						className,
+						null,
+						typeParameters,
+						interfaces,
+						constructorParameters,
+						methods,
+						Collections.<Operator>emptyList(),
+						Collections.<UnaryOperator>emptyList(),
+						Collections.<Declaration>emptyList(),
+						false,
+						true,
+						true
 				);
 				break;
 			case INTERFACE:
@@ -250,7 +268,9 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 						operators,
 						unaryOperators,
 						Collections.<Declaration>emptyList(),
-						true
+						true,
+						false,
+						false
 				);
 				break;
 			default:

@@ -45,10 +45,10 @@ public class TestType extends Type {
 	}
 
 	public TestType(String className, List<Declaration> typeParameters, List<Site> interfaces, List<Declaration> parameters, List<Method> methods, List<Operator> operators, List<UnaryOperator> unaryOperators, List<Declaration> properties) {
-		super(className, null, typeParameters, interfaces, parameters, methods, operators, unaryOperators, properties, false);
+		super(className, null, typeParameters, interfaces, parameters, methods, operators, unaryOperators, properties, false, true, false);
 	}
 
-	public boolean isAbstract() {
+	public Boolean isAbstract() {
 		return false;
 	}
 

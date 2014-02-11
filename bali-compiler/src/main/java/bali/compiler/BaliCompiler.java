@@ -99,7 +99,7 @@ public class BaliCompiler {
 				new ReturnValueValidatorFactory(),
 				new ImplementationValidatorFactory(),
 				new AssignmentValidatorFactory(),
-				new ConstructionValidatorFactory(library),
+				new ConstructionValidatorFactory(),
 				new ThrowStatementValidatorFactory(library),
 				new BranchStatementValidatorFactory(),
 				new RunStatementValidatorFactory(),
@@ -171,13 +171,16 @@ public class BaliCompiler {
 		}
 
 		BaliCompiler compiler = new BaliCompiler();
+		File outputFile = new File(out, moduleName + ".bar");
+		OutputStream os = new FileOutputStream(outputFile);
 
 		try {
 
-			OutputStream os = new FileOutputStream(new File(out, moduleName + ".jar"));
 			compiler.compile(packageDescriptions, os);
 
 		} catch (ValidationException e) {
+			os.close();
+			outputFile.delete();
 			List<String> failedFiles = e.getFailedFiles();
 			System.err.println("Compilation failed");
 			System.err.println();
@@ -192,6 +195,8 @@ public class BaliCompiler {
 				}
 			}
 		}
+		os.close();
+
 	}
 
 	private static File check(String name) throws Exception {

@@ -35,4 +35,8 @@ public abstract class LiteralExpressionNode extends ExpressionNode {
 	public String getSerialization() {
 		return serialization;
 	}
+
+	public String toString() {
+		return serialization;
+	}
 }
