@@ -10,7 +10,7 @@ import bali.monitor.ConnectionMonitor
 import bali.monitor.CounterMonitor
 
 
-class TempleServer implements Executable {
+object TempleServer implements Executable {
 
 	method execute {
 

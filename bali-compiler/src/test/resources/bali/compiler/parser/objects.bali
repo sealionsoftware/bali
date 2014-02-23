@@ -1,6 +1,6 @@
 // Class Declarations
 
-class AClass {
+object AClass {
 
 	field Number aField = 1
 	field String aString = "Hello World"
@@ -16,7 +16,7 @@ class AClass {
 
 }
 
-class AnotherClass(String parameter) implements AnInterface {
+object AnotherClass(String parameter) implements AnInterface {
 
 	method aVoidAnotherMethod {
 		// Do something

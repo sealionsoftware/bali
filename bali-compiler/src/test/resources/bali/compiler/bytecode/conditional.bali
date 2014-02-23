@@ -5,7 +5,7 @@ interface Doer {
  	declare goDo
 }
 
-class ConditionalDoer implements Doer {
+object ConditionalDoer implements Doer {
 
  	method goDo {
 

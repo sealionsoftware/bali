@@ -44,7 +44,7 @@ public class BaliParserUnitTest {
 
 	@Test
 	public void testClassesDeclaration() throws Exception {
-		parsePackageDeclaration("classes.bali");
+		parsePackageDeclaration("objects.bali");
 	}
 
 	@Test

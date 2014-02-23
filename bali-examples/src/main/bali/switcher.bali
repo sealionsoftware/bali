@@ -6,7 +6,7 @@ interface Doer {
  	declare goDo()
 }
 
-class SwitchDoer() implements Doer {
+object SwitchDoer() implements Doer {
 
 	field Number operand = 1
 

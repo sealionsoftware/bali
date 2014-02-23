@@ -15,7 +15,7 @@ bean SubBean  {
 	property Number aNumber
 }
 
-class BeanExecutable() implements Executable {
+object BeanExecutable() implements Executable {
 
  	method execute(){
 

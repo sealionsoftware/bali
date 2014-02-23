@@ -39,7 +39,7 @@ constantDeclaration:        'constant' siteDefinition IDENTIFIER '=' constantVal
 
 interfaceDeclaration:       'interface' typeDefinition ('extends' siteDefinitionList)? '{' (declarationDeclaration)* '}' ;
 
-classDeclaration:           'class' typeDefinition argumentDeclarationList? ( 'implements' siteDefinitionList )? '{' fieldDeclaration* methodDeclaration* '}' ;
+classDeclaration:           'object' typeDefinition argumentDeclarationList? ( 'implements' siteDefinitionList )? '{' fieldDeclaration* methodDeclaration* '}' ;
 
 beanDeclaration:            'bean' typeDefinition ( 'extends' siteDefinition )? '{' propertyDeclaration* '}' ;
 

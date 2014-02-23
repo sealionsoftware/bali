@@ -3,7 +3,7 @@ import bali.Number
 import bali.String
 import bali.Executable
 
-class UnaryDoer() implements Executable {
+object UnaryDoer() implements Executable {
 
  	method execute(){
 

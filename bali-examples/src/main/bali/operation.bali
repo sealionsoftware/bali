@@ -3,7 +3,7 @@ import bali.Number
 import bali.String
 import bali.Executable
 
-class OperationDoer() implements Executable {
+object OperationDoer() implements Executable {
 
  	method execute(){
  	    Number n = 1 + 2

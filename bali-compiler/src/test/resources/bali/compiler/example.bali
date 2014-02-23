@@ -45,7 +45,7 @@ interface AnInterface extends ASuperInterface {
 
 // Classes
 
-class AnImplementation(Number aParameter) implements AnInterface {
+object AnImplementation(Number aParameter) implements AnInterface {
 
  	field Number aField
 

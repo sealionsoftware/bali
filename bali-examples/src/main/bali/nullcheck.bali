@@ -1,7 +1,7 @@
 import bali.String
 import bali.Executable
 
-class NullChecker(String greeting) implements Executable {
+object NullChecker(String greeting) implements Executable {
 
 	method execute(){
 

@@ -7,7 +7,7 @@ interface Greeter {
  	declare greet
 }
 
-class ConsoleGreeter implements Greeter {
+object ConsoleGreeter implements Greeter {
 
 	field String greeting = "Field Greeting"
 

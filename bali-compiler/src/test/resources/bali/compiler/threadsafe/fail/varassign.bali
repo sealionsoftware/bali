@@ -2,7 +2,7 @@ import bali.Console
 import bali.String
 import bali.Executable
 
-class Test implements Executable {
+object Test implements Executable {
 
  	method execute {
  	    String one = "G'Day"
