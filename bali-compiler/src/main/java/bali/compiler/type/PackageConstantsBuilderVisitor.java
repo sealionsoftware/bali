@@ -7,7 +7,6 @@ import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
 
 import java.util.ArrayList;
@@ -25,11 +24,11 @@ public class PackageConstantsBuilderVisitor extends ClassVisitor {
 	private static final String THREADSAFE_ANNOTATION_NAME  =
 			org.objectweb.asm.Type.getType(ThreadSafe.class).getDescriptor();
 
-	private TypeLibrary library;
+	private ClassLibrary library;
 
 	private List<Declaration> declaredConstants = new ArrayList<>();
 
-	public PackageConstantsBuilderVisitor(TypeLibrary library) {
+	public PackageConstantsBuilderVisitor(ClassLibrary library) {
 		super(Opcodes.ASM4);
 		this.library = library;
 	}
@@ -54,13 +53,13 @@ public class PackageConstantsBuilderVisitor extends ClassVisitor {
 			public void visitEnd() {
 				if (signature != null){
 					SignatureReader signatureReader = new SignatureReader(signature);
-					SiteSignatureVisitor fieldVisitor = new SiteSignatureVisitor(library, Collections.<String, Site>emptyMap(), isNullable, isThreadSafe);
+					SiteSignatureVisitor fieldVisitor = new SiteSignatureVisitor(library, Collections.<String, Type>emptyMap(), isNullable, isThreadSafe);
 					signatureReader.accept(fieldVisitor);
-					declaredConstants.add(new Declaration(name, fieldVisitor.getSite()));
+					declaredConstants.add(new Declaration<>(name, fieldVisitor.getSite()));
 				} else {
-					Type asmType = Type.getType(desc);
-					Reference<bali.compiler.type.Type> ref = library.getReference(asmType.getClassName().replaceAll("/", "."));
-					declaredConstants.add(new Declaration(name, new VanillaSite(ref, isNullable, isThreadSafe)));
+					org.objectweb.asm.Type asmType = org.objectweb.asm.Type.getType(desc);
+					Reference<Class> ref = library.getReference(asmType.getClassName().replaceAll("/", "."));
+					declaredConstants.add(new Declaration<>(name, new ParameterisedSite(ref, isNullable, isThreadSafe)));
 				}
 				super.visitEnd();
 			}

@@ -2,8 +2,6 @@ package bali.compiler.validation.validator;
 
 import bali.compiler.parser.tree.ConstructionExpressionNode;
 import bali.compiler.parser.tree.Node;
-import bali.compiler.type.Type;
-import bali.compiler.type.TypeLibrary;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.Collections;
@@ -22,10 +20,10 @@ public class ConstructionValidatorFactory implements ValidatorFactory {
 				List<ValidationFailure> failures;
 				if (node instanceof ConstructionExpressionNode){
 					ConstructionExpressionNode expression = (ConstructionExpressionNode) node;
-					Type expressionType = expression.getType().getType();
+					bali.compiler.type.Class expressionClass = expression.getType().getTemplate();
 					// TODO: Check constructor type signature
 
-					if (!expressionType.isConstrucable()) {
+					if (!expressionClass.getMetaType().isConstructable()) {
 						failures = Collections.singletonList(new ValidationFailure(expression, "Cannot instanciate an interface type"));
 					} else {
 						failures = Collections.emptyList();

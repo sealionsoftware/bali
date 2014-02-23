@@ -2,8 +2,8 @@ package bali.number;
 
 import bali.Boolean;
 import bali.Number;
+import bali.annotation.Kind;
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
 
 import java.util.Arrays;
 
@@ -17,7 +17,7 @@ import static bali.number.NumberFactory.NUMBER_FACTORY;
  * User: Richard
  * Date: 04/05/13
  */
-@MetaType(MetaTypes.CLASS)
+@MetaType(Kind.OBJECT)
 public final class BigInteger implements bali.Integer {
 
 	private static final java.lang.String INVALID_NUMBER_TYPE = "Invalid Number Type";

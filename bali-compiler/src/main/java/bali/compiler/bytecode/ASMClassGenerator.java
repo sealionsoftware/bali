@@ -1,9 +1,9 @@
 package bali.compiler.bytecode;
 
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
+import bali.annotation.Kind;
 import bali.compiler.GeneratedClass;
-import bali.compiler.parser.tree.ClassNode;
+import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.DeclarationNode;
 import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.FieldNode;
@@ -22,17 +22,17 @@ import java.util.Map;
  * User: Richard
  * Date: 13/05/13
  */
-public class ASMClassGenerator implements Generator<ClassNode, GeneratedClass> {
+public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> {
 
 	private ASMConverter converter = new ASMConverter();
 
-	public GeneratedClass build(ClassNode input) throws Exception {
+	public GeneratedClass build(ObjectNode input) throws Exception {
 
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 		String[] interfaceNames = new String[input.getImplementations().size()];
 		int i = 0;
 		for (SiteNode iface : input.getImplementations()) {
-			interfaceNames[i++] = converter.getInternalName(iface.getSite().getName());
+			interfaceNames[i++] = converter.getInternalName(iface.getSite().getTemplate().getName());
 		}
 
 		cw.visit(V1_7,
@@ -45,7 +45,7 @@ public class ASMClassGenerator implements Generator<ClassNode, GeneratedClass> {
 		cw.visitSource(input.getSourceFile(), null);
 
 		AnnotationVisitor av = cw.visitAnnotation(converter.getTypeDescriptor(MetaType.class.getName()), false);
-		av.visitEnum("value", converter.getTypeDescriptor(MetaTypes.class.getName()), MetaTypes.CLASS.name());
+		av.visitEnum("value", converter.getTypeDescriptor(Kind.class.getName()), Kind.OBJECT.name());
 		av.visitEnd();
 
 		Map<String, ExpressionNode> values = new HashMap<>();
@@ -81,7 +81,7 @@ public class ASMClassGenerator implements Generator<ClassNode, GeneratedClass> {
 		return new GeneratedClass(input.getClassName(), cw.toByteArray());
 	}
 
-	private void buildConstructor(Map<String, ExpressionNode> values, ClassWriter cw, ClassNode input) {
+	private void buildConstructor(Map<String, ExpressionNode> values, ClassWriter cw, ObjectNode input) {
 
 		ASMStackManager manager = new ASMStackManager(converter);
 
@@ -119,7 +119,7 @@ public class ASMClassGenerator implements Generator<ClassNode, GeneratedClass> {
 			initv.visitFieldInsn(PUTFIELD,
 					converter.getInternalName(input.getQualifiedClassName()),
 					valueEntry.getKey(),
-					converter.getTypeDescriptor(value.getType().getType()));
+					converter.getTypeDescriptor(value.getType().getTemplate()));
 		}
 		initv.visitInsn(POP);
 		initv.visitInsn(RETURN);
@@ -149,7 +149,7 @@ public class ASMClassGenerator implements Generator<ClassNode, GeneratedClass> {
 		for (VariableInfo variable : manager.getDeclaredVariables()) {
 			methodVisitor.visitLocalVariable(
 					variable.getName(),
-					converter.getTypeDescriptor(variable.getType().getType()),
+					converter.getTypeDescriptor(variable.getType().getTemplate()),
 					null,
 					variable.getStart(),
 					variable.getEnd(),

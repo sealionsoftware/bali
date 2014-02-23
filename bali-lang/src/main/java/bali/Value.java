@@ -2,7 +2,7 @@ package bali;
 
 import bali.annotation.Immutable;
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
+import bali.annotation.Kind;
 import bali.annotation.Name;
 import bali.annotation.Operator;
 
@@ -11,10 +11,10 @@ import bali.annotation.Operator;
  * Date: 09/06/13
  */
 @Immutable
-@MetaType(MetaTypes.INTERFACE)
+@MetaType(Kind.INTERFACE)
 public interface Value<T extends Value> {
 
 	@Operator("==")
-	public Boolean equalTo(@Name("operand")T operand);
+	public Boolean equalTo(@Name("operand") T operand);
 
 }

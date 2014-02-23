@@ -15,15 +15,15 @@ import java.util.Queue;
  */
 public class MethodSignatureVisitor extends SignatureVisitor {
 
-	private TypeLibrary library;
+	private ClassLibrary library;
 
 	private SiteSignatureVisitor returnTypeVisitor ;
 	private List<SiteSignatureVisitor> parameterVisitors = new ArrayList<>();
-	private Map<String, Site> typeVariableBounds;
-	private TypeData returnData;
-	private Queue<TypeData> parameterData;
+	private Map<String, Type> typeVariableBounds;
+	private SiteData returnData;
+	private Queue<SiteData> parameterData;
 
-	public MethodSignatureVisitor(TypeLibrary library, Map<String, Site> typeVariableBounds, TypeData returnData, List<? extends TypeData> parameterData) {
+	public MethodSignatureVisitor(ClassLibrary library, Map<String, Type> typeVariableBounds, SiteData returnData, List<? extends SiteData> parameterData) {
 		super(Opcodes.ASM4);
 		this.library = library;
 		this.typeVariableBounds = typeVariableBounds;
@@ -37,7 +37,7 @@ public class MethodSignatureVisitor extends SignatureVisitor {
 	}
 
 	public SignatureVisitor visitParameterType() {
-		TypeData data = parameterData.poll();
+		SiteData data = parameterData.poll();
 		SiteSignatureVisitor visitor = new SiteSignatureVisitor(library, typeVariableBounds, data.nullable, data.threadSafe);
 		parameterVisitors.add(visitor);
 		return visitor;

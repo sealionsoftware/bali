@@ -1,11 +1,10 @@
 package bali.compiler.validation.validator;
 
-import bali.compiler.parser.tree.ClassNode;
+import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.DeclarationNode;
 import bali.compiler.parser.tree.Node;
-import bali.compiler.type.Type;
-import bali.compiler.type.TypeLibrary;
+import bali.compiler.type.*;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.Collections;
@@ -18,16 +17,16 @@ import java.util.Set;
  * Constructs the Class declarations qualified name,
  * Sets the source file name
  * Checks for member name duplication
- * Adds the type to the TypeLibrary
+ * Adds the type to the ClassLibrary
  * <p/>
  * User: Richard
  * Date: 19/06/13
  */
 public class ClassValidatorFactory implements ValidatorFactory {
 
-	private TypeLibrary library;
+	private ClassLibrary library;
 
-	public ClassValidatorFactory(TypeLibrary library) {
+	public ClassValidatorFactory(ClassLibrary library) {
 		this.library = library;
 	}
 
@@ -41,8 +40,8 @@ public class ClassValidatorFactory implements ValidatorFactory {
 				List<ValidationFailure> failures;
 				if (node instanceof CompilationUnitNode){
 					failures = validate((CompilationUnitNode) node);
-				} else if (node instanceof ClassNode){
-					failures = validate((ClassNode) node);
+				} else if (node instanceof ObjectNode){
+					failures = validate((ObjectNode) node);
 				} else {
 					failures = Collections.emptyList();
 				}
@@ -56,10 +55,10 @@ public class ClassValidatorFactory implements ValidatorFactory {
 				return Collections.emptyList();
 			}
 
-			private List<ValidationFailure> validate(ClassNode node) {
+			private List<ValidationFailure> validate(ObjectNode node) {
 
 				node.setSourceFile(unitName + ".bali");
-				Type resolved = library.addDeclaration(node);
+				bali.compiler.type.Class resolved = library.addDeclaration(node);
 				node.setResolvedType(resolved);
 
 				Set<String> memberNames = new HashSet<>();

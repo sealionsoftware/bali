@@ -1,14 +1,15 @@
 package bali.compiler.type;
 
+import bali.annotation.Kind;
 import bali.compiler.parser.tree.ArgumentDeclarationNode;
 import bali.compiler.parser.tree.BeanNode;
-import bali.compiler.parser.tree.ClassNode;
+import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.InterfaceNode;
-import bali.compiler.parser.tree.MethodDeclaringTypeNode;
+import bali.compiler.parser.tree.MethodDeclaringClassNode;
 import bali.compiler.parser.tree.MethodNode;
 import bali.compiler.parser.tree.PropertyNode;
 import bali.compiler.parser.tree.SiteNode;
-import bali.compiler.parser.tree.TypeNode;
+import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.parser.tree.TypeParameterNode;
 
 import java.util.ArrayList;
@@ -16,16 +17,16 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Maps between the Parsers internal AST representation of a "TypeDeclaration" and the Validators "Type" model
+ * Maps between the Parsers internal AST representation of a "TypeDeclaration" and the Validators "Class" model
  * <p/>
  * User: Richard
  * Date: 28/08/13
  */
-public class TypeDeclarationTypeBuilder {
+public class ClassDeclarationTypeBuilder {
 
-	public Type build(TypeNode declaration) {
-		if (declaration instanceof ClassNode) {
-			return build((ClassNode) declaration);
+	public Class build(ClassNode declaration) {
+		if (declaration instanceof ObjectNode) {
+			return build((ObjectNode) declaration);
 		}
 		if (declaration instanceof InterfaceNode) {
 			return build((InterfaceNode) declaration);
@@ -33,11 +34,12 @@ public class TypeDeclarationTypeBuilder {
 		if (declaration instanceof BeanNode){
 			return build((BeanNode) declaration);
 		}
-		throw new RuntimeException("Cannot build MetaTypes like " + declaration);
+		// TODO - self declared values, monitors
+		throw new RuntimeException("Cannot build Kind like " + declaration);
 	}
 
-	public Type build(ClassNode declaration) {
-		return new Type(
+	public Class build(ObjectNode declaration) {
+		return new MutableClassModel(
 				declaration.getQualifiedClassName(),
 				null,
 				getTypeParameters(declaration),
@@ -46,61 +48,55 @@ public class TypeDeclarationTypeBuilder {
 				getMethods(declaration),
 				Collections.<Operator>emptyList(),
 				Collections.<UnaryOperator>emptyList(),
-				Collections.<Declaration>emptyList(),
-				false,
-				true,
-				false
+				Collections.<Declaration<Site>>emptyList(),
+				Kind.OBJECT
 		);
 	}
 
-	public Type build(InterfaceNode declaration) {
-		return new Type(
+	public Class build(InterfaceNode declaration) {
+		return new MutableClassModel(
 				declaration.getQualifiedClassName(),
 				null,
 				getTypeParameters(declaration),
 				getInterfaces(declaration),
-				Collections.<Declaration>emptyList(),
+				Collections.<Declaration<Site>>emptyList(),
 				getMethods(declaration),
 				getOperators(declaration),
 				getUnaryOperators(declaration),
-				Collections.<Declaration>emptyList(),
-				true,
-				false,
-				false
-		); // TODO - self declared values, monitors
+				Collections.<Declaration<Site>>emptyList(),
+				Kind.INTERFACE
+		);
 	}
 
-	public Type build(BeanNode declaration) {
+	public Class build(BeanNode declaration) {
 		SiteNode superType = declaration.getSuperType();
-		return new Type(
+		return new MutableClassModel(
 				declaration.getQualifiedClassName(),
 				superType != null ? superType.getSite() : null ,
 				getTypeParameters(declaration),
-				Collections.<Site>emptyList(),
-				Collections.<Declaration>emptyList(),
+				Collections.<Type>emptyList(),
+				Collections.<Declaration<Site>>emptyList(),
 				Collections.<Method>emptyList(),
 				Collections.<Operator>emptyList(),
 				Collections.<UnaryOperator>emptyList(),
 				getProperties(declaration),
-				true,
-				true,
-				false
+				Kind.BEAN
 		);
 	}
 
-	private List<Declaration> getProperties(BeanNode declaration) {
-		List<Declaration> ret = new ArrayList<>();
+	private List<Declaration<Site>> getProperties(BeanNode declaration) {
+		List<Declaration<Site>> ret = new ArrayList<>();
 		for (PropertyNode node : declaration.getProperties()){
-			ret.add(new Declaration(node.getName(), node.getType().getSite()));
+			ret.add(new Declaration<>(node.getName(), node.getType().getSite()));
 		}
 		return ret;
 	}
 
-	private List<Declaration> getTypeParameters(TypeNode declaration) {
+	private List<Declaration<Type>> getTypeParameters(ClassNode declaration) {
 
-		List<Declaration> parameters = new ArrayList<>();
+		List<Declaration<Type>> parameters = new ArrayList<>();
 		for (TypeParameterNode declaredParameter : declaration.getTypeParameters()) {
-			parameters.add(new Declaration(
+			parameters.add(new Declaration<Type>(
 					declaredParameter.getName(),
 					getType(declaredParameter.getType())
 			));
@@ -108,10 +104,10 @@ public class TypeDeclarationTypeBuilder {
 		return parameters;
 	}
 
-	private List<Declaration> getParameters(ClassNode declaration) {
-		List<Declaration> arguments = new ArrayList<>();
+	private List<Declaration<Site>> getParameters(ObjectNode declaration) {
+		List<Declaration<Site>> arguments = new ArrayList<>();
 		for (ArgumentDeclarationNode declaredArgument : declaration.getArgumentDeclarations()) {
-			arguments.add(new Declaration(
+			arguments.add(new Declaration<>(
 					declaredArgument.getName(),
 					getType(declaredArgument.getType())
 			));
@@ -119,12 +115,12 @@ public class TypeDeclarationTypeBuilder {
 		return arguments;
 	}
 
-	private List<Method> getMethods(MethodDeclaringTypeNode<? extends MethodNode> declaration) {
+	private List<Method> getMethods(MethodDeclaringClassNode<? extends MethodNode> declaration) {
 		List<Method> methods = new ArrayList<>();
 		for (MethodNode declaredMethod : declaration.getMethods()) {
-			List<Declaration> arguments = new ArrayList<>();
+			List<Declaration<Site>> arguments = new ArrayList<>();
 			for (ArgumentDeclarationNode declaredArgument : declaredMethod.getArguments()) {
-				arguments.add(new Declaration(
+				arguments.add(new Declaration<>(
 						declaredArgument.getName(),
 						getType(declaredArgument.getType())
 				));
@@ -139,8 +135,8 @@ public class TypeDeclarationTypeBuilder {
 		return methods;
 	}
 
-	private List<Site> getInterfaces(MethodDeclaringTypeNode<? extends MethodNode> declaration) {
-		List<Site> ret = new ArrayList<>();
+	private List<Type> getInterfaces(MethodDeclaringClassNode<? extends MethodNode> declaration) {
+		List<Type> ret = new ArrayList<>();
 		for (SiteNode typeReference : declaration.getImplementations()) {
 			ret.add(getType(typeReference));
 		}
@@ -150,7 +146,7 @@ public class TypeDeclarationTypeBuilder {
 	private List<UnaryOperator> getUnaryOperators(InterfaceNode declaration) {
 		List<UnaryOperator> ret = new ArrayList<>();
 //		for (SiteNode typeReference : declaration.getO()){
-//			ret.add(getType(typeReference));
+//			ret.add(getTemplate(typeReference));
 //		}
 		return ret; //TODO: self defined unary operators
 	}
@@ -158,7 +154,7 @@ public class TypeDeclarationTypeBuilder {
 	private List<Operator> getOperators(InterfaceNode declaration) {
 		List<Operator> ret = new ArrayList<>();
 //		for (SiteNode typeReference : declaration.getO()){
-//			ret.add(getType(typeReference));
+//			ret.add(getTemplate(typeReference));
 //		}
 		return ret; //TODO: self defined operators
 	}

@@ -63,7 +63,7 @@ public class ASMInterfaceGeneratorUnitTest {
 		java.lang.reflect.Method declaredMethod = loadedClass.getMethod("aMethod", new java.lang.Class[]{});
 
 		Assert.assertEquals("Number of methods", 1, loadedClass.getMethods().length);
-		Assert.assertEquals("Return Type", void.class, declaredMethod.getReturnType());
+		Assert.assertEquals("Return Class", void.class, declaredMethod.getReturnType());
 	}
 
 	@Test
@@ -83,7 +83,7 @@ public class ASMInterfaceGeneratorUnitTest {
 		java.lang.reflect.Method declaredMethod = loadedClass.getMethod("aMethod", new java.lang.Class[]{});
 
 		Assert.assertEquals("Number of methods", 1, loadedClass.getMethods().length);
-		Assert.assertEquals("Return Type", Number.class, declaredMethod.getReturnType());
+		Assert.assertEquals("Return Class", Number.class, declaredMethod.getReturnType());
 	}
 
 	@Test
@@ -107,7 +107,7 @@ public class ASMInterfaceGeneratorUnitTest {
 		java.lang.reflect.Method declaredMethod = loadedClass.getMethod("aMethod", new java.lang.Class[]{Number.class});
 
 		Assert.assertEquals("Number of methods", 1, loadedClass.getMethods().length);
-		Assert.assertEquals("Return Type", void.class, declaredMethod.getReturnType());
+		Assert.assertEquals("Return Class", void.class, declaredMethod.getReturnType());
 	}
 
 	private java.lang.Class build() throws Exception {

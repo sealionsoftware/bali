@@ -1,14 +1,14 @@
 package bali;
 
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
+import bali.annotation.Kind;
 import bali.annotation.Operator;
 
 /**
  * User: Richard
  * Date: 02/05/13
  */
-@MetaType(MetaTypes.CLASS)
+@MetaType(Kind.OBJECT)
 public enum IdentityBoolean implements Boolean {
 
 	FALSE, TRUE;

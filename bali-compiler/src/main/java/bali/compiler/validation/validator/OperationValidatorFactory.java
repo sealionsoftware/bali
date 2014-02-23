@@ -4,6 +4,7 @@ import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.OperationNode;
 import bali.compiler.type.Operator;
 import bali.compiler.type.Site;
+import bali.compiler.type.Type;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class OperationValidatorFactory implements ValidatorFactory {
 					Operator operator = getOperatorWithName(operatorName, targetType);
 
 					if (operator == null) {
-						ret.add(new ValidationFailure(node, "Type " + targetType + " has no operator " + operatorName));
+						ret.add(new ValidationFailure(node, "Class " + targetType + " has no operator " + operatorName));
 						return ret;
 					}
 
@@ -54,13 +55,13 @@ public class OperationValidatorFactory implements ValidatorFactory {
 				return Collections.emptyList();
 			}
 
-			public Operator getOperatorWithName(String name, Site site) {
+			public Operator getOperatorWithName(String name, Type site) {
 				for (Operator operator : site.getOperators()) {
 					if (operator.getName().equals(name)) {
 						return operator;
 					}
 				}
-				for (Site iface : site.getInterfaces()){
+				for (Type iface : site.getInterfaces()){
 					Operator ret = getOperatorWithName(name, iface);
 					if (ret != null){
 						return ret;

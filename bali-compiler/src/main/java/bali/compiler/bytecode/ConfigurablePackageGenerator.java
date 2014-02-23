@@ -3,7 +3,7 @@ package bali.compiler.bytecode;
 import bali.compiler.GeneratedClass;
 import bali.compiler.GeneratedPackage;
 import bali.compiler.parser.tree.BeanNode;
-import bali.compiler.parser.tree.ClassNode;
+import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.RunStatementNode;
@@ -17,14 +17,14 @@ public class ConfigurablePackageGenerator implements Generator<CompilationUnitNo
 	private Generator<CompilationUnitNode, GeneratedClass> packageClassGenerator;
 	private Generator<BeanNode, GeneratedClass> beanGenerator;
 	private Generator<InterfaceNode, GeneratedClass> interfaceGenerator;
-	private Generator<ClassNode, GeneratedClass> classGenerator;
+	private Generator<ObjectNode, GeneratedClass> classGenerator;
 	private Generator<RunStatementNode, GeneratedClass> runStatementGenerator;
 
 	public ConfigurablePackageGenerator(
 			Generator<CompilationUnitNode, GeneratedClass> packageClassGenerator,
 			Generator<BeanNode, GeneratedClass> beanGenerator,
 			Generator<InterfaceNode, GeneratedClass> interfaceGenerator,
-			Generator<ClassNode, GeneratedClass> classGenerator,
+			Generator<ObjectNode, GeneratedClass> classGenerator,
 	        Generator<RunStatementNode, GeneratedClass> runStatementGenerator
 	) {
 		this.packageClassGenerator = packageClassGenerator;
@@ -48,7 +48,7 @@ public class ConfigurablePackageGenerator implements Generator<CompilationUnitNo
 			pkg.addClass(interfaceGenerator.build(iface));
 		}
 
-		for (ClassNode clazz : compilationUnit.getClasses()){
+		for (ObjectNode clazz : compilationUnit.getClasses()){
 			pkg.addClass(classGenerator.build(clazz));
 		}
 

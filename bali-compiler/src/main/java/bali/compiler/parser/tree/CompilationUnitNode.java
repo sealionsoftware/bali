@@ -2,7 +2,7 @@ package bali.compiler.parser.tree;
 
 import bali.compiler.reference.BlockingReference;
 import bali.compiler.reference.Reference;
-import bali.compiler.type.Type;
+import bali.compiler.type.Class;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +19,9 @@ public class CompilationUnitNode extends Node {
 	private List<ConstantNode> constants = new ArrayList<>();
 	private List<BeanNode> beans = new ArrayList<>();
 	private List<InterfaceNode> interfaces = new ArrayList<>();
-	private List<ClassNode> classes = new ArrayList<>();
+	private List<ObjectNode> classes = new ArrayList<>();
 
-	private BlockingReference<Map<String, Reference<Type>>> resolvables = new BlockingReference<>();
+	private BlockingReference<Map<String, Reference<Class>>> resolvables = new BlockingReference<>();
 	private BlockingReference<List<RunStatementNode>> runStatements = new BlockingReference<>();
 
 	public CompilationUnitNode(Integer line, Integer character) {
@@ -52,7 +52,7 @@ public class CompilationUnitNode extends Node {
 		interfaces.add(iface);
 	}
 
-	public void addClass(ClassNode clazz){
+	public void addClass(ObjectNode clazz){
 		children.add(clazz);
 		classes.add(clazz);
 	}
@@ -77,15 +77,15 @@ public class CompilationUnitNode extends Node {
 		return beans;
 	}
 
-	public List<ClassNode> getClasses() {
+	public List<ObjectNode> getClasses() {
 		return classes;
 	}
 
-	public Map<String, Reference<Type>> getResolvables() {
+	public Map<String, Reference<Class>> getResolvables() {
 		return resolvables.get();
 	}
 
-	public void setResolvables(Map<String, Reference<Type>> resolvables) {
+	public void setResolvables(Map<String, Reference<Class>> resolvables) {
 		this.resolvables.set(resolvables);
 	}
 

@@ -1,11 +1,11 @@
 package bali.compiler.bytecode;
 
+import bali.annotation.Kind;
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.BeanNode;
 import bali.compiler.parser.tree.PropertyNode;
-import bali.compiler.type.Type;
+import bali.compiler.type.Class;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
@@ -24,9 +24,9 @@ public class ASMBeanGenerator implements Generator<BeanNode, GeneratedClass> {
 	public GeneratedClass build(BeanNode input) throws Exception {
 
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
-		Type superType = input.getSuperType() != null ? input.getSuperType().getSite().getType() : null;
+		Class superClass = input.getSuperType() != null ? input.getSuperType().getSite().getTemplate() : null;
 		String hostClassInternalName = converter.getInternalName(input.getQualifiedClassName());
-		String superClassInternalName = superType != null ? converter.getInternalName(superType) : "java/lang/Object";
+		String superClassInternalName = superClass != null ? converter.getInternalName(superClass) : "java/lang/Object";
 
 		cw.visit(V1_7,
 				ACC_PUBLIC + ACC_SUPER,
@@ -36,7 +36,7 @@ public class ASMBeanGenerator implements Generator<BeanNode, GeneratedClass> {
 				null);
 
 		AnnotationVisitor av = cw.visitAnnotation(converter.getTypeDescriptor(MetaType.class.getName()), false);
-		av.visitEnum("value", converter.getTypeDescriptor(MetaTypes.class.getName()), MetaTypes.BEAN.name());
+		av.visitEnum("value", converter.getTypeDescriptor(Kind.class.getName()), Kind.BEAN.name());
 		av.visitEnd();
 
 		buildConstructor(cw, superClassInternalName);
@@ -54,7 +54,7 @@ public class ASMBeanGenerator implements Generator<BeanNode, GeneratedClass> {
 
 		MethodVisitor initv = cw.visitMethod(ACC_PUBLIC,
 				"<init>",
-				converter.getMethodDescriptor(null, Collections.<Type>emptyList()),
+				converter.getMethodDescriptor(null, Collections.<Class>emptyList()),
 				null,
 				null
 		);
@@ -72,8 +72,8 @@ public class ASMBeanGenerator implements Generator<BeanNode, GeneratedClass> {
 	private void buildProperty(PropertyNode property, ClassWriter cw, String hostClassInternalName) {
 
 		String propertyName = property.getName();
-		Type type = property.getType().getSite().getType();
-		String typeDesc = converter.getTypeDescriptor(type);
+		bali.compiler.type.Class aClass = property.getType().getSite().getTemplate();
+		String typeDesc = converter.getTypeDescriptor(aClass);
 
 		cw.visitField(ACC_PRIVATE,
 				propertyName,
@@ -86,14 +86,14 @@ public class ASMBeanGenerator implements Generator<BeanNode, GeneratedClass> {
 
 		MethodVisitor getterVisitor = cw.visitMethod(ACC_PUBLIC + ACC_FINAL,
 				"get" + propertyStem,
-				converter.getMethodDescriptor(type, Collections.<Type>emptyList()),
+				converter.getMethodDescriptor(aClass, Collections.<Class>emptyList()),
 				null,
 				null
 		);
 
 		getterVisitor.visitCode();
 		getterVisitor.visitVarInsn(ALOAD, 0);
-		getterVisitor.visitFieldInsn(GETFIELD, hostClassInternalName, propertyName, converter.getTypeDescriptor(type));
+		getterVisitor.visitFieldInsn(GETFIELD, hostClassInternalName, propertyName, converter.getTypeDescriptor(aClass));
 		getterVisitor.visitInsn(ARETURN);
 
 		getterVisitor.visitMaxs(1, 1);
@@ -101,7 +101,7 @@ public class ASMBeanGenerator implements Generator<BeanNode, GeneratedClass> {
 
 		MethodVisitor setterVisitor = cw.visitMethod(ACC_PUBLIC + ACC_FINAL,
 				"set" + propertyStem,
-				converter.getMethodDescriptor(null, Collections.singletonList(type)),
+				converter.getMethodDescriptor(null, Collections.singletonList(aClass)),
 				null,
 				null
 		);

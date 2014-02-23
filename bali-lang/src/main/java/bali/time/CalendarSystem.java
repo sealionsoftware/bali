@@ -1,13 +1,13 @@
 package bali.time;
 
+import bali.annotation.Kind;
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
 
 /**
  * User: Richard
  * Date: 11/07/13
  */
-@MetaType(MetaTypes.INTERFACE)
+@MetaType(Kind.INTERFACE)
 public interface CalendarSystem {
 
 	public Date getDate(Instant instant);

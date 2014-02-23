@@ -5,7 +5,9 @@ import bali.Exception
 import bali.io.Socket
 import bali.io.ServerSocket
 import bali.io.SocketMonitor
+import bali.Count
 import bali.monitor.ConnectionMonitor
+import bali.monitor.CounterMonitor
 
 
 class TempleServer implements Executable {
@@ -30,10 +32,8 @@ class TempleServer implements Executable {
 
 	                while (true) {
                         String? read = << connection
-                        if (?read) if (~(read.length() == 0)){
+                        if (?read) {
                             CONSOLE << read
-                        } else {
-                            break
                         } else {
                             break
                         }

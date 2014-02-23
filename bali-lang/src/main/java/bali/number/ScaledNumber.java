@@ -3,14 +3,14 @@ package bali.number;
 import bali.Boolean;
 import bali.IdentityBoolean;
 import bali.Number;
+import bali.annotation.Kind;
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
 
 /**
  * User: Richard
  * Date: 11/06/13
  */
-@MetaType(MetaTypes.CLASS)
+@MetaType(Kind.OBJECT)
 public class ScaledNumber implements bali.Number {
 
 	private BigInteger number;

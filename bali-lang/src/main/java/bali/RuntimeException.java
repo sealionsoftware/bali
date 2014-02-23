@@ -1,14 +1,14 @@
 package bali;
 
 
+import bali.annotation.Kind;
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
 
 /**
  * User: Richard
  * Date: 23/10/13
  */
-@MetaType(MetaTypes.CLASS)
+@MetaType(Kind.OBJECT)
 public class RuntimeException implements Exception {
 
 	private String message;

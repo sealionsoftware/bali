@@ -13,14 +13,15 @@ import java.util.HashMap;
  */
 public class SiteSignatureVisitorUnitTest {
 
-	private SiteSignatureVisitor visitor = new SiteSignatureVisitor(new TypeLibrary(), new HashMap<String, Site>(), false, false);
+	private SiteSignatureVisitor visitor = new SiteSignatureVisitor(new ClassLibrary(), new HashMap<String, Type>(), false, false);
 
 	@Test
 	public void testVisitTypeVariable() throws Exception {
 		new SignatureReader("TT;").accept(visitor);
 		Site site = visitor.getSite();
 		Assert.assertNotNull(site);
-		Assert.assertEquals("T", site.getName());
+		Assert.assertTrue(site instanceof VariableSite);
+		Assert.assertEquals("T", ((VariableSite) site).getName());
 	}
 
 	@Test
@@ -37,9 +38,9 @@ public class SiteSignatureVisitorUnitTest {
 		new SignatureReader("Lbali/compiler/type/A;").accept(visitor);
 		Site site = visitor.getSite();
 
-		Assert.assertEquals("bali.compiler.type.A", site.getName());
-		Assert.assertNotNull(site.getTypeParameters());
-		Assert.assertEquals(site.getTypeParameters().size(), 0);
+		Assert.assertEquals("bali.compiler.type.A", site.getTemplate().getName());
+		Assert.assertNotNull(site.getTypeArguments());
+		Assert.assertEquals(site.getTypeArguments().size(), 0);
 	}
 
 	@Test
@@ -48,19 +49,15 @@ public class SiteSignatureVisitorUnitTest {
 		new SignatureReader("Lbali/compiler/type/B<Lbali/compiler/type/A;>;").accept(visitor);
 		Site site = visitor.getSite();
 
-		Assert.assertEquals("bali.compiler.type.B", site.getName());
-		Assert.assertNotNull(site.getTypeParameters());
-		Assert.assertEquals(1, site.getTypeParameters().size());
+		Assert.assertEquals("bali.compiler.type.B", site.getTemplate().getName());
+		Assert.assertNotNull(site.getTypeArguments());
+		Assert.assertEquals(1, site.getTypeArguments().size());
 
-		Declaration parameterDeclaration = site.getTypeParameters().get(0);
+		Site argument = site.getTypeArguments().get(0);
 
-		Assert.assertEquals("T", parameterDeclaration.getName());
-
-		Site parameterType = parameterDeclaration.getType();
-
-		Assert.assertEquals("bali.compiler.type.A", parameterType.getName());
-		Assert.assertNotNull(parameterType.getTypeParameters());
-		Assert.assertEquals(0, parameterType.getTypeParameters().size());
+		Assert.assertEquals("bali.compiler.type.A", argument.getTemplate().getName());
+		Assert.assertNotNull(argument.getTypeArguments());
+		Assert.assertEquals(0, argument.getTypeArguments().size());
 	}
 
 	@Test
@@ -69,17 +66,14 @@ public class SiteSignatureVisitorUnitTest {
 		new SignatureReader("Lbali/compiler/type/B<TT;>;").accept(visitor);
 		Site site = visitor.getSite();
 
-		Assert.assertEquals("bali.compiler.type.B", site.getName());
-		Assert.assertNotNull(site.getTypeParameters());
-		Assert.assertEquals(1, site.getTypeParameters().size());
+		Assert.assertEquals("bali.compiler.type.B", site.getTemplate().getName());
+		Assert.assertNotNull(site.getTypeArguments());
+		Assert.assertEquals(1, site.getTypeArguments().size());
 
-		Declaration parameterDeclaration = site.getTypeParameters().get(0);
-
-		Assert.assertEquals("T", parameterDeclaration.getName());
-
-		Site parameterType = parameterDeclaration.getType();
-		Assert.assertNotNull(parameterType);
-		Assert.assertEquals("T", parameterType.getName());
+		Site argument = site.getTypeArguments().get(0);
+		Assert.assertNotNull(argument);
+		Assert.assertTrue(argument instanceof VariableSite);
+		Assert.assertEquals("T", ((VariableSite) argument).getName());
 
 	}
 

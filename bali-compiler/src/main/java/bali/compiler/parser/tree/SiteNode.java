@@ -69,7 +69,7 @@ public class SiteNode extends Node {
 		this.site.set(site);
 	}
 
-//	public boolean equals(Object o) {
+//	public boolean equals(OBJECT o) {
 //
 //		if (this == o) return true;
 //		if (o == null || getClass() != o.getClass()) return false;

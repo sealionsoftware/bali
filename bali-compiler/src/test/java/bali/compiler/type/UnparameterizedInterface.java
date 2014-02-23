@@ -1,8 +1,8 @@
 package bali.compiler.type;
 
 import bali.String;
+import bali.annotation.Kind;
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
 import bali.annotation.Name;
 import bali.annotation.Operator;
 
@@ -10,7 +10,7 @@ import bali.annotation.Operator;
  * User: Richard
  * Date: 23/08/13
  */
-@MetaType(MetaTypes.INTERFACE)
+@MetaType(Kind.INTERFACE)
 public interface UnparameterizedInterface {
 
 	public void aVoidMethod();

@@ -25,16 +25,16 @@ public class StandardSocket implements Socket, Initialisable {
 		this.delegate = delegate;
 	}
 
-	public synchronized void initalise() throws Exception {
+	public void initalise() throws Exception {
 		input = new BufferedReader(new InputStreamReader(delegate.getInputStream()));
 		output = new BufferedWriter(new OutputStreamWriter(delegate.getOutputStream()));
 	}
 
-	public synchronized void close() throws Exception {
+	public void close() throws Exception {
 		delegate.close();
 	}
 
-	public synchronized String readLine() throws Exception {
+	public String readLine() throws Exception {
 		final StringBuilder sb = new StringBuilder();
 		int i = input.read();
 		if (i < 0){
@@ -50,7 +50,7 @@ public class StandardSocket implements Socket, Initialisable {
 		return new CharArrayString(sb.toString().toCharArray());
 	}
 
-	public synchronized void writeLine(String in) throws IOException {
+	public void writeLine(String in) throws IOException {
 		output.write(in.toString());
 		output.write("\r\n");
 		output.flush();

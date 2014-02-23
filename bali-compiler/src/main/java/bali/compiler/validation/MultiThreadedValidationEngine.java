@@ -3,11 +3,11 @@ package bali.compiler.validation;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.Reaper;
 import bali.compiler.parser.tree.TerminatedException;
-import bali.compiler.parser.tree.TypeNode;
+import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.reference.BlockDeclaringThread;
 import bali.compiler.reference.SimpleReference;
 import bali.compiler.type.ConstantLibrary;
-import bali.compiler.type.TypeLibrary;
+import bali.compiler.type.ClassLibrary;
 import bali.compiler.validation.validator.Validator;
 import bali.compiler.validation.validator.ValidatorFactory;
 
@@ -25,12 +25,12 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class MultiThreadedValidationEngine implements ValidationEngine {
 
-	private TypeLibrary typeLibrary;
+	private ClassLibrary classLibrary;
 	private ConstantLibrary constantLibrary;
 	private List<ValidatorFactory> validatorFactories;
 
-	public MultiThreadedValidationEngine(TypeLibrary typeLibrary, ConstantLibrary constantLibrary, List<ValidatorFactory> validatorFactories) {
-		this.typeLibrary = typeLibrary;
+	public MultiThreadedValidationEngine(ClassLibrary classLibrary, ConstantLibrary constantLibrary, List<ValidatorFactory> validatorFactories) {
+		this.classLibrary = classLibrary;
 		this.constantLibrary = constantLibrary;
 		this.validatorFactories = validatorFactories;
 	}
@@ -40,14 +40,14 @@ public class MultiThreadedValidationEngine implements ValidationEngine {
 		final Map<String,List<ValidationFailure>> validationFailures = new LinkedHashMap<>();
 		for (CompilationUnitNode compilationUnitNode : units){
 			String unitName = compilationUnitNode.getName();
-			List<TypeNode> declaredTypes = new ArrayList<>();
+			List<ClassNode> declaredTypes = new ArrayList<>();
 			declaredTypes.addAll(compilationUnitNode.getClasses());
 			declaredTypes.addAll(compilationUnitNode.getInterfaces());
 			declaredTypes.addAll(compilationUnitNode.getBeans());
-			for (TypeNode typeNode : declaredTypes){
-				String qualifiedClassName = unitName + "." + typeNode.getClassName();
-				typeNode.setQualifiedClassName(qualifiedClassName);
-				typeLibrary.notifyOfDeclaration(qualifiedClassName);
+			for (ClassNode classNode : declaredTypes){
+				String qualifiedClassName = unitName + "." + classNode.getClassName();
+				classNode.setQualifiedClassName(qualifiedClassName);
+				classLibrary.notifyOfDeclaration(qualifiedClassName);
 			}
 			constantLibrary.notifyOfPackage(unitName);
 		}

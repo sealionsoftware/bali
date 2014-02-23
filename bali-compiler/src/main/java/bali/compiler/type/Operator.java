@@ -4,7 +4,7 @@ package bali.compiler.type;
  * User: Richard
  * Date: 08/09/13
  */
-public class Operator extends Declaration {
+public class Operator extends Declaration<Site> {
 
 	private Site parameter;
 	private String methodName;

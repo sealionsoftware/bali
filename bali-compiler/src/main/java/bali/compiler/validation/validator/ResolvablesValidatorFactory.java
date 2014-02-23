@@ -3,11 +3,11 @@ package bali.compiler.validation.validator;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.ImportNode;
 import bali.compiler.parser.tree.Node;
-import bali.compiler.parser.tree.TypeNode;
+import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.reference.Reference;
 import bali.compiler.reference.SimpleReference;
-import bali.compiler.type.Type;
-import bali.compiler.type.TypeLibrary;
+import bali.compiler.type.*;
+import bali.compiler.type.Class;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.Collections;
@@ -26,9 +26,9 @@ import java.util.Map;
  */
 public class ResolvablesValidatorFactory implements ValidatorFactory {
 
-	private TypeLibrary library;
+	private ClassLibrary library;
 
-	public ResolvablesValidatorFactory(TypeLibrary library) {
+	public ResolvablesValidatorFactory(ClassLibrary library) {
 		this.library = library;
 	}
 
@@ -36,7 +36,7 @@ public class ResolvablesValidatorFactory implements ValidatorFactory {
 
 		return new Validator() {
 
-			private Map<String, Reference<Type>> resolvables = new HashMap<>();
+			private Map<String, Reference<bali.compiler.type.Class>> resolvables = new HashMap<>();
 
 			public List<ValidationFailure> validate(Node node, Control control) {
 
@@ -47,8 +47,8 @@ public class ResolvablesValidatorFactory implements ValidatorFactory {
 					return failures;
 				} else if (node instanceof ImportNode){
 					failures = validate((ImportNode) node);
-				} else if (node instanceof TypeNode){
-					failures = validate((TypeNode) node);
+				} else if (node instanceof ClassNode){
+					failures = validate((ClassNode) node);
 				}
 
 				control.validateChildren();
@@ -56,7 +56,7 @@ public class ResolvablesValidatorFactory implements ValidatorFactory {
 				return failures;
 			}
 
-			public List<ValidationFailure> validate(TypeNode node){
+			public List<ValidationFailure> validate(ClassNode node){
 				resolvables.put(node.getClassName(), library.getReference(node.getQualifiedClassName()));
 				return Collections.emptyList();
 			}
@@ -65,8 +65,8 @@ public class ResolvablesValidatorFactory implements ValidatorFactory {
 			public List<ValidationFailure> validate(ImportNode iport) {
 
 				String name = iport.getName();
-				Type iportType = iport.getType();
-				if (iportType != null){
+				Class iportClass = iport.getType();
+				if (iportClass != null){
 					resolvables.put(name.substring(name.lastIndexOf(".") + 1),  new SimpleReference<>(iport.getType()));
 				}
 

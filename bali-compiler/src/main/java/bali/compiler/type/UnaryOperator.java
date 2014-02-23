@@ -4,7 +4,7 @@ package bali.compiler.type;
  * User: Richard
  * Date: 08/09/13
  */
-public class UnaryOperator extends Declaration {
+public class UnaryOperator extends Declaration<Site> {
 
 	private String methodName;
 

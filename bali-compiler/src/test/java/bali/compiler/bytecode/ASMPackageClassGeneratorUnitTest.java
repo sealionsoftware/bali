@@ -114,7 +114,7 @@ public class ASMPackageClassGeneratorUnitTest {
 		Assert.assertEquals("Number of fields", 1, loadedClass.getFields().length);
 		Assert.assertEquals("Number of methods", 0, loadedClass.getDeclaredMethods().length);
 		java.lang.reflect.Field constantField = loadedClass.getField("aConstant");
-		Assert.assertEquals("Constant Type", clazz, constantField.getType());
+		Assert.assertEquals("Constant Class", clazz, constantField.getType());
 		Assert.assertTrue("Constant Value", expectation.equalTo((T) constantField.get(null)) == IdentityBoolean.TRUE);
 	}
 

@@ -3,14 +3,14 @@ package bali.time.standard;
 import bali.Boolean;
 import bali.Number;
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
+import bali.annotation.Kind;
 import bali.time.Interval;
 
 /**
  * User: Richard
  * Date: 11/07/13
  */
-@MetaType(MetaTypes.CLASS)
+@MetaType(Kind.OBJECT)
 public final class StandardInterval implements Interval {
 
 	private final Number value;

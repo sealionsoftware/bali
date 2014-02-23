@@ -6,7 +6,6 @@ import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.ReferenceNode;
 import bali.compiler.parser.tree.RunStatementNode;
 import bali.compiler.type.Site;
-import bali.compiler.type.Type;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;

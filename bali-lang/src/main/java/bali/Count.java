@@ -1,7 +1,7 @@
 package bali;
 
+import bali.annotation.Kind;
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
 import bali.annotation.Operator;
 import bali.annotation.ThreadSafe;
 
@@ -9,7 +9,7 @@ import bali.annotation.ThreadSafe;
  * User: Richard
  * Date: 07/11/13
  */
-@MetaType(MetaTypes.INTERFACE)
+@MetaType(Kind.INTERFACE)
 public interface Count {
 
 	@Operator("++")

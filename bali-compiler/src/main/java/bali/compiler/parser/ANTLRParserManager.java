@@ -7,7 +7,7 @@ import bali.compiler.parser.tree.BooleanLiteralExpressionNode;
 import bali.compiler.parser.tree.BreakStatementNode;
 import bali.compiler.parser.tree.CaseStatementNode;
 import bali.compiler.parser.tree.CatchStatementNode;
-import bali.compiler.parser.tree.ClassNode;
+import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.CodeBlockNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.ConditionalStatementNode;
@@ -47,10 +47,8 @@ import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 
-import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -138,7 +136,7 @@ public class ANTLRParserManager implements ParserManager {
 		}
 
 //		for (BaliParser.TypeDeclarationContext typeIdentifier : context.typeDeclaration()){
-//			bean.addParameter(getType(typeIdentifier));
+//			bean.addParameter(getTemplate(typeIdentifier));
 //		}
 
 		for (BaliParser.PropertyDeclarationContext pdc : context.propertyDeclaration()) {
@@ -154,7 +152,7 @@ public class ANTLRParserManager implements ParserManager {
 		iface.setClassName(context.typeDefinition().getText());
 
 //		for (TerminalNode typeIdentifier : context.typeDeclarationList().typeIdentifier()){
-//			iface.addParameter(getType(typeIdentifier));
+//			iface.addParameter(getTemplate(typeIdentifier));
 //		}
 		if (context.siteDefinitionList() != null) {
 			for (BaliParser.SiteDefinitionContext typeDeclaration : context.siteDefinitionList().siteDefinition()) {
@@ -168,13 +166,13 @@ public class ANTLRParserManager implements ParserManager {
 		return iface;
 	}
 
-	private ClassNode build(BaliParser.ClassDeclarationContext context) throws Exception {
-		ClassNode clazz = new ClassNode(l(context), c(context));
+	private ObjectNode build(BaliParser.ClassDeclarationContext context) throws Exception {
+		ObjectNode clazz = new ObjectNode(l(context), c(context));
 		clazz.setClassName(context.typeDefinition().typeIdentifier().getText());
 
 
 //		for (TerminalNode typeIdentifier : context.typeDeclarationList().typeIdentifier()){
-//			clazz.addParameter(getType(typeIdentifier));
+//			clazz.addParameter(getTemplate(typeIdentifier));
 //		}
 		if (context.siteDefinitionList() != null) {
 			for (BaliParser.SiteDefinitionContext typeDeclaration : context.siteDefinitionList().siteDefinition()) {

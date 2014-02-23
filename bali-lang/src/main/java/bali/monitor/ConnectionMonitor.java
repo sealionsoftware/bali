@@ -1,13 +1,13 @@
 package bali.monitor;
 
+import bali.annotation.Kind;
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
 
 /**
  * User: Richard
  * Date: 07/02/14
  */
-@MetaType(MetaTypes.INTERFACE)
+@MetaType(Kind.INTERFACE)
 public interface ConnectionMonitor<T> {
 
 	public void waitForConnection() throws java.lang.Exception;

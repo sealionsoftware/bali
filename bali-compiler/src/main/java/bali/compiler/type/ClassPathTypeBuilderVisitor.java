@@ -1,10 +1,12 @@
 package bali.compiler.type;
 
-import bali.annotation.MetaTypes;
+import bali.annotation.Kind;
 import bali.annotation.Name;
 import bali.annotation.Nullable;
 import bali.annotation.ThreadSafe;
+import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.reference.Reference;
+import bali.compiler.reference.SimpleReference;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -12,7 +14,6 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureReader;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -33,24 +34,27 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 	private static String PARAM_NAME_ANNOTATION_DESC =
 			org.objectweb.asm.Type.getType(Name.class).getDescriptor();
 
-	private TypeLibrary library;
+	private ClassLibrary library;
 
-	private Type classpathType;
-	private MetaTypes metaType;
+	private Class classpathClass;
+	private Kind metaType;
 
 	private String className;
-	private List<Declaration> typeParameters = new ArrayList<>();
-	private List<Site> interfaces = new ArrayList<>();
-	private List<Declaration> constructorParameters;
+	private List<Declaration<Type>> typeParameters = new ArrayList<>();
+	private List<Type> interfaces = new ArrayList<>();
+	private List<Declaration<Site>> constructorParameters;
 	private List<Method> methods = new ArrayList<>();
 	private List<Operator> operators = new ArrayList<>();
 	private List<UnaryOperator> unaryOperators = new ArrayList<>();
 
-	private Map<String, Site> typeVariableBounds = new HashMap<>();
+	private Map<String, Type> typeVariableBounds = new HashMap<>();
 
-	public ClassPathTypeBuilderVisitor(TypeLibrary library) {
+	private Type nullBound;
+
+	public ClassPathTypeBuilderVisitor(ClassLibrary library) {
 		super(Opcodes.ASM4);
 		this.library = library;
+		nullBound = new ParameterisedType(library.getReference(Object.class.getName()));
 	}
 
 	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
@@ -63,15 +67,16 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 			new SignatureReader(signature).accept(visitor);
 
 			typeParameters = visitor.getTypeParameters();
-			for (Declaration typeParameter : typeParameters){
-				typeVariableBounds.put(typeParameter.getName(), typeParameter.getType());
+			for (Declaration<Type> typeParameter : typeParameters){
+				Type bound = typeParameter.getType();
+				typeVariableBounds.put(typeParameter.getName(), bound != null ? bound : nullBound);
 			}
 			this.interfaces = visitor.getInterfaces();
 		} else {
-			List<Site> ifaces = new ArrayList<>();
+			List<Type> ifaces = new ArrayList<>();
 			for (String iface : interfaces){
-				Reference<Type> ref = library.getReference(iface.replaceAll("/", "."));
-				ifaces.add(new VanillaSite(ref, true, true));
+				Reference<Class> ref = library.getReference(iface.replaceAll("/", "."));
+				ifaces.add(new ParameterisedType(ref));
 			}
 			this.interfaces = ifaces;
 		}
@@ -83,7 +88,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 			return new AnnotationVisitor(Opcodes.ASM4) {
 				public void visitEnum(String name, String desc, String value) {
 					if (name.equals("value")){
-						metaType = MetaTypes.valueOf(value);
+						metaType = Kind.valueOf(value);
 					}
 				}
 			};
@@ -104,7 +109,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 
 			private boolean isOperator;
 			private String operatorName;
-			private TypeData returnData = new TypeData();
+			private SiteData returnData = new SiteData();
 			private List<ParameterData> parameterData = new ArrayList<>(numberOfParameters);{
 				for (int i = 0 ; i < numberOfParameters ; i++){
 					parameterData.add(new ParameterData());
@@ -151,7 +156,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 			public void visitEnd() {
 				super.visitEnd();
 
-				List<Declaration> parameterDeclarations;
+				List<Declaration<Site>> parameterDeclarations;
 				Site returnType = null;
 
 				if (signature != null) {
@@ -162,19 +167,19 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 					int i = 0;
 					parameterDeclarations = new ArrayList<>();
 					for (Site parameterType : visitor.getParameterTypes()) {
-						parameterDeclarations.add(new Declaration(parameterData.get(i++).name, parameterType));
+						parameterDeclarations.add(new Declaration<>(parameterData.get(i++).name, parameterType));
 					}
 				} else {
 					org.objectweb.asm.Type methodType = org.objectweb.asm.Type.getMethodType(desc);
 					org.objectweb.asm.Type methodReturnType = methodType.getReturnType();
 					if (!methodReturnType.getClassName().equals(void.class.getName())) {
-						returnType = new VanillaSite(library.getReference(methodReturnType.getClassName()), returnData.nullable, returnData.threadSafe); //TODO - parameterized return types
+						returnType = new ParameterisedSite(library.getReference(methodReturnType.getClassName()), returnData.nullable, returnData.threadSafe); //TODO - parameterized return types
 					}
 					parameterDeclarations = new ArrayList<>();
 					int i = 0;
 					for (org.objectweb.asm.Type parameterType : methodType.getArgumentTypes()) {
-						Site parameterSite = new VanillaSite(library.getReference(parameterType.getClassName()));
-						parameterDeclarations.add(new Declaration(
+						Site parameterSite = new ParameterisedSite(library.getReference(parameterType.getClassName()));
+						parameterDeclarations.add(new Declaration<>(
 								parameterData.get(i++).name,
 								parameterSite
 						));
@@ -225,8 +230,8 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 		}
 
 		switch (metaType) {
-			case CLASS:
-				classpathType = new Type(
+			case OBJECT:
+				classpathClass = new MutableClassModel(
 						className,
 						null,
 						typeParameters,
@@ -235,14 +240,12 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 						methods,
 						Collections.<Operator>emptyList(),
 						Collections.<UnaryOperator>emptyList(),
-						Collections.<Declaration>emptyList(),
-						false,
-						true,
-						false
+						Collections.<Declaration<Site>>emptyList(),
+						Kind.OBJECT
 					);
 				break;
 			case MONITOR:
-				classpathType = new Type(
+				classpathClass = new MutableClassModel(
 						className,
 						null,
 						typeParameters,
@@ -251,26 +254,22 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 						methods,
 						Collections.<Operator>emptyList(),
 						Collections.<UnaryOperator>emptyList(),
-						Collections.<Declaration>emptyList(),
-						false,
-						true,
-						true
+						Collections.<Declaration<Site>>emptyList(),
+						Kind.MONITOR
 				);
 				break;
 			case INTERFACE:
-				classpathType = new Type(
+				classpathClass = new MutableClassModel(
 						className,
 						null,
 						typeParameters,
 						interfaces,
-						Collections.<Declaration>emptyList(),
+						Collections.<Declaration<Site>>emptyList(),
 						methods,
 						operators,
 						unaryOperators,
-						Collections.<Declaration>emptyList(),
-						true,
-						false,
-						false
+						Collections.<Declaration<Site>>emptyList(),
+						Kind.INTERFACE
 				);
 				break;
 			default:
@@ -278,7 +277,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 		}
 	}
 
-	public Type getClasspathType() {
-		return classpathType;
+	public Class getClasspathClass() {
+		return classpathClass;
 	}
 }

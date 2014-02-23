@@ -2,8 +2,8 @@ package bali.number;
 
 import bali.Boolean;
 import bali.Number;
+import bali.annotation.Kind;
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
 
 import static bali.IdentityBoolean.FALSE;
 import static bali.IdentityBoolean.TRUE;
@@ -13,7 +13,7 @@ import static bali.number.NumberFactory.NUMBER_FACTORY;
  * User: Richard
  * Date: 11/06/13
  */
-@MetaType(MetaTypes.CLASS)
+@MetaType(Kind.OBJECT)
 public final class Byte implements bali.Integer {
 
 	static final byte MAX_VALUE = java.lang.Byte.MAX_VALUE;

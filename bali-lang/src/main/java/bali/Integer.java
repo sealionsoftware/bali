@@ -1,14 +1,13 @@
 package bali;
 
-import bali.Number;
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
+import bali.annotation.Kind;
 
 /**
  * User: Richard
  * Date: 14/08/13
  */
-@MetaType(MetaTypes.INTERFACE)
+@MetaType(Kind.INTERFACE)
 public interface Integer extends Number {
 
 //	public Integer add(Integer i);

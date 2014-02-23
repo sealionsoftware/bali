@@ -3,8 +3,8 @@ package bali.time.calendar;
 import bali.CharArrayString;
 import bali.Number;
 import bali.String;
+import bali.annotation.Kind;
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
 import bali.time.CalendarSystem;
 import bali.time.Date;
 import bali.time.DateTime;
@@ -17,7 +17,7 @@ import bali.time.standard.StandardTime;
  * User: Richard
  * Date: 11/07/13
  */
-@MetaType(MetaTypes.CLASS)
+@MetaType(Kind.OBJECT)
 public final class ISOCalendarSystem implements CalendarSystem {
 
 	private static final int YEAR_LENGTH = 365;

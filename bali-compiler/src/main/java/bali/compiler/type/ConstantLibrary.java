@@ -17,7 +17,7 @@ public class ConstantLibrary {
 	private Map<String, Reference<List<Declaration>>> constants = new HashMap<>();
 	private PackageConstantsBuilder constantsBuilder;
 
-	public ConstantLibrary(TypeLibrary library) {
+	public ConstantLibrary(ClassLibrary library) {
 		constantsBuilder = new PackageConstantsBuilder(library);
 	}
 

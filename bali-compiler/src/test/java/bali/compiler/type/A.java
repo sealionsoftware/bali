@@ -1,12 +1,12 @@
 package bali.compiler.type;
 
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
+import bali.annotation.Kind;
 
 /**
  * User: Richard
  * Date: 16/09/13
  */
-@MetaType(MetaTypes.CLASS)
+@MetaType(Kind.OBJECT)
 public class A {
 }

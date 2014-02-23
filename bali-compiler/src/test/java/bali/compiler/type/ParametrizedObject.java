@@ -1,14 +1,14 @@
 package bali.compiler.type;
 
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
+import bali.annotation.Kind;
 import bali.annotation.Name;
 
 /**
  * User: Richard
  * Date: 12/09/13
  */
-@MetaType(MetaTypes.CLASS)
+@MetaType(Kind.OBJECT)
 public class ParametrizedObject<T extends B<T>> {
 
 	public T getT() {

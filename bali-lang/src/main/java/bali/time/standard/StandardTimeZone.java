@@ -2,7 +2,7 @@ package bali.time.standard;
 
 import bali.String;
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
+import bali.annotation.Kind;
 import bali.time.Interval;
 import bali.time.TimeZone;
 
@@ -10,7 +10,7 @@ import bali.time.TimeZone;
  * User: Richard
  * Date: 15/07/13
  */
-@MetaType(MetaTypes.CLASS)
+@MetaType(Kind.OBJECT)
 public final class StandardTimeZone implements TimeZone {
 
 	private final String name;

@@ -1,13 +1,15 @@
 package bali.compiler.validation.validator;
 
-import bali.compiler.parser.tree.ClassNode;
+import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.InvocationNode;
 import bali.compiler.parser.tree.Node;
+import bali.compiler.reference.SimpleReference;
 import bali.compiler.type.Declaration;
 import bali.compiler.type.Method;
+import bali.compiler.type.ParameterisedSite;
 import bali.compiler.type.Site;
-import bali.compiler.type.VanillaSite;
+import bali.compiler.type.Type;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -29,8 +31,8 @@ public class InvocationValidatorFactory implements ValidatorFactory {
 
 			public List<ValidationFailure> validate(Node node, Control control) {
 
-				if (node instanceof ClassNode){
-					thisSite = new VanillaSite(((ClassNode) node).getResolvedType());
+				if (node instanceof ObjectNode){
+					thisSite = new ParameterisedSite(new SimpleReference<>(((ObjectNode) node).getResolvedType()));
 				}
 
 				control.validateChildren();
@@ -55,13 +57,13 @@ public class InvocationValidatorFactory implements ValidatorFactory {
 						return ret;
 					}
 					List<ExpressionNode> arguments = invocation.getArguments();
-					List<Declaration> parameters = method.getParameters();
+					List<Declaration<Site>> parameters = method.getParameters();
 					if (arguments.size() != parameters.size()){
 						ret.add(new ValidationFailure(invocation, "Invalid number of arguments (" + arguments.size() + ") for method " + method + "."));
 						return ret;
 					}
 					Iterator<ExpressionNode> i = arguments.iterator();
-					Iterator<Declaration> j = parameters.iterator();
+					Iterator<Declaration<Site>> j = parameters.iterator();
 					while (i.hasNext()){
 						ExpressionNode argument = i.next();
 						Declaration parameter = j.next();
@@ -76,13 +78,13 @@ public class InvocationValidatorFactory implements ValidatorFactory {
 				return Collections.emptyList();
 			}
 
-			public Method getMethodWithName(String name, Site site) {
+			public Method getMethodWithName(String name, Type site) {
 				for (Method method : site.getMethods()) {
 					if (method.getName().equals(name)) {
 						return method;
 					}
 				}
-				for (Site iface : site.getInterfaces()){
+				for (Type iface : site.getInterfaces()){
 					Method ret = getMethodWithName(name, iface);
 					if (ret != null){
 						return ret;

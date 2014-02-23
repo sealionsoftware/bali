@@ -3,9 +3,10 @@ package bali.compiler.validation.validator;
 import bali.String;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.StringLiteralExpressionNode;
+import bali.compiler.reference.SimpleReference;
+import bali.compiler.type.ClassLibrary;
+import bali.compiler.type.ParameterisedSite;
 import bali.compiler.type.Site;
-import bali.compiler.type.TypeLibrary;
-import bali.compiler.type.VanillaSite;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.Collections;
@@ -19,8 +20,8 @@ public class StringLiteralValidatorFactory implements ValidatorFactory {
 
 	private Site site;
 
-	public StringLiteralValidatorFactory(TypeLibrary library) {
-		this.site = new VanillaSite(library.getType(String.class.getName()), false, true);
+	public StringLiteralValidatorFactory(ClassLibrary library) {
+		this.site = new ParameterisedSite(library.getReference(String.class.getName()), false, true);
 	}
 
 	public Validator createValidator() {

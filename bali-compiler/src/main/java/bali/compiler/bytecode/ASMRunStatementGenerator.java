@@ -1,9 +1,8 @@
 package bali.compiler.bytecode;
 
 import bali.compiler.GeneratedClass;
-import bali.compiler.parser.tree.DeclarationNode;
 import bali.compiler.parser.tree.RunStatementNode;
-import bali.compiler.type.Type;
+import bali.compiler.type.Class;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
@@ -36,7 +35,7 @@ public class ASMRunStatementGenerator implements Generator<RunStatementNode, Gen
 		for (RunStatementNode.RunArgument argument : input.getArguments()) {
 			cw.visitField(ACC_PRIVATE + ACC_FINAL,
 					argument.getName(),
-					converter.getTypeDescriptor(argument.getType().getType()),
+					converter.getTypeDescriptor(argument.getType().getTemplate()),
 					null,
 					null
 			).visitEnd();
@@ -54,11 +53,11 @@ public class ASMRunStatementGenerator implements Generator<RunStatementNode, Gen
 
 	private void buildConstructor(ClassWriter cw, RunStatementNode input) {
 
-		List<Type> parameterTypes = getParameterTypes(input.getArguments());
+		List<Class> parameterClasses = getParameterTypes(input.getArguments());
 
 		MethodVisitor initv = cw.visitMethod(ACC_PUBLIC,
 				"<init>",
-				converter.getMethodDescriptor(null, parameterTypes),
+				converter.getMethodDescriptor(null, parameterClasses),
 				null,
 				null
 		);
@@ -75,7 +74,7 @@ public class ASMRunStatementGenerator implements Generator<RunStatementNode, Gen
 			initv.visitFieldInsn(PUTFIELD,
 					converter.getInternalName(input.getRunnableClassName()),
 					declaration.getName(),
-					converter.getTypeDescriptor(declaration.getType().getType()));
+					converter.getTypeDescriptor(declaration.getType().getTemplate()));
 		}
 
 		initv.visitInsn(POP);
@@ -104,7 +103,7 @@ public class ASMRunStatementGenerator implements Generator<RunStatementNode, Gen
 		for (VariableInfo variable : manager.getDeclaredVariables()) {
 			methodVisitor.visitLocalVariable(
 					variable.getName(),
-					converter.getTypeDescriptor(variable.getType().getType()),
+					converter.getTypeDescriptor(variable.getType().getTemplate()),
 					null,
 					variable.getStart(),
 					variable.getEnd(),
@@ -117,12 +116,12 @@ public class ASMRunStatementGenerator implements Generator<RunStatementNode, Gen
 
 	}
 
-	private List<Type> getParameterTypes(List<RunStatementNode.RunArgument> arguments) {
-		List<Type>parameterTypes = new ArrayList<>();
+	private List<Class> getParameterTypes(List<RunStatementNode.RunArgument> arguments) {
+		List<Class> parameterClasses = new ArrayList<>();
 		for (RunStatementNode.RunArgument declaration : arguments){
-			parameterTypes.add(declaration.getType().getType());
+			parameterClasses.add(declaration.getType().getTemplate());
 		}
-		return parameterTypes;
+		return parameterClasses;
 	}
 
 

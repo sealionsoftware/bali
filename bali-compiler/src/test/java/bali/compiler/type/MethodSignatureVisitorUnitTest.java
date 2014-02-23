@@ -4,7 +4,6 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.objectweb.asm.signature.SignatureReader;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.List;
  */
 public class MethodSignatureVisitorUnitTest {
 
-	private MethodSignatureVisitor visitor = new MethodSignatureVisitor(new TypeLibrary(), new HashMap<String, Site>(), new TypeData(), Arrays.asList(new TypeData()));
+	private MethodSignatureVisitor visitor = new MethodSignatureVisitor(new ClassLibrary(), new HashMap<String, Type>(), new SiteData(), Arrays.asList(new SiteData()));
 
 	@Test
 	public void testParameterizedReturnMethod() throws Exception {
@@ -25,7 +24,8 @@ public class MethodSignatureVisitorUnitTest {
 		List<Site> parameters = visitor.getParameterTypes();
 
 		Assert.assertNotNull(returnType);
-		Assert.assertEquals("T", returnType.getName());
+		Assert.assertTrue(returnType instanceof VariableSite);
+		Assert.assertEquals("T", ((VariableSite) returnType).getName());
 		Assert.assertNotNull(parameters);
 		Assert.assertEquals(0, parameters.size());
 	}
@@ -40,6 +40,8 @@ public class MethodSignatureVisitorUnitTest {
 		Assert.assertNull(returnType);
 		Assert.assertNotNull(parameters);
 		Assert.assertEquals(1, parameters.size());
-		Assert.assertEquals("T", parameters.get(0).getName());
+		Site parameter = parameters.get(0);
+		Assert.assertTrue(parameter instanceof VariableSite);
+		Assert.assertEquals("T", ((VariableSite) parameter).getName());
 	}
 }

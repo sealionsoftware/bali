@@ -1,159 +1,31 @@
 package bali.compiler.type;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
  * User: Richard
- * Date: 28/08/13
+ * Date: 21/09/13
  */
-public class Type {
+public interface Type {
 
-	private String name;
-	private Site superType;
-	private List<Declaration> typeParameters;
-	private List<Site> interfaces;
-	private List<Declaration> parameters;
-	private List<Method> methods;
-	private List<Operator> operators;
-	private List<UnaryOperator> unaryOperators;
-	private List<Declaration> properties;
+	boolean isAssignableTo(Type t);
 
-	private Boolean isAbstract;
-	private Boolean isConstrucable;
-	private Boolean isMonitor;
+	Type getSuperType();
 
-	public Type(String name,
-	            Site superType,
-	            List<Declaration> typeParameters,
-	            List<Site> interfaces,
-	            List<Declaration> parameters,
-	            List<Method> methods,
-	            List<Operator> operators,
-	            List<UnaryOperator> unaryOperators,
-	            List<Declaration> properties,
-	            Boolean isAbstract,
-	            Boolean isConstrucable,
-	            Boolean isMonitor) {
-		this.name = name;
-		this.superType = superType;
-		this.typeParameters = typeParameters;
-		this.methods = methods;
-		this.interfaces = interfaces;
-		this.operators = operators;
-		this.unaryOperators = unaryOperators;
-		this.parameters = parameters;
-		this.properties = properties;
-		this.isAbstract = isAbstract;
-		this.isConstrucable = isConstrucable;
-		this.isMonitor = isMonitor;
-	}
+	List<Site> getTypeArguments();
 
-	public String getName() {
-		return name;
-	}
+	List<Declaration<Site>> getParameters();
 
-	public Site getSuperType() {
-		return superType;
-	}
+	List<Method> getMethods();
 
-	public List<Declaration> getTypeParameters() {
-		return typeParameters;
-	}
+	List<Type> getInterfaces();
 
-	public List<Declaration> getParameters() {
-		return parameters;
-	}
+	List<Operator> getOperators();
 
-	public List<Operator> getOperators() {
-		return operators;
-	}
+	List<UnaryOperator> getUnaryOperators();
 
-	public List<UnaryOperator> getUnaryOperators() {
-		return unaryOperators;
-	}
+	List<Declaration<Site>> getProperties();
 
-	public List<Declaration> getProperties() {
-		return properties;
-	}
+	Class getTemplate();
 
-	public List<Site> getInterfaces() {
-		return interfaces;
-	}
-
-	public List<Method> getMethods() {
-		return methods;
-	}
-
-	public Boolean isAbstract(){
-		return isAbstract;
-	}
-
-	public Boolean isConstrucable() {
-		return isConstrucable;
-	}
-
-	public Boolean isMonitor() {
-		return isMonitor;
-	}
-
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		Type type = (Type) o;
-
-		if (!name.equals(type.name)) return false;
-		if (!typeParameters.equals(type.typeParameters)) return false;
-
-		return true;
-	}
-
-	public int hashCode() {
-		int result = name.hashCode();
-		result = 31 * result + typeParameters.hashCode();
-		return result;
-	}
-
-	public Method getMethod(String name, List<Site> argumentTypes) {
-
-		for (Method method : methods) {
-			if (method.getName().equals(name)) {
-				List<Declaration> parameters = method.getParameters();
-				if (checkIfArgumentsAreAssignable(argumentTypes, parameters)) {
-					return method;
-				}
-			}
-		}
-		return null;
-	}
-
-	private boolean checkIfArgumentsAreAssignable(List<Site> argumentTypes, List<Declaration> parameters) {
-		if (argumentTypes.size() != parameters.size()) {
-			return false;
-		}
-		Iterator<Site> i = argumentTypes.iterator();
-		Iterator<Declaration> j = parameters.iterator();
-		while (i.hasNext()) {
-			if (!i.next().isAssignableTo(j.next().getType())) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(name);
-		if (typeParameters.size() > 0){
-			sb.append("<");
-			Iterator<Declaration> i = typeParameters.iterator();
-			sb.append(i.next().getName());
-			while(i.hasNext()){
-				sb.append(",").append(i.next().getName());
-			}
-			sb.append(">");
-		}
-		return sb.toString();
-	}
 }

@@ -1,15 +1,13 @@
 package bali;
 
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
-
-import java.lang.*;
+import bali.annotation.Kind;
 
 /**
  * User: Richard
  * Date: 06/02/14
  */
-@MetaType(MetaTypes.INTERFACE)
+@MetaType(Kind.INTERFACE)
 public interface Closable {
 
 	public void close() throws java.lang.Exception;

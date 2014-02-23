@@ -4,7 +4,7 @@ import bali.Boolean;
 import bali.Integer;
 import bali.Number;
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
+import bali.annotation.Kind;
 
 import static bali.IdentityBoolean.FALSE;
 import static bali.IdentityBoolean.TRUE;
@@ -14,7 +14,7 @@ import static bali.number.NumberFactory.NUMBER_FACTORY;
  * User: Richard
  * Date: 11/06/13
  */
-@MetaType(MetaTypes.CLASS)
+@MetaType(Kind.OBJECT)
 class Long implements bali.Integer {
 
 	static final long MAX_VALUE = java.lang.Long.MAX_VALUE;

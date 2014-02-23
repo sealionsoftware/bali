@@ -2,8 +2,8 @@ package bali.compiler.validation.validator;
 
 import bali.compiler.parser.tree.ImportNode;
 import bali.compiler.parser.tree.Node;
-import bali.compiler.type.Type;
-import bali.compiler.type.TypeLibrary;
+import bali.compiler.type.*;
+import bali.compiler.type.Class;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -18,9 +18,9 @@ import java.util.List;
  */
 public class ImportsValidatorFactory implements ValidatorFactory {
 
-	private TypeLibrary library;
+	private ClassLibrary library;
 
-	public ImportsValidatorFactory(TypeLibrary library) {
+	public ImportsValidatorFactory(ClassLibrary library) {
 		this.library = library;
 	}
 
@@ -32,8 +32,8 @@ public class ImportsValidatorFactory implements ValidatorFactory {
 					List<ValidationFailure> failures = new ArrayList<>();
 					ImportNode iport = (ImportNode) node;
 					try {
-						Type type = library.getType(iport.getName());
-						iport.setType(type);
+						Class aClass = library.getReference(iport.getName()).get();
+						iport.setType(aClass);
 					} catch (Exception e) {
 						failures.add(new ValidationFailure(
 								iport,

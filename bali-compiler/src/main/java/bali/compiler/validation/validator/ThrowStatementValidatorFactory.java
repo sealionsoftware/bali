@@ -6,9 +6,10 @@ import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.parser.tree.ThrowStatementNode;
+import bali.compiler.reference.SimpleReference;
+import bali.compiler.type.ClassLibrary;
+import bali.compiler.type.ParameterisedSite;
 import bali.compiler.type.Site;
-import bali.compiler.type.TypeLibrary;
-import bali.compiler.type.VanillaSite;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -25,8 +26,8 @@ public class ThrowStatementValidatorFactory implements ValidatorFactory {
 
 	private Site throwableType;
 
-	public ThrowStatementValidatorFactory(TypeLibrary library) {
-		throwableType = new VanillaSite(library.getType(Exception.class.getName()));
+	public ThrowStatementValidatorFactory(ClassLibrary library) {
+		throwableType = new ParameterisedSite(library.getReference(Exception.class.getName()));
 	}
 
 	public Validator createValidator() {
@@ -48,7 +49,7 @@ public class ThrowStatementValidatorFactory implements ValidatorFactory {
 				if (!value.getType().isAssignableTo(throwableType)){
 					return Collections.singletonList(new ValidationFailure(
 							value,
-							"throw statement requires an argument that implements " + throwableType.getName()
+							"throw statement requires an argument that implements " + throwableType.getTemplate().getName()
 					));
 				}
 				return Collections.emptyList();
@@ -60,7 +61,7 @@ public class ThrowStatementValidatorFactory implements ValidatorFactory {
 				if (!type.getSite().isAssignableTo(throwableType)){
 					ret.add(new ValidationFailure(
 							type,
-							"catch block requires a parameter that implements " + throwableType.getName()
+							"catch block requires a parameter that implements " +  throwableType.getTemplate().getName()
 					));
 				}
 				return ret;

@@ -1,7 +1,7 @@
 package bali.compiler.bytecode;
 
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
+import bali.annotation.Kind;
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.MethodNode;
@@ -22,13 +22,13 @@ public class ASMInterfaceGenerator implements Generator<InterfaceNode, Generated
 		String[] extensions = new String[input.getImplementations().size()];
 		int i = 0;
 		for (SiteNode superInterface : input.getImplementations()) {
-			extensions[i++] = converter.getInternalName(superInterface.getSite().getName());
+			extensions[i++] = converter.getInternalName(superInterface.getSite().getTemplate().getName());
 		}
 
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 
 		AnnotationVisitor av = cw.visitAnnotation(converter.getTypeDescriptor(MetaType.class.getName()), false);
-		av.visitEnum("value", converter.getTypeDescriptor(MetaTypes.class.getName()), MetaTypes.INTERFACE.name());
+		av.visitEnum("value", converter.getTypeDescriptor(Kind.class.getName()), Kind.INTERFACE.name());
 		av.visitEnd();
 
 		cw.visit(V1_7,

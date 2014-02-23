@@ -1,7 +1,6 @@
 package bali.compiler.type;
 
 import bali.compiler.reference.Reference;
-import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureVisitor;
 
@@ -15,8 +14,8 @@ import java.util.Map;
  */
 public class SiteSignatureVisitor extends SignatureVisitor {
 
-	private TypeLibrary library;
-	private Map<String, Site> typeVariableBounds;
+	private ClassLibrary library;
+	private Map<String, Type> typeVariableBounds;
 
 	private Site site;
 
@@ -25,7 +24,7 @@ public class SiteSignatureVisitor extends SignatureVisitor {
 	private boolean nullable;
 	private boolean threadSafe;
 
-	public SiteSignatureVisitor(TypeLibrary library, Map<String, Site> typeVariableBounds, Boolean nullable, Boolean threadSafe) {
+	public SiteSignatureVisitor(ClassLibrary library, Map<String, Type> typeVariableBounds, Boolean nullable, Boolean threadSafe) {
 		super(Opcodes.ASM4);
 		this.library = library;
 		this.typeVariableBounds = typeVariableBounds;
@@ -39,23 +38,15 @@ public class SiteSignatureVisitor extends SignatureVisitor {
 			return;
 		}
 
-		Reference<Type> typeReference = library.getReference(className);
+		Reference<Class> typeReference = library.getReference(className);
 
 		List<Site> typeArguments = new LinkedList<>();
 		for (SiteSignatureVisitor visitor : typeArgumentVisitors){
 			typeArguments.add(visitor.getSite());
 		}
 
-		site = buildSite(typeReference, typeArguments);
+		site = new ParameterisedSite(typeReference, typeArguments, nullable, threadSafe);
 		super.visitEnd();
-	}
-
-	private Site buildSite(Reference<Type> typeReference, List<Site> typeArguments){
-		if (typeArguments.isEmpty()){
-			return new VanillaSite(typeReference, nullable, threadSafe);
-		} else {
-			return new ParametrizedSite(typeReference, typeArguments, nullable, threadSafe);
-		}
 	}
 
 	public void visitTypeVariable(String name) {
@@ -68,7 +59,7 @@ public class SiteSignatureVisitor extends SignatureVisitor {
 	}
 
 	public SignatureVisitor visitTypeArgument(char wildcard) {
-		SiteSignatureVisitor visitor = new SiteSignatureVisitor(library, typeVariableBounds, false, false); //TODO Java 8 Type annotations so type arguments can be nullable, threadsafe
+		SiteSignatureVisitor visitor = new SiteSignatureVisitor(library, typeVariableBounds, false, false); //TODO Java 8 Class annotations so type arguments can be nullable, threadsafe
 		typeArgumentVisitors.add(visitor);
 		return visitor;
 	}

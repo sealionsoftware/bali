@@ -71,7 +71,7 @@ public class ASMStackManagerUnitTest implements Opcodes {
 //	@Test
 //	public void testDeclareVariableStatement() {
 ////
-////		Type type = new Type(0, 0);
+////		Class type = new Class(0, 0);
 ////		type.setQualifiedClassName("bali/Number");
 ////
 ////		NumberLiteralExpression value = new NumberLiteralExpression(0, 0);

@@ -6,22 +6,22 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Builds a Validator "Type" model for referenced types on the classpath
+ * Builds a Validator "Class" model for referenced types on the classpath
  * <p/>
  * User: Richard
  * Date: 23/08/13
  */
 public class ClasspathTypeBuilder {
 
-	private TypeLibrary library;
+	private ClassLibrary library;
 	private ClassLoader classLoader;
 
-	public ClasspathTypeBuilder(TypeLibrary library) {
+	public ClasspathTypeBuilder(ClassLibrary library) {
 		this.library = library;
 		this.classLoader = Thread.currentThread().getContextClassLoader();
 	}
 
-	public Type build(String typeToBuild) {
+	public Class build(String typeToBuild) {
 
 		ClassReader reader;
 		try {
@@ -33,7 +33,7 @@ public class ClasspathTypeBuilder {
 
 		ClassPathTypeBuilderVisitor visitor = new ClassPathTypeBuilderVisitor(library);
 		reader.accept(visitor, ClassReader.SKIP_FRAMES);
-		return visitor.getClasspathType();
+		return visitor.getClasspathClass();
 	}
 
 }

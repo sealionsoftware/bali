@@ -2,6 +2,7 @@ package bali.compiler.bytecode;
 
 import bali.CharArrayString;
 import bali.IdentityBoolean;
+import bali.annotation.Kind;
 import bali.compiler.parser.tree.ArrayLiteralExpressionNode;
 import bali.compiler.parser.tree.BooleanLiteralExpressionNode;
 import bali.compiler.parser.tree.BreakStatementNode;
@@ -32,13 +33,8 @@ import bali.compiler.parser.tree.TryStatementNode;
 import bali.compiler.parser.tree.UnaryOperationNode;
 import bali.compiler.parser.tree.VariableNode;
 import bali.compiler.parser.tree.WhileStatementNode;
-import bali.compiler.type.Declaration;
-import bali.compiler.type.ErasedSite;
-import bali.compiler.type.Method;
-import bali.compiler.type.Operator;
-import bali.compiler.type.Site;
-import bali.compiler.type.Type;
-import bali.compiler.type.UnaryOperator;
+import bali.compiler.type.*;
+import bali.compiler.type.Class;
 import bali.compiler.validation.validator.UnaryOperationValidatorFactory;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -50,7 +46,6 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -67,23 +62,8 @@ public class ASMStackManager implements Opcodes {
 	private Deque<Label> scopeHorizonStack = new ArrayDeque<>();
 	private Deque<LoopContext> loopContextStack = new ArrayDeque<>();
 
-	private Type erasedType;
-
 	public ASMStackManager(ASMConverter converter) {
 		this.converter = converter;
-		erasedType = new Type(Object.class.getName(),
-				null,
-				Collections.<Declaration>emptyList(),
-				Collections.<Site>emptyList(),
-				Collections.<Declaration>emptyList(),
-				Collections.<Method>emptyList(),
-				Collections.<Operator>emptyList(),
-				Collections.<UnaryOperator>emptyList(),
-				Collections.<Declaration>emptyList(),
-				false,
-				false,
-				false
-		);
 	}
 
 	public List<VariableInfo> getDeclaredVariables() {
@@ -233,7 +213,7 @@ public class ASMStackManager implements Opcodes {
 					v.visitFieldInsn(PUTFIELD,
 							converter.getInternalName(referenceNode.getHostClass()),
 							referenceNode.getName(),
-							converter.getTypeDescriptor(referenceNode.getType().getType())
+							converter.getTypeDescriptor(referenceNode.getType().getTemplate())
 					);
 				} break;
 				case VARIABLE: {
@@ -247,7 +227,7 @@ public class ASMStackManager implements Opcodes {
 			}
 
 		} else {
-			Type targetType = targetNode.getType().getType();
+			Class targetClass = targetNode.getType().getTemplate();
 			push(targetNode, v);
 			if (value != null){
 				push(statement.getValue(), v);
@@ -255,7 +235,7 @@ public class ASMStackManager implements Opcodes {
 				throw new RuntimeException("Reference assignment requires a value");
 			}
 
-			v.visitMethodInsn(invokeInsn(targetType), converter.getInternalName(targetType), statement.getSetterName(), converter.getMethodDescriptor(null, Collections.singletonList(referenceNode.getType().getType())));
+			v.visitMethodInsn(invokeInsn(targetClass), converter.getInternalName(targetClass), statement.getSetterName(), converter.getMethodDescriptor(null, Collections.singletonList(referenceNode.getType().getTemplate())));
 		}
 	}
 
@@ -297,18 +277,18 @@ public class ASMStackManager implements Opcodes {
 		Label end = new Label();
 		v.visitLabel(top);
 		push(statement.getCollection(), v);
-		Type collectionType = statement.getCollection().getType().getType();
-		v.visitMethodInsn(invokeInsn(collectionType), converter.getInternalName(collectionType), "iterator", "()Lbali/Iterator;");
+		Class collectionClass = statement.getCollection().getType().getTemplate();
+		v.visitMethodInsn(invokeInsn(collectionClass), converter.getInternalName(collectionClass), "iterator", "()Lbali/Iterator;");
 		v.visitLabel(start);
 		v.visitInsn(DUP);
 		v.visitMethodInsn(INVOKEINTERFACE, "bali/Iterator", "hasNext", "()Lbali/Boolean;");
 		v.visitFieldInsn(GETSTATIC, "bali/IdentityBoolean", "TRUE", "Lbali/IdentityBoolean;");
 		v.visitJumpInsn(IF_ACMPNE, end);
 		v.visitInsn(DUP);
-		v.visitMethodInsn(INVOKEINTERFACE, "bali/Iterator", "next", "()Ljava/lang/Object;");
+		v.visitMethodInsn(INVOKEINTERFACE, "bali/Iterator", "next", "()Ljava/lang/OBJECT;");
 		DeclarationNode element = statement.getElement();
 		SiteNode variableType = element.getType();
-		v.visitTypeInsn(CHECKCAST, converter.getInternalName(variableType.getSite().getName()));
+		v.visitTypeInsn(CHECKCAST, converter.getInternalName(variableType.getSite().getTemplate().getName()));
 		addToVariables(element.getName(), element.getType().getSite(), start, end, v);
 		loopContextStack.push(new LoopContext(start, end));
 		execute(statement.getBody(), v);
@@ -324,11 +304,11 @@ public class ASMStackManager implements Opcodes {
 		Label end = new Label();
 		Label next = new Label();
 		push(statement.getValue(), v);
-		Type statementType = statement.getValue().getType().getType();
+		Class statementClass = statement.getValue().getType().getTemplate();
 		for (CaseStatementNode caseStatement : statement.getCaseStatements()) {
 			v.visitInsn(DUP);
 			push(caseStatement.getCondition(), v);
-			v.visitMethodInsn(invokeInsn(statementType), converter.getInternalName(statementType), "equalTo", "(Ljava/lang/Object;)Lbali/Boolean;");
+			v.visitMethodInsn(invokeInsn(statementClass), converter.getInternalName(statementClass), "equalTo", "(Ljava/lang/OBJECT;)Lbali/Boolean;");
 			v.visitFieldInsn(GETSTATIC, "bali/IdentityBoolean", "TRUE", "Lbali/Boolean;");
 			v.visitJumpInsn(IF_ACMPNE, next);
 			execute(caseStatement.getBody(), v);
@@ -362,7 +342,7 @@ public class ASMStackManager implements Opcodes {
 			Site site = declaration.getType().getSite();
 			String name = declaration.getName();
 			v.visitInsn(DUP);
-			v.visitTypeInsn(INSTANCEOF, converter.getInternalName(site.getType()));
+			v.visitTypeInsn(INSTANCEOF, converter.getInternalName(site.getTemplate()));
 			v.visitJumpInsn(IFEQ, catchEnd);
 			v.visitInsn(DUP);
 			addToVariables(name, site, catchStart, catchEnd, v);
@@ -387,14 +367,14 @@ public class ASMStackManager implements Opcodes {
 		v.visitTypeInsn(NEW, runnableClassName);
 		v.visitInsn(DUP);
 
-		List<Type> parameterTypes = new ArrayList<>();
+		List<Class> parameterClasses = new ArrayList<>();
 		for (RunStatementNode.RunArgument argument : statement.getArguments()){
-			Type parameterType = argument.getType().getType();
-			parameterTypes.add(parameterType);
+			Class parameterClass = argument.getType().getTemplate();
+			parameterClasses.add(parameterClass);
 			switch (argument.getScope()) {
 				case FIELD: {
 					v.visitVarInsn(ALOAD, 0);
-					v.visitFieldInsn(GETFIELD, converter.getInternalName(argument.getHostClassName()), argument.getName(), converter.getTypeDescriptor(parameterType));
+					v.visitFieldInsn(GETFIELD, converter.getInternalName(argument.getHostClassName()), argument.getName(), converter.getTypeDescriptor(parameterClass));
 				}
 				break;
 				case VARIABLE: {
@@ -404,7 +384,7 @@ public class ASMStackManager implements Opcodes {
 			}
 		}
 
-		v.visitMethodInsn(INVOKESPECIAL, runnableClassName, "<init>", converter.getMethodDescriptor(null, parameterTypes));
+		v.visitMethodInsn(INVOKESPECIAL, runnableClassName, "<init>", converter.getMethodDescriptor(null, parameterClasses));
 		v.visitMethodInsn(INVOKESPECIAL, "java/lang/Thread", "<init>", "(Ljava/lang/Runnable;)V");
 		v.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Thread", "start", "()V");
 
@@ -425,8 +405,8 @@ public class ASMStackManager implements Opcodes {
 		v.visitVarInsn(ASTORE, variableIndex);
 	}
 
-	private int invokeInsn(Type t) {
-		return t.isAbstract() ? INVOKEINTERFACE : INVOKEVIRTUAL;
+	private int invokeInsn(Class t) {
+		return Kind.INTERFACE.equals(t.getMetaType()) ? INVOKEINTERFACE : INVOKEVIRTUAL;
 	}
 
 	// Push Methods
@@ -478,7 +458,7 @@ public class ASMStackManager implements Opcodes {
 	}
 
 	public void push(ArrayLiteralExpressionNode value, MethodVisitor v) {
-		String implName = converter.getInternalName(value.getType().getType());
+		String implName = converter.getInternalName(value.getType().getTemplate());
 		v.visitTypeInsn(NEW, implName);
 		v.visitInsn(DUP);
 		push(value.getValues().size(), v);
@@ -499,9 +479,8 @@ public class ASMStackManager implements Opcodes {
 		if (target != null){
 			pushInvocation(
 				target,
-				target.getType().getType(),
+				target.getType(),
 				value.getType(),
-				Collections.<Site>emptyList(),
 				Collections.<ExpressionNode>emptyList(),
 				value.getGetterName(),
 				v
@@ -511,12 +490,12 @@ public class ASMStackManager implements Opcodes {
 
 		switch (value.getScope()) {
 			case STATIC: {
-				v.visitFieldInsn(GETSTATIC, converter.getInternalName(value.getHostClass()), value.getName(), converter.getTypeDescriptor(value.getType().getType()));
+				v.visitFieldInsn(GETSTATIC, converter.getInternalName(value.getHostClass()), value.getName(), converter.getTypeDescriptor(value.getType().getTemplate()));
 			}
 			break;
 			case FIELD: {
 				v.visitVarInsn(ALOAD, 0);
-				v.visitFieldInsn(GETFIELD, converter.getInternalName(value.getHostClass()), value.getName(), converter.getTypeDescriptor(value.getType().getType()));
+				v.visitFieldInsn(GETFIELD, converter.getInternalName(value.getHostClass()), value.getName(), converter.getTypeDescriptor(value.getType().getTemplate()));
 			}
 			break;
 			case VARIABLE: {
@@ -526,28 +505,24 @@ public class ASMStackManager implements Opcodes {
 		}
 	}
 
+
 	public void push(ConstructionExpressionNode value, MethodVisitor v) {
-		String internalName = converter.getInternalName(value.getType().getType());
+		String internalName = converter.getInternalName(value.getType().getTemplate());
 		v.visitTypeInsn(NEW, internalName);
 		v.visitInsn(DUP);
-		List<Type> argumentTypes = new ArrayList<>();
+		List<Class> argumentClasses = new ArrayList<>();
 		for (ExpressionNode argumentValue : value.getArguments()) {
 			push(argumentValue, v);
-			argumentTypes.add(argumentValue.getType().getType());
+			argumentClasses.add(argumentValue.getType().getTemplate());
 		}
-		v.visitMethodInsn(INVOKESPECIAL, internalName, "<init>", converter.getMethodDescriptor(null, argumentTypes));
+		v.visitMethodInsn(INVOKESPECIAL, internalName, "<init>", converter.getMethodDescriptor(null, argumentClasses));
 	}
 
 	public void push(InvocationNode value, MethodVisitor v) {
-		List<Site> parameters = new ArrayList<>();
-		for (Declaration declaration : value.getResolvedMethod().getParameters()){
-			parameters.add(declaration.getType());
-		}
 		pushInvocation(
 				value.getTarget(),
-				value.getTargetType().getType(),
+				value.getTargetType(),
 				value.getType(),
-				parameters,
 				value.getArguments(),
 				value.getMethodName(),
 				v
@@ -557,19 +532,18 @@ public class ASMStackManager implements Opcodes {
 	public void push(UnaryOperationNode value, MethodVisitor v) {
 		if (UnaryOperationValidatorFactory.NULL_CHECK_OPERATOR_NAME.equals(value.getOperator())){
 			pushNullCheck(value.getTarget(), v);
-
 		} else {
 			pushInvocation(
 					value.getTarget(),
-					value.getTarget().getType().getType(),
+					value.getTarget().getType(),
 					value.getType(),
-					Collections.<Site>emptyList(),
 					new ArrayList<ExpressionNode>(),
 					value.getResolvedOperator().getMethodName(),
 					v
 			);
 		}
 	}
+
 
 	public void pushNullCheck(ExpressionNode target, MethodVisitor v) {
 		push(target, v);
@@ -586,53 +560,68 @@ public class ASMStackManager implements Opcodes {
 	public void push(OperationNode value, MethodVisitor v) {
 		pushInvocation(
 				value.getOne(),
-				value.getOne().getType().getType(),
+				value.getOne().getType(),
 				value.getType(),
-				Collections.singletonList(value.getResolvedOperator().getParameter()),
 				Collections.singletonList(value.getTwo()),
 				value.getResolvedOperator().getMethodName(),
 				v
 		);
 	}
 
-	public void pushInvocation(ExpressionNode target, Type targetType, Site valueType, List<Site> parameterTypes, List<ExpressionNode> arguments, String methodName, MethodVisitor v) {
+	public void pushInvocation(ExpressionNode target, Site targetType, Site valueType, List<ExpressionNode> arguments, String methodName, MethodVisitor v) {
 		if (target != null){
 			push(target, v);
 		} else {
 			v.visitVarInsn(ALOAD, 0);
 		}
 
-		List<Type> argumentsErased = new ArrayList<>();
+		Method erasedMethod = getMethod(targetType.getTemplate(), methodName);
+		List<Declaration<Site>> earasedParameters  = erasedMethod.getParameters();
+		if (earasedParameters.size() != arguments.size()){
+			throw new RuntimeException("The number of arguments must equal the number of parameters to write an invocation");
+		}
 
 		Iterator<ExpressionNode> i = arguments.iterator();
-		Iterator<Site> j = parameterTypes.iterator();
-
-		while (i.hasNext()){
-			push(i.next(), v);
-			argumentsErased.add(getErasure(j.next()));
+		List<Class> erasedParameters = new ArrayList<>();
+		for (Declaration<Site> erasedParameter : earasedParameters){
+			Class parameterClass = erasedParameter.getType().getTemplate();
+			ExpressionNode argument = i.next();
+			push(argument, v);
+			if (!argument.getType().getTemplate().equals(parameterClass)){
+				v.visitTypeInsn(CHECKCAST, converter.getInternalName(parameterClass.getName()));
+			}
+			erasedParameters.add(parameterClass);
 		}
 
-		Type valueErased = getErasure(valueType);
-		v.visitMethodInsn(invokeInsn(targetType),
-				converter.getInternalName(targetType),
+		Type erasedType = erasedMethod.getType();
+		Class erasedClass = erasedType != null ? erasedType.getTemplate() : null;
+		v.visitMethodInsn(invokeInsn(targetType.getTemplate()),
+				converter.getInternalName(targetType.getTemplate()),
 				methodName,
-				converter.getMethodDescriptor(valueErased, argumentsErased));
-		if (valueType != null && !valueErased.getName().equals(valueType.getName())) {
-			v.visitTypeInsn(CHECKCAST, converter.getInternalName(valueType.getName()));
+				converter.getMethodDescriptor(erasedClass, erasedParameters));
+		if (valueType != null && !valueType.getTemplate().equals(erasedClass)) {
+			v.visitTypeInsn(CHECKCAST, converter.getInternalName(erasedClass));
 		}
 	}
 
-	private Type getErasure(Site site){
-		if (site == null){
-			return null;
+	private Method getMethod(Class erased, String name){
+		Method ret = erased.getMethod(name);
+		if (ret != null){
+			return ret;
 		}
-		if (site instanceof ErasedSite){
-			ErasedSite erased = (ErasedSite) site;
-			Type bound = erased.getBoundType();
-			return bound != null ? bound : erasedType;
+		for (Type iface : erased.getInterfaces()){
+			ret = getMethod(iface.getTemplate(), name);
+			if (ret != null){
+				return ret;
+			}
 		}
-		return site.getType();
+		Type superType = erased.getSuperType();
+		if (superType != null){
+			return getMethod(superType.getTemplate(), name);
+		}
+		return null;
 	}
+
 
 	public void push(int i, MethodVisitor v) {
 		if (i >= -1 && i <= 5) {

@@ -1,7 +1,7 @@
 package bali.compiler.validation.validator;
 
 import bali.compiler.parser.tree.CatchStatementNode;
-import bali.compiler.parser.tree.ClassNode;
+import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.CodeBlockNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.ConditionalStatementNode;
@@ -15,10 +15,11 @@ import bali.compiler.parser.tree.ReferenceNode;
 import bali.compiler.parser.tree.RunStatementNode;
 import bali.compiler.parser.tree.UnaryOperationNode;
 import bali.compiler.parser.tree.VariableNode;
+import bali.compiler.type.AttachedSite;
 import bali.compiler.type.ConstantLibrary;
-import bali.compiler.type.CopySite;
 import bali.compiler.type.Declaration;
 import bali.compiler.type.Site;
+import bali.compiler.type.Type;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayDeque;
@@ -50,8 +51,8 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 
 				if (node instanceof CompilationUnitNode) {
 					return validate((CompilationUnitNode) node, control);
-				} else if (node instanceof ClassNode) {
-					validate((ClassNode) node, control);
+				} else if (node instanceof ObjectNode) {
+					validate((ObjectNode) node, control);
 				} else if (node instanceof MethodDeclarationNode) {
 					validate((MethodDeclarationNode) node, control);
 				} else if (node instanceof CatchStatementNode) {
@@ -110,7 +111,7 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 							pkgName,
 							true
 					);
-					for (Declaration declaration : packageConstants) {
+					for (Declaration<Site> declaration : packageConstants) {
 						scope.add(declaration.getName(), declaration.getType());
 					}
 					unitLevelScopes.push(scope);
@@ -129,7 +130,7 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 							pkgName + "._",
 							true
 					);
-					for (Declaration declaration : packageConstants) {
+					for (Declaration<Site> declaration : packageConstants) {
 						scope.add(declaration.getName(), declaration.getType());
 					}
 					unitLevelScopes.push(scope);
@@ -140,7 +141,7 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 				return Collections.emptyList();
 			}
 
-			private void validate(ClassNode clazz, Control agent) {
+			private void validate(ObjectNode clazz, Control agent) {
 				List<DeclarationNode> referenceableFields = new ArrayList<>();
 				referenceableFields.addAll(clazz.getArgumentDeclarations());
 				referenceableFields.addAll(clazz.getFields());
@@ -178,20 +179,7 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 						if (target instanceof ReferenceNode){
 							ReferenceNode referenceNode = (ReferenceNode) target;
 							String name = referenceNode.getName();
-							Site original = getSiteForReference(name);
-							Site newSite = new CopySite(
-									original.getType(),
-									original.getSuperType(),
-									original.getTypeParameters(),
-									original.getInterfaces(),
-									original.getParameters(),
-									original.getMethods(),
-									original.getOperators(),
-									original.getUnaryOperators(),
-									original.getProperties(),
-									false,
-									original.isThreadSafe()
-							);
+							Site newSite = new AttachedSite(getSiteForReference(name));
 							ControlExpressionNode conditional = statement.getConditional();
 							conditional.overrideType(name, newSite);
 						}
@@ -233,7 +221,7 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 
 				for (Scope superScope : scopeStack){
 					if (!ReferenceNode.ReferenceScope.STATIC.equals(superScope.getScope())){
-						for (Declaration declaration : superScope.getDeclarations()){
+						for (Declaration<Site> declaration : superScope.getDeclarations()){
 							scope.add(declaration.getName(), declaration.getType());
 						}
 					}
@@ -242,7 +230,7 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 				pushAndWalk(agent, scope);
 
 				List<RunStatementNode.RunArgument> arguments = new ArrayList<>();
-				for (Declaration declaration : scope.getDeclarations()){
+				for (Declaration<Site> declaration : scope.getDeclarations()){
 
 					Scope originalScope = getScopeForReference(declaration.getName());
 					arguments.add(new RunStatementNode.RunArgument(
@@ -320,7 +308,7 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 					Site site = target.getType();
 					PropertyData propertyData = getProperty(site, name);
 					if (propertyData == null){
-						failures.add(new ValidationFailure(value, "Could not resolve reference " + site.getType().getName() + "." + name));
+						failures.add(new ValidationFailure(value, "Could not resolve reference " + site.getTemplate().getName() + "." + name));
 						return failures;
 					}
 					value.setFinal(false);
@@ -335,11 +323,11 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 		};
 	}
 
-	private PropertyData getProperty(Site site, String name){
-		for (Declaration p : site.getProperties())
+	private PropertyData getProperty(Type site, String name){
+		for (Declaration<Site> p : site.getProperties())
 			if(p.getName().equals(name))
-				return new PropertyData(p, site.getType().getName());
-		Site superType = site.getSuperType();
+				return new PropertyData(p, site.getTemplate().getName());
+		Type superType = site.getSuperType();
 		if (superType != null)
 			return getProperty(superType, name);
 		return null;
@@ -347,15 +335,15 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 
 	private static class PropertyData {
 
-		private Declaration property;
+		private Declaration<Site> property;
 		private String hostClass;
 
-		public PropertyData(Declaration property, String hostClass) {
+		public PropertyData(Declaration<Site> property, String hostClass) {
 			this.property = property;
 			this.hostClass = hostClass;
 		}
 
-		private Declaration getProperty() {
+		private Declaration<Site> getProperty() {
 			return property;
 		}
 

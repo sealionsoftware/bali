@@ -1,7 +1,7 @@
 package bali;
 
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
+import bali.annotation.Kind;
 import bali.annotation.Nullable;
 import bali.annotation.Operator;
 
@@ -9,7 +9,7 @@ import bali.annotation.Operator;
  * User: Richard
  * Date: 07/07/13
  */
-@MetaType(MetaTypes.INTERFACE)
+@MetaType(Kind.INTERFACE)
 public interface Reader {
 
 	@Operator("<<")

@@ -1,22 +1,21 @@
 package bali.compiler.validation.validator;
 
-import bali.compiler.parser.tree.ClassNode;
+import bali.annotation.Kind;
+import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
-import bali.compiler.parser.tree.DeclarationNode;
 import bali.compiler.parser.tree.ImportNode;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.SiteNode;
-import bali.compiler.type.Declaration;
-import bali.compiler.type.Method;
-import bali.compiler.type.Site;
-import bali.compiler.type.Type;
+import bali.compiler.type.*;
+import bali.compiler.type.Class;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -33,7 +32,7 @@ public class ImplementationValidatorFactory implements ValidatorFactory {
 	public Validator createValidator() {
 		return new Validator() {
 
-			private Set<Type> interfaces;
+			private Set<bali.compiler.type.Class> interfaces;
 
 			public List<ValidationFailure> validate(Node node, Control control) {
 
@@ -41,8 +40,8 @@ public class ImplementationValidatorFactory implements ValidatorFactory {
 
 				if (node instanceof CompilationUnitNode){
 					ret = validate((CompilationUnitNode) node);
-				} else if (node instanceof ClassNode){
-					ret = validate((ClassNode) node);
+				} else if (node instanceof ObjectNode){
+					ret = validate((ObjectNode) node);
 				} else {
 					ret = Collections.emptyList();
 				}
@@ -53,15 +52,15 @@ public class ImplementationValidatorFactory implements ValidatorFactory {
 
 			public List<ValidationFailure> validate(CompilationUnitNode unit) {
 
-				Set<Type> interfaces = new HashSet<>();
+				Set<Class> interfaces = new HashSet<>();
 
 				for (InterfaceNode iface : unit.getInterfaces()) {
 					interfaces.add(iface.getResolvedType());
 				}
 				for (ImportNode iport : unit.getImports()) {
-					Type iportType = iport.getType();
-					if (iportType != null && iportType.isAbstract()) {
-						interfaces.add(iportType);
+					Class iportClass = iport.getType();
+					if (iportClass != null && Kind.INTERFACE.equals(iportClass.getMetaType())) {
+						interfaces.add(iportClass);
 					}
 				}
 
@@ -69,28 +68,24 @@ public class ImplementationValidatorFactory implements ValidatorFactory {
 				return Collections.emptyList();
 			}
 
-			private List<ValidationFailure> validate(ClassNode classNode) {
+			private List<ValidationFailure> validate(ObjectNode objectNode) {
 
 				List<ValidationFailure> failures = new ArrayList<>();
 
-				for (SiteNode type : classNode.getImplementations()) {
+				for (SiteNode type : objectNode.getImplementations()) {
 
 					Site ifaceSite = type.getSite();
 
-					if (!interfaces.contains(ifaceSite.getType())) {
+					if (!interfaces.contains(ifaceSite.getTemplate())) {
 						failures.add(
-								new ValidationFailure(classNode, "Implementation declaration " + type.getClassName() + " is not a recognised interface")
+								new ValidationFailure(objectNode, "Implementation declaration " + type.getClassName() + " is not a recognised interface")
 						);
 						continue;
 					}
 
-					for (MethodDeclarationNode methodNode : classNode.getMethods()) {
-						for (Type iface : interfaces) {
-							List<Site> argumentTypes = new ArrayList<>();
-							for (DeclarationNode declarationNode : methodNode.getArguments()) {
-								argumentTypes.add(declarationNode.getType().getSite());
-							}
-							Method methodDeclaration = iface.getMethod(methodNode.getName(), argumentTypes);
+					for (MethodDeclarationNode methodNode : objectNode.getMethods()) {
+						for (Class iface : interfaces) {
+							Method methodDeclaration = iface.getMethod(methodNode.getName());
 							if (methodDeclaration != null) {
 								methodNode.setDeclared(true);
 								break;
@@ -99,16 +94,34 @@ public class ImplementationValidatorFactory implements ValidatorFactory {
 					}
 
 					for (Method method : ifaceSite.getMethods()) {
-						List<Site> types = new ArrayList<>();
-						for (Declaration declaration : method.getParameters()) {
-							types.add(declaration.getType());
+						List<Site> ifaceMethodParameter = new ArrayList<>();
+						for (Declaration<Site> declaration : method.getParameters()) {
+							ifaceMethodParameter.add(declaration.getType());
 						}
-						if (classNode.getResolvedType().getMethod(method.getName(), types) == null) {
+						Method implementation = objectNode.getResolvedType().getMethod(method.getName());
+						if (implementation == null) {
 							failures.add(
-									new ValidationFailure(classNode, "Class " + classNode.getClassName() + " does not implement method " + method)
+									new ValidationFailure(objectNode, "Class " + objectNode.getClassName() + " does not implement method " + method)
 							);
+							continue;
+						}
+						List<Declaration<Site>> implementationParameters = implementation.getParameters();
+						if (implementationParameters.size() != ifaceMethodParameter.size()) {
+							failures.add(
+									new ValidationFailure(objectNode, "Method " + implementation.getName() + " has wrong number of arguments to implement interface declaration " + method)
+							);
+							continue;
+						}
+						Iterator<Site> ifaceParameters = ifaceMethodParameter.iterator();
+						for (Declaration<Site> implementationParameter : implementationParameters){
+							Site ifaceParameter = ifaceParameters.next();
+							if (!implementationParameter.getType().isAssignableTo(ifaceParameter)){
+								new ValidationFailure(objectNode, "Implementation parameter " + implementationParameter.getName() + " is not assignable to declared parameter type " + ifaceParameter);
+							}
 						}
 					}
+
+
 
 				}
 				return failures;

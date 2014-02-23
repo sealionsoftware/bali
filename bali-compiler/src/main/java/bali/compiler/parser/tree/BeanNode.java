@@ -7,7 +7,7 @@ import java.util.List;
  * User: Richard
  * Date: 29/04/13
  */
-public class BeanNode extends TypeNode {
+public class BeanNode extends ClassNode {
 
 	private SiteNode superType;
 	private final List<PropertyNode> properties = new ArrayList<>();

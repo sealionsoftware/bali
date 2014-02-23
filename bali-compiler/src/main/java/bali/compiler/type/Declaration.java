@@ -4,12 +4,12 @@ package bali.compiler.type;
  * User: Richard
  * Date: 27/08/13
  */
-public class Declaration {
+public class Declaration<T extends Type> {
 
 	private String name;
-	private Site type;
+	private T type;
 
-	public Declaration(String name, Site type) {
+	public Declaration(String name, T type) {
 		this.name = name;
 		this.type = type;
 	}
@@ -18,7 +18,7 @@ public class Declaration {
 		return name;
 	}
 
-	public Site getType() {
+	public T getType() {
 		return type;
 	}
 
@@ -29,7 +29,6 @@ public class Declaration {
 		Declaration that = (Declaration) o;
 
 		if (!name.equals(that.name)) return false;
-		if (!type.equals(that.type)) return false;
 
 		return true;
 	}

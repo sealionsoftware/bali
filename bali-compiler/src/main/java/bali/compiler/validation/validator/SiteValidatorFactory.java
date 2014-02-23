@@ -1,36 +1,13 @@
 package bali.compiler.validation.validator;
 
-import bali.collection.Collection;
-import bali.compiler.parser.tree.CatchStatementNode;
-import bali.compiler.parser.tree.ClassNode;
-import bali.compiler.parser.tree.CodeBlockNode;
-import bali.compiler.parser.tree.CompilationUnitNode;
-import bali.compiler.parser.tree.ConditionalStatementNode;
-import bali.compiler.parser.tree.ControlExpressionNode;
-import bali.compiler.parser.tree.DeclarationNode;
-import bali.compiler.parser.tree.ExpressionNode;
-import bali.compiler.parser.tree.ForStatementNode;
-import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.Node;
-import bali.compiler.parser.tree.ReferenceNode;
-import bali.compiler.parser.tree.RunStatementNode;
 import bali.compiler.parser.tree.SiteNode;
-import bali.compiler.parser.tree.UnaryOperationNode;
-import bali.compiler.parser.tree.VariableNode;
-import bali.compiler.type.ConstantLibrary;
-import bali.compiler.type.CopySite;
-import bali.compiler.type.Declaration;
 import bali.compiler.type.Site;
-import bali.compiler.type.Type;
+import bali.compiler.type.Class;
 import bali.compiler.validation.ValidationFailure;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * User: Richard
@@ -46,19 +23,19 @@ public class SiteValidatorFactory implements ValidatorFactory {
 
 					SiteNode siteNode = (SiteNode) node;
 					Site site = siteNode.getSite();
-					Type type = site.getType();
+					Class aClass = site.getTemplate();
 
-					if (!type.isAbstract()){
+					if (!aClass.getMetaType().isReference()){
 						failures.add(new ValidationFailure(
 							siteNode,
-							"Declared site must be of abstract type"
+							"Declared site must be of interface type"
 						));
 					}
 
-					if (siteNode.getParameters().size() != type.getTypeParameters().size()){
+					if (siteNode.getParameters().size() != aClass.getTypeParameters().size()){
 						failures.add(new ValidationFailure(
 								siteNode,
-								"Invalid parameterisation: " + siteNode.getParameters() + " => " + type.getTypeParameters()
+								"Invalid parameterisation: " + siteNode.getParameters() + " => " + aClass.getTypeParameters()
 						));
 					}
 

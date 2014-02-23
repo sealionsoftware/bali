@@ -11,6 +11,6 @@ import static java.lang.annotation.ElementType.TYPE;
 @Target(TYPE)
 public @interface MetaType {
 
-	public MetaTypes value();
+	public Kind value();
 
 }

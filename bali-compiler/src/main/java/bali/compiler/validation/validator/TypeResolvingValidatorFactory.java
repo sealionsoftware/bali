@@ -1,15 +1,13 @@
 package bali.compiler.validation.validator;
 
+import bali.annotation.Kind;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.ConstructionExpressionNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.reference.Reference;
-import bali.compiler.type.ParametrizedSite;
-import bali.compiler.type.Site;
-import bali.compiler.type.Type;
-import bali.compiler.type.TypeLibrary;
-import bali.compiler.type.VanillaSite;
+import bali.compiler.type.*;
+import bali.compiler.type.Class;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -28,9 +26,9 @@ import java.util.Map;
  */
 public class TypeResolvingValidatorFactory implements ValidatorFactory {
 
-	private TypeLibrary library;
+	private ClassLibrary library;
 
-	public TypeResolvingValidatorFactory(TypeLibrary library) {
+	public TypeResolvingValidatorFactory(ClassLibrary library) {
 		this.library = library;
 	}
 
@@ -38,7 +36,7 @@ public class TypeResolvingValidatorFactory implements ValidatorFactory {
 
 		return new Validator() {
 
-			private Map<String, Reference<Type>> resolvables;
+			private Map<String, Reference<bali.compiler.type.Class>> resolvables;
 
 			public List<ValidationFailure> validate(Node node, Control control) {
 
@@ -62,7 +60,7 @@ public class TypeResolvingValidatorFactory implements ValidatorFactory {
 			public List<ValidationFailure> validate(SiteNode siteNode) {
 
 				List<ValidationFailure> ret = new ArrayList<>();
-				Reference<Type> reference = resolvables.get(siteNode.getClassName());
+				Reference<Class> reference = resolvables.get(siteNode.getClassName());
 
 				if (reference == null) {
 					try {
@@ -75,21 +73,21 @@ public class TypeResolvingValidatorFactory implements ValidatorFactory {
 
 				List<SiteNode> parameterNodes = siteNode.getParameters();
 				if (parameterNodes.isEmpty()){
-					siteNode.setSite(new VanillaSite(reference, siteNode.getNullable(), siteNode.getThreadSafe()));
+					siteNode.setSite(new ParameterisedSite(reference, siteNode.getNullable(), siteNode.getThreadSafe()));
 				}
 				List<Site> parameterSites = new ArrayList<>(parameterNodes.size());
 				for (SiteNode parameterNode : parameterNodes) {
 					parameterSites.add(parameterNode.getSite());
 				}
 
-				siteNode.setSite(new ParametrizedSite(reference, parameterSites, siteNode.getNullable(), siteNode.getThreadSafe()));
+				siteNode.setSite(new ParameterisedSite(reference, parameterSites, siteNode.getNullable(), siteNode.getThreadSafe()));
 				return ret;
 			}
 
 			public List<ValidationFailure> validate(ConstructionExpressionNode type) {
 
 				List<ValidationFailure> ret = new ArrayList<>();
-				Reference<Type> reference = resolvables.get(type.getClassName());
+				Reference<Class> reference = resolvables.get(type.getClassName());
 
 				if (reference == null) {
 					try {
@@ -100,7 +98,7 @@ public class TypeResolvingValidatorFactory implements ValidatorFactory {
 					}
 				}
 
-				type.setType(new VanillaSite(reference, false, reference.get().isMonitor()));
+				type.setType(new ParameterisedSite(reference, false, Kind.MONITOR.equals(reference.get().getMetaType())));
 				return ret;
 			}
 		};

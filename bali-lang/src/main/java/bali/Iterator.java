@@ -1,13 +1,13 @@
 package bali;
 
+import bali.annotation.Kind;
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
 
 /**
  * User: Richard
  * Date: 09/06/13
  */
-@MetaType(MetaTypes.INTERFACE)
+@MetaType(Kind.INTERFACE)
 public interface Iterator<T> {
 
 	public bali.Boolean hasNext();

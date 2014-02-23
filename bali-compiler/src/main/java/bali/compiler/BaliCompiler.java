@@ -13,8 +13,8 @@ import bali.compiler.parser.ANTLRParserManager;
 import bali.compiler.parser.ParserManager;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.Node;
+import bali.compiler.type.ClassLibrary;
 import bali.compiler.type.ConstantLibrary;
-import bali.compiler.type.TypeLibrary;
 import bali.compiler.validation.MultiThreadedValidationEngine;
 import bali.compiler.validation.ValidationEngine;
 import bali.compiler.validation.ValidationException;
@@ -75,7 +75,7 @@ public class BaliCompiler {
 
 	public BaliCompiler() {
 
-		TypeLibrary library = new TypeLibrary();
+		ClassLibrary library = new ClassLibrary();
 		ConstantLibrary constantLibrary = new ConstantLibrary(library);
 
 		parserManager = new ANTLRParserManager();

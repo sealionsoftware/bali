@@ -1,0 +1,189 @@
+package bali.compiler.type;
+
+import bali.annotation.Kind;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * A Class is a compiled Type Template
+ *
+ * User: Richard
+ * Date: 28/08/13
+ */
+public class MutableClassModel implements Class {
+
+	private String name;
+	private Type superType;
+	private List<Declaration<Type>> typeParameters;
+	private List<Type> interfaces;
+	private List<Declaration<Site>> parameters;
+	private List<Method> methods;
+	private List<Operator> operators;
+	private List<UnaryOperator> unaryOperators;
+	private List<Declaration<Site>> properties;
+	private Kind metaType;
+
+	public MutableClassModel(String name, Type superType, List<Declaration<Type>> typeParameters, List<Type> interfaces, List<Declaration<Site>> parameters, List<Method> methods, List<Operator> operators, List<UnaryOperator> unaryOperators, List<Declaration<Site>> properties, Kind metaType) {
+		this.name = name;
+		this.superType = superType;
+		this.typeParameters = typeParameters;
+		this.interfaces = interfaces;
+		this.parameters = parameters;
+		this.methods = methods;
+		this.operators = operators;
+		this.unaryOperators = unaryOperators;
+		this.properties = properties;
+		this.metaType = metaType;
+	}
+
+	public MutableClassModel(String name) {
+		this.name = name;
+		this.typeParameters = Collections.emptyList();
+		this.interfaces = Collections.emptyList();
+		this.parameters = Collections.emptyList();
+		this.methods = Collections.emptyList();
+		this.operators = Collections.emptyList();
+		this.unaryOperators = Collections.emptyList();
+		this.properties = Collections.emptyList();
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public Type getSuperType() {
+		return superType;
+	}
+
+	public List<Declaration<Type>> getTypeParameters() {
+		return typeParameters;
+	}
+
+	public List<Declaration<Site>> getParameters() {
+		return parameters;
+	}
+
+	public List<Operator> getOperators() {
+		return operators;
+	}
+
+	public List<UnaryOperator> getUnaryOperators() {
+		return unaryOperators;
+	}
+
+	public List<Declaration<Site>> getProperties() {
+		return properties;
+	}
+
+	public List<Type> getInterfaces() {
+		return interfaces;
+	}
+
+	public List<Method> getMethods() {
+		return methods;
+	}
+
+	public Kind getMetaType() {
+		return metaType;
+	}
+
+	public void setSuperType(Type superType) {
+		this.superType = superType;
+	}
+
+	public void setMetaType(Kind metaType) {
+		this.metaType = metaType;
+	}
+
+	public void setTypeParameters(List<Declaration<Type>> typeParameters) {
+		this.typeParameters = typeParameters;
+	}
+
+	public void setInterfaces(List<Type> interfaces) {
+		this.interfaces = interfaces;
+	}
+
+	public void setParameters(List<Declaration<Site>> parameters) {
+		this.parameters = parameters;
+	}
+
+	public void setMethods(List<Method> methods) {
+		this.methods = methods;
+	}
+
+	public void setOperators(List<Operator> operators) {
+		this.operators = operators;
+	}
+
+	public void setUnaryOperators(List<UnaryOperator> unaryOperators) {
+		this.unaryOperators = unaryOperators;
+	}
+
+	public void setProperties(List<Declaration<Site>> properties) {
+		this.properties = properties;
+	}
+
+	public boolean equals(Object o) {
+		return (o instanceof Class) && name.equals(((Class) o).getName());
+	}
+
+	public int hashCode() {
+		return name.hashCode();
+	}
+
+	public Method getMethod(String name) {
+
+		for (Method method : methods) {
+			if (method.getName().equals(name)) {
+				return method;
+			}
+		}
+		for (Operator operator : operators){
+			if (operator.getMethodName().equals(name)){
+				return new Method(name, operator.getType(), Collections.singletonList(new Declaration<>(null, operator.getParameter())));
+			}
+		}
+		for (UnaryOperator unaryOperator : unaryOperators){
+			if (unaryOperator.getMethodName().equals(name)){
+				return new Method(name, unaryOperator.getType(), Collections.<Declaration<Site>>emptyList());
+			}
+		}
+		for (Declaration<Site> property : properties){
+			if (getGetterName(property.getName()).equals(name)){
+				return new Method(name, property.getType(), Collections.<Declaration<Site>>emptyList());
+			}
+			if (getSetterName(property.getName()).equals(name)){
+				return new Method(name, null, Collections.singletonList(property));
+			}
+		}
+		return null;
+	}
+
+	//TODO: this shouldn't live here
+	private String getGetterName(String propertyName){
+		return "get" + getStem(propertyName);
+	}
+	private String getSetterName(String propertyName){
+		return "set" + getStem(propertyName);
+	}
+	private String getStem(String propertyName){
+		return propertyName.substring(0,1).toUpperCase() + propertyName.substring(1);
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(name);
+		if (typeParameters.size() > 0){
+			sb.append("<");
+			Iterator<Declaration<Type>> i = typeParameters.iterator();
+			sb.append(i.next().getName());
+			while(i.hasNext()){
+				sb.append(",").append(i.next().getName());
+			}
+			sb.append(">");
+		}
+		return sb.toString();
+	}
+}

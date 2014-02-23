@@ -4,7 +4,7 @@ import bali.IdentityBoolean;
 import bali.Number;
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.ArgumentDeclarationNode;
-import bali.compiler.parser.tree.ClassNode;
+import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.CodeBlockNode;
 import bali.compiler.parser.tree.FieldNode;
 import bali.compiler.parser.tree.InterfaceNode;
@@ -29,11 +29,11 @@ public class ASMClassGeneratorUnitTest {
 
 	private static ASMClassGenerator generator = new ASMClassGenerator();
 
-	private ClassNode clazz;
+	private ObjectNode clazz;
 
 	@Before
 	public void setUp() {
-		clazz = new ClassNode();
+		clazz = new ObjectNode();
 		clazz.setSourceFile("bali.test.bali");
 		clazz.setQualifiedClassName("bali.test.AClass");
 	}
@@ -72,7 +72,7 @@ public class ASMClassGeneratorUnitTest {
 
 		Assert.assertEquals("Number of fields", 1, loadedClass.getDeclaredFields().length);
 		Assert.assertTrue("Is Private", Modifier.isPrivate(declaredField.getModifiers()));
-		Assert.assertEquals("Type", Number.class, declaredField.getType());
+		Assert.assertEquals("Class", Number.class, declaredField.getType());
 
 		Object instance = loadedClass.newInstance();
 		declaredField.setAccessible(true);
@@ -97,7 +97,7 @@ public class ASMClassGeneratorUnitTest {
 
 		Assert.assertEquals("Number of methods", 1, loadedClass.getDeclaredMethods().length);
 		Assert.assertTrue("Is Private", Modifier.isPrivate(declaredMethod.getModifiers()));
-		Assert.assertEquals("Return Type", void.class, declaredMethod.getReturnType());
+		Assert.assertEquals("Return Class", void.class, declaredMethod.getReturnType());
 	}
 
 	@Test
@@ -127,7 +127,7 @@ public class ASMClassGeneratorUnitTest {
 		java.lang.reflect.Method declaredMethod = loadedClass.getDeclaredMethod("aMethod", new java.lang.Class[]{});
 
 		Assert.assertEquals("Number of methods", 1, loadedClass.getDeclaredMethods().length);
-		Assert.assertEquals("Return Type", Number.class, declaredMethod.getReturnType());
+		Assert.assertEquals("Return Class", Number.class, declaredMethod.getReturnType());
 	}
 
 	@Test
@@ -155,7 +155,7 @@ public class ASMClassGeneratorUnitTest {
 		java.lang.reflect.Method declaredMethod = loadedClass.getDeclaredMethod("aMethod", new java.lang.Class[]{Number.class});
 
 		Assert.assertEquals("Number of methods", 1, loadedClass.getDeclaredMethods().length);
-		Assert.assertEquals("Return Type", void.class, declaredMethod.getReturnType());
+		Assert.assertEquals("Return Class", void.class, declaredMethod.getReturnType());
 	}
 
 	@Test

@@ -1,12 +1,12 @@
 package bali.compiler.type;
 
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
+import bali.annotation.Kind;
 
 /**
  * User: Richard
  * Date: 12/09/13
  */
-@MetaType(MetaTypes.INTERFACE)
+@MetaType(Kind.INTERFACE)
 public interface VanillaInterface {
 }

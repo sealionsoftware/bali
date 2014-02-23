@@ -2,24 +2,24 @@ package bali.compiler.validation.validator;
 
 import bali.compiler.parser.tree.BeanNode;
 import bali.compiler.parser.tree.Node;
-import bali.compiler.type.Type;
-import bali.compiler.type.TypeLibrary;
+import bali.compiler.type.Class;
+import bali.compiler.type.ClassLibrary;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.Collections;
 import java.util.List;
 
 /**
- * Constructs the interfaces qualified class name, and adds it to the TypeLibrary
+ * Constructs the interfaces qualified class name, and adds it to the ClassLibrary
  * <p/>
  * User: Richard
  * Date: 19/06/13
  */
 public class BeanValidatorFactory implements ValidatorFactory {
 
-	private TypeLibrary library;
+	private ClassLibrary library;
 
-	public BeanValidatorFactory(TypeLibrary library) {
+	public BeanValidatorFactory(ClassLibrary library) {
 		this.library = library;
 	}
 
@@ -29,7 +29,7 @@ public class BeanValidatorFactory implements ValidatorFactory {
 
 				if (node instanceof BeanNode){
 					BeanNode bean = (BeanNode) node;
-					Type resolved = library.addDeclaration(bean);
+					Class resolved = library.addDeclaration(bean);
 					bean.setResolvedType(resolved);
 					// TODO: validations
 				}

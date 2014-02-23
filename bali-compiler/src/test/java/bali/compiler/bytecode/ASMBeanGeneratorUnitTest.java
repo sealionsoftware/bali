@@ -56,10 +56,10 @@ public class ASMBeanGeneratorUnitTest {
 		Assert.assertEquals("Number of getters", 1, getters.size());
 
 		Assert.assertEquals("Setter Name", "setAProperty", setters.get(0).getName());
-		Assert.assertEquals("Setter Type", Number.class, setters.get(0).getParameterTypes()[0]);
+		Assert.assertEquals("Setter Class", Number.class, setters.get(0).getParameterTypes()[0]);
 
 		Assert.assertEquals("Getter Name", "getAProperty", getters.get(0).getName());
-		Assert.assertEquals("Getter Type", Number.class, getters.get(0).getReturnType());
+		Assert.assertEquals("Getter Class", Number.class, getters.get(0).getReturnType());
 
 	}
 
@@ -114,7 +114,7 @@ public class ASMBeanGeneratorUnitTest {
 //		java.lang.reflect.Method declaredMethod = loadedClass.getMethod("aMethod", new Class[]{});
 //
 //		Assert.assertEquals("Number of methods", 1, loadedClass.getMethods().length);
-//		Assert.assertEquals("Return Type", void.class, declaredMethod.getReturnType());
+//		Assert.assertEquals("Return Class", void.class, declaredMethod.getReturnType());
 //	}
 //
 //	@Test
@@ -134,7 +134,7 @@ public class ASMBeanGeneratorUnitTest {
 //		java.lang.reflect.Method declaredMethod = loadedClass.getMethod("aMethod", new Class[]{});
 //
 //		Assert.assertEquals("Number of methods", 1, loadedClass.getMethods().length);
-//		Assert.assertEquals("Return Type", Number.class, declaredMethod.getReturnType());
+//		Assert.assertEquals("Return Class", Number.class, declaredMethod.getReturnType());
 //	}
 //
 //	@Test
@@ -158,7 +158,7 @@ public class ASMBeanGeneratorUnitTest {
 //		java.lang.reflect.Method declaredMethod = loadedClass.getMethod("aMethod", new Class[]{Number.class});
 //
 //		Assert.assertEquals("Number of methods", 1, loadedClass.getMethods().length);
-//		Assert.assertEquals("Return Type", void.class, declaredMethod.getReturnType());
+//		Assert.assertEquals("Return Class", void.class, declaredMethod.getReturnType());
 //	}
 
 	private List<Method> getSetters(Class clazz){

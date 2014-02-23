@@ -3,7 +3,7 @@ package bali.number;
 import bali.Boolean;
 import bali.Number;
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
+import bali.annotation.Kind;
 
 import static bali.IdentityBoolean.FALSE;
 import static bali.IdentityBoolean.TRUE;
@@ -12,7 +12,7 @@ import static bali.IdentityBoolean.TRUE;
  * User: Richard
  * Date: 10/06/13
  */
-@MetaType(MetaTypes.CLASS)
+@MetaType(Kind.OBJECT)
 public enum Infinity implements Number {
 
 	POSITIVE_INFINITY, NEGATIVE_INFINITY;

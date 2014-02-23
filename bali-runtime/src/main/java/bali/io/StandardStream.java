@@ -1,8 +1,6 @@
 package bali.io;
 
 import bali.*;
-import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
 
 /**
  * User: Richard

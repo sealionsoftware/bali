@@ -3,7 +3,7 @@ package bali.compiler.bytecode;
 import bali.compiler.GeneratedClass;
 import bali.compiler.GeneratedPackage;
 import bali.compiler.parser.tree.BeanNode;
-import bali.compiler.parser.tree.ClassNode;
+import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.RunStatementNode;
@@ -23,7 +23,7 @@ public class ConfigurablePackageGeneratorUnitTest {
 	private static Generator<CompilationUnitNode, GeneratedClass> packageClassGenerator = Mockito.mock(Generator.class);
 	private static Generator<BeanNode, GeneratedClass> beanGenerator = Mockito.mock(Generator.class);
 	private static Generator<InterfaceNode, GeneratedClass> interfaceGenerator = Mockito.mock(Generator.class);
-	private static Generator<ClassNode, GeneratedClass> classGenerator = Mockito.mock(Generator.class);
+	private static Generator<ObjectNode, GeneratedClass> classGenerator = Mockito.mock(Generator.class);
 	private static Generator<RunStatementNode, GeneratedClass> runStatementGenerator = Mockito.mock(Generator.class);
 
 	private static ConfigurablePackageGenerator generator = new ConfigurablePackageGenerator(
@@ -75,7 +75,7 @@ public class ConfigurablePackageGeneratorUnitTest {
 	@Test
 	public void testGeneratePackageWithClass() throws Exception{
 
-		ClassNode clazz = new ClassNode(0,0);
+		ObjectNode clazz = new ObjectNode(0,0);
 		unit.addClass(clazz);
 
 		GeneratedClass generatedClass = new GeneratedClass("testClass", new byte[0]);

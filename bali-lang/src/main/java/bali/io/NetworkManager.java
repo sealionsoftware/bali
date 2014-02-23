@@ -3,13 +3,13 @@ package bali.io;
 import bali.String;
 import bali.Integer;
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
+import bali.annotation.Kind;
 
 /**
  * User: Richard
  * Date: 06/02/14
  */
-@MetaType(MetaTypes.INTERFACE)
+@MetaType(Kind.INTERFACE)
 public interface NetworkManager {
 
 	public Host resolve(IPAddress address);

@@ -14,10 +14,10 @@ import java.util.List;
  */
 public class PackageConstantsBuilder {
 
-	private TypeLibrary library;
+	private ClassLibrary library;
 	private ClassLoader classLoader;
 
-	public PackageConstantsBuilder(TypeLibrary library) {
+	public PackageConstantsBuilder(ClassLibrary library) {
 		this.library = library;
 		this.classLoader = Thread.currentThread().getContextClassLoader();
 	}

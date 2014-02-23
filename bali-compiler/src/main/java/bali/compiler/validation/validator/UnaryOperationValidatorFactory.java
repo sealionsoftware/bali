@@ -3,10 +3,12 @@ package bali.compiler.validation.validator;
 import bali.Boolean;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.UnaryOperationNode;
+import bali.compiler.reference.SimpleReference;
+import bali.compiler.type.ClassLibrary;
+import bali.compiler.type.ParameterisedSite;
 import bali.compiler.type.Site;
-import bali.compiler.type.TypeLibrary;
+import bali.compiler.type.Type;
 import bali.compiler.type.UnaryOperator;
-import bali.compiler.type.VanillaSite;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -29,10 +31,10 @@ public class UnaryOperationValidatorFactory implements ValidatorFactory {
 	public static final String NULL_CHECK_OPERATOR_NAME = "?";
 	private UnaryOperator nullCheck;
 
-	public UnaryOperationValidatorFactory(TypeLibrary library) {
+	public UnaryOperationValidatorFactory(ClassLibrary library) {
 		this.nullCheck = new UnaryOperator(
 				"?",
-				new VanillaSite(library.getType(Boolean.class.getName())),
+				new ParameterisedSite(library.getReference(Boolean.class.getName())),
 				null
 		);
 	}
@@ -60,7 +62,7 @@ public class UnaryOperationValidatorFactory implements ValidatorFactory {
 					UnaryOperator operator = operatorName.equals(NULL_CHECK_OPERATOR_NAME) ? nullCheck : getUnaryOperatorWithName(operatorName, targetType);
 
 					if (operator == null) {
-						ret.add(new ValidationFailure(node, "Type " + targetType + " has no method for operator " + operatorName));
+						ret.add(new ValidationFailure(node, "Class " + targetType + " has no method for operator " + operatorName));
 						return ret;
 					}
 
@@ -70,13 +72,13 @@ public class UnaryOperationValidatorFactory implements ValidatorFactory {
 				return Collections.emptyList();
 			}
 
-			public UnaryOperator getUnaryOperatorWithName(String name, Site site) {
+			public UnaryOperator getUnaryOperatorWithName(String name, Type site) {
 				for (UnaryOperator operator : site.getUnaryOperators()) {
 					if (operator.getName().equals(name)) {
 						return operator;
 					}
 				}
-				for (Site iface : site.getInterfaces()){
+				for (Type iface : site.getInterfaces()){
 					UnaryOperator ret = getUnaryOperatorWithName(name, iface);
 					if (ret != null){
 						return ret;

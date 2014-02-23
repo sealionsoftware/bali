@@ -1,14 +1,14 @@
 package bali.io;
 
 import bali.String;
+import bali.annotation.Kind;
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
 
 /**
  * User: Richard
  * Date: 06/02/14
  */
-@MetaType(MetaTypes.INTERFACE)
+@MetaType(Kind.INTERFACE)
 public interface Host {
 
 	public String shortName();

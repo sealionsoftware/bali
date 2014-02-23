@@ -1,14 +1,14 @@
 package bali.time;
 
 import bali.Number;
+import bali.annotation.Kind;
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
 
 /**
  * User: Richard
  * Date: 15/07/13
  */
-@MetaType(MetaTypes.INTERFACE)
+@MetaType(Kind.INTERFACE)
 public interface Time {
 
 	public Number getHour();

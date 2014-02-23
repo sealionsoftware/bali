@@ -7,17 +7,17 @@ import java.util.List;
  * User: Richard
  * Date: 29/04/13
  */
-public abstract class MethodDeclaringTypeNode<M extends MethodNode> extends TypeNode {
+public abstract class MethodDeclaringClassNode<M extends MethodNode> extends ClassNode {
 
 	private String className;
 	private List<SiteNode> implementations = new ArrayList<>();
 	private List<TypeParameterNode> typeParameters = new ArrayList<>();
 	private List<M> methods = new ArrayList<>();
 
-	public MethodDeclaringTypeNode() {
+	public MethodDeclaringClassNode() {
 	}
 
-	public MethodDeclaringTypeNode(Integer line, Integer character) {
+	public MethodDeclaringClassNode(Integer line, Integer character) {
 		super(line, character);
 	}
 

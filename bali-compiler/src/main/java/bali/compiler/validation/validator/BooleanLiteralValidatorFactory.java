@@ -3,9 +3,9 @@ package bali.compiler.validation.validator;
 import bali.Boolean;
 import bali.compiler.parser.tree.BooleanLiteralExpressionNode;
 import bali.compiler.parser.tree.Node;
+import bali.compiler.type.ClassLibrary;
+import bali.compiler.type.ParameterisedSite;
 import bali.compiler.type.Site;
-import bali.compiler.type.TypeLibrary;
-import bali.compiler.type.VanillaSite;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.Collections;
@@ -19,8 +19,8 @@ public class BooleanLiteralValidatorFactory implements ValidatorFactory {
 
 	private Site site;
 
-	public BooleanLiteralValidatorFactory(TypeLibrary library) {
-		this.site = new VanillaSite(library.getType(Boolean.class.getName()), false, true);
+	public BooleanLiteralValidatorFactory(ClassLibrary library) {
+		this.site = new ParameterisedSite(library.getReference(Boolean.class.getName()), false, true);
 	}
 
 	public Validator createValidator() {

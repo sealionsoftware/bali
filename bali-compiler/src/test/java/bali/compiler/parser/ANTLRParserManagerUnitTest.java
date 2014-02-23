@@ -2,7 +2,7 @@ package bali.compiler.parser;
 
 import bali.compiler.parser.tree.BeanNode;
 import bali.compiler.parser.tree.BooleanLiteralExpressionNode;
-import bali.compiler.parser.tree.ClassNode;
+import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.CodeBlockNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.ConditionalStatementNode;
@@ -21,8 +21,6 @@ import bali.compiler.parser.tree.WhileStatementNode;
 import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.io.File;
 
 /**
  * User: Richard
@@ -61,8 +59,8 @@ public class ANTLRParserManagerUnitTest {
 	public void testConstant() {
 		ConstantNode constant = unit.getConstants().get(0);
 		Assert.assertEquals("Constant name", "GLOBAL_CONSTANT", constant.getName());
-		Assert.assertEquals("Type", "Number", constant.getType().getClassName());
-		Assert.assertEquals("Value Type", NumberLiteralExpressionNode.class, constant.getValue().getClass());
+		Assert.assertEquals("Class", "Number", constant.getType().getClassName());
+		Assert.assertEquals("Value Class", NumberLiteralExpressionNode.class, constant.getValue().getClass());
 		Assert.assertEquals("Value", "2", ((NumberLiteralExpressionNode) constant.getValue()).getSerialization());
 		Assert.assertEquals("Children", 2, constant.getChildren().size());
 	}
@@ -79,7 +77,7 @@ public class ANTLRParserManagerUnitTest {
 
 	@Test
 	public void testClass() {
-		ClassNode clazz = unit.getClasses().get(0);
+		ObjectNode clazz = unit.getClasses().get(0);
 		Assert.assertEquals("Name", "AnImplementation", clazz.getClassName());
 		Assert.assertEquals("Arguments", 1, clazz.getArgumentDeclarations().size());
 		Assert.assertEquals("Interfaces", 1, clazz.getImplementations().size());
@@ -101,7 +99,7 @@ public class ANTLRParserManagerUnitTest {
 	public void testConstructionArguments() {
 		DeclarationNode declaration = unit.getClasses().get(0).getArgumentDeclarations().get(0);
 		Assert.assertEquals("Name", "aParameter", declaration.getName());
-		Assert.assertEquals("Type", "Number", declaration.getType().getClassName());
+		Assert.assertEquals("Class", "Number", declaration.getType().getClassName());
 		Assert.assertEquals("Children", 1, declaration.getChildren().size());
 	}
 
@@ -109,7 +107,7 @@ public class ANTLRParserManagerUnitTest {
 	public void testField() {
 		FieldNode field = unit.getClasses().get(0).getFields().get(0);
 		Assert.assertEquals("Name", "aField", field.getName());
-		Assert.assertEquals("Type", "Number", field.getType().getClassName());
+		Assert.assertEquals("Class", "Number", field.getType().getClassName());
 		Assert.assertEquals("Children", 1, field.getChildren().size());
 	}
 
@@ -117,7 +115,7 @@ public class ANTLRParserManagerUnitTest {
 	public void testMethod() {
 		MethodDeclarationNode method = unit.getClasses().get(0).getMethods().get(0);
 		Assert.assertEquals("Name", "aMethod", method.getName());
-		Assert.assertEquals("Type", "Number", method.getType().getClassName());
+		Assert.assertEquals("Class", "Number", method.getType().getClassName());
 		Assert.assertEquals("Arguments", 1, method.getArguments().size());
 		Assert.assertEquals("Children", 3, method.getChildren().size());
 	}
@@ -126,7 +124,7 @@ public class ANTLRParserManagerUnitTest {
 	public void testMethodArgument() {
 		DeclarationNode declaration = unit.getClasses().get(0).getMethods().get(0).getArguments().get(0);
 		Assert.assertEquals("Name", "anArgument", declaration.getName());
-		Assert.assertEquals("Type", "Number", declaration.getType().getClassName());
+		Assert.assertEquals("Class", "Number", declaration.getType().getClassName());
 		Assert.assertEquals("Children", 1, declaration.getChildren().size());
 	}
 

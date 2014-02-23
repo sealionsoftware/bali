@@ -5,8 +5,8 @@ import bali.IdentityBoolean;
 import bali.Iterator;
 import bali.Number;
 import bali.Value;
+import bali.annotation.Kind;
 import bali.annotation.MetaType;
-import bali.annotation.MetaTypes;
 import bali.Integer;
 import bali.annotation.Name;
 
@@ -18,7 +18,7 @@ import static bali.number.NumberFactory.NUMBER_FACTORY;
  * User: Richard
  * Date: 08/05/13
  */
-@MetaType(MetaTypes.CLASS)
+@MetaType(Kind.OBJECT)
 public final class Array<E extends Value<E>> implements Collection<E>, Value<Array<E>> {
 
 	private final E[] elements;
