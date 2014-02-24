@@ -2,8 +2,8 @@ package bali.io;
 
 import bali.Closable;
 import bali.ReaderWriter;
-import bali.annotation.MetaType;
 import bali.annotation.Kind;
+import bali.annotation.MetaType;
 
 /**
  * User: Richard

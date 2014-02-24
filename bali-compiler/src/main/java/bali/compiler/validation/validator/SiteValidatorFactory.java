@@ -2,8 +2,8 @@ package bali.compiler.validation.validator;
 
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.SiteNode;
-import bali.compiler.type.Site;
 import bali.compiler.type.Class;
+import bali.compiler.type.Site;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;

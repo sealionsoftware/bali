@@ -1,8 +1,8 @@
 package bali.time;
 
 import bali.Number;
-import bali.annotation.MetaType;
 import bali.annotation.Kind;
+import bali.annotation.MetaType;
 import bali.time.standard.StandardDateTime;
 import bali.time.standard.StandardInstant;
 

@@ -2,16 +2,12 @@ package bali.compiler;
 
 import bali.compiler.validation.ValidationException;
 import junit.framework.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.util.Collections;
 
 /**

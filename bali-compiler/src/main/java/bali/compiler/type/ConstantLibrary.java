@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class ConstantLibrary {
 
-	private Map<String, Reference<List<Declaration>>> constants = new HashMap<>();
+	private Map<String, Reference<List<Declaration<Site>>>> constants = new HashMap<>();
 	private PackageConstantsBuilder constantsBuilder;
 
 	public ConstantLibrary(ClassLibrary library) {
@@ -22,24 +22,24 @@ public class ConstantLibrary {
 	}
 
 	public void notifyOfPackage(String name) {
-		Reference<List<Declaration>> reference = constants.get(name);
+		Reference<List<Declaration<Site>>> reference = constants.get(name);
 		if (reference == null){
 			reference = new BlockingReference<>();
 			constants.put(name, reference);
 		}
 	}
 
-	public void addPackageConstants(String name, List<Declaration> declarations) {
-		Reference<List<Declaration>> reference = constants.get(name);
+	public void addPackageConstants(String name, List<Declaration<Site>> declarations) {
+		Reference<List<Declaration<Site>>> reference = constants.get(name);
 		reference.set(declarations);
 	}
 
-	public List<Declaration> getConstants(String fullyQualifiedPackageName) {
-		Reference<List<Declaration>> reference = constants.get(fullyQualifiedPackageName);
+	public List<Declaration<Site>> getConstants(String fullyQualifiedPackageName) {
+		Reference<List<Declaration<Site>>> reference = constants.get(fullyQualifiedPackageName);
 		if (reference != null) {
 			return reference.get();
 		}
-		List<Declaration> packageConstants = constantsBuilder.buildPackageConstants(fullyQualifiedPackageName);
+		List<Declaration<Site>> packageConstants = constantsBuilder.buildPackageConstants(fullyQualifiedPackageName);
 		constants.put(fullyQualifiedPackageName, new SimpleReference<>(packageConstants));
 		return packageConstants;
 	}

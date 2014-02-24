@@ -2,7 +2,6 @@ package bali.compiler.parser;
 
 import bali.compiler.parser.tree.CompilationUnitNode;
 
-import java.io.File;
 import java.io.InputStream;
 
 /**

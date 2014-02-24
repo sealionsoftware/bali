@@ -1,9 +1,9 @@
 package bali.collection;
 
-import bali.Iterable;
-import bali.annotation.MetaType;
-import bali.annotation.Kind;
 import bali.Integer;
+import bali.Iterable;
+import bali.annotation.Kind;
+import bali.annotation.MetaType;
 
 /**
  * User: Richard

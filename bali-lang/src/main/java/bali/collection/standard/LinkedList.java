@@ -1,12 +1,12 @@
 package bali.collection.standard;
 
 import bali.IdentityBoolean;
+import bali.Integer;
 import bali.Iterator;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 import bali.collection.Collection;
 import bali.collection.List;
-import bali.Integer;
 
 /**
  * User: Richard

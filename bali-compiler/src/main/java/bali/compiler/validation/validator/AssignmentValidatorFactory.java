@@ -9,10 +9,7 @@ import bali.compiler.parser.tree.ReferenceNode;
 import bali.compiler.type.Site;
 import bali.compiler.validation.ValidationFailure;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Deque;
 import java.util.List;
 
 /**

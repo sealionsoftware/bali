@@ -1,7 +1,7 @@
 package bali.io;
 
-import bali.String;
 import bali.Integer;
+import bali.String;
 
 import java.net.InetSocketAddress;
 

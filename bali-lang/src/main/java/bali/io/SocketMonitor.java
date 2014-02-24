@@ -1,11 +1,8 @@
 package bali.io;
 
-import bali.annotation.MetaType;
 import bali.annotation.Kind;
+import bali.annotation.MetaType;
 import bali.monitor.ConnectionMonitor;
-
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * User: Richard

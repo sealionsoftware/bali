@@ -8,7 +8,6 @@ import bali.compiler.type.Type;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,11 +23,12 @@ public class OperationValidatorFactory implements ValidatorFactory {
 			public List<ValidationFailure> validate(Node node, Control control) {
 
 				control.validateChildren();
+				List<ValidationFailure> ret = new ArrayList<>();
 
 				if (node instanceof OperationNode){
 
 					OperationNode operation = (OperationNode) node;
-					List<ValidationFailure> ret = new ArrayList<>();
+
 					Site targetType = operation.getOne().getType();
 					Site operandType = operation.getTwo().getType();
 					String operatorName = operation.getOperator();
@@ -46,13 +46,13 @@ public class OperationValidatorFactory implements ValidatorFactory {
 					}
 
 					if (!operandType.isAssignableTo(operator.getParameter())) {
-						ret.add(new ValidationFailure(node, "Operator " + operator + " requires an operand of type " + operandType));
+						ret.add(new ValidationFailure(node, "Operator " + operator + " requires an operand of type " + operator.getParameter()));
 					}
 
 					operation.setResolvedOperator(operator);
 				}
 
-				return Collections.emptyList();
+				return ret;
 			}
 
 			public Operator getOperatorWithName(String name, Type site) {

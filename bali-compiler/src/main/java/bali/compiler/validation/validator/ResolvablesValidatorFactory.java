@@ -1,13 +1,13 @@
 package bali.compiler.validation.validator;
 
+import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.ImportNode;
 import bali.compiler.parser.tree.Node;
-import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.reference.Reference;
 import bali.compiler.reference.SimpleReference;
-import bali.compiler.type.*;
 import bali.compiler.type.Class;
+import bali.compiler.type.ClassLibrary;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.Collections;

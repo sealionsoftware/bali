@@ -1,13 +1,13 @@
 package bali.compiler.bytecode;
 
-import bali.annotation.MetaType;
 import bali.annotation.Kind;
+import bali.annotation.MetaType;
 import bali.compiler.GeneratedClass;
-import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.DeclarationNode;
 import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.FieldNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
+import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.SiteNode;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;

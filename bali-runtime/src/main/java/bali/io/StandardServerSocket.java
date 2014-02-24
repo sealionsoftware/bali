@@ -1,7 +1,5 @@
 package bali.io;
 
-import bali.annotation.ThreadSafe;
-
 /**
  * User: Richard
  * Date: 06/02/14

@@ -2,12 +2,12 @@ package bali.collection;
 
 import bali.Boolean;
 import bali.IdentityBoolean;
+import bali.Integer;
 import bali.Iterator;
 import bali.Number;
 import bali.Value;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
-import bali.Integer;
 import bali.annotation.Name;
 
 import java.util.Arrays;

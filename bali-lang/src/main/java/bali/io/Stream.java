@@ -1,7 +1,7 @@
 package bali.io;
 
-import bali.Value;
 import bali.Iterator;
+import bali.Value;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 

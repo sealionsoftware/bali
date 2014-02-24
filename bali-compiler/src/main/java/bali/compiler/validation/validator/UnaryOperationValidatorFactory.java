@@ -1,18 +1,13 @@
 package bali.compiler.validation.validator;
 
-import bali.Boolean;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.UnaryOperationNode;
-import bali.compiler.reference.SimpleReference;
-import bali.compiler.type.ClassLibrary;
-import bali.compiler.type.ParameterisedSite;
 import bali.compiler.type.Site;
 import bali.compiler.type.Type;
 import bali.compiler.type.UnaryOperator;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -28,17 +23,6 @@ import java.util.List;
  */
 public class UnaryOperationValidatorFactory implements ValidatorFactory {
 
-	public static final String NULL_CHECK_OPERATOR_NAME = "?";
-	private UnaryOperator nullCheck;
-
-	public UnaryOperationValidatorFactory(ClassLibrary library) {
-		this.nullCheck = new UnaryOperator(
-				"?",
-				new ParameterisedSite(library.getReference(Boolean.class.getName())),
-				null
-		);
-	}
-
 	public Validator createValidator() {
 
 		return new Validator() {
@@ -46,11 +30,12 @@ public class UnaryOperationValidatorFactory implements ValidatorFactory {
 			public List<ValidationFailure> validate(Node node, Control control) {
 
 				control.validateChildren();
+				List<ValidationFailure> ret = new ArrayList<>();
 
 				if (node instanceof UnaryOperationNode){
 
 					UnaryOperationNode unary = (UnaryOperationNode) node;
-					List<ValidationFailure> ret = new ArrayList<>();
+
 					Site targetType = unary.getTarget().getType();
 					String operatorName = unary.getOperator();
 
@@ -59,7 +44,7 @@ public class UnaryOperationValidatorFactory implements ValidatorFactory {
 						return ret;
 					}
 
-					UnaryOperator operator = operatorName.equals(NULL_CHECK_OPERATOR_NAME) ? nullCheck : getUnaryOperatorWithName(operatorName, targetType);
+					UnaryOperator operator = getUnaryOperatorWithName(operatorName, targetType);
 
 					if (operator == null) {
 						ret.add(new ValidationFailure(node, "Class " + targetType + " has no method for operator " + operatorName));
@@ -69,7 +54,7 @@ public class UnaryOperationValidatorFactory implements ValidatorFactory {
 					unary.setResolvedOperator(operator);
 				}
 
-				return Collections.emptyList();
+				return ret;
 			}
 
 			public UnaryOperator getUnaryOperatorWithName(String name, Type site) {

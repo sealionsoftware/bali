@@ -1,8 +1,7 @@
 package bali;
 
-import bali.annotation.MetaType;
 import bali.annotation.Kind;
-import bali.annotation.Operator;
+import bali.annotation.MetaType;
 
 /**
  * User: Richard
@@ -13,12 +12,11 @@ public enum IdentityBoolean implements Boolean {
 
 	FALSE, TRUE;
 
-	@Operator("!")
 	public Boolean not() {
 		return this == TRUE ? FALSE : TRUE;
 	}
 
-	@Operator("&")
+	// This is a stub - the bali compiler implements the real logic directly
 	public Boolean and(Boolean operand) {
 		if (this == FALSE){
 			return FALSE;
@@ -28,7 +26,7 @@ public enum IdentityBoolean implements Boolean {
 		return TRUE;
 	}
 
-	@Operator("|")
+	// This is a stub - the bali compiler implements the real logic directly
 	public Boolean or(Boolean operand) {
 		if (this == FALSE && operand == FALSE){
 			return FALSE;
@@ -36,12 +34,10 @@ public enum IdentityBoolean implements Boolean {
 		return TRUE;
 	}
 
-	@Operator("^")
 	public Boolean xor(Boolean that) {
 		return this.or(that).and(this.and(that).not());
 	}
 
-	@Operator("==")
 	public Boolean equalTo(Boolean operand) {
 		return this == operand ? TRUE : FALSE;
 	}

@@ -1,9 +1,9 @@
 package bali.compiler.validation.validator;
 
-import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.InvocationNode;
 import bali.compiler.parser.tree.Node;
+import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.reference.SimpleReference;
 import bali.compiler.type.Declaration;
 import bali.compiler.type.Method;
@@ -47,8 +47,12 @@ public class InvocationValidatorFactory implements ValidatorFactory {
 					invocation.setTargetType(targetType);
 
 					if (targetType == null){
-						ret.add(new ValidationFailure(node, "The target of invocation " + invocation.getMethodName() + " is void"));
+						ret.add(new ValidationFailure(node, "The target of invocation " + invocation + " is void"));
 						return ret;
+					}
+
+					if (targetType.isNullable()){
+						ret.add(new ValidationFailure(node, "The target of invocation " + invocation + " is nullable"));
 					}
 
 					Method method = getMethodWithName(invocation.getMethodName(), targetType);

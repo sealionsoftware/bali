@@ -26,7 +26,7 @@ public class PackageConstantsBuilderVisitor extends ClassVisitor {
 
 	private ClassLibrary library;
 
-	private List<Declaration> declaredConstants = new ArrayList<>();
+	private List<Declaration<Site>> declaredConstants = new ArrayList<>();
 
 	public PackageConstantsBuilderVisitor(ClassLibrary library) {
 		super(Opcodes.ASM4);
@@ -59,14 +59,14 @@ public class PackageConstantsBuilderVisitor extends ClassVisitor {
 				} else {
 					org.objectweb.asm.Type asmType = org.objectweb.asm.Type.getType(desc);
 					Reference<Class> ref = library.getReference(asmType.getClassName().replaceAll("/", "."));
-					declaredConstants.add(new Declaration<>(name, new ParameterisedSite(ref, isNullable, isThreadSafe)));
+					declaredConstants.add(new Declaration<Site>(name, new ParameterisedSite(ref, isNullable, isThreadSafe)));
 				}
 				super.visitEnd();
 			}
 		};
 	}
 
-	public List<Declaration> getDeclaredConstants() {
+	public List<Declaration<Site>> getDeclaredConstants() {
 		return declaredConstants;
 	}
 }

@@ -78,7 +78,7 @@ public class BaliCompiler {
 		ClassLibrary library = new ClassLibrary();
 		ConstantLibrary constantLibrary = new ConstantLibrary(library);
 
-		parserManager = new ANTLRParserManager();
+		parserManager = new ANTLRParserManager(library);
 
 		validator = new MultiThreadedValidationEngine(library, constantLibrary, Arrays.asList(
 				new ImportsValidatorFactory(library),
@@ -94,7 +94,7 @@ public class BaliCompiler {
 				new ArrayLiteralValidatorFactory(library),
 				new ReferenceValidatorFactory(constantLibrary),
 				new InvocationValidatorFactory(),
-				new UnaryOperationValidatorFactory(library),
+				new UnaryOperationValidatorFactory(),
 				new OperationValidatorFactory(),
 				new ReturnValueValidatorFactory(),
 				new ImplementationValidatorFactory(),

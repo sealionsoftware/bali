@@ -91,11 +91,11 @@ invocation:                 (target '.')? call ;
 
 reference:                  (target '.')? IDENTIFIER ;
 
-operator:                   QM | OPERATOR ;
+nullCheck:                  QM expressionForOperation ;
 
-unaryOperation:             operator expressionForOperation ;
+unaryOperation:             OPERATOR expressionForOperation ;
 
-operation:                  expressionForOperation (operator expressionForOperation)+ ;
+operation:                  expressionForOperation OPERATOR expression ;
 
 construction:               'new' typeIdentifier argumentList ;
 
@@ -107,11 +107,11 @@ breakStatement:             'break' ;
 
 continueStatement:          'continue' ;
 
-siteDefinition:            typeIdentifier ('['  siteDefinitionList ']')? EX? QM? ;
+siteDefinition:             typeIdentifier ('['  siteDefinitionList ']')? EX? QM? ;
 
-siteDefinitionList:        siteDefinition (',' siteDefinition)* ;
+siteDefinitionList:         siteDefinition (',' siteDefinition)* ;
 
-typeDefinition:            typeIdentifier ('['  typeVarDeclarationList ']')? ;
+typeDefinition:             typeIdentifier ('['  typeVarDeclarationList ']')? ;
 
 typeVarDeclaration:         typeIdentifier? IDENTIFIER ;
 
@@ -129,12 +129,12 @@ memberName:                 call | IDENTIFIER ;
 
 expressionBase:             constantValue | '(' unaryOperation ')' | '(' operation ')' | memberName ;
 
-expressionForOperation:     unaryOperation | invocation | reference | expressionBase ;
+expressionForOperation:     unaryOperation | nullCheck | invocation | reference | expressionBase ;
 
 expression:                 operation | expressionForOperation ;
 
 literal:                    STRING_LITERAL | NUMBER_LITERAL | booleanLiteral | arrayLiteral ;
 
-arrayLiteral:                '[' (expression (',' expression)*)? ']' ;
+arrayLiteral:               '[' (expression (',' expression)*)? ']' ;
 
 booleanLiteral:             'true' | 'false' ;

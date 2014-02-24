@@ -1,7 +1,6 @@
 package bali.compiler.validation.validator;
 
 import bali.compiler.parser.tree.CatchStatementNode;
-import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.CodeBlockNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.ConditionalStatementNode;
@@ -11,13 +10,16 @@ import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.ForStatementNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.Node;
+import bali.compiler.parser.tree.NullCheckNode;
+import bali.compiler.parser.tree.ObjectNode;
+import bali.compiler.parser.tree.OperationNode;
 import bali.compiler.parser.tree.ReferenceNode;
 import bali.compiler.parser.tree.RunStatementNode;
-import bali.compiler.parser.tree.UnaryOperationNode;
 import bali.compiler.parser.tree.VariableNode;
-import bali.compiler.type.AttachedSite;
+import bali.compiler.reference.SimpleReference;
 import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.Declaration;
+import bali.compiler.type.ParameterisedSite;
 import bali.compiler.type.Site;
 import bali.compiler.type.Type;
 import bali.compiler.validation.ValidationFailure;
@@ -105,7 +107,7 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 				Deque<Scope> unitLevelScopes = new ArrayDeque<>();
 				String pkgName = "_";
 				try {
-					List<Declaration> packageConstants = library.getConstants(pkgName);
+					List<Declaration<Site>> packageConstants = library.getConstants(pkgName);
 					Scope scope = new Scope(
 							ReferenceNode.ReferenceScope.STATIC,
 							pkgName,
@@ -124,7 +126,7 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 				do {
 					i = compilationUnitName.indexOf('.', i);
 					pkgName = i > 0 ? compilationUnitName.substring(0, i) : compilationUnitName;
-					List<Declaration> packageConstants = library.getConstants(pkgName);
+					List<Declaration<Site>> packageConstants = library.getConstants(pkgName);
 					Scope scope = new Scope(
 							ReferenceNode.ReferenceScope.STATIC,
 							pkgName + "._",
@@ -170,24 +172,32 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 			}
 
 			private void validate(ConditionalStatementNode statement, Control agent) {
-
 				ExpressionNode condition = statement.getCondition();
-				if (condition instanceof UnaryOperationNode){
-					UnaryOperationNode unary = (UnaryOperationNode) condition;
-					if (unary.getOperator().equals(UnaryOperationValidatorFactory.NULL_CHECK_OPERATOR_NAME)){
-						ExpressionNode target = unary.getTarget();
-						if (target instanceof ReferenceNode){
-							ReferenceNode referenceNode = (ReferenceNode) target;
-							String name = referenceNode.getName();
-							Site newSite = new AttachedSite(getSiteForReference(name));
-							ControlExpressionNode conditional = statement.getConditional();
-							conditional.overrideType(name, newSite);
-						}
+				processCondition(condition, statement);
+				agent.validateChildren();
+			}
+
+			private void processCondition(ExpressionNode condition, ConditionalStatementNode statement){
+				if (condition instanceof NullCheckNode){
+					processConditional((NullCheckNode) condition, statement.getConditional());
+				} else if (condition instanceof OperationNode){
+					OperationNode operationNode = (OperationNode) condition;
+					if (operationNode.getOperator().equals("&")){
+						processCondition(operationNode.getOne(), statement);
+						processCondition(operationNode.getTwo(), statement);
 					}
 				}
+			}
 
-				agent.validateChildren();
-
+			private void processConditional(NullCheckNode node, ControlExpressionNode conditional){
+				ExpressionNode target = node.getTarget();
+				if (target instanceof ReferenceNode){
+					ReferenceNode referenceNode = (ReferenceNode) target;
+					String name = referenceNode.getName();
+					Site oldSite = getSiteForReference(name);
+					Site newSite = new ParameterisedSite(new SimpleReference<>(oldSite.getTemplate()), oldSite.getTypeArguments(), false, oldSite.isThreadSafe());
+					conditional.overrideType(name, newSite);
+				}
 			}
 
 			private void validate(ForStatementNode statement, Control agent) {
@@ -385,10 +395,10 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 			return declarations.get(name);
 		}
 
-		public List<Declaration> getDeclarations() {
-			List<Declaration> ret = new ArrayList<>();
+		public List<Declaration<Site>> getDeclarations() {
+			List<Declaration<Site>> ret = new ArrayList<>();
 			for (Map.Entry<String, Site> entry : declarations.entrySet()){
-				ret.add(new Declaration(entry.getKey(), entry.getValue()));
+				ret.add(new Declaration<>(entry.getKey(), entry.getValue()));
 			}
 			return ret;
 		}

@@ -6,9 +6,9 @@ import bali.io.Socket
 import bali.io.ServerSocket
 import bali.io.SocketMonitor
 import bali.Count
+import bali.Counter
 import bali.monitor.ConnectionMonitor
-import bali.monitor.CounterMonitor
-
+import bali.Integer
 
 object TempleServer implements Executable {
 
@@ -17,10 +17,12 @@ object TempleServer implements Executable {
 		CONSOLE << "Starting Temple"
 		ServerSocket port = NETWORK_MANAGER.openPort(8080)
 		ConnectionMonitor[Socket]! monitor = new SocketMonitor(port)
+		Count count = new Counter()
 
 		while (true){
 
 			monitor.waitForConnection()
+			Integer! requestNo = ++count
 
 			run {
 
@@ -32,9 +34,9 @@ object TempleServer implements Executable {
 
 	                while (true) {
                         String? read = << connection
-                        if (?read) {
+                        if (?read & read.length() > 0){
                             CONSOLE << read
-                        } else {
+                        }  else {
                             break
                         }
                     }
@@ -42,12 +44,12 @@ object TempleServer implements Executable {
                     connection << "HTTP/1.1 200 OK"
                     connection << "Content-Type: text/html;"
                     connection << ""
-                    connection << "Hello World"
+                    connection << "Hello World " + NUMBER_FACTORY.format(requestNo)
 
 	                CONSOLE << "Response Completed"
 
 				} catch (Exception e){
-					CONSOLE << ("Inner Error: " + e.getMessage())
+					CONSOLE << "Inner Error: " + e.getMessage()
 				}
 				connection.close()
 			}

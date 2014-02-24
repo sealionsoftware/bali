@@ -1,6 +1,6 @@
 package bali.io;
 
-import bali.*;
+import bali.Value;
 
 /**
  * User: Richard

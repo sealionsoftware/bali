@@ -7,7 +7,6 @@ import bali.compiler.parser.tree.BooleanLiteralExpressionNode;
 import bali.compiler.parser.tree.BreakStatementNode;
 import bali.compiler.parser.tree.CaseStatementNode;
 import bali.compiler.parser.tree.CatchStatementNode;
-import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.CodeBlockNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.ConditionalStatementNode;
@@ -24,7 +23,9 @@ import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.InvocationNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.MethodNode;
+import bali.compiler.parser.tree.NullCheckNode;
 import bali.compiler.parser.tree.NumberLiteralExpressionNode;
+import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.OperationNode;
 import bali.compiler.parser.tree.PropertyNode;
 import bali.compiler.parser.tree.ReferenceAssignmentNode;
@@ -40,6 +41,9 @@ import bali.compiler.parser.tree.TryStatementNode;
 import bali.compiler.parser.tree.UnaryOperationNode;
 import bali.compiler.parser.tree.VariableNode;
 import bali.compiler.parser.tree.WhileStatementNode;
+import bali.compiler.type.ClassLibrary;
+import bali.compiler.type.ParameterisedSite;
+import bali.compiler.type.Site;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.DefaultErrorStrategy;
@@ -49,9 +53,6 @@ import org.antlr.v4.runtime.Token;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -61,6 +62,12 @@ import java.util.List;
  * Date: 30/04/13
  */
 public class ANTLRParserManager implements ParserManager {
+
+	private Site booleanType;
+
+	public ANTLRParserManager(ClassLibrary library) {
+		this.booleanType = new ParameterisedSite(library.getReference(bali.Boolean.class.getName()), false, true);
+	}
 
 	public CompilationUnitNode parse(InputStream compilationUnit, String name) throws Exception {
 
@@ -425,39 +432,25 @@ public class ANTLRParserManager implements ParserManager {
 	private OperationNode build(BaliParser.OperationContext context) {
 
 		OperationNode operation = new OperationNode(l(context), c(context));
-		List<BaliParser.ExpressionForOperationContext> operands = new ArrayList<>(context.expressionForOperation());
-		List<BaliParser.OperatorContext> operators = new ArrayList<>(context.operator());
-		Collections.reverse(operands);
-		Collections.reverse(operators);
-		Iterator<BaliParser.ExpressionForOperationContext> i = operands.iterator();
-		Iterator<BaliParser.OperatorContext> j = operators.iterator();
-
-		operation.setTwo(build(i.next()));
-		OperationNode currentOperation = operation;
-
-		while (i.hasNext()) {
-			BaliParser.ExpressionForOperationContext expressionForOperationContext = i.next();
-			ExpressionNode next = build(expressionForOperationContext);
-			currentOperation.setOperator(j.next().getText());
-
-			if (i.hasNext()) {
-				OperationNode newOperation = new OperationNode(l(expressionForOperationContext), c(expressionForOperationContext));
-				newOperation.setTwo(next);
-				currentOperation.setOne(newOperation);
-				currentOperation = newOperation;
-			} else {
-				currentOperation.setOne(next);
-			}
-		}
+		operation.setOne(build(context.expressionForOperation()));
+		operation.setOperator(context.OPERATOR().getText());
+		operation.setTwo(build(context.expression()));
 
 		return operation;
 	}
 
 	private UnaryOperationNode build(BaliParser.UnaryOperationContext context) {
 		UnaryOperationNode operation = new UnaryOperationNode(l(context), c(context));
-		operation.setOperator(context.operator().getText());
+		operation.setOperator(context.OPERATOR().getText());
 		operation.setTarget(build(context.expressionForOperation()));
 		return operation;
+	}
+
+	private NullCheckNode build(BaliParser.NullCheckContext context) {
+		NullCheckNode check = new NullCheckNode(l(context), c(context));
+		check.setType(booleanType);
+		check.setTarget(build(context.expressionForOperation()));
+		return check;
 	}
 
 	private ExpressionNode build(BaliParser.ExpressionBaseContext context) {
@@ -509,6 +502,9 @@ public class ANTLRParserManager implements ParserManager {
 		}
 		if (context.unaryOperation() != null) {
 			return build(context.unaryOperation());
+		}
+		if (context.nullCheck() != null){
+			return build(context.nullCheck());
 		}
 		if (context.expressionBase() != null) {
 			return build(context.expressionBase());

@@ -2,7 +2,6 @@ package bali.compiler.parser;
 
 import bali.compiler.parser.tree.BeanNode;
 import bali.compiler.parser.tree.BooleanLiteralExpressionNode;
-import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.CodeBlockNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.ConditionalStatementNode;
@@ -14,10 +13,12 @@ import bali.compiler.parser.tree.ImportNode;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.NumberLiteralExpressionNode;
+import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.ReferenceNode;
 import bali.compiler.parser.tree.ReturnStatementNode;
 import bali.compiler.parser.tree.VariableNode;
 import bali.compiler.parser.tree.WhileStatementNode;
+import bali.compiler.type.ClassLibrary;
 import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -28,7 +29,7 @@ import org.junit.Test;
  */
 public class ANTLRParserManagerUnitTest {
 
-	private static ANTLRParserManager parserManager = new ANTLRParserManager();
+	private static ANTLRParserManager parserManager = new ANTLRParserManager(new ClassLibrary());
 
 	private static CompilationUnitNode unit;
 

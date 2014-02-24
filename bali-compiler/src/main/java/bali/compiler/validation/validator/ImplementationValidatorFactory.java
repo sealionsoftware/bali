@@ -1,15 +1,17 @@
 package bali.compiler.validation.validator;
 
 import bali.annotation.Kind;
-import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.ImportNode;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.Node;
+import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.SiteNode;
-import bali.compiler.type.*;
 import bali.compiler.type.Class;
+import bali.compiler.type.Declaration;
+import bali.compiler.type.Method;
+import bali.compiler.type.Site;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;

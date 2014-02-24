@@ -1,13 +1,13 @@
 package bali.compiler.validation;
 
-import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.Reaper;
-import bali.compiler.parser.tree.TerminatedException;
 import bali.compiler.parser.tree.ClassNode;
+import bali.compiler.parser.tree.CompilationUnitNode;
+import bali.compiler.parser.tree.TerminatedException;
 import bali.compiler.reference.BlockDeclaringThread;
 import bali.compiler.reference.SimpleReference;
-import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.ClassLibrary;
+import bali.compiler.type.ConstantLibrary;
 import bali.compiler.validation.validator.Validator;
 import bali.compiler.validation.validator.ValidatorFactory;
 

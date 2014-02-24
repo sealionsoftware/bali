@@ -1,9 +1,8 @@
 package bali.compiler.bytecode;
 
 import bali.compiler.reference.SimpleReference;
-import bali.compiler.type.*;
-
-import java.lang.Class;
+import bali.compiler.type.MutableClassModel;
+import bali.compiler.type.ParameterisedSite;
 
 /**
  * User: Richard

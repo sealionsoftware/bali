@@ -3,13 +3,13 @@ package bali.compiler.type;
 import bali.annotation.Kind;
 import bali.compiler.parser.tree.ArgumentDeclarationNode;
 import bali.compiler.parser.tree.BeanNode;
-import bali.compiler.parser.tree.ObjectNode;
+import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.MethodDeclaringClassNode;
 import bali.compiler.parser.tree.MethodNode;
+import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.PropertyNode;
 import bali.compiler.parser.tree.SiteNode;
-import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.parser.tree.TypeParameterNode;
 
 import java.util.ArrayList;

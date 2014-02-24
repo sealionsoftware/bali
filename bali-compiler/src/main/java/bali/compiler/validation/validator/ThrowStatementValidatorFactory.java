@@ -6,7 +6,6 @@ import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.parser.tree.ThrowStatementNode;
-import bali.compiler.reference.SimpleReference;
 import bali.compiler.type.ClassLibrary;
 import bali.compiler.type.ParameterisedSite;
 import bali.compiler.type.Site;

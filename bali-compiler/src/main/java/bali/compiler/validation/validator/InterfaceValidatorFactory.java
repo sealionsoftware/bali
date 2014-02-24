@@ -2,7 +2,7 @@ package bali.compiler.validation.validator;
 
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.Node;
-import bali.compiler.type.*;
+import bali.compiler.type.ClassLibrary;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.Collections;

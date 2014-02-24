@@ -5,10 +5,10 @@ import bali.compiler.parser.tree.ArrayLiteralExpressionNode;
 import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.reference.Reference;
+import bali.compiler.type.Class;
 import bali.compiler.type.ClassLibrary;
 import bali.compiler.type.ParameterisedSite;
 import bali.compiler.type.Site;
-import bali.compiler.type.Class;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;

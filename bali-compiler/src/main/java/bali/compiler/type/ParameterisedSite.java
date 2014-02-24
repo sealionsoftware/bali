@@ -3,7 +3,6 @@ package bali.compiler.type;
 import bali.compiler.reference.Reference;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -35,11 +34,11 @@ public class ParameterisedSite extends ParameterisedType implements Site {
 			return true;
 		}
 
-		if (nullable && !t.isNullable()){
+		if (isNullable() && !t.isNullable()){
 			return false;
 		}
 
-		if (t.isThreadSafe() && !threadsafe){
+		if (t.isThreadSafe() && !isThreadSafe()){
 			return false;
 		}
 

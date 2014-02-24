@@ -1,9 +1,9 @@
 package bali.io;
 
-import bali.String;
 import bali.Integer;
-import bali.annotation.MetaType;
+import bali.String;
 import bali.annotation.Kind;
+import bali.annotation.MetaType;
 
 /**
  * User: Richard

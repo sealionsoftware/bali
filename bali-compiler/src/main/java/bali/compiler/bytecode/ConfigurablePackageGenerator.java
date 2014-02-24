@@ -3,9 +3,9 @@ package bali.compiler.bytecode;
 import bali.compiler.GeneratedClass;
 import bali.compiler.GeneratedPackage;
 import bali.compiler.parser.tree.BeanNode;
-import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.InterfaceNode;
+import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.RunStatementNode;
 
 /**

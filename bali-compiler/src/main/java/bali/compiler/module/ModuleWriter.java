@@ -2,7 +2,6 @@ package bali.compiler.module;
 
 import bali.compiler.GeneratedPackage;
 
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 

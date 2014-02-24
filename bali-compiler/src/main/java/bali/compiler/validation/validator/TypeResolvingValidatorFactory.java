@@ -6,8 +6,10 @@ import bali.compiler.parser.tree.ConstructionExpressionNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.reference.Reference;
-import bali.compiler.type.*;
 import bali.compiler.type.Class;
+import bali.compiler.type.ClassLibrary;
+import bali.compiler.type.ParameterisedSite;
+import bali.compiler.type.Site;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;

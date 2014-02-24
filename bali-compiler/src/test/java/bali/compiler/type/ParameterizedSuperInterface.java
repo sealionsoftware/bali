@@ -1,7 +1,7 @@
 package bali.compiler.type;
 
-import bali.annotation.MetaType;
 import bali.annotation.Kind;
+import bali.annotation.MetaType;
 import bali.annotation.Operator;
 
 /**

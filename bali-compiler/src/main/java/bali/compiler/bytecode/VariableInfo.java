@@ -1,6 +1,5 @@
 package bali.compiler.bytecode;
 
-import bali.compiler.parser.tree.DeclarationNode;
 import bali.compiler.type.Site;
 import org.objectweb.asm.Label;
 

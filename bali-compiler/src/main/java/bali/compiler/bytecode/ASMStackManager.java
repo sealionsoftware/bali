@@ -1,5 +1,6 @@
 package bali.compiler.bytecode;
 
+import bali.Boolean;
 import bali.CharArrayString;
 import bali.IdentityBoolean;
 import bali.annotation.Kind;
@@ -18,6 +19,7 @@ import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.ForStatementNode;
 import bali.compiler.parser.tree.InvocationNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
+import bali.compiler.parser.tree.NullCheckNode;
 import bali.compiler.parser.tree.NumberLiteralExpressionNode;
 import bali.compiler.parser.tree.OperationNode;
 import bali.compiler.parser.tree.ReferenceAssignmentNode;
@@ -33,9 +35,11 @@ import bali.compiler.parser.tree.TryStatementNode;
 import bali.compiler.parser.tree.UnaryOperationNode;
 import bali.compiler.parser.tree.VariableNode;
 import bali.compiler.parser.tree.WhileStatementNode;
-import bali.compiler.type.*;
 import bali.compiler.type.Class;
-import bali.compiler.validation.validator.UnaryOperationValidatorFactory;
+import bali.compiler.type.Declaration;
+import bali.compiler.type.Method;
+import bali.compiler.type.Site;
+import bali.compiler.type.Type;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -428,6 +432,8 @@ public class ASMStackManager implements Opcodes {
 			push((InvocationNode) value, v);
 		} else if (value instanceof UnaryOperationNode) {
 			push((UnaryOperationNode) value, v);
+		} else if (value instanceof NullCheckNode) {
+			push((NullCheckNode) value, v);
 		} else if (value instanceof OperationNode) {
 			push((OperationNode) value, v);
 		} else {
@@ -443,7 +449,7 @@ public class ASMStackManager implements Opcodes {
 	}
 
 	public void push(BooleanLiteralExpressionNode value, MethodVisitor v) {
-		Boolean bool = Boolean.valueOf(value.getSerialization());
+		java.lang.Boolean bool = java.lang.Boolean.valueOf(value.getSerialization());
 		v.visitFieldInsn(GETSTATIC, converter.getInternalName(IdentityBoolean.class.getName()), bool ? "TRUE" : "FALSE", converter.getTypeDescriptor(IdentityBoolean.class.getName()));
 	}
 
@@ -530,23 +536,18 @@ public class ASMStackManager implements Opcodes {
 	}
 
 	public void push(UnaryOperationNode value, MethodVisitor v) {
-		if (UnaryOperationValidatorFactory.NULL_CHECK_OPERATOR_NAME.equals(value.getOperator())){
-			pushNullCheck(value.getTarget(), v);
-		} else {
-			pushInvocation(
-					value.getTarget(),
-					value.getTarget().getType(),
-					value.getType(),
-					new ArrayList<ExpressionNode>(),
-					value.getResolvedOperator().getMethodName(),
-					v
-			);
-		}
+		pushInvocation(
+			value.getTarget(),
+			value.getTarget().getType(),
+			value.getType(),
+			new ArrayList<ExpressionNode>(),
+			value.getResolvedOperator().getMethodName(),
+			v
+		);
 	}
 
-
-	public void pushNullCheck(ExpressionNode target, MethodVisitor v) {
-		push(target, v);
+	public void push(NullCheckNode value, MethodVisitor v) {
+		push(value.getTarget(), v);
 		Label isNull = new Label();
 		Label end = new Label();
 		v.visitJumpInsn(IFNULL, isNull);
@@ -558,6 +559,17 @@ public class ASMStackManager implements Opcodes {
 	}
 
 	public void push(OperationNode value, MethodVisitor v) {
+		String operator = value.getOperator();
+		if (Boolean.class.getName().equals(value.getOne().getType().getTemplate().getName())){
+			if (bali.Boolean.AND.equals(operator)){
+				pushLogicalAnd(value.getOne(), value.getTwo(), v);
+				return;
+			}
+			if (bali.Boolean.OR.equals(operator)){
+				pushLogicalOr(value.getOne(), value.getTwo(), v);
+				return;
+			}
+		}
 		pushInvocation(
 				value.getOne(),
 				value.getOne().getType(),
@@ -566,6 +578,28 @@ public class ASMStackManager implements Opcodes {
 				value.getResolvedOperator().getMethodName(),
 				v
 		);
+	}
+
+	public void pushLogicalAnd(ExpressionNode target, ExpressionNode argument, MethodVisitor v) {
+		Label end = new Label();
+		push(target, v);
+		v.visitInsn(DUP);
+		push(IdentityBoolean.FALSE, v);
+		v.visitJumpInsn(IF_ACMPNE, end);
+		v.visitInsn(POP);
+		push(argument, v);
+		v.visitLabel(end);
+	}
+
+	public void pushLogicalOr(ExpressionNode target, ExpressionNode argument, MethodVisitor v) {
+		Label end = new Label();
+		push(target, v);
+		v.visitInsn(DUP);
+		push(IdentityBoolean.TRUE, v);
+		v.visitJumpInsn(IF_ACMPEQ, end);
+		v.visitInsn(POP);
+		push(argument, v);
+		v.visitLabel(end);
 	}
 
 	public void pushInvocation(ExpressionNode target, Site targetType, Site valueType, List<ExpressionNode> arguments, String methodName, MethodVisitor v) {

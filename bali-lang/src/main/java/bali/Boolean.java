@@ -11,13 +11,16 @@ import bali.annotation.Operator;
 @MetaType(Kind.INTERFACE)
 public interface Boolean extends Value<Boolean> {
 
+	public static final java.lang.String AND = "&";
+	public static final java.lang.String OR = "|";
+
 	@Operator("~")
 	Boolean not();
 
-	@Operator("&")
+	@Operator(AND)
 	Boolean and(Boolean operand);
 
-	@Operator("|")
+	@Operator(OR)
 	Boolean or(Boolean operand);
 
 	@Operator("^")

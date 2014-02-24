@@ -5,6 +5,7 @@ import bali.compiler.parser.tree.ConstantNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.Declaration;
+import bali.compiler.type.Site;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class ConstantValidatorFactory implements ValidatorFactory {
 	public Validator createValidator() {
 		return new Validator() {
 
-			private List<Declaration> declarations = new ArrayList<>();
+			private List<Declaration<Site>> declarations = new ArrayList<>();
 
 			public List<ValidationFailure> validate(Node node, Control control) {
 
@@ -37,7 +38,7 @@ public class ConstantValidatorFactory implements ValidatorFactory {
 				} else if (node instanceof ConstantNode){
 					ConstantNode constantNode = (ConstantNode) node;
 					declarations.add(
-							new Declaration(constantNode.getName(), constantNode.getType().getSite())
+							new Declaration<>(constantNode.getName(), constantNode.getType().getSite())
 					);
 				} else {
 					control.validateChildren();

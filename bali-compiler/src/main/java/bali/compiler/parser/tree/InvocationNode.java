@@ -73,4 +73,17 @@ public class InvocationNode extends ExpressionNode {
 		return arguments;
 	}
 
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		if (target != null){
+			sb.append(target).append(".");
+		}
+		sb.append(methodName);
+		sb.append("(");
+		for (ExpressionNode argument : arguments){
+			sb.append(argument);
+		}
+		sb.append(")");
+		return sb.toString();
+	}
 }

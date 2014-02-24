@@ -1,7 +1,7 @@
 package bali.time;
 
-import bali.annotation.MetaType;
 import bali.annotation.Kind;
+import bali.annotation.MetaType;
 
 /**
  * User: Richard

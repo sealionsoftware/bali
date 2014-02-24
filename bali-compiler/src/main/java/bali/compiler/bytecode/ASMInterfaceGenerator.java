@@ -1,7 +1,7 @@
 package bali.compiler.bytecode;
 
-import bali.annotation.MetaType;
 import bali.annotation.Kind;
+import bali.annotation.MetaType;
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.MethodNode;

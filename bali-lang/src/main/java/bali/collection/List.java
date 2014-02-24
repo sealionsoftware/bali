@@ -1,8 +1,8 @@
 package bali.collection;
 
+import bali.Integer;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
-import bali.Integer;
 
 /**
  * User: Richard

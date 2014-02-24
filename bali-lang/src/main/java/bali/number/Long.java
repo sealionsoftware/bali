@@ -3,8 +3,8 @@ package bali.number;
 import bali.Boolean;
 import bali.Integer;
 import bali.Number;
-import bali.annotation.MetaType;
 import bali.annotation.Kind;
+import bali.annotation.MetaType;
 
 import static bali.IdentityBoolean.FALSE;
 import static bali.IdentityBoolean.TRUE;

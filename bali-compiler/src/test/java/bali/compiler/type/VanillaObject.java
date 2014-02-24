@@ -2,8 +2,8 @@ package bali.compiler.type;
 
 import bali.CharArrayString;
 import bali.String;
-import bali.annotation.MetaType;
 import bali.annotation.Kind;
+import bali.annotation.MetaType;
 import bali.annotation.Name;
 
 /**

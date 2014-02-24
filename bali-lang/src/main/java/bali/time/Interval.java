@@ -2,8 +2,8 @@ package bali.time;
 
 import bali.Number;
 import bali.Quantified;
-import bali.annotation.MetaType;
 import bali.annotation.Kind;
+import bali.annotation.MetaType;
 
 /**
  * User: Richard

@@ -1,8 +1,8 @@
 package bali.time.standard;
 
 import bali.String;
-import bali.annotation.MetaType;
 import bali.annotation.Kind;
+import bali.annotation.MetaType;
 import bali.time.Interval;
 import bali.time.TimeZone;
 

@@ -1,8 +1,8 @@
 package bali;
 
 import bali.annotation.Immutable;
-import bali.annotation.MetaType;
 import bali.annotation.Kind;
+import bali.annotation.MetaType;
 import bali.annotation.Name;
 import bali.annotation.Operator;
 

@@ -22,7 +22,7 @@ public class PackageConstantsBuilder {
 		this.classLoader = Thread.currentThread().getContextClassLoader();
 	}
 
-	public List<Declaration> buildPackageConstants(String name){
+	public List<Declaration<Site>> buildPackageConstants(String name){
 
 		ClassReader reader;
 		String className = name.replace('.','/').concat(".class");
