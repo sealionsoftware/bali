@@ -562,11 +562,11 @@ public class ASMStackManager implements Opcodes {
 		String operator = value.getOperator();
 		if (Boolean.class.getName().equals(value.getOne().getType().getTemplate().getName())){
 			if (bali.Boolean.AND.equals(operator)){
-				pushLogicalAnd(value.getOne(), value.getTwo(), v);
+				pushLogicalShortCut(value.getOne(), value.getTwo(), IdentityBoolean.FALSE, v);
 				return;
 			}
 			if (bali.Boolean.OR.equals(operator)){
-				pushLogicalOr(value.getOne(), value.getTwo(), v);
+				pushLogicalShortCut(value.getOne(), value.getTwo(), IdentityBoolean.TRUE, v);
 				return;
 			}
 		}
@@ -580,22 +580,11 @@ public class ASMStackManager implements Opcodes {
 		);
 	}
 
-	public void pushLogicalAnd(ExpressionNode target, ExpressionNode argument, MethodVisitor v) {
+	public void pushLogicalShortCut(ExpressionNode target, ExpressionNode argument, IdentityBoolean returnIf, MethodVisitor v ) {
 		Label end = new Label();
 		push(target, v);
 		v.visitInsn(DUP);
-		push(IdentityBoolean.FALSE, v);
-		v.visitJumpInsn(IF_ACMPNE, end);
-		v.visitInsn(POP);
-		push(argument, v);
-		v.visitLabel(end);
-	}
-
-	public void pushLogicalOr(ExpressionNode target, ExpressionNode argument, MethodVisitor v) {
-		Label end = new Label();
-		push(target, v);
-		v.visitInsn(DUP);
-		push(IdentityBoolean.TRUE, v);
+		push(returnIf, v);
 		v.visitJumpInsn(IF_ACMPEQ, end);
 		v.visitInsn(POP);
 		push(argument, v);

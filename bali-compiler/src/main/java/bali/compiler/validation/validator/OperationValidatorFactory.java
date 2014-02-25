@@ -41,7 +41,7 @@ public class OperationValidatorFactory implements ValidatorFactory {
 					Operator operator = getOperatorWithName(operatorName, targetType);
 
 					if (operator == null) {
-						ret.add(new ValidationFailure(node, "Class " + targetType + " has no operator " + operatorName));
+						ret.add(new ValidationFailure(node, "Type " + targetType + " has no operator " + operatorName));
 						return ret;
 					}
 

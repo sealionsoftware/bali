@@ -36,7 +36,7 @@ object TempleServer implements Executable {
                         String? read = << connection
                         if (?read & read.length() > 0){
                             CONSOLE << read
-                        }  else {
+                        } else {
                             break
                         }
                     }
@@ -49,7 +49,7 @@ object TempleServer implements Executable {
 	                CONSOLE << "Response Completed"
 
 				} catch (Exception e){
-					CONSOLE << "Inner Error: " + e.getMessage()
+					CONSOLE << "Error Processing Request: " + e.getMessage()
 				}
 				connection.close()
 			}

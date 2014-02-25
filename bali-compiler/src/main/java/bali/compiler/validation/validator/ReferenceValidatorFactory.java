@@ -15,6 +15,7 @@ import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.OperationNode;
 import bali.compiler.parser.tree.ReferenceNode;
 import bali.compiler.parser.tree.RunStatementNode;
+import bali.compiler.parser.tree.StatementNode;
 import bali.compiler.parser.tree.VariableNode;
 import bali.compiler.reference.SimpleReference;
 import bali.compiler.type.ConstantLibrary;
@@ -61,10 +62,11 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 					validate((CatchStatementNode) node, control);
 				} else if (node instanceof VariableNode) {
 					validate((VariableNode) node, control);
-				} else if (node instanceof ControlExpressionNode){
+				} else if (node instanceof ControlExpressionNode
+						|| node instanceof ExpressionNode){
 
 					Map<String, Site> originals = new HashMap<>();
-					ControlExpressionNode cen = (ControlExpressionNode) node;
+					StatementNode cen = (StatementNode) node;
 					for (Map.Entry<String, Site> typeOverride: cen.getTypeOverrides().entrySet() ){
 						String reference = typeOverride.getKey();
 						Scope overriddenScope = getScopeForReference(reference);
@@ -74,7 +76,12 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 					}
 
 					try {
-						if (node instanceof ForStatementNode) {
+						if (node instanceof ReferenceNode) {
+							control.validateChildren();
+							return validate((ReferenceNode) node);
+						} else if (node instanceof OperationNode){
+							validate((OperationNode) node, control);
+						} else if (node instanceof ForStatementNode) {
 							validate((ForStatementNode) node, control);
 						} else if (node instanceof ConditionalStatementNode){
 							validate((ConditionalStatementNode) node, control);
@@ -92,10 +99,6 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 							overriddenScope.add(reference, typeOverride.getValue());
 						}
 					}
-
-				} else if (node instanceof ReferenceNode) {
-					control.validateChildren();
-					return validate((ReferenceNode) node);
 				} else {
 					control.validateChildren();
 				}
@@ -177,12 +180,26 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 				agent.validateChildren();
 			}
 
+			private void validate(OperationNode node, Control agent) {
+				ExpressionNode one = node.getOne();
+				ExpressionNode two = node.getTwo();
+				if (one instanceof NullCheckNode &&
+						((NullCheckNode) one).getTarget() instanceof ReferenceNode &&
+						node.getOperator().equals(bali.Boolean.AND)){
+					String name = ((ReferenceNode) ((NullCheckNode) one).getTarget()).getName();
+					Site oldSite = getSiteForReference(name);
+					Site newSite = new ParameterisedSite(new SimpleReference<>(oldSite.getTemplate()), oldSite.getTypeArguments(), false, oldSite.isThreadSafe());
+					two.overrideType(name, newSite);
+				}
+				agent.validateChildren();
+			}
+
 			private void processCondition(ExpressionNode condition, ConditionalStatementNode statement){
 				if (condition instanceof NullCheckNode){
 					processConditional((NullCheckNode) condition, statement.getConditional());
 				} else if (condition instanceof OperationNode){
 					OperationNode operationNode = (OperationNode) condition;
-					if (operationNode.getOperator().equals("&")){
+					if (operationNode.getOperator().equals(bali.Boolean.AND)){
 						processCondition(operationNode.getOne(), statement);
 						processCondition(operationNode.getTwo(), statement);
 					}
