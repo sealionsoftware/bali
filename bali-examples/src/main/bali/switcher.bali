@@ -1,16 +1,13 @@
 import bali.Console
 import bali.Number
 import bali.String
+import bali.Executable
 
-interface Doer {
- 	declare goDo()
-}
-
-object SwitchDoer() implements Doer {
+object SwitchExecutable implements Executable {
 
 	field Number operand = 1
 
- 	method goDo(){
+ 	method execute {
 
 		switch (operand){
 			case 0: {

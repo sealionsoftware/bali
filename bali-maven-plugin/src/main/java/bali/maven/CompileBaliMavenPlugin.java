@@ -28,7 +28,7 @@ import java.util.List;
 		defaultPhase = LifecyclePhase.COMPILE,
 		requiresDependencyResolution = ResolutionScope.COMPILE
 )
-public class BaliMavenPlugin implements Mojo {
+public class CompileBaliMavenPlugin implements Mojo {
 
 	@Parameter(property = "project.artifactId")
 	private String moduleName;

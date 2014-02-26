@@ -53,7 +53,7 @@ public class RepositoryClassLoader extends ClassLoader {
 			urls.add(result.getArtifact().getFile().toURI().toURL());
 		}
 
-		delegate = new URLClassLoader(urls.toArray(new URL[urls.size()]));
+		delegate = new URLClassLoader(urls.toArray(new URL[urls.size()]), Thread.currentThread().getContextClassLoader());
 	}
 
 	public Class<?> loadClass(String name) throws ClassNotFoundException {

@@ -3,9 +3,9 @@ import bali.Number
 import bali.String
 import bali.Executable
 
-object OperationDoer() implements Executable {
+object OperationDoer implements Executable {
 
- 	method execute(){
+ 	method execute {
  	    Number n = 1 + 2
  	    String s = NUMBER_FACTORY.format(n) + "!"
  	    CONSOLE << s

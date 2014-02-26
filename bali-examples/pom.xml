@@ -19,6 +19,71 @@
 				<artifactId>bali-maven-plugin</artifactId>
 				<version>1.0-SNAPSHOT</version>
 				<extensions>true</extensions>
+				<executions>
+					<execution>
+						<id>compound</id>
+						<goals>
+							<goal>execute-bali</goal>
+						</goals>
+						<configuration>
+							<executableClassName>compound.CompoundExecutable</executableClassName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>nullcheck</id>
+						<goals>
+							<goal>execute-bali</goal>
+						</goals>
+						<configuration>
+							<executableClassName>nullcheck.NullChecker</executableClassName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>operation</id>
+						<goals>
+							<goal>execute-bali</goal>
+						</goals>
+						<configuration>
+							<executableClassName>operation.OperationDoer</executableClassName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>properties</id>
+						<goals>
+							<goal>execute-bali</goal>
+						</goals>
+						<configuration>
+							<executableClassName>properties.BeanExecutable</executableClassName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>switcher</id>
+						<goals>
+							<goal>execute-bali</goal>
+						</goals>
+						<configuration>
+							<executableClassName>switcher.SwitchExecutable</executableClassName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>threads</id>
+						<goals>
+							<goal>execute-bali</goal>
+						</goals>
+						<configuration>
+							<executableClassName>threads.ThreadedExecutable</executableClassName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>unary</id>
+						<goals>
+							<goal>execute-bali</goal>
+						</goals>
+						<configuration>
+							<executableClassName>unary.UnaryExecutable</executableClassName>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

@@ -9,6 +9,7 @@ import bali.compiler.parser.tree.FieldNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.SiteNode;
+import bali.compiler.type.Type;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
@@ -48,7 +49,6 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 		av.visitEnum("value", converter.getTypeDescriptor(Kind.class.getName()), Kind.OBJECT.name());
 		av.visitEnd();
 
-		Map<String, ExpressionNode> values = new HashMap<>();
 		for (FieldNode field : input.getFields()) {
 			cw.visitField(ACC_PRIVATE,
 					field.getName(),
@@ -56,9 +56,6 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 					null,
 					null
 			).visitEnd();
-			if (field.getValue() != null) {
-				values.put(field.getName(), field.getValue());
-			}
 		}
 
 		for (DeclarationNode argument : input.getArgumentDeclarations()) {
@@ -70,7 +67,7 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 			).visitEnd();
 		}
 
-		buildConstructor(values, cw, input);
+		buildConstructor(input, cw);
 
 		for (MethodDeclarationNode method : input.getMethods()) {
 			buildMethod(method, cw);
@@ -81,7 +78,7 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 		return new GeneratedClass(input.getClassName(), cw.toByteArray());
 	}
 
-	private void buildConstructor(Map<String, ExpressionNode> values, ClassWriter cw, ObjectNode input) {
+	private void buildConstructor(ObjectNode input, ClassWriter cw) {
 
 		ASMStackManager manager = new ASMStackManager(converter);
 
@@ -112,14 +109,17 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 					converter.getTypeDescriptor(declaration.getType()));
 		}
 
-		for (Map.Entry<String, ExpressionNode> valueEntry : values.entrySet()) {
-			initv.visitInsn(DUP);
-			ExpressionNode value = valueEntry.getValue();
-			manager.push(value, initv);
-			initv.visitFieldInsn(PUTFIELD,
-					converter.getInternalName(input.getQualifiedClassName()),
-					valueEntry.getKey(),
-					converter.getTypeDescriptor(value.getType().getTemplate()));
+		for (FieldNode node : input.getFields()) {
+			ExpressionNode value = node.getValue();
+			if (value != null){
+				initv.visitInsn(DUP);
+				manager.push(value, initv);
+				initv.visitFieldInsn(PUTFIELD,
+						converter.getInternalName(input.getQualifiedClassName()),
+						node.getName(),
+						converter.getTypeDescriptor(node.getType().getSite().getTemplate()));
+			}
+
 		}
 		initv.visitInsn(POP);
 		initv.visitInsn(RETURN);
@@ -160,6 +160,25 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 		methodVisitor.visitMaxs(1, 1);
 		methodVisitor.visitEnd();
 
+	}
+
+	private class InlineValue {
+
+		private Type type;
+		private ExpressionNode value;
+
+		private InlineValue(Type type, ExpressionNode value) {
+			this.type = type;
+			this.value = value;
+		}
+
+		public Type getType() {
+			return type;
+		}
+
+		public ExpressionNode getValue() {
+			return value;
+		}
 	}
 
 }
