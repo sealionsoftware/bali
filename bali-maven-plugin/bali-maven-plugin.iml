@@ -28,7 +28,7 @@
     <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-classworlds:2.4" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven.plugin-tools:maven-plugin-annotations:3.2" level="project" />
     <orderEntry type="module" module-name="bali-compiler" />
-    <orderEntry type="module" module-name="bali-lang" />
+    <orderEntry type="library" name="Maven: com.sealionsoftware:bali-lang:1.0" level="project" />
     <orderEntry type="library" name="Maven: org.antlr:antlr4:4.0" level="project" />
     <orderEntry type="library" name="Maven: org.antlr:antlr4-runtime:4.0" level="project" />
     <orderEntry type="library" name="Maven: org.abego.treelayout:org.abego.treelayout.core:1.0.1" level="project" />
