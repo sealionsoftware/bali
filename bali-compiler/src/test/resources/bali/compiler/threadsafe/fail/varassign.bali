@@ -5,9 +5,9 @@ import bali.Executable
 object Test implements Executable {
 
  	method execute {
- 	    String one = "G'Day"
+ 	    String one = "G'Day";
 		run {
-			CONSOLE << one
+			CONSOLE << one;
 		}
  	}
 

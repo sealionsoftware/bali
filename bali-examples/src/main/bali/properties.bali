@@ -19,13 +19,13 @@ object BeanExecutable() implements Executable {
 
  	method execute(){
 
-	    Bean aBean = new Bean()
-	    aBean.aString = "aString"
-	    aBean.aSubBean = new SubBean()
-	    aBean.aSubBean.aNumber = 42
+	    Bean aBean = new Bean();
+	    aBean.aString = "aString";
+	    aBean.aSubBean = new SubBean();
+	    aBean.aSubBean.aNumber = 42;
 
-	    CONSOLE << aBean.aString
-	    CONSOLE << NUMBER_FACTORY.format(aBean.aSubBean.aNumber)
+	    CONSOLE << aBean.aString;
+	    CONSOLE << NUMBER_FACTORY.format(aBean.aSubBean.aNumber);
  	}
 
 }

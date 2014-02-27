@@ -4,18 +4,18 @@ import bali.Executable
 object Test implements Executable {
 
  	method execute {
- 	    String? one = "G'Day"
- 	    String? two
+ 	    String? one = "G'Day";
+ 	    String? two;
  	    if (?one) {
- 	        String safe = one
+ 	        String safe = one;
  	    }
 	    if (?one & true) {
-            String safe = one
+            String safe = one;
         }
         if (?one & ?two) {
-            String safe = two
+            String safe = two;
         }
-        ?one & one.length() > 0
+        ?one & one.length() > 0;
  	}
 
 }

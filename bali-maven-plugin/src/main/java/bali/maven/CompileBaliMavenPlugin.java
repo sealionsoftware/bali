@@ -22,7 +22,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-
+// TODO: At the moment this is using the plugin classpath - needs to assemble its own
 @org.apache.maven.plugins.annotations.Mojo(
 		name = "compile-bali",
 		defaultPhase = LifecyclePhase.COMPILE,

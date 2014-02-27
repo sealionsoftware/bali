@@ -14,49 +14,49 @@ object TempleServer implements Executable {
 
 	method execute {
 
-		CONSOLE << "Starting Temple"
-		ServerSocket port = NETWORK_MANAGER.openPort(8080)
-		ConnectionMonitor[Socket]! monitor = new SocketMonitor(port)
-		Count count = new Counter()
+		CONSOLE << "Starting Temple";
+		ServerSocket port = NETWORK_MANAGER.openPort(8080);
+		ConnectionMonitor[Socket]! monitor = new SocketMonitor(port);
+		Count count = new Counter();
 
 		while (true){
 
-			monitor.waitForConnection()
-			Integer! requestNo = ++count
+			monitor.waitForConnection();
+			Integer! requestNo = ++count;
 
 			run {
 
-				Socket connection = monitor.getConnection()
+				Socket connection = monitor.getConnection();
 
 				try {
 
-					CONSOLE << "Receiving Request"
+					CONSOLE << "Receiving Request";
 
 	                while (true) {
-                        String? read = << connection
+                        String? read = << connection;
                         if (?read & read.length() > 0){
-                            CONSOLE << read
+                            CONSOLE << read;
                         } else {
-                            break
+                            break;
                         }
                     }
 
-                    connection << "HTTP/1.1 200 OK"
-                    connection << "Content-Type: text/html;"
-                    connection << ""
-                    connection << "Hello World " + NUMBER_FACTORY.format(requestNo)
+                    connection << "HTTP/1.1 200 OK";
+                    connection << "Content-Type: text/html;";
+                    connection << "";
+                    connection << "Hello World " + NUMBER_FACTORY.format(requestNo);
 
-	                CONSOLE << "Response Completed"
+	                CONSOLE << "Response Completed";
 
 				} catch (Exception e){
-					CONSOLE << "Error Processing Request: " + e.getMessage()
+					CONSOLE << "Error Processing Request: " + e.getMessage();
 				}
-				connection.close()
+				connection.close();
 			}
 		}
 
-		port.close()
-		CONSOLE << "Temple Exiting"
+		port.close();
+		CONSOLE << "Temple Exiting";
 	}
 
 }

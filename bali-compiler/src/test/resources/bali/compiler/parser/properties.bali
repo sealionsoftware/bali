@@ -1,8 +1,8 @@
 {
-	aReference.aProperty
-	aReference = anotherReference.aProperty
-	anotherReference.aProperty.anotherProperty
-	aReference.aProperty = anotherReference.aProperty
-	aReference.invoke.aProperty
-	(anOperand + anotherOperand).aProperty
+	aReference.aProperty;
+	aReference = anotherReference.aProperty;
+	anotherReference.aProperty.anotherProperty;
+	aReference.aProperty = anotherReference.aProperty;
+	aReference.invoke.aProperty;
+	(anOperand + anotherOperand).aProperty;
 }

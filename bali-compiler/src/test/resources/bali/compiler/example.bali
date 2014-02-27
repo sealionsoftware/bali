@@ -51,30 +51,30 @@ object AnImplementation(Number aParameter) implements AnInterface {
 
  	method Number aMethod(Number anArgument){
 
- 	    Number aVariable = anArgument + GLOBAL_CONSTANT
-		Iterable[Number] numbers = [3,4,5]
- 	    Boolean stop = false
+ 	    Number aVariable = anArgument + GLOBAL_CONSTANT;
+		Iterable[Number] numbers = [3,4,5];
+ 	    Boolean stop = false;
 
  	    while(~stop){
 	        for (Number number : numbers){
-	            aVariable = aVariable + number
+	            aVariable = aVariable + number;
 	        }
 	        if (aVariable > 100){
-	            stop = true
+	            stop = true;
 	        }
  	    }
 
- 	    ABean aBean = new AnotherBean()
-        aBean.aNumber = 3
+ 	    ABean aBean = new AnotherBean();
+        aBean.aNumber = 3;
 
         run {
-            CONSOLE << "Hello World"
+            CONSOLE << "Hello World";
         }
 
-		return anArgument
+		return anArgument;
  	}
 
 	method Number anotherMethod(Number anArgument){
-        return anArgument
+        return anArgument;
     }
 }

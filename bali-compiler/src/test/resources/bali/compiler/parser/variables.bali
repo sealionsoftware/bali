@@ -1,33 +1,33 @@
 {
 	// Declaration
-	String aString = "Hello World"
-	String anotherString = aString
-	String anotherString = aFactory.getString
-	String anotherString = aMethodOrFunction
-	String anotherString = STRING_CONSTANT
+	String aString = "Hello World";
+	String anotherString = aString;
+	String anotherString = aFactory.getString;
+	String anotherString = aMethodOrFunction;
+	String anotherString = STRING_CONSTANT;
 
 	// Assignment
-	aString = "Goodbye World"
+	aString = "Goodbye World";
 
 	// Numeric Expressions
-	Number anInt = 1.0
-	anInt = anInt + 1
-	anInt = anInt * 1
-	anInt = anInt - 1
-	anInt = anInt / 1
-	anInt = anInt ^ 1
+	Number anInt = 1.0;
+	anInt = anInt + 1;
+	anInt = anInt * 1;
+	anInt = anInt - 1;
+	anInt = anInt / 1;
+	anInt = anInt ^ 1;
 
 	// Logical Expressions
-	Boolean aBoolean = true
-	aBoolean = aBoolean & true
-	aBoolean = aBoolean | false
-	aBoolean = aBoolean ^ false
-	aBoolean = ~aBoolean
-	aBoolean = ?anObject
-	aBoolean = 1.0 == 1
-	aBoolean = 2 ~= 1
+	Boolean aBoolean = true;
+	aBoolean = aBoolean & true;
+	aBoolean = aBoolean | false;
+	aBoolean = aBoolean ^ false;
+	aBoolean = ~aBoolean;
+	aBoolean = ?anObject;
+	aBoolean = 1.0 == 1;
+	aBoolean = 2 ~= 1;
 
 	// String Expressions
-	String one = "whats up $aBoolean"
+	String one = "whats up $aBoolean";
 
 }

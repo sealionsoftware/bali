@@ -55,7 +55,7 @@ codeBlock:                  '{' statement* '}' ;
 
 statement:                  lineStatement | controlStatement ;
 
-lineStatement:              variableDeclaration | assignment | returnStatement | throwStatement | breakStatement | continueStatement | expression;
+lineStatement:              (variableDeclaration | assignment | returnStatement | throwStatement | breakStatement | continueStatement | expression) ';';
 
 controlStatement:           conditionalStatement | tryStatement | whileStatement | forStatement | switchStatement | runStatement ;
 

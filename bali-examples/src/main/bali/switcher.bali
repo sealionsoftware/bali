@@ -11,13 +11,13 @@ object SwitchExecutable implements Executable {
 
 		switch (operand){
 			case 0: {
-				CONSOLE << "Operand was 0"
+				CONSOLE << "Operand was 0";
 			}
 			case 1: {
-            	CONSOLE << "Operand was 1"
+            	CONSOLE << "Operand was 1";
             }
 			default: {
-				CONSOLE << "?"
+				CONSOLE << "?";
 			}
 		}
 

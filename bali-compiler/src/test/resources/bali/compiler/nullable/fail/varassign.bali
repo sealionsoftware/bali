@@ -5,8 +5,8 @@ import bali.Executable
 object Test implements Executable {
 
  	method execute {
- 	    String? one = "G'Day"
-		String two = one
+ 	    String? one = "G'Day";
+		String two = one;
  	}
 
 }

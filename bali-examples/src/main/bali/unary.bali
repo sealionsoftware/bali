@@ -7,11 +7,11 @@ object UnaryExecutable implements Executable {
 
  	method execute(){
 
- 	    Number n = 1
- 	    n = -n // Now -1
- 	    n = |n // Now 1
+ 	    Number n = 1;
+ 	    n = -n; // Now -1
+ 	    n = |n; // Now 1
 
- 	    CONSOLE << "Calc: " + NUMBER_FACTORY.format(n)
+ 	    CONSOLE << "Calc: " + NUMBER_FACTORY.format(n);
 
  	}
 

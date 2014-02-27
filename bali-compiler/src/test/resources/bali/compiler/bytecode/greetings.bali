@@ -12,9 +12,9 @@ object ConsoleGreeter implements Greeter {
 	field String greeting = "Field Greeting"
 
  	method greet {
-	    String greetingTwo = "Variable Greeting"
-	    greetingTwo = GREETING
-		CONSOLE.printLine(greetingTwo)
+	    String greetingTwo = "Variable Greeting";
+	    greetingTwo = GREETING;
+		CONSOLE.printLine(greetingTwo);
  	}
 
 }

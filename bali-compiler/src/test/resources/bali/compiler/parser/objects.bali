@@ -11,7 +11,7 @@ object AClass {
 
 	method String aStringMethod(String parameter){
 		// Do something
-		return "Hello World"
+		return "Hello World";
 	}
 
 }

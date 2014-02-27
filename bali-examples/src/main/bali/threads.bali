@@ -12,11 +12,11 @@ object ThreadedExecutable() implements Executable {
 
  	method execute(){
 
-		Count i = new Counter()
+		Count i = new Counter();
 		while (++i < 100) {
-			Integer! imm = #i
+			Integer! imm = #i;
 			run {
-				CONSOLE << (GREETING + ": " + NUMBER_FACTORY.format(imm))
+				CONSOLE << (GREETING + ": " + NUMBER_FACTORY.format(imm));
 			}
 		}
 

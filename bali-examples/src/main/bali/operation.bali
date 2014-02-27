@@ -6,12 +6,12 @@ import bali.Executable
 object OperationDoer implements Executable {
 
  	method execute {
- 	    Number n = 1 + 2
- 	    String s = NUMBER_FACTORY.format(n) + "!"
- 	    CONSOLE << s
+ 	    Number n = 1 + 2;
+ 	    String s = NUMBER_FACTORY.format(n) + "!";
+ 	    CONSOLE << s;
 
  	    if (true & (false | (true ^ false))){
- 	        CONSOLE << "evaluated compound expression to true"
+ 	        CONSOLE << "evaluated compound expression to true";
  	    }
  	}
 

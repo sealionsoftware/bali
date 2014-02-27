@@ -1,5 +1,5 @@
 {
-	aReference.propertyA
+	aReference.propertyA;
 	aReference.propertyA.propertyOnA
-		.propertyOnPropertyOnA
+		.propertyOnPropertyOnA;
 }

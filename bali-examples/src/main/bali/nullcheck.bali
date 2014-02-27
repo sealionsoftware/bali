@@ -8,7 +8,7 @@ object NullChecker implements Executable {
 	method execute(){
 
 		if (?greeting){
-			CONSOLE << greeting
+			CONSOLE << greeting;
 		}
 	}
 }
