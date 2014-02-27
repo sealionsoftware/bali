@@ -1,8 +1,8 @@
 package bali.collection.standard;
 
-import bali.IdentityBoolean;
 import bali.Integer;
 import bali.Iterator;
+import bali._;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 import bali.collection.Collection;
@@ -16,11 +16,12 @@ import bali.collection.List;
 public final class LinkedList<T> implements List<T> {
 
 	public LinkedList(){}
+	private int size;
 
 	public LinkedList(Collection<T> in) {
 		Iterator<T> iterator = in.iterator();
-		while (iterator.hasNext() == IdentityBoolean.TRUE){
-
+		while (_.PRIMITIVE_CONVERTER.from(iterator.hasNext())){
+			add(iterator.next());
 		}
 	}
 
@@ -35,7 +36,7 @@ public final class LinkedList<T> implements List<T> {
 	}
 
 	public Integer size() {
-		return null;
+		return _.PRIMITIVE_CONVERTER.from(size);
 	}
 
 	public void add(T object) {
@@ -51,7 +52,7 @@ public final class LinkedList<T> implements List<T> {
 			private Link<T> current = start;
 
 			public bali.Boolean hasNext() {
-				return start.next != null ? IdentityBoolean.TRUE : IdentityBoolean.FALSE;
+				return _.PRIMITIVE_CONVERTER.from(start.next != null);
 			}
 
 			public T next() {

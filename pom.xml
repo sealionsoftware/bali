@@ -17,6 +17,7 @@
 		<module>bali-runtime</module>
 		<module>bali-compiler</module>
 		<module>bali-maven-plugin</module>
+		<module>bali-server</module>
 		<!--<module>bali-examples</module>-->
 		<!--<module>temple</module>-->
 	</modules>

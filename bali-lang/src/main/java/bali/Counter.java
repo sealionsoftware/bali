@@ -2,7 +2,6 @@ package bali;
 
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
-import bali.number.NumberFactory;
 
 /**
  * User: Richard
@@ -18,18 +17,18 @@ public class Counter implements Count {
 	}
 
 	public Counter(Integer count) {
-		this.count = NumberFactory.NUMBER_FACTORY.valueOf(count);
+		this.count = _.PRIMITIVE_CONVERTER.from(count);
 	}
 
 	public Integer increment() {
-		return NumberFactory.NUMBER_FACTORY.forInt(count++);
+		return _.PRIMITIVE_CONVERTER.from(count++);
 	}
 
 	public Integer decrement() {
-		return NumberFactory.NUMBER_FACTORY.forInt(count--);
+		return _.PRIMITIVE_CONVERTER.from(count--);
 	}
 
 	public Integer value() {
-		return NumberFactory.NUMBER_FACTORY.forInt(count);
+		return _.PRIMITIVE_CONVERTER.from(count);
 	}
 }

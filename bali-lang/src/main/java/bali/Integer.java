@@ -10,8 +10,4 @@ import bali.annotation.MetaType;
 @MetaType(Kind.INTERFACE)
 public interface Integer extends Number {
 
-//	public Integer add(Integer i);
-//
-//	public Integer subtract(Integer i);
-
 }

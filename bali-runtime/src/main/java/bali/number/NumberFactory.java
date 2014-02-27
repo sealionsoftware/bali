@@ -9,6 +9,8 @@ import bali.String;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 
+import java.lang.*;
+
 
 /**
  * User: Richard

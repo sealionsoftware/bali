@@ -1,8 +1,8 @@
 package bali.time.calendar;
 
-import bali.CharArrayString;
 import bali.Number;
 import bali.String;
+import bali._;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 import bali.time.CalendarSystem;
@@ -23,8 +23,8 @@ public final class ISOCalendarSystem implements CalendarSystem {
 	private static final int YEAR_LENGTH = 365;
 	private static final int LEAP_YEAR_LENGTH = 366;
 
-	private static final String COMMON_ERA = new CharArrayString("CE".toCharArray());
-	private static final String BEFORE_COMMON_ERA = new CharArrayString("BCE".toCharArray());
+	private static final String COMMON_ERA = _.PRIMITIVE_CONVERTER.from("CE".toCharArray());
+	private static final String BEFORE_COMMON_ERA = _.PRIMITIVE_CONVERTER.from("BCE".toCharArray());
 
 	public Date getDate(Instant instant) {
 
