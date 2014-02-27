@@ -1,7 +1,7 @@
 package bali.compiler.bytecode;
 
-import bali.IdentityBoolean;
 import bali.Number;
+import bali.True;
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.ArgumentDeclarationNode;
 import bali.compiler.parser.tree.CodeBlockNode;
@@ -77,7 +77,7 @@ public class ASMClassGeneratorUnitTest {
 		Object instance = loadedClass.newInstance();
 		declaredField.setAccessible(true);
 
-		Assert.assertTrue("Value", new Byte((byte) 1).equalTo((Number) declaredField.get(instance)) == IdentityBoolean.TRUE);
+		Assert.assertTrue("Value", new Byte((byte) 1).equalTo((Number) declaredField.get(instance)) == True.TRUE);
 	}
 
 	@Test

@@ -1,7 +1,7 @@
 package bali.number;
 
-import bali.IdentityBoolean;
 import bali.Number;
+import bali.True;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -54,7 +54,7 @@ public class ByteUnitTest {
 		Byte b = new Byte((byte) 1);
 		Number result = b.add(new Int(Int.MAX_VALUE));
 		Assert.assertEquals("result is not a Long", Long.class, result.getClass());
-		Assert.assertEquals("result is not correct value", (long) java.lang.Integer.MAX_VALUE + 1, ((Long) result).value);
+		Assert.assertEquals("result is not correct value", (long) Integer.MAX_VALUE + 1, ((Long) result).value);
 	}
 
 	@Test
@@ -62,7 +62,7 @@ public class ByteUnitTest {
 		Byte b = new Byte((byte) 1);
 		Number result = b.add(new Long(Long.MAX_VALUE));
 		Assert.assertEquals("result is not a BigInteger", BigInteger.class, result.getClass());
-		Assert.assertTrue("result is not correct value", Long.POSITIVE_HORIZON.equalTo(result) == IdentityBoolean.TRUE);
+		Assert.assertTrue("result is not correct value", Long.POSITIVE_HORIZON.equalTo(result) == True.TRUE);
 	}
 
 

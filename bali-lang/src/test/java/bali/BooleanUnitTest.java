@@ -3,14 +3,14 @@ package bali;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static bali.False.FALSE;
+import static bali.True.TRUE;
+
 /**
  * User: Richard
  * Date: 05/05/13
  */
 public class BooleanUnitTest {
-
-	private static final Boolean FALSE = IdentityBoolean.FALSE;
-	private static final Boolean TRUE = IdentityBoolean.TRUE;
 
 	@Test
 	public void testEquality(){

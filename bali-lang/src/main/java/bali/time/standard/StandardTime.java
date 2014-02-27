@@ -9,7 +9,6 @@ import bali.time.Time;
  * User: Richard
  * Date: 11/07/13
  */
-@MetaType(Kind.OBJECT)
 public final class StandardTime implements Time {
 
 	private Number hour;

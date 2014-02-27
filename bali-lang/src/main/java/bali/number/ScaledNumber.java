@@ -1,17 +1,14 @@
 package bali.number;
 
 import bali.Boolean;
-import bali.IdentityBoolean;
 import bali.Number;
-import bali.annotation.Kind;
-import bali.annotation.MetaType;
+import bali.True;
 
 /**
  * User: Richard
  * Date: 11/06/13
  */
-@MetaType(Kind.OBJECT)
-public class ScaledNumber implements bali.Number {
+public class ScaledNumber implements Number {
 
 	private BigInteger number;
 	private BigInteger scalePlace;
@@ -36,7 +33,7 @@ public class ScaledNumber implements bali.Number {
 	}
 
 	public Number magnitude() {
-		return isNegative() == IdentityBoolean.TRUE ? negative() : this;
+		return isNegative() == True.TRUE ? negative() : this;
 	}
 
 	public Number negative() {

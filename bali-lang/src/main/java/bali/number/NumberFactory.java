@@ -6,17 +6,12 @@ import bali.Integer;
 import bali.Number;
 import bali.Serializer;
 import bali.String;
-import bali.annotation.Kind;
-import bali.annotation.MetaType;
-
-import java.lang.*;
 
 
 /**
  * User: Richard
  * Date: 11/06/13
  */
-@MetaType(Kind.OBJECT)
 public class NumberFactory implements Serializer<Number> {
 
 	public static final NumberFactory NUMBER_FACTORY = new NumberFactory();
@@ -97,7 +92,7 @@ public class NumberFactory implements Serializer<Number> {
 		return negative ? ret.negative() : ret;
 	}
 
-	public bali.Integer forLong(long o) {
+	public Integer forLong(long o) {
 		if (o <= INTEGER_CEILING && o >= INTEGER_FLOOR) {
 			return forInt((int) o);
 		}

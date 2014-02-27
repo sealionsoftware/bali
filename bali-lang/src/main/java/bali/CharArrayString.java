@@ -1,7 +1,5 @@
 package bali;
 
-import bali.annotation.Kind;
-import bali.annotation.MetaType;
 import bali.collection.Array;
 import bali.number.NumberFactory;
 
@@ -11,7 +9,6 @@ import java.util.Arrays;
  * User: Richard
  * Date: 02/05/13
  */
-@MetaType(Kind.OBJECT)
 public final class CharArrayString implements String {
 
 	final char[] characters;
@@ -44,7 +41,7 @@ public final class CharArrayString implements String {
 
 	public Boolean equalTo(String operand) {
 		CharArrayString cas = (CharArrayString) operand;
-		return Arrays.equals(characters, cas.characters) ? IdentityBoolean.TRUE : IdentityBoolean.FALSE;
+		return Arrays.equals(characters, cas.characters) ? True.TRUE : False.FALSE;
 	}
 
 	public String uppercase() {

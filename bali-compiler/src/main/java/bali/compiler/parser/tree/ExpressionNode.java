@@ -2,10 +2,6 @@ package bali.compiler.parser.tree;
 
 import bali.compiler.type.Site;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * User: Richard
  * Date: 29/04/13

@@ -1,16 +1,14 @@
 package bali.number;
 
 import bali.Boolean;
-import bali.IdentityBoolean;
 import bali.Number;
-import bali.annotation.Kind;
-import bali.annotation.MetaType;
+import static bali.Primitive.convert;
 
 /**
+ * TODO
  * User: Richard
  * Date: 10/06/13
  */
-@MetaType(Kind.OBJECT)
 public final class Fraction implements Number {
 
 	final Number numerator;
@@ -42,7 +40,7 @@ public final class Fraction implements Number {
 	}
 
 	public Number magnitude() {
-		return isNegative() == IdentityBoolean.TRUE ? negative() : this;
+		return convert(isNegative()) ? negative() : this;
 	}
 
 	public Number negative() {
@@ -54,8 +52,6 @@ public final class Fraction implements Number {
 	}
 
 	public Boolean greaterThan(BigInteger integer) {
-
-
 		return null;
 	}
 

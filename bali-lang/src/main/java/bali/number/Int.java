@@ -1,45 +1,37 @@
 package bali.number;
 
 import bali.Boolean;
-import bali.Integer;
 import bali.Number;
-import bali.annotation.Kind;
-import bali.annotation.MetaType;
 
-import static bali.IdentityBoolean.FALSE;
-import static bali.IdentityBoolean.TRUE;
-import static bali.number.NumberFactory.NUMBER_FACTORY;
+import static bali.Primitive.convert;
 
 /**
  * User: Richard
  * Date: 11/06/13
  */
-@MetaType(Kind.OBJECT)
-class Long implements bali.Integer {
+public class Int implements bali.Integer {
 
-	static final long MAX_VALUE = java.lang.Long.MAX_VALUE;
-	static final long MIN_VALUE = java.lang.Long.MIN_VALUE;
-	static final BigInteger POSITIVE_HORIZON = new BigInteger(new byte[]{-128, -128, -128, -128, -128, -128, -128, -128, -128, -127});
-	static final BigInteger NEGATIVE_HORIZON = new BigInteger(new byte[]{-127, -128, -128, -128, -128, -128, -128, -128, -128, -127}, false);
+	static final int MAX_VALUE = Integer.MAX_VALUE;
+	static final int MIN_VALUE = Integer.MIN_VALUE;
 
-	final long value;
+	final int value;
 
-	public Long(long value) {
+	public Int(int value) {
 		this.value = value;
 	}
 
-	// Unary
+	// Unary Operations
 
 	public Boolean isPositive() {
-		return value > 0 ? TRUE : FALSE;
+		return convert(value > 0);
 	}
 
 	public Boolean isNegative() {
-		return value < 0 ? TRUE : FALSE;
+		return convert(value < 0);
 	}
 
 	public Boolean isZero() {
-		return value == 0 ? TRUE : FALSE;
+		return convert(value == 0);
 	}
 
 	public Number magnitude() {
@@ -47,17 +39,14 @@ class Long implements bali.Integer {
 	}
 
 	public Number negative() {
-		return new Long(-value);
+		return new Int(-value);
 	}
 
 	// Equality
 
 	public Boolean equalTo(Number o) {
-		if (o instanceof Long) {
-			return equalTo((Long) o);
-		}
-		if (o instanceof Integer) {
-			return equalTo((Integer) o);
+		if (o instanceof Int) {
+			return equalTo((Int) o);
 		}
 		if (o instanceof Short) {
 			return equalTo((Short) o);
@@ -66,10 +55,6 @@ class Long implements bali.Integer {
 			return equalTo((Byte) o);
 		}
 		return o.equalTo(this);
-	}
-
-	public Boolean equalTo(Long operand) {
-		return equalTo(operand.value);
 	}
 
 	public Boolean equalTo(Int operand) {
@@ -84,18 +69,15 @@ class Long implements bali.Integer {
 		return equalTo(operand.value);
 	}
 
-	public Boolean equalTo(long operand) {
-		return value == operand ? TRUE : FALSE;
+	public Boolean equalTo(int operand) {
+		return convert(value == operand);
 	}
 
 	// Greater Than
 
 	public Boolean greaterThan(Number o) {
-		if (o instanceof Long) {
-			return greaterThan((Long) o);
-		}
-		if (o instanceof Integer) {
-			return greaterThan((Integer) o);
+		if (o instanceof Int) {
+			return greaterThan((Int) o);
 		}
 		if (o instanceof Short) {
 			return greaterThan((Short) o);
@@ -104,10 +86,6 @@ class Long implements bali.Integer {
 			return greaterThan((Byte) o);
 		}
 		return o.lessThan(this).and(equalTo(o).not());
-	}
-
-	public Boolean greaterThan(Long o) {
-		return greaterThan(o.value);
 	}
 
 	public Boolean greaterThan(Int o) {
@@ -122,16 +100,13 @@ class Long implements bali.Integer {
 		return greaterThan(o.value);
 	}
 
-	public Boolean greaterThan(long o) {
-		return value > o ? TRUE : FALSE;
+	public Boolean greaterThan(int o) {
+		return convert(value > o);
 	}
 
 	// Less Than
 
 	public Boolean lessThan(Number o) {
-		if (o instanceof Long) {
-			return lessThan((Long) o);
-		}
 		if (o instanceof Int) {
 			return lessThan((Int) o);
 		}
@@ -142,10 +117,6 @@ class Long implements bali.Integer {
 			return lessThan((Byte) o);
 		}
 		return o.greaterThan(this).and(equalTo(o).not());
-	}
-
-	public Boolean lessThan(Long o) {
-		return lessThan(o.value);
 	}
 
 	public Boolean lessThan(Int o) {
@@ -160,16 +131,13 @@ class Long implements bali.Integer {
 		return lessThan(o.value);
 	}
 
-	public Boolean lessThan(long o) {
-		return value < o ? TRUE : FALSE;
+	public Boolean lessThan(int o) {
+		return convert(value < o);
 	}
 
 	// Addition
 
 	public Number add(Number o) {
-		if (o instanceof Long) {
-			return add((Long) o);
-		}
 		if (o instanceof Int) {
 			return add((Int) o);
 		}
@@ -180,10 +148,6 @@ class Long implements bali.Integer {
 			return add((Byte) o);
 		}
 		return o.add(this);
-	}
-
-	public Number add(Long o) {
-		return add(o.value);
 	}
 
 	public Number add(Int o) {
@@ -198,28 +162,13 @@ class Long implements bali.Integer {
 		return add(o.value);
 	}
 
-	private Number add(long o) {
-		long rem = java.lang.Long.MAX_VALUE - value;
-		if (rem < o) {
-			return POSITIVE_HORIZON.add(new Long(o - rem - 1));
-		}
-
-		rem = java.lang.Long.MIN_VALUE + value;
-		if (rem < o) {
-			return NEGATIVE_HORIZON.subtract(new Long(o - rem));
-		}
-
-		long ret = value + o;
-		return NUMBER_FACTORY.forLong(ret);
+	private Number add(int o) {
+		return convert((long) value + o);
 	}
-
 
 	// Subtraction
 
 	public Number subtract(Number o) {
-		if (o instanceof Long) {
-			return subtract((Long) o);
-		}
 		if (o instanceof Int) {
 			return subtract((Int) o);
 		}
@@ -230,10 +179,6 @@ class Long implements bali.Integer {
 			return subtract((Byte) o);
 		}
 		return o.subtract(this).negative();
-	}
-
-	public Number subtract(Long o) {
-		return subtract(o.value);
 	}
 
 	public Number subtract(Int o) {
@@ -248,27 +193,13 @@ class Long implements bali.Integer {
 		return subtract(o.value);
 	}
 
-	private Number subtract(long o) {
-		long rem = java.lang.Long.MIN_VALUE - value;
-		if (rem < o) {
-			return NEGATIVE_HORIZON.subtract(new Long(o - rem));
-		}
-
-		rem = java.lang.Long.MAX_VALUE - value;
-		if (rem < o) {
-			return POSITIVE_HORIZON.add(new Long(o - rem));
-		}
-
-		long ret = value - o;
-		return NUMBER_FACTORY.forLong(ret);
+	private Number subtract(int o) {
+		return convert((long) value - o);
 	}
 
 	// Multiplication
 
 	public Number multiply(Number o) {
-		if (o instanceof Long) {
-			return multiply((Long) o);
-		}
 		if (o instanceof Int) {
 			return multiply((Int) o);
 		}
@@ -278,11 +209,7 @@ class Long implements bali.Integer {
 		if (o instanceof Byte) {
 			return multiply((Byte) o);
 		}
-		return o.multiply(this);
-	}
-
-	public Number multiply(Long o) {
-		return multiply(o.value);
+		return o.multiply(this).negative();
 	}
 
 	public Number multiply(Int o) {
@@ -297,27 +224,13 @@ class Long implements bali.Integer {
 		return multiply(o.value);
 	}
 
-	private Number multiply(long o) {
-		long rem = MAX_VALUE - value;
-		if (rem < o) {
-			return POSITIVE_HORIZON.add(new Long(o - rem));
-		}
-
-		rem = MIN_VALUE + value;
-		if (rem < o) {
-			return NEGATIVE_HORIZON.add(new Long(o - rem));
-		}
-
-		long ret = value * o;
-		return NUMBER_FACTORY.forLong(ret);
+	private Number multiply(int o) {
+		return convert((long) value * o);
 	}
 
 	// Division
 
 	public Number divide(Number o) {
-		if (o instanceof Long) {
-			return divide((Long) o);
-		}
 		if (o instanceof Int) {
 			return divide((Int) o);
 		}
@@ -328,10 +241,6 @@ class Long implements bali.Integer {
 			return divide((Byte) o);
 		}
 		return o.divide(this);
-	}
-
-	public Number divide(Long o) {
-		return divide(o.value);
 	}
 
 	public Number divide(Int o) {
@@ -346,18 +255,8 @@ class Long implements bali.Integer {
 		return divide(o.value);
 	}
 
-	private Number divide(long o) {
-		long rem = MAX_VALUE - value;
-		if (rem < o) {
-			return POSITIVE_HORIZON.add(new Long(o - rem));
-		}
-
-		rem = MIN_VALUE + value;
-		if (rem < o) {
-			return NEGATIVE_HORIZON.add(new Long(o - rem));
-		}
-
-		long ret = value / o;
-		return NUMBER_FACTORY.forLong(ret);
+	private Number divide(int o) {
+		return convert(value / o);
 	}
+
 }

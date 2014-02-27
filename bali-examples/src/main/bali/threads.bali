@@ -1,4 +1,3 @@
-import bali.Console
 import bali.Number
 import bali.Integer
 import bali.String

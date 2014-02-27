@@ -1,7 +1,9 @@
 package bali.collection;
 
+import bali.Boolean;
 import bali.Integer;
 import bali.Iterable;
+import bali.Number;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 
@@ -13,5 +15,9 @@ import bali.annotation.MetaType;
 public interface Collection<T> extends Iterable<T> {
 
 	public Integer size();
+
+	public Boolean isEmpty();
+
+	public T get(Number index);
 
 }

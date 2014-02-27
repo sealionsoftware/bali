@@ -1,6 +1,6 @@
 package bali.compiler.validation.validator;
 
-import bali.collection.Array;
+import bali.collection.ValueCollection;
 import bali.compiler.parser.tree.ArrayLiteralExpressionNode;
 import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.Node;
@@ -25,7 +25,7 @@ public class ArrayLiteralValidatorFactory implements ValidatorFactory {
 	private Reference<Class> arrayClass;
 
 	public ArrayLiteralValidatorFactory(ClassLibrary library) {
-		this.arrayClass = library.getReference(Array.class.getName());
+		this.arrayClass = library.getReference(ValueCollection.class.getName());
 	}
 
 	public Validator createValidator() {
@@ -43,7 +43,7 @@ public class ArrayLiteralValidatorFactory implements ValidatorFactory {
 
 					List<ExpressionNode> values = literal.getValues();
 					if (values.isEmpty()) {
-						failures.add(new ValidationFailure(literal, "Array literals must have at least one entry"));
+						failures.add(new ValidationFailure(literal, "ValueCollection literals must have at least one entry"));
 					}
 
 					Iterator<ExpressionNode> i = literal.getValues().iterator();

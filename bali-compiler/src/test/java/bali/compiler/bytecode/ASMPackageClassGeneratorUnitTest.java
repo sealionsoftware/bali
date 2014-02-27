@@ -2,11 +2,13 @@ package bali.compiler.bytecode;
 
 import bali.Boolean;
 import bali.CharArrayString;
-import bali.IdentityBoolean;
+import bali.False;
 import bali.Number;
 import bali.String;
+import bali.True;
 import bali.Value;
 import bali.collection.Array;
+import bali.collection.ValueCollection;
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.ArrayLiteralExpressionNode;
 import bali.compiler.parser.tree.BooleanLiteralExpressionNode;
@@ -61,7 +63,7 @@ public class ASMPackageClassGeneratorUnitTest {
 		BooleanLiteralExpressionNode blv = new BooleanLiteralExpressionNode();
 		blv.setSerialization("true");
 		blv.setType(new TestVanillaSite((Boolean.class)));
-		testGenerateConstant(Boolean.class, blv, IdentityBoolean.TRUE);
+		testGenerateConstant(Boolean.class, blv, True.TRUE);
 	}
 
 	@Test
@@ -79,9 +81,9 @@ public class ASMPackageClassGeneratorUnitTest {
 		llv.addValue(two);
 		llv.addValue(three);
 
-		llv.setType(new TestVanillaSite((Array.class)));
+		llv.setType(new TestVanillaSite((ValueCollection.class)));
 
-		testGenerateConstant(Array.class, llv, new Array<Number>(new Number[]{
+		testGenerateConstant(ValueCollection.class, llv, new Array<>(new Number[]{
 				NUMBER_FACTORY.forDecimalString("1".toCharArray()),
 				NUMBER_FACTORY.forDecimalString("2".toCharArray()),
 				NUMBER_FACTORY.forDecimalString("3".toCharArray())
@@ -115,13 +117,13 @@ public class ASMPackageClassGeneratorUnitTest {
 		Assert.assertEquals("Number of methods", 0, loadedClass.getDeclaredMethods().length);
 		java.lang.reflect.Field constantField = loadedClass.getField("aConstant");
 		Assert.assertEquals("Constant Class", clazz, constantField.getType());
-		Assert.assertTrue("Constant Value", expectation.equalTo((T) constantField.get(null)) == IdentityBoolean.TRUE);
+		Assert.assertTrue("Constant Value", expectation.equalTo((T) constantField.get(null)) == True.TRUE);
 	}
 
 
 	public static class Instantiatable implements Value<Instantiatable> {
 		public Boolean equalTo(Instantiatable o) {
-			return o instanceof Instantiatable ? IdentityBoolean.TRUE : IdentityBoolean.FALSE;
+			return o != null ? True.TRUE : False.FALSE;
 		}
 	}
 

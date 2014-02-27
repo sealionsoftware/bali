@@ -2,31 +2,29 @@ package bali.number;
 
 import bali.Boolean;
 import bali.Number;
-import bali.annotation.Kind;
-import bali.annotation.MetaType;
 
 import java.util.Arrays;
 
-import static bali.IdentityBoolean.FALSE;
-import static bali.IdentityBoolean.TRUE;
-import static bali.number.NumberFactory.NUMBER_FACTORY;
+import static bali.Primitive.convert;
 
 /**
+ * TODO
  * Class representing the integer numbers in base 256
  * <p/>
  * User: Richard
  * Date: 04/05/13
  */
-@MetaType(Kind.OBJECT)
 public final class BigInteger implements bali.Integer {
 
-	private static final java.lang.String INVALID_NUMBER_TYPE = "Invalid Number Type";
+	private static final String INVALID_NUMBER_TYPE = "Invalid Number Type";
+	private static final Boolean TRUE = convert(true);
+	private static final Boolean FALSE = convert(false);
 
 	static final byte MIN = -128;
 	static final byte MAX = 127;
 	private static final short SIZE = MAX - MIN + 1;
 	private static final short MIN_2 = 2 * MIN;
-	private static final Number ZERO = NUMBER_FACTORY.forByte((byte) 0);
+	private static final Number ZERO = convert(0);
 
 	private final boolean positive;
 	private final byte[] value;
@@ -43,19 +41,19 @@ public final class BigInteger implements bali.Integer {
 	// Unary
 
 	public Boolean isPositive() {
-		return positive ? TRUE : FALSE;
+		return convert(positive);
 	}
 
 	public Boolean isNegative() {
-		return positive ? FALSE : TRUE;
+		return convert(positive);
 	}
 
 	public Boolean isZero() {
-		return (value.length == 1 && value[0] == 0) ? TRUE : FALSE;
+		return convert(value.length == 1 && value[0] == 0);
 	}
 
 	public BigInteger magnitude() {
-		return isPositive() == TRUE ? this : negative();
+		return convert(isPositive()) ? this : negative();
 	}
 
 	public BigInteger negative() {
@@ -84,10 +82,10 @@ public final class BigInteger implements bali.Integer {
 	}
 
 	public Boolean equalTo(BigInteger o) {
-		return Arrays.equals(o.value, value) ? TRUE : FALSE;
+		return convert(Arrays.equals(o.value, value));
 	}
 
-	public Boolean equalTo(bali.number.Long o) {
+	public Boolean equalTo(Long o) {
 		return equalTo(o.value);
 	}
 
@@ -105,7 +103,7 @@ public final class BigInteger implements bali.Integer {
 
 	public Boolean equalTo(long o) {
 		try {
-			return toLong() == o ? TRUE : FALSE;
+			return convert(toLong() == o);
 		} catch (TooBigException e) {
 			return FALSE;
 		}
@@ -117,8 +115,8 @@ public final class BigInteger implements bali.Integer {
 		if (number instanceof BigInteger) {
 			return greaterThan((BigInteger) number);
 		}
-		if (number instanceof bali.number.Long) {
-			return greaterThan((bali.number.Long) number);
+		if (number instanceof Long) {
+			return greaterThan((Long) number);
 		}
 		if (number instanceof Int) {
 			return greaterThan((Int) number);
@@ -150,9 +148,9 @@ public final class BigInteger implements bali.Integer {
 		return FALSE;
 	}
 
-	public Boolean greaterThan(bali.number.Long o) {
+	public Boolean greaterThan(Long o) {
 		try {
-			return toLong() > o.value ? TRUE : FALSE;
+			return convert(toLong() > o.value);
 		} catch (TooBigException e) {
 			return FALSE;
 		}
@@ -160,7 +158,7 @@ public final class BigInteger implements bali.Integer {
 
 	public Boolean greaterThan(Int o) {
 		try {
-			return toInt() > o.value ? TRUE : FALSE;
+			return convert(toInt() > o.value);
 		} catch (TooBigException e) {
 			return FALSE;
 		}
@@ -168,7 +166,7 @@ public final class BigInteger implements bali.Integer {
 
 	public Boolean greaterThan(Short o) {
 		try {
-			return toShort() > o.value ? TRUE : FALSE;
+			return convert(toShort() > o.value);
 		} catch (TooBigException e) {
 			return FALSE;
 		}
@@ -176,7 +174,7 @@ public final class BigInteger implements bali.Integer {
 
 	public Boolean greaterThan(Byte o) {
 		try {
-			return toByte() > o.value ? TRUE : FALSE;
+			return convert(toByte() > o.value);
 		} catch (TooBigException e) {
 			return FALSE;
 		}
@@ -188,8 +186,8 @@ public final class BigInteger implements bali.Integer {
 		if (number instanceof BigInteger) {
 			return lessThan((BigInteger) number);
 		}
-		if (number instanceof bali.number.Long) {
-			return lessThan((bali.number.Long) number);
+		if (number instanceof Long) {
+			return lessThan((Long) number);
 		}
 		if (number instanceof Int) {
 			return lessThan((Int) number);
@@ -221,9 +219,9 @@ public final class BigInteger implements bali.Integer {
 		return FALSE;
 	}
 
-	public Boolean lessThan(bali.number.Long o) {
+	public Boolean lessThan(Long o) {
 		try {
-			return toLong() < o.value ? TRUE : FALSE;
+			return convert(toLong() < o.value);
 		} catch (TooBigException e) {
 			return FALSE;
 		}
@@ -231,7 +229,7 @@ public final class BigInteger implements bali.Integer {
 
 	public Boolean lessThan(Int o) {
 		try {
-			return toInt() < o.value ? TRUE : FALSE;
+			return convert(toInt() < o.value);
 		} catch (TooBigException e) {
 			return FALSE;
 		}
@@ -239,7 +237,7 @@ public final class BigInteger implements bali.Integer {
 
 	public Boolean lessThan(Short o) {
 		try {
-			return toShort() < o.value ? TRUE : FALSE;
+			return convert(toShort() < o.value);
 		} catch (TooBigException e) {
 			return FALSE;
 		}
@@ -247,7 +245,7 @@ public final class BigInteger implements bali.Integer {
 
 	public Boolean lessThan(Byte o) {
 		try {
-			return toByte() < o.value ? TRUE : FALSE;
+			return convert(toByte() < o.value);
 		} catch (TooBigException e) {
 			return FALSE;
 		}
@@ -259,8 +257,8 @@ public final class BigInteger implements bali.Integer {
 		if (o instanceof BigInteger) {
 			return add((BigInteger) o);
 		}
-		if (o instanceof bali.number.Long) {
-			return add((bali.number.Long) o);
+		if (o instanceof Long) {
+			return add((Long) o);
 		}
 		if (o instanceof Int) {
 			return add((Int) o);
@@ -276,14 +274,14 @@ public final class BigInteger implements bali.Integer {
 
 	public Number add(BigInteger o) {
 
-		if (o.isZero() == TRUE) {
+		if (convert(o.isZero())) {
 			return this;
 		}
-		if (isZero() == TRUE) {
+		if (convert(isZero())) {
 			return o;
 		}
 
-		if (o.greaterThan(this) == TRUE) {
+		if (convert(o.greaterThan(this))) {
 			return o.add(this);
 		}
 
@@ -297,7 +295,7 @@ public final class BigInteger implements bali.Integer {
 		return new BigInteger(add(o.value), positive);
 	}
 
-	public Number add(bali.number.Long o) {
+	public Number add(Long o) {
 		return add(o.value);
 	}
 
@@ -339,10 +337,10 @@ public final class BigInteger implements bali.Integer {
 
 	private Number add(long o) {
 
-		if (isPositive() == TRUE && o < 0) {
+		if (convert(isPositive()) && o < 0) {
 			return subtract(-o); // TODO check Long.MIN
 		}
-		if (isPositive() == FALSE && o > 0) {
+		if (!convert(isPositive()) && o > 0) {
 			return subtract(o).negative();
 		}
 
@@ -363,8 +361,8 @@ public final class BigInteger implements bali.Integer {
 		if (o instanceof BigInteger) {
 			return subtract((BigInteger) o);
 		}
-		if (o instanceof bali.number.Long) {
-			return subtract((bali.number.Long) o);
+		if (o instanceof Long) {
+			return subtract((Long) o);
 		}
 		if (o instanceof Int) {
 			return subtract((Int) o);
@@ -380,14 +378,14 @@ public final class BigInteger implements bali.Integer {
 
 	public Number subtract(BigInteger o) {
 
-		if (o.isZero() == TRUE) {
+		if (convert(o.isZero())) {
 			return this;
 		}
-		if (isZero() == TRUE) {
+		if (convert(isZero())) {
 			return o.negative();
 		}
 
-		if (o.greaterThan(this) == TRUE) {
+		if (convert(o.greaterThan(this))) {
 			return o.subtract(this).negative();
 		}
 
@@ -401,7 +399,7 @@ public final class BigInteger implements bali.Integer {
 		return new BigInteger(subtract(o.value), positive);
 	}
 
-	public Number subtract(bali.number.Long o) {
+	public Number subtract(Long o) {
 		return subtract(o.value);
 	}
 
@@ -444,8 +442,8 @@ public final class BigInteger implements bali.Integer {
 		if (o == 0) {
 			return this;
 		}
-		if (isZero() == TRUE && o != java.lang.Long.MIN_VALUE) {
-			return NUMBER_FACTORY.forLong(-o);
+		if (convert(isZero()) && o != java.lang.Long.MIN_VALUE) {
+			return convert(-o);
 		}
 
 //		if (positive && o > 0){
@@ -488,7 +486,7 @@ public final class BigInteger implements bali.Integer {
 	public Number multiply(BigInteger o) {
 		int i = 0;
 		Number out = this;
-		while (new Int(++i).lessThan(o) == TRUE) {
+		while (convert(new Int(++i).lessThan(o))) {
 			out = out.add(this);
 		}
 		return out;
@@ -497,16 +495,16 @@ public final class BigInteger implements bali.Integer {
 	public Number divide(Number o) {
 		int i = 0;
 		Number out = this;
-		if (o.equalTo(ZERO) == TRUE) {
-			if (this.equalTo(ZERO) == TRUE) {
+		if (convert(o.equalTo(ZERO))) {
+			if (convert(this.equalTo(ZERO))) {
 				return ZERO;
 			}
-			return o.isNegative() == TRUE ? Infinity.NEGATIVE_INFINITY : Infinity.POSITIVE_INFINITY;
+			return convert(o.isNegative()) ? Infinity.NEGATIVE_INFINITY : Infinity.POSITIVE_INFINITY;
 		}
-		while (new Int(++i).lessThan(o) == TRUE) {
+		while (convert(new Int(++i).lessThan(o))) {
 			out = out.subtract(this);
 		}
-		if (out.equalTo(ZERO) == TRUE) {
+		if (convert(out.equalTo(ZERO))) {
 			return new Int(i);
 		}
 		return new Fraction(this, o);
@@ -517,7 +515,7 @@ public final class BigInteger implements bali.Integer {
 	}
 
 	private int toInt() throws TooBigException {
-		return (int) toPrimitive(java.lang.Integer.MAX_VALUE);
+		return (int) toPrimitive(Integer.MAX_VALUE);
 	}
 
 	private short toShort() throws TooBigException {

@@ -13,7 +13,7 @@ public class NumberFactoryUnitTest {
 	private NumberFactory numberFactory = NumberFactory.NUMBER_FACTORY;
 
 	private void testForByte(byte in) {
-		bali.Number number = numberFactory.forByte(in);
+		Number number = numberFactory.forByte(in);
 		Assert.assertTrue(in + " is not a Byte", number instanceof Byte);
 		Assert.assertEquals(in + " is incorrect value", in, ((Byte) number).value);
 		testForString(java.lang.Byte.toString(in).toCharArray(), Byte.class);
@@ -30,7 +30,7 @@ public class NumberFactoryUnitTest {
 		Number number = numberFactory.forInt(in);
 		Assert.assertTrue(in + " is not an Int", number instanceof Int);
 		Assert.assertEquals(in + " is incorrect value", in, ((Int) number).value);
-		testForString(java.lang.Integer.toString(in).toCharArray(), Int.class);
+		testForString(Integer.toString(in).toCharArray(), Int.class);
 	}
 
 	private void testForLong(long in) {
@@ -92,22 +92,22 @@ public class NumberFactoryUnitTest {
 
 	@Test
 	public void testForIntegerHighPositive() {
-		testForInteger(java.lang.Integer.MAX_VALUE);
+		testForInteger(Integer.MAX_VALUE);
 	}
 
 	@Test
 	public void testForIntegerHighNegative() {
-		testForInteger(java.lang.Integer.MIN_VALUE);
+		testForInteger(Integer.MIN_VALUE);
 	}
 
 	@Test
 	public void testForLongLowPositive() {
-		testForLong((long) java.lang.Integer.MAX_VALUE + 1);
+		testForLong((long) Integer.MAX_VALUE + 1);
 	}
 
 	@Test
 	public void testForLongLowNegative() {
-		testForLong((long) java.lang.Integer.MIN_VALUE - 1);
+		testForLong((long) Integer.MIN_VALUE - 1);
 	}
 
 	@Test

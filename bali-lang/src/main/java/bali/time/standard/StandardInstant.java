@@ -13,7 +13,6 @@ import bali.time.Interval;
  * User: Richard
  * Date: 11/07/13
  */
-@MetaType(Kind.OBJECT)
 public final class StandardInstant implements Instant {
 
 	private Number value;

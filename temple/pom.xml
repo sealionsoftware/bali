@@ -30,7 +30,7 @@
 			<plugin>
 				<groupId>com.sealionsoftware</groupId>
 				<artifactId>bali-maven-plugin</artifactId>
-				<version>1.0</version>
+				<version>1.0-SNAPSHOT</version>
 				<extensions>true</extensions>
 			</plugin>
 		</plugins>

@@ -2,7 +2,6 @@ package bali.time.calendar;
 
 import bali.Number;
 import bali.String;
-import bali._;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 import bali.time.CalendarSystem;
@@ -11,8 +10,11 @@ import bali.time.DateTime;
 import bali.time.Instant;
 import bali.time.standard.StandardTime;
 
+import static bali.Primitive.convert;
+
 /**
  * Implements a proleptic Gregorian Calendar.
+ * TODO: finish this
  *
  * User: Richard
  * Date: 11/07/13
@@ -23,8 +25,8 @@ public final class ISOCalendarSystem implements CalendarSystem {
 	private static final int YEAR_LENGTH = 365;
 	private static final int LEAP_YEAR_LENGTH = 366;
 
-	private static final String COMMON_ERA = _.PRIMITIVE_CONVERTER.from("CE".toCharArray());
-	private static final String BEFORE_COMMON_ERA = _.PRIMITIVE_CONVERTER.from("BCE".toCharArray());
+	private static final String COMMON_ERA = convert("CE");
+	private static final String BEFORE_COMMON_ERA = convert("BCE");
 
 	public Date getDate(Instant instant) {
 

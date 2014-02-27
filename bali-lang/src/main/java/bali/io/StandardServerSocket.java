@@ -19,7 +19,7 @@ public class StandardServerSocket implements ServerSocket {
 		return ret;
 	}
 
-	public void close() throws java.lang.Exception {
+	public void close() throws Exception {
 		delegate.close();
 	}
 }

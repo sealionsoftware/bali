@@ -1,8 +1,5 @@
 package bali;
 
-import bali.annotation.Kind;
-import bali.annotation.MetaType;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -12,7 +9,6 @@ import java.util.Arrays;
  * User: Richard
  * Date: 05/05/13
  */
-@MetaType(Kind.MONITOR)
 public final class Console implements ReaderWriter {
 
 	private static final int BUFFER_SIZE = 256;
@@ -42,6 +38,6 @@ public final class Console implements ReaderWriter {
 		} catch (IOException e) {
 			throw new java.lang.RuntimeException("IOException whilst reading from standard in");
 		}
-		return new CharArrayString(Arrays.copyOf(in, i));
+		return Primitive.convert(Arrays.copyOf(in, i));
 	}
 }

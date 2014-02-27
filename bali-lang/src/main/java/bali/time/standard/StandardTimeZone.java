@@ -10,7 +10,6 @@ import bali.time.TimeZone;
  * User: Richard
  * Date: 15/07/13
  */
-@MetaType(Kind.OBJECT)
 public final class StandardTimeZone implements TimeZone {
 
 	private final String name;

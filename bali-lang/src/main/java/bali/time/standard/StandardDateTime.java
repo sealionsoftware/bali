@@ -12,7 +12,6 @@ import bali.time.Time;
  * User: Richard
  * Date: 15/07/13
  */
-@MetaType(Kind.OBJECT)
 public final class StandardDateTime implements DateTime {
 
 	private Date date;

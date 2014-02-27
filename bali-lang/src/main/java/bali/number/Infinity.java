@@ -1,32 +1,30 @@
 package bali.number;
 
 import bali.Boolean;
+import bali.False;
 import bali.Number;
-import bali.annotation.Kind;
-import bali.annotation.MetaType;
 
-import static bali.IdentityBoolean.FALSE;
-import static bali.IdentityBoolean.TRUE;
+import static bali.Primitive.convert;
 
 /**
+ * TODO: shouldnt this be a double implementation?
  * User: Richard
  * Date: 10/06/13
  */
-@MetaType(Kind.OBJECT)
 public enum Infinity implements Number {
 
 	POSITIVE_INFINITY, NEGATIVE_INFINITY;
 
 	public Boolean isPositive() {
-		return this == POSITIVE_INFINITY ? TRUE : FALSE;
+		return convert(this == POSITIVE_INFINITY);
 	}
 
 	public Boolean isNegative() {
-		return this == NEGATIVE_INFINITY ? TRUE : FALSE;
+		return convert(this == NEGATIVE_INFINITY);
 	}
 
 	public Boolean isZero() {
-		return FALSE;
+		return False.FALSE;
 	}
 
 	public Number magnitude() {
@@ -38,11 +36,11 @@ public enum Infinity implements Number {
 	}
 
 	public Boolean greaterThan(Number o) {
-		return this == POSITIVE_INFINITY ? TRUE : FALSE;
+		return convert(this == POSITIVE_INFINITY);
 	}
 
 	public Boolean lessThan(Number o) {
-		return this == NEGATIVE_INFINITY ? TRUE : FALSE;
+		return convert(this == NEGATIVE_INFINITY);
 	}
 
 	public Number add(Number o) {
@@ -62,6 +60,6 @@ public enum Infinity implements Number {
 	}
 
 	public Boolean equalTo(Number operand) {
-		return this == operand ? TRUE : FALSE;
+		return convert(this == operand);
 	}
 }

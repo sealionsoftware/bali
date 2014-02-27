@@ -10,7 +10,6 @@ import bali.time.Interval;
  * User: Richard
  * Date: 11/07/13
  */
-@MetaType(Kind.OBJECT)
 public final class StandardInterval implements Interval {
 
 	private final Number value;

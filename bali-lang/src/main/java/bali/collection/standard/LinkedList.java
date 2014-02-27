@@ -1,14 +1,19 @@
 package bali.collection.standard;
 
+import bali.Boolean;
 import bali.Integer;
 import bali.Iterator;
-import bali._;
+import bali.Number;
+import bali.Primitive;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 import bali.collection.Collection;
 import bali.collection.List;
 
+import static bali.Primitive.convert;
+
 /**
+ * TODO: this needs finishing
  * User: Richard
  * Date: 27/08/13
  */
@@ -20,7 +25,7 @@ public final class LinkedList<T> implements List<T> {
 
 	public LinkedList(Collection<T> in) {
 		Iterator<T> iterator = in.iterator();
-		while (_.PRIMITIVE_CONVERTER.from(iterator.hasNext())){
+		while (convert(iterator.hasNext())){
 			add(iterator.next());
 		}
 	}
@@ -36,7 +41,7 @@ public final class LinkedList<T> implements List<T> {
 	}
 
 	public Integer size() {
-		return _.PRIMITIVE_CONVERTER.from(size);
+		return Primitive.convert(size);
 	}
 
 	public void add(T object) {
@@ -52,7 +57,7 @@ public final class LinkedList<T> implements List<T> {
 			private Link<T> current = start;
 
 			public bali.Boolean hasNext() {
-				return _.PRIMITIVE_CONVERTER.from(start.next != null);
+				return convert(start.next != null);
 			}
 
 			public T next() {
@@ -66,5 +71,13 @@ public final class LinkedList<T> implements List<T> {
 	private class Link<T> {
 		public Link<T> next;
 		public T item;
+	}
+
+	public Boolean isEmpty() {
+		return convert(size == 0);
+	}
+
+	public T get(Number index) {
+		return null;
 	}
 }

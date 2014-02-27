@@ -10,7 +10,6 @@ import bali.time.Date;
  * User: Richard
  * Date: 11/07/13
  */
-@MetaType(Kind.OBJECT)
 public final class StandardDate implements Date {
 
 	private String epoch;

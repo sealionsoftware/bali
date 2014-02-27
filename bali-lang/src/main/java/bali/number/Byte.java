@@ -2,18 +2,15 @@ package bali.number;
 
 import bali.Boolean;
 import bali.Number;
-import bali.annotation.Kind;
-import bali.annotation.MetaType;
 
-import static bali.IdentityBoolean.FALSE;
-import static bali.IdentityBoolean.TRUE;
-import static bali.number.NumberFactory.NUMBER_FACTORY;
+import static bali.False.FALSE;
+import static bali.True.TRUE;
+import static bali.Primitive.convert;
 
 /**
  * User: Richard
  * Date: 11/06/13
  */
-@MetaType(Kind.OBJECT)
 public final class Byte implements bali.Integer {
 
 	static final byte MAX_VALUE = java.lang.Byte.MAX_VALUE;
@@ -97,7 +94,7 @@ public final class Byte implements bali.Integer {
 
 	public Number add(Byte o) {
 		int ret = value + o.value;
-		return NUMBER_FACTORY.forInt(ret);
+		return convert(ret);
 	}
 
 	// Subtraction
@@ -111,7 +108,7 @@ public final class Byte implements bali.Integer {
 
 	public Number subtract(Byte o) {
 		int ret = value - o.value;
-		return NUMBER_FACTORY.forInt(ret);
+		return convert(ret);
 	}
 
 	// Multiplication
@@ -125,7 +122,7 @@ public final class Byte implements bali.Integer {
 
 	public Number multiply(Byte o) {
 		int ret = value * o.value;
-		return NUMBER_FACTORY.forInt(ret);
+		return convert(ret);
 	}
 
 	// Division
@@ -139,6 +136,6 @@ public final class Byte implements bali.Integer {
 
 	public Number divide(Byte o) {
 		int ret = value / o.value;
-		return NUMBER_FACTORY.forInt(ret);
+		return convert(ret);
 	}
 }

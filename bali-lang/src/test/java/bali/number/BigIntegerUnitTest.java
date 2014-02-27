@@ -1,11 +1,10 @@
 package bali.number;
 
-import bali.Boolean;
-import bali.IdentityBoolean;
 import bali.Number;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static bali.True.TRUE;
 import static bali.number.BigInteger.MAX;
 import static bali.number.BigInteger.MIN;
 
@@ -15,7 +14,7 @@ import static bali.number.BigInteger.MIN;
  */
 public class BigIntegerUnitTest {
 
-	private static final bali.Number FOUR = new BigInteger(new byte[]{MIN + 4});
+	private static final Number FOUR = new BigInteger(new byte[]{MIN + 4});
 	private static final Number TWO = new BigInteger(new byte[]{MIN + 2});
 	private static final Number ONE = new BigInteger(new byte[]{MIN + 1});
 	private static final Number ZERO = new BigInteger(new byte[]{MIN});
@@ -27,8 +26,6 @@ public class BigIntegerUnitTest {
 	private static final Number LARGE_POSITIVE_LESS_ONE = new BigInteger(new byte[]{MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX}); // 256^12 - 1
 	private static final Number LARGE_NEGATIVE = new BigInteger(new byte[]{MIN, MIN, MIN, MIN, MIN, MIN, MIN, MIN, MIN, MIN, MIN, MIN, 1}, false); // -256^12
 	private static final Number LARGE_NEGATIVE_PLUS_ONE = new BigInteger(new byte[]{MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX}); // -128^12 + 1
-
-	private static final Boolean TRUE = IdentityBoolean.TRUE;
 
 	@Test
 	public void testEquality() {

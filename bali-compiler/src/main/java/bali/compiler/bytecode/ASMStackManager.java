@@ -2,8 +2,10 @@ package bali.compiler.bytecode;
 
 import bali.Boolean;
 import bali.CharArrayString;
-import bali.IdentityBoolean;
+import bali.False;
+import bali.True;
 import bali.annotation.Kind;
+import bali.collection.Array;
 import bali.compiler.parser.tree.ArrayLiteralExpressionNode;
 import bali.compiler.parser.tree.BooleanLiteralExpressionNode;
 import bali.compiler.parser.tree.BreakStatementNode;
@@ -249,7 +251,7 @@ public class ASMStackManager implements Opcodes {
 		Label next = new Label();
 
 		push(statement.getCondition(), v);
-		v.visitFieldInsn(GETSTATIC, "bali/IdentityBoolean", "TRUE", "Lbali/IdentityBoolean;");
+		push(True.TRUE, v);
 		v.visitJumpInsn(IF_ACMPNE, next);
 		execute(statement.getConditional(), v);
 		v.visitJumpInsn(GOTO, end);
@@ -266,7 +268,7 @@ public class ASMStackManager implements Opcodes {
 		Label start = new Label();
 		v.visitLabel(start);
 		push(statement.getCondition(), v);
-		push(IdentityBoolean.TRUE, v);
+		push(True.TRUE, v);
 		v.visitJumpInsn(IF_ACMPNE, end);
 		loopContextStack.push(new LoopContext(start, end));
 		execute(statement.getBody(), v);
@@ -286,7 +288,7 @@ public class ASMStackManager implements Opcodes {
 		v.visitLabel(start);
 		v.visitInsn(DUP);
 		v.visitMethodInsn(INVOKEINTERFACE, "bali/Iterator", "hasNext", "()Lbali/Boolean;");
-		push(IdentityBoolean.TRUE, v);
+		push(True.TRUE, v);
 		v.visitJumpInsn(IF_ACMPNE, end);
 		v.visitInsn(DUP);
 		v.visitMethodInsn(INVOKEINTERFACE, "bali/Iterator", "next", "()Ljava/lang/Object;");
@@ -312,7 +314,7 @@ public class ASMStackManager implements Opcodes {
 			v.visitInsn(DUP);
 			push(caseStatement.getCondition(), v);
 			v.visitMethodInsn(INVOKEINTERFACE, "bali/Value", "equalTo", "(Lbali/Value;)Lbali/Boolean;");
-			push(IdentityBoolean.TRUE, v);
+			push(True.TRUE, v);
 			v.visitJumpInsn(IF_ACMPNE, next);
 			execute(caseStatement.getBody(), v);
 			v.visitJumpInsn(GOTO, end);
@@ -448,8 +450,12 @@ public class ASMStackManager implements Opcodes {
 	}
 
 	public void push(BooleanLiteralExpressionNode value, MethodVisitor v) {
-		java.lang.Boolean bool = java.lang.Boolean.valueOf(value.getSerialization());
-		v.visitFieldInsn(GETSTATIC, converter.getInternalName(IdentityBoolean.class.getName()), bool ? "TRUE" : "FALSE", converter.getTypeDescriptor(IdentityBoolean.class.getName()));
+		String serialization = value.getSerialization();
+		if ("true".equals(serialization)){
+			push(True.TRUE, v);
+		} else if ("false".equals(serialization)) {
+			push(False.FALSE, v);
+		}
 	}
 
 	public void push(StringLiteralExpressionNode value, MethodVisitor v) {
@@ -463,7 +469,7 @@ public class ASMStackManager implements Opcodes {
 	}
 
 	public void push(ArrayLiteralExpressionNode value, MethodVisitor v) {
-		String implName = converter.getInternalName(value.getType().getTemplate());
+		String implName = converter.getInternalName(Array.class.getName());
 		v.visitTypeInsn(NEW, implName);
 		v.visitInsn(DUP);
 		push(value.getValues().size(), v);
@@ -550,10 +556,10 @@ public class ASMStackManager implements Opcodes {
 		Label isNull = new Label();
 		Label end = new Label();
 		v.visitJumpInsn(IFNULL, isNull);
-		push(IdentityBoolean.TRUE, v);
+		push(True.TRUE, v);
 		v.visitJumpInsn(GOTO, end);
 		v.visitLabel(isNull);
-		push(IdentityBoolean.FALSE, v);
+		push(False.FALSE, v);
 		v.visitLabel(end);
 	}
 
@@ -561,11 +567,11 @@ public class ASMStackManager implements Opcodes {
 		String operator = value.getOperator();
 		if (Boolean.class.getName().equals(value.getOne().getType().getTemplate().getName())){
 			if (bali.Boolean.AND.equals(operator)){
-				pushLogicalShortCut(value.getOne(), value.getTwo(), IdentityBoolean.FALSE, v);
+				pushLogicalShortCut(value.getOne(), value.getTwo(), False.FALSE, v);
 				return;
 			}
 			if (bali.Boolean.OR.equals(operator)){
-				pushLogicalShortCut(value.getOne(), value.getTwo(), IdentityBoolean.TRUE, v);
+				pushLogicalShortCut(value.getOne(), value.getTwo(), True.TRUE, v);
 				return;
 			}
 		}
@@ -579,7 +585,7 @@ public class ASMStackManager implements Opcodes {
 		);
 	}
 
-	public void pushLogicalShortCut(ExpressionNode target, ExpressionNode argument, IdentityBoolean returnIf, MethodVisitor v ) {
+	public void pushLogicalShortCut(ExpressionNode target, ExpressionNode argument, Boolean returnIf, MethodVisitor v ) {
 		Label end = new Label();
 		push(target, v);
 		v.visitInsn(DUP);
@@ -657,8 +663,14 @@ public class ASMStackManager implements Opcodes {
 		}
 	}
 
-	private void push(bali.IdentityBoolean b, MethodVisitor v){
-		v.visitFieldInsn(GETSTATIC, "bali/IdentityBoolean", b.name(), "Lbali/IdentityBoolean;");
+	private void push(Boolean b, MethodVisitor v){
+		if (b == True.TRUE){
+			v.visitFieldInsn(GETSTATIC, "bali/True", "TRUE", "Lbali/Boolean;");
+		} else if (b == False.FALSE){
+			v.visitFieldInsn(GETSTATIC, "bali/False", "FALSE", "Lbali/Boolean;");
+		} else {
+			throw new RuntimeException("Cannot push boolean value " + b);
+		}
 	}
 
 }

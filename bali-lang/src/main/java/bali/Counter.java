@@ -3,6 +3,8 @@ package bali;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 
+import static bali.Primitive.convert;
+
 /**
  * User: Richard
  * Date: 07/11/13
@@ -17,18 +19,18 @@ public class Counter implements Count {
 	}
 
 	public Counter(Integer count) {
-		this.count = _.PRIMITIVE_CONVERTER.from(count);
+		this.count = convert(count);
 	}
 
 	public Integer increment() {
-		return _.PRIMITIVE_CONVERTER.from(count++);
+		return convert(count++);
 	}
 
 	public Integer decrement() {
-		return _.PRIMITIVE_CONVERTER.from(count--);
+		return convert(count--);
 	}
 
 	public Integer value() {
-		return _.PRIMITIVE_CONVERTER.from(count);
+		return convert(count);
 	}
 }
