@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 
+import static bali.Primitive.convert;
+
 /**
  * User: Richard
  * Date: 05/05/13
@@ -19,8 +21,7 @@ public final class Console implements ReaderWriter {
 	public Console() {}
 
 	public synchronized void writeLine(String in){
-		CharArrayString cas = (CharArrayString) in;
-		ps.println(cas.characters);
+		ps.println(convert(in));
 	}
 
 	public synchronized String readLine(){

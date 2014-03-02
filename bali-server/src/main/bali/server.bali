@@ -1,0 +1,44 @@
+import bali.Closable
+
+interface WebApplication extends Closeable, HttpHandler {
+
+	declare ResourceSpecifications getResourceSpecifications
+	declare initialise(Resources resources)
+
+}
+
+interface HttpHandler {
+
+	declare HttpResponse handle(HttpRequest request)
+
+}
+
+bean HttpRequest {
+
+	property String httpMethod
+	property String path;
+	property Map<String, String> headers;
+
+}
+
+bean HttpResponse {
+
+	property Integer status
+	property Map<String, String> headers
+	property String body;
+
+}
+
+bean ResourceSpecifications {
+
+	property Collection<String> dataSourceNames
+	property Collection<String> parameterNames
+
+}
+
+bean Dependencies {
+
+	property Map<String, DataSource> dataSources
+	property Map<String, String> parameters
+
+}

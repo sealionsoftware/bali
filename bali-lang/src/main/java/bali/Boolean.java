@@ -11,6 +11,9 @@ import bali.annotation.Operator;
 @MetaType(Kind.INTERFACE)
 public interface Boolean extends Value<Boolean> {
 
+	public static final Boolean TRUE = True.VALUE;
+	public static final Boolean FALSE = False.VALUE;
+
 	public static final java.lang.String AND = "&";
 	public static final java.lang.String OR = "|";
 

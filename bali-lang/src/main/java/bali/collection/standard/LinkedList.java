@@ -77,7 +77,15 @@ public final class LinkedList<T> implements List<T> {
 		return convert(size == 0);
 	}
 
-	public T get(Number index) {
+	public Collection<T> join(Collection<T> operand) {
+		return null;
+	}
+
+	public Collection<T> head(Integer index) {
+		return null;
+	}
+
+	public Collection<T> tail(Integer index) {
 		return null;
 	}
 }

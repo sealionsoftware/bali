@@ -6,20 +6,22 @@ package bali;
  */
 public class False implements Boolean {
 
-	public static final Boolean FALSE = new False();
+	static final Boolean VALUE = new False();
 
 	private False(){}
 
 	public Boolean not() {
-		return True.TRUE;
+		return TRUE;
 	}
 
-	// This is a stub - the bali compiler implements the real logic directly
+	// This is a stub - the bali compiler implements the real logic directly to avoid
+	// evaluation of the operand
 	public Boolean and(Boolean operand) {
-		return FALSE;
+		return this;
 	}
 
-	// This is a stub - the bali compiler implements the real logic directly
+	// This is a stub - the bali compiler implements the real logic directly to avoid
+	// evaluation of the operand
 	public Boolean or(Boolean operand) {
 		return operand;
 	}
@@ -29,7 +31,11 @@ public class False implements Boolean {
 	}
 
 	public Boolean equalTo(Boolean operand) {
-		return this == operand ? True.TRUE : FALSE;
+		return this == operand ? TRUE : this;
+	}
+
+	public java.lang.String toString(){
+		return "FALSE";
 	}
 
 }

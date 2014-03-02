@@ -14,9 +14,9 @@ STRING_LITERAL:             '"' ~[^"]* '"' ;
 NUMBER_LITERAL:             [0-9]+ ('.' [0-9]+)? ;
 
 QM:                         '?';
-EX:                         '!';
+AT:                         '@';
 
-OPERATOR:                   [\+\-$%\^&\*#\~@/\\\|=<>]+ ;
+OPERATOR:                   [\+\-$%\^&\*#\~/\\\|=<>¬¦`]+ ;
 
 // Grammar Definition
 
@@ -107,7 +107,7 @@ breakStatement:             'break' ;
 
 continueStatement:          'continue' ;
 
-siteDefinition:             typeIdentifier ('['  siteDefinitionList ']')? EX? QM? ;
+siteDefinition:             typeIdentifier ('['  siteDefinitionList ']')? AT? QM? ;
 
 siteDefinitionList:         siteDefinition (',' siteDefinition)* ;
 

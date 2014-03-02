@@ -3,9 +3,9 @@ package bali.collection;
 import bali.Boolean;
 import bali.Integer;
 import bali.Iterable;
-import bali.Number;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
+import bali.annotation.Operator;
 
 /**
  * User: Richard
@@ -18,6 +18,14 @@ public interface Collection<T> extends Iterable<T> {
 
 	public Boolean isEmpty();
 
-	public T get(Number index);
+	@Operator("#")
+	public T get(Integer index);
+
+	@Operator("+")
+	public Collection<T> join(Collection<T> operand);
+
+	public Collection<T> head(Integer index);
+
+	public Collection<T> tail(Integer index);
 
 }

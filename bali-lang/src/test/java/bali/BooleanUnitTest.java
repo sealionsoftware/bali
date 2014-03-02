@@ -3,8 +3,8 @@ package bali;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static bali.False.FALSE;
-import static bali.True.TRUE;
+import static bali.Boolean.FALSE;
+import static bali.Boolean.TRUE;
 
 /**
  * User: Richard

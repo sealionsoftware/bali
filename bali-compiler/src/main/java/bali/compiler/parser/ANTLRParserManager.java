@@ -632,7 +632,7 @@ public class ANTLRParserManager implements ParserManager {
 		if(typeContext.QM() != null){
 			returnType.setNullable(true);
 		}
-		if(typeContext.EX() != null){
+		if(typeContext.AT() != null){
 			returnType.setThreadSafe(true);
 		}
 

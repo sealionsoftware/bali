@@ -8,11 +8,10 @@ import bali.annotation.MetaType;
  * User: Richard
  * Date: 14/08/13
  */
-@MetaType(Kind.INTERFACE)
-public interface Entry<K extends Value<K>, V> {
+@MetaType(Kind.BEAN)
+public class Entry<K extends Value<K>, V> {
 
-	public K getKey();
-
-	public V getValue();
+	public K key;
+	public V value;
 
 }

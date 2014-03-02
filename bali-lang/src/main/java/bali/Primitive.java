@@ -25,11 +25,11 @@ public class Primitive {
 //	}
 
 	public static Boolean convert(boolean in) {
-		return in ? True.TRUE : False.FALSE;
+		return in ? Boolean.TRUE : Boolean.FALSE;
 	}
 
 	public static boolean convert(Boolean in) {
-		return in == True.TRUE;
+		return in == Boolean.TRUE;
 	}
 
 	public static String convert(char[] in) {
@@ -37,6 +37,18 @@ public class Primitive {
 	}
 
 	public static String convert(java.lang.String in) {
-		return convert(in.toCharArray());
+		return new CharArrayString(in.toCharArray());
+	}
+
+	public static java.lang.String convert(String in) {
+		return new java.lang.String(((CharArrayString) in).characters);
+	}
+
+	public static Character convert(char in) {
+		return CharCharacter.CHARS[in];
+	}
+
+	public static char convert(Character in) {
+		return ((CharCharacter) in).value;
 	}
 }
