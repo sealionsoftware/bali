@@ -40,4 +40,8 @@ public class CharCharacter implements Character {
 		}
 		return FALSE;
 	}
+
+	public Boolean notEqualTo(@Name("operand") Character operand) {
+		return equalTo(operand).not();
+	}
 }

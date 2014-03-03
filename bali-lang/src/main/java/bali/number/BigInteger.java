@@ -2,6 +2,7 @@ package bali.number;
 
 import bali.Boolean;
 import bali.Number;
+import bali.annotation.Name;
 
 import java.util.Arrays;
 
@@ -107,6 +108,10 @@ public final class BigInteger implements bali.Integer {
 		} catch (TooBigException e) {
 			return FALSE;
 		}
+	}
+
+	public Boolean notEqualTo(@Name("operand") Number operand) {
+		return equalTo(operand).not();
 	}
 
 	// Greater Than

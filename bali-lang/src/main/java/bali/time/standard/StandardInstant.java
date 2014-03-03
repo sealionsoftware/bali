@@ -4,6 +4,7 @@ import bali.Boolean;
 import bali.Number;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
+import bali.annotation.Name;
 import bali.time.Instant;
 import bali.time.Interval;
 
@@ -39,6 +40,10 @@ public final class StandardInstant implements Instant {
 
 	public Boolean equalTo(Instant o) {
 		return value.equalTo(o.getMillisSince1970());
+	}
+
+	public Boolean notEqualTo(@Name("operand") Instant operand) {
+		return equalTo(operand).not();
 	}
 
 	public Number getMillisSince1970() {

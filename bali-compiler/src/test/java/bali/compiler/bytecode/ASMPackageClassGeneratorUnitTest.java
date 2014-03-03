@@ -7,6 +7,7 @@ import bali.Number;
 import bali.String;
 import bali.True;
 import bali.Value;
+import bali.annotation.Name;
 import bali.collection.Array;
 import bali.collection.ValueCollection;
 import bali.compiler.GeneratedClass;
@@ -124,6 +125,10 @@ public class ASMPackageClassGeneratorUnitTest {
 	public static class Instantiatable implements Value<Instantiatable> {
 		public Boolean equalTo(Instantiatable o) {
 			return o != null ? True.TRUE : False.FALSE;
+		}
+
+		public Boolean notEqualTo(@Name("operand") Instantiatable operand) {
+			return equalTo(operand).not();
 		}
 	}
 

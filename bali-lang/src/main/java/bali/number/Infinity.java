@@ -3,6 +3,7 @@ package bali.number;
 import bali.Boolean;
 import bali.False;
 import bali.Number;
+import bali.annotation.Name;
 
 import static bali.Primitive.convert;
 
@@ -62,4 +63,10 @@ public enum Infinity implements Number {
 	public Boolean equalTo(Number operand) {
 		return convert(this == operand);
 	}
+
+	public Boolean notEqualTo(@Name("operand") Number operand) {
+		return equalTo(operand).not();
+	}
+
+
 }

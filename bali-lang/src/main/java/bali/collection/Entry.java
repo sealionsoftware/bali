@@ -11,7 +11,22 @@ import bali.annotation.MetaType;
 @MetaType(Kind.BEAN)
 public class Entry<K extends Value<K>, V> {
 
-	public K key;
-	public V value;
+	private K key;
+	private V value;
 
+	public K getKey() {
+		return key;
+	}
+
+	public void setKey(K key) {
+		this.key = key;
+	}
+
+	public V getValue() {
+		return value;
+	}
+
+	public void setValue(V value) {
+		this.value = value;
+	}
 }

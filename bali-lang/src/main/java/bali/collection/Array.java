@@ -129,6 +129,30 @@ public final class Array<E extends Value<E>> implements ValueCollection<E> {
 		return TRUE;
 	}
 
+	public Boolean notEqualTo(@Name("operand") ValueCollection<E> operand) {
+
+		if (operand == null){
+			return TRUE;
+		}
+
+		if (size() != operand.size()){
+			return TRUE;
+		}
+
+		Iterator<E> i = iterator();
+		Iterator<E> j = operand.iterator();
+
+		while (i.hasNext() == TRUE){
+			E local = i.next();
+			E remote = j.next();
+			if (local.notEqualTo(remote) == TRUE){
+				return TRUE;
+			}
+		}
+
+		return FALSE;
+	}
+
 	public java.lang.String toString(){
 		StringBuilder sb = new StringBuilder("[");
 		if (elements.length > 0){

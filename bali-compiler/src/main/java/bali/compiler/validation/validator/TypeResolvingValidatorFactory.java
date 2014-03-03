@@ -68,7 +68,7 @@ public class TypeResolvingValidatorFactory implements ValidatorFactory {
 					try {
 						reference = library.getReference(siteNode.getClassName());
 					} catch (Exception e) {
-						ret.add(new ValidationFailure(siteNode, "Cannot resolve type " + siteNode));
+						ret.add(new ValidationFailure(siteNode, "Cannot resolve class " + siteNode.getClassName()));
 						return ret;
 					}
 				}
@@ -95,12 +95,12 @@ public class TypeResolvingValidatorFactory implements ValidatorFactory {
 					try {
 						reference = library.getReference(type.getClassName());
 					} catch (Exception e) {
-						ret.add(new ValidationFailure(type, "Cannot resolve type " + type));
+						ret.add(new ValidationFailure(type, "Cannot resolve constructor class " + type.getClassName()));
 						return ret;
 					}
 				}
 
-				type.setType(new ParameterisedSite(reference, false, Kind.MONITOR.equals(reference.get().getMetaType())));
+				type.setType(new ParameterisedSite(reference, false, false));
 				return ret;
 			}
 		};

@@ -19,7 +19,7 @@ import java.net.URLClassLoader;
 		defaultPhase = LifecyclePhase.TEST,
 		requiresDependencyResolution = ResolutionScope.TEST
 )
-public class ExecuteBaliMavenPlugin implements Mojo {
+public class ExecuteBaliGoal implements Mojo {
 
 	@Parameter(property = "executableClassName")
 	private String executableClassName;

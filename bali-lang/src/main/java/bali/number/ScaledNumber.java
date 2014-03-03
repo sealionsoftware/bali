@@ -3,6 +3,7 @@ package bali.number;
 import bali.Boolean;
 import bali.Number;
 import bali.True;
+import bali.annotation.Name;
 
 /**
  * User: Richard
@@ -72,5 +73,9 @@ public class ScaledNumber implements Number {
 
 	public Boolean equalTo(Number operand) {
 		return null;
+	}
+
+	public Boolean notEqualTo(@Name("operand") Number operand) {
+		return equalTo(operand).not();
 	}
 }

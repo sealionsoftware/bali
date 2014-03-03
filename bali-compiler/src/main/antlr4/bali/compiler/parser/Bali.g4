@@ -1,4 +1,5 @@
 // Grammar of the Bali Language
+// TODO: clean up references and dereferencing
 
 grammar Bali;
 
@@ -16,7 +17,7 @@ NUMBER_LITERAL:             [0-9]+ ('.' [0-9]+)? ;
 QM:                         '?';
 AT:                         '@';
 
-OPERATOR:                   [\+\-$%\^&\*#\~/\\\|=<>¬¦`]+ ;
+OPERATOR:                   [\+\-$%\^&\*#\~/\\\|=<>¬¦`!]+ ;
 
 // Grammar Definition
 
@@ -26,28 +27,28 @@ packageDeclaration:
 	(
 		beanDeclaration |
 		interfaceDeclaration |
-		classDeclaration
+		objectDeclaration
 	)*
 	EOF
 ;
 
-typeIdentifier:             (IDENTIFIER '.')* IDENTIFIER ;
+className:                  (IDENTIFIER '.')* IDENTIFIER ;
 
-importDeclaration:          'import' typeIdentifier ;
+importDeclaration:          'import' className ;
 
-constantDeclaration:        'constant' siteDefinition IDENTIFIER '=' constantValue ;
+constantDeclaration:        'constant' siteDefinition IDENTIFIER '=' expression ;
 
 interfaceDeclaration:       'interface' typeDefinition ('extends' siteDefinitionList)? '{' (declarationDeclaration)* '}' ;
 
-classDeclaration:           'object' typeDefinition argumentDeclarationList? ( 'implements' siteDefinitionList )? '{' fieldDeclaration* methodDeclaration* '}' ;
+objectDeclaration:          'object' typeDefinition parameterList? ( 'implements' siteDefinitionList )? '{' fieldDeclaration* methodDeclaration* '}' ;
 
 beanDeclaration:            'bean' typeDefinition ( 'extends' siteDefinition )? '{' propertyDeclaration* '}' ;
 
 fieldDeclaration:           'field' siteDefinition IDENTIFIER ('=' expression )? ;
 
-methodDeclaration:          'method' siteDefinition? IDENTIFIER argumentDeclarationList? codeBlock ;
+methodDeclaration:          'method' siteDefinition? IDENTIFIER parameterList? codeBlock ;
 
-declarationDeclaration:     'declare' siteDefinition? IDENTIFIER argumentDeclarationList? ;
+declarationDeclaration:     'declare' siteDefinition? IDENTIFIER parameterList? ;
 
 propertyDeclaration:        'property' siteDefinition IDENTIFIER ;
 
@@ -63,19 +64,19 @@ controlExpression:          codeBlock | controlStatement ;
 
 conditionalStatement:       'if' '(' expression ')' controlExpression ('else' controlExpression)? ;
 
-tryStatement:               'try' controlExpression catchStatement+ ;
+tryStatement:               'try' controlExpression catchBlock+ ;
 
-catchStatement:             'catch' '(' argumentDeclaration ')' controlExpression ;
+catchBlock:                 'catch' '(' parameter ')' controlExpression ;
 
 whileStatement:             'while' '(' expression ')' controlExpression ;
 
-forStatement:               'for' '(' argumentDeclaration ':' expression ')' controlExpression ;
+forStatement:               'for' '(' parameter ':' expression ')' controlExpression ;
 
-switchStatement:            'switch' '(' expression ')' '{' caseStatement+ defaultStatement? '}' ;
+switchStatement:            'switch' '(' expression ')' '{' caseBlock* defaultBlock? '}' ;
 
-caseStatement:              'case' expression ':' controlExpression ;
+caseBlock:                  'case' expression ':' controlExpression ;
 
-defaultStatement:           'default' ':' controlExpression ;
+defaultBlock:               'default' ':' controlExpression ;
 
 runStatement:               'run' controlExpression ;
 
@@ -97,7 +98,7 @@ unaryOperation:             OPERATOR expressionForOperation ;
 
 operation:                  expressionForOperation OPERATOR expression ;
 
-construction:               'new' typeIdentifier argumentList ;
+construction:               'new' className argumentList ;
 
 returnStatement:            'return' expression? ;
 
@@ -107,27 +108,27 @@ breakStatement:             'break' ;
 
 continueStatement:          'continue' ;
 
-siteDefinition:             typeIdentifier ('['  siteDefinitionList ']')? AT? QM? ;
+siteDefinition:             className ('['  siteDefinitionList ']')? AT? QM? ;
 
 siteDefinitionList:         siteDefinition (',' siteDefinition)* ;
 
-typeDefinition:             typeIdentifier ('['  typeVarDeclarationList ']')? ;
+typeDefinition:             className ('['  typeVarDeclarationList ']')? ;
 
-typeVarDeclaration:         typeIdentifier? IDENTIFIER ;
+typeVarDeclaration:         className? IDENTIFIER ;
 
 typeVarDeclarationList:     typeVarDeclaration (',' typeVarDeclaration)* ;
 
-argumentDeclaration:        siteDefinition IDENTIFIER ;
+parameter:                  siteDefinition IDENTIFIER ;
 
-argumentDeclarationList:    '(' (argumentDeclaration ( ',' argumentDeclaration)*)? ')' ;
+parameterList:              '(' (parameter ( ',' parameter)*)? ')' ;
 
-argumentList:               '(' ( expression ( ',' expression)*)? ')' ;
+argument:                   (IDENTIFIER ':')? expression ;
 
-constantValue:              literal | construction ;
+argumentList:               '(' ( argument ( ',' argument)*)? ')' ;
 
 memberName:                 call | IDENTIFIER ;
 
-expressionBase:             constantValue | '(' unaryOperation ')' | '(' operation ')' | memberName ;
+expressionBase:             literal | construction | '(' unaryOperation ')' | '(' operation ')' | memberName ;
 
 expressionForOperation:     unaryOperation | nullCheck | invocation | reference | expressionBase ;
 

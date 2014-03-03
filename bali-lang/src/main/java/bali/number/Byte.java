@@ -2,6 +2,7 @@ package bali.number;
 
 import bali.Boolean;
 import bali.Number;
+import bali.annotation.Name;
 
 import static bali.False.FALSE;
 import static bali.True.TRUE;
@@ -55,6 +56,10 @@ public final class Byte implements bali.Integer {
 
 	public Boolean equalTo(Byte operand) {
 		return value == operand.value ? TRUE : FALSE;
+	}
+
+	public Boolean notEqualTo(@Name("operand") Number operand) {
+		return equalTo(operand).not();
 	}
 
 	// Greater than

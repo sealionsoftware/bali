@@ -1,5 +1,7 @@
 package bali;
 
+import bali.annotation.Name;
+
 /**
  * User: Richard
  * Date: 02/05/13
@@ -32,6 +34,10 @@ public class True implements Boolean {
 
 	public Boolean equalTo(Boolean operand) {
 		return this == operand ? this : FALSE;
+	}
+
+	public Boolean notEqualTo(@Name("operand") Boolean operand) {
+		return equalTo(operand).not();
 	}
 
 	public java.lang.String toString(){

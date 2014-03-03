@@ -64,8 +64,10 @@ object AnImplementation(Number aParameter) implements AnInterface {
 	        }
  	    }
 
- 	    ABean aBean = new AnotherBean();
-        aBean.aNumber = 3;
+ 	    ABean aBean = new AnotherBean(
+ 	        aNumber: 3
+ 	    );
+        aBean.aNumber = 4;
 
         run {
             CONSOLE << "Hello World";

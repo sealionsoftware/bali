@@ -104,7 +104,7 @@ public class ANTLRParserManager implements ParserManager {
 		for (BaliParser.InterfaceDeclarationContext idc : context.interfaceDeclaration()) {
 			cu.addInterface(build(idc));
 		}
-		for (BaliParser.ClassDeclarationContext cdc : context.classDeclaration()) {
+		for (BaliParser.ObjectDeclarationContext cdc : context.objectDeclaration()) {
 			cu.addClass(build(cdc));
 		}
 
@@ -121,7 +121,7 @@ public class ANTLRParserManager implements ParserManager {
 
 	private ImportNode build(BaliParser.ImportDeclarationContext context) {
 		ImportNode iport = new ImportNode(l(context), c(context));
-		iport.setName(context.typeIdentifier().getText());
+		iport.setName(context.className().getText());
 		return iport;
 	}
 
@@ -129,7 +129,7 @@ public class ANTLRParserManager implements ParserManager {
 		ConstantNode constant = new ConstantNode(l(context), c(context));
 		constant.setName(context.IDENTIFIER().getText());
 		constant.setType(build(context.siteDefinition()));
-		constant.setValue(build(context.constantValue()));
+		constant.setValue(build(context.expression()));
 		return constant;
 	}
 
@@ -173,9 +173,9 @@ public class ANTLRParserManager implements ParserManager {
 		return iface;
 	}
 
-	private ObjectNode build(BaliParser.ClassDeclarationContext context) throws Exception {
+	private ObjectNode build(BaliParser.ObjectDeclarationContext context) throws Exception {
 		ObjectNode clazz = new ObjectNode(l(context), c(context));
-		clazz.setClassName(context.typeDefinition().typeIdentifier().getText());
+		clazz.setClassName(context.typeDefinition().className().getText());
 
 
 //		for (TerminalNode typeIdentifier : context.typeDeclarationList().typeIdentifier()){
@@ -186,9 +186,9 @@ public class ANTLRParserManager implements ParserManager {
 				clazz.addImplementation(build(typeDeclaration));
 			}
 		}
-		BaliParser.ArgumentDeclarationListContext adlc = context.argumentDeclarationList();
-		if (adlc != null) for (BaliParser.ArgumentDeclarationContext adc : adlc.argumentDeclaration()) {
-			clazz.addArgument(build(adc));
+		BaliParser.ParameterListContext parameterList = context.parameterList();
+		if (parameterList != null) for (BaliParser.ParameterContext parameter : parameterList.parameter()) {
+			clazz.addArgument(build(parameter));
 		}
 		for (BaliParser.FieldDeclarationContext fdc : context.fieldDeclaration()) {
 			clazz.addField(build(fdc));
@@ -207,9 +207,9 @@ public class ANTLRParserManager implements ParserManager {
 		if (typeDeclaration != null) {
 			method.setType(build(typeDeclaration));
 		}
-		BaliParser.ArgumentDeclarationListContext adlc = context.argumentDeclarationList();
-		if (adlc != null) for (BaliParser.ArgumentDeclarationContext adc : adlc.argumentDeclaration()) {
-			method.addArgument(build(adc));
+		BaliParser.ParameterListContext parameterList = context.parameterList();
+		if (parameterList != null) for (BaliParser.ParameterContext parameter : parameterList.parameter()) {
+			method.addArgument(build(parameter));
 		}
 		method.setBody(build(context.codeBlock()));
 		return method;
@@ -290,7 +290,7 @@ public class ANTLRParserManager implements ParserManager {
 
 	private ControlExpressionNode build(BaliParser.ForStatementContext context) throws Exception {
 		ForStatementNode forStatement = new ForStatementNode(l(context), c(context));
-		forStatement.setElement(build(context.argumentDeclaration()));
+		forStatement.setElement(build(context.parameter()));
 		forStatement.setCollection(build(context.expression()));
 		forStatement.setBody(build(context.controlExpression()));
 		return forStatement;
@@ -299,11 +299,11 @@ public class ANTLRParserManager implements ParserManager {
 	private ControlExpressionNode build(BaliParser.SwitchStatementContext context) throws Exception {
 		SwitchStatementNode switchStatement = new SwitchStatementNode(l(context), c(context));
 		switchStatement.setValue(build(context.expression()));
-		for (BaliParser.CaseStatementContext caseStatementContext : context.caseStatement()) {
+		for (BaliParser.CaseBlockContext caseStatementContext : context.caseBlock()) {
 			switchStatement.addCaseStatement(build(caseStatementContext));
 		}
-		if (context.defaultStatement() != null) {
-			switchStatement.setDefaultStatement(build(context.defaultStatement()));
+		if (context.defaultBlock() != null) {
+			switchStatement.setDefaultStatement(build(context.defaultBlock()));
 		}
 		return switchStatement;
 	}
@@ -311,27 +311,27 @@ public class ANTLRParserManager implements ParserManager {
 	private ControlExpressionNode build(BaliParser.TryStatementContext context) throws Exception {
 		TryStatementNode tryStatement = new TryStatementNode(l(context), c(context));
 		tryStatement.setMain(build(context.controlExpression()));
-		for (BaliParser.CatchStatementContext catchContext : context.catchStatement()) {
+		for (BaliParser.CatchBlockContext catchContext : context.catchBlock()) {
 			tryStatement.addCatchStatement(build(catchContext));
 		}
 		return tryStatement;
 	}
 
-	private CatchStatementNode build(BaliParser.CatchStatementContext context) throws Exception {
+	private CatchStatementNode build(BaliParser.CatchBlockContext context) throws Exception {
 		CatchStatementNode catchStatement = new CatchStatementNode(l(context), c(context));
-		catchStatement.setDeclaration(build(context.argumentDeclaration()));
+		catchStatement.setDeclaration(build(context.parameter()));
 		catchStatement.setBody(build(context.controlExpression()));
 		return catchStatement;
 	}
 
-	private CaseStatementNode build(BaliParser.CaseStatementContext context) throws Exception {
+	private CaseStatementNode build(BaliParser.CaseBlockContext context) throws Exception {
 		CaseStatementNode caseStatement = new CaseStatementNode(l(context), c(context));
 		caseStatement.setCondition(build(context.expression()));
 		caseStatement.setBody(build(context.controlExpression()));
 		return caseStatement;
 	}
 
-	private ControlExpressionNode build(BaliParser.DefaultStatementContext context) throws Exception {
+	private ControlExpressionNode build(BaliParser.DefaultBlockContext context) throws Exception {
 		return build(context.controlExpression());
 	}
 
@@ -402,7 +402,7 @@ public class ANTLRParserManager implements ParserManager {
 		return field;
 	}
 
-	private ArgumentDeclarationNode build(BaliParser.ArgumentDeclarationContext context) {
+	private ArgumentDeclarationNode build(BaliParser.ParameterContext context) {
 		ArgumentDeclarationNode argumentDeclaration = new ArgumentDeclarationNode(l(context), c(context));
 		argumentDeclaration.setName(context.IDENTIFIER().getText());
 		argumentDeclaration.setType(build(context.siteDefinition()));
@@ -423,8 +423,9 @@ public class ANTLRParserManager implements ParserManager {
 		if (typeDeclaration != null) {
 			method.setType(build(typeDeclaration));
 		}
-		for (BaliParser.ArgumentDeclarationContext adc : context.argumentDeclarationList().argumentDeclaration()) {
-			method.addArgument(build(adc));
+		BaliParser.ParameterListContext adlc = context.parameterList();
+		if (adlc != null) for (BaliParser.ParameterContext parameter : adlc.parameter()) {
+			method.addArgument(build(parameter));
 		}
 		return method;
 	}
@@ -455,8 +456,11 @@ public class ANTLRParserManager implements ParserManager {
 
 	private ExpressionNode build(BaliParser.ExpressionBaseContext context) {
 
-		if (context.constantValue() != null) {
-			return build(context.constantValue());
+		if (context.literal() != null) {
+			return build(context.literal());
+		}
+		if (context.construction() != null) {
+			return build(context.construction());
 		}
 		if (context.unaryOperation() != null) {
 			return build(context.unaryOperation());
@@ -551,7 +555,7 @@ public class ANTLRParserManager implements ParserManager {
 				} else if (memberNameContext.call() != null){
 					InvocationNode invocationNode = new InvocationNode(l(target),c(target));
 					invocationNode.setMethodName(memberNameContext.call().IDENTIFIER().getText());
-					for (BaliParser.ExpressionContext vc : memberNameContext.call().argumentList().expression()) {
+					for (BaliParser.ArgumentContext vc : memberNameContext.call().argumentList().argument()) {
 						invocationNode.addArgument(build(vc));
 					}
 					invocationNode.setTarget(retarget);
@@ -571,54 +575,57 @@ public class ANTLRParserManager implements ParserManager {
 
 		value.setMethodName(context.call().IDENTIFIER().getText());
 
-		for (BaliParser.ExpressionContext vc : context.call().argumentList().expression()) {
+		for (BaliParser.ArgumentContext vc : context.call().argumentList().argument()) {
 			value.addArgument(build(vc));
 		}
 
 		return value;
 	}
 
-	private ExpressionNode build(BaliParser.ConstantValueContext context) {
-		if (context.literal() != null) {
-			BaliParser.LiteralContext lc = context.literal();
-			if (lc.booleanLiteral() != null) {
-				BooleanLiteralExpressionNode blv = new BooleanLiteralExpressionNode(l(context), c(context));
-				blv.setSerialization(lc.booleanLiteral().getText());
-				return blv;
-			}
-			if (lc.STRING_LITERAL() != null) {
-				StringLiteralExpressionNode slv = new StringLiteralExpressionNode(l(context), c(context));
-				String token = lc.STRING_LITERAL().getText();
-				slv.setSerialization(token.substring(1, token.length() - 1));
-				return slv;
-			}
-			if (lc.NUMBER_LITERAL() != null) {
-				NumberLiteralExpressionNode nlv = new NumberLiteralExpressionNode(l(context), c(context));
-				nlv.setSerialization(lc.NUMBER_LITERAL().getText());
-				return nlv;
-			}
-			if (lc.arrayLiteral() != null) {
-				ArrayLiteralExpressionNode llv = new ArrayLiteralExpressionNode(l(context), c(context));
-				for (BaliParser.ExpressionContext v : lc.arrayLiteral().expression()) {
-					llv.addValue(build(v));
-				}
-				return llv;
-			}
-		} else if (context.construction() != null) {
-			BaliParser.ConstructionContext cc = context.construction();
-			ConstructionExpressionNode value = new ConstructionExpressionNode(l(context), c(context));
-			value.setClassName(cc.typeIdentifier().getText());
-			for (BaliParser.ExpressionContext vc : cc.argumentList().expression()) {
-				value.addArgument(build(vc));
-			}
-			return value;
+	private ExpressionNode build(BaliParser.ArgumentContext context) {
+		return build(context.expression());
+	}
+
+	private ExpressionNode build(BaliParser.ConstructionContext context) {
+
+		ConstructionExpressionNode value = new ConstructionExpressionNode(l(context), c(context));
+		value.setClassName(context.className().getText());
+		for (BaliParser.ArgumentContext vc : context.argumentList().argument()) {
+			value.addArgument(build(vc));
 		}
-		throw new RuntimeException("Could not get value for constant expression " + context.getText());
+		return value;
+	}
+
+	private ExpressionNode build(BaliParser.LiteralContext context) {
+		if (context.booleanLiteral() != null) {
+			BooleanLiteralExpressionNode blv = new BooleanLiteralExpressionNode(l(context), c(context));
+			blv.setSerialization(context.booleanLiteral().getText());
+			return blv;
+		}
+		if (context.STRING_LITERAL() != null) {
+			StringLiteralExpressionNode slv = new StringLiteralExpressionNode(l(context), c(context));
+			String token = context.STRING_LITERAL().getText();
+			slv.setSerialization(token.substring(1, token.length() - 1));
+			return slv;
+		}
+		if (context.NUMBER_LITERAL() != null) {
+			NumberLiteralExpressionNode nlv = new NumberLiteralExpressionNode(l(context), c(context));
+			nlv.setSerialization(context.NUMBER_LITERAL().getText());
+			return nlv;
+		}
+		if (context.arrayLiteral() != null) {
+			ArrayLiteralExpressionNode llv = new ArrayLiteralExpressionNode(l(context), c(context));
+			for (BaliParser.ExpressionContext v : context.arrayLiteral().expression()) {
+				llv.addValue(build(v));
+			}
+			return llv;
+		}
+		throw new RuntimeException("Could not get value for literal expression " + context.getText());
 	}
 
 	private SiteNode build(BaliParser.SiteDefinitionContext typeContext) {
 
-		BaliParser.TypeIdentifierContext tic = typeContext.typeIdentifier();
+		BaliParser.ClassNameContext tic = typeContext.className();
 		Token start = tic.IDENTIFIER(0).getSymbol();
 		SiteNode returnType = new SiteNode(start.getLine(), start.getCharPositionInLine());
 		returnType.setClassName(tic.getText());

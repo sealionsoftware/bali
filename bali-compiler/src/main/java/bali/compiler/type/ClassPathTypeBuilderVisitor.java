@@ -39,6 +39,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 
 	private String className;
 	private List<Declaration<Type>> typeParameters = new ArrayList<>();
+	private Type superType;
 	private List<Type> interfaces = new ArrayList<>();
 	private List<Declaration<Site>> constructorParameters;
 	private List<Method> methods = new ArrayList<>();
@@ -70,6 +71,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 				typeVariableBounds.put(typeParameter.getName(), bound != null ? bound : nullBound);
 			}
 			this.interfaces = visitor.getInterfaces();
+			this.superType = visitor.getSuperType();
 		} else {
 			List<Type> ifaces = new ArrayList<>();
 			for (String iface : interfaces){
@@ -77,6 +79,9 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 				ifaces.add(new ParameterisedType(ref));
 			}
 			this.interfaces = ifaces;
+			if (superName != null){
+				this.superType = new ParameterisedType(library.getReference(superName.replaceAll("/", ".")));
+			}
 		}
 	}
 
@@ -220,6 +225,8 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 		};
 	}
 
+
+
 	public void visitEnd() {
 		super.visitEnd();
 
@@ -239,7 +246,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 						Collections.<Operator>emptyList(),
 						Collections.<UnaryOperator>emptyList(),
 						Collections.<Declaration<Site>>emptyList(),
-						Kind.OBJECT
+						metaType
 					);
 				break;
 			case MONITOR:
@@ -253,7 +260,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 						Collections.<Operator>emptyList(),
 						Collections.<UnaryOperator>emptyList(),
 						Collections.<Declaration<Site>>emptyList(),
-						Kind.MONITOR
+						metaType
 				);
 				break;
 			case INTERFACE:
@@ -267,7 +274,21 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 						operators,
 						unaryOperators,
 						Collections.<Declaration<Site>>emptyList(),
-						Kind.INTERFACE
+						metaType
+				);
+				break;
+			case BEAN:
+				classpathClass = new MutableClassModel(
+						className,
+						superType,
+						typeParameters,
+						Collections.<Type>emptyList(),
+						Collections.<Declaration<Site>>emptyList(),
+						Collections.<Method>emptyList(),
+						Collections.<Operator>emptyList(),
+						Collections.<UnaryOperator>emptyList(),
+						Collections.<Declaration<Site>>emptyList(),
+						metaType
 				);
 				break;
 			default:

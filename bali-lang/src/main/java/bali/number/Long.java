@@ -3,6 +3,7 @@ package bali.number;
 import bali.Boolean;
 import bali.Integer;
 import bali.Number;
+import bali.annotation.Name;
 
 import static bali.Primitive.convert;
 
@@ -81,6 +82,10 @@ class Long implements Integer {
 
 	public Boolean equalTo(long operand) {
 		return convert(value == operand);
+	}
+
+	public Boolean notEqualTo(@Name("operand") Number operand) {
+		return equalTo(operand).not();
 	}
 
 	// Greater Than

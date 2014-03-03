@@ -13,7 +13,7 @@ import bali.collection.List;
 import static bali.Primitive.convert;
 
 /**
- * TODO: this needs finishing
+ * TODO
  * User: Richard
  * Date: 27/08/13
  */

@@ -91,13 +91,13 @@ public class SiteNode extends Node {
 
 		StringBuilder sb = new StringBuilder(className);
 		if (parameters.size() > 0) {
-			sb.append("<");
+			sb.append("[");
 			Iterator<SiteNode> i = parameters.iterator();
 			sb.append(i.next());
 			while (i.hasNext()) {
 				sb.append(",").append(i.next());
 			}
-			sb.append(">");
+			sb.append("]");
 		}
 		if (nullable){
 			sb.append("?");

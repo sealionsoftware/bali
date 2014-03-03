@@ -4,6 +4,7 @@ import bali.Boolean;
 import bali.Number;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
+import bali.annotation.Name;
 import bali.time.Interval;
 
 /**
@@ -28,6 +29,10 @@ public final class StandardInterval implements Interval {
 
 	public Boolean equalTo(Interval o) {
 		return value.equalTo(o.getTimeInMillis());
+	}
+
+	public Boolean notEqualTo(@Name("operand") Interval operand) {
+		return equalTo(operand).not();
 	}
 
 	public Number getTimeInMillis() {

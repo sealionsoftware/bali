@@ -2,6 +2,7 @@ package bali.number;
 
 import bali.Boolean;
 import bali.Number;
+import bali.annotation.Name;
 
 import static bali.Primitive.convert;
 
@@ -71,6 +72,10 @@ public class Int implements bali.Integer {
 
 	public Boolean equalTo(int operand) {
 		return convert(value == operand);
+	}
+
+	public Boolean notEqualTo(@Name("operand") Number operand) {
+		return equalTo(operand).not();
 	}
 
 	// Greater Than

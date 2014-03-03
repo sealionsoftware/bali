@@ -157,6 +157,28 @@ public final class CharArrayString implements String  {
 		return TRUE;
 	}
 
+	public Boolean notEqualTo(@Name("operand") String operand) {
+
+		if (operand instanceof CharArrayString){
+			CharArrayString cas = (CharArrayString) operand;
+			return convert(!Arrays.equals(characters, cas.characters));
+		}
+
+		if (convert(operand.size().notEqualTo(size()))){
+			return TRUE;
+		}
+
+		int i = 0;
+		Iterator<Character> iterator = operand.iterator();
+		while(convert(iterator.hasNext())){
+			if (convert(iterator.next().notEqualTo(convert(characters[i])))){
+				return TRUE;
+			}
+		}
+
+		return FALSE;
+	}
+
 	public java.lang.String toString() {
 		return new java.lang.String(characters);
 	}

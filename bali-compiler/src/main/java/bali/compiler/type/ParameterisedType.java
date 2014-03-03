@@ -274,13 +274,13 @@ public class ParameterisedType implements Type {
 		StringBuilder sb = new StringBuilder();
 		sb.append(template.getName());
 		if (typeArguments.size() > 0){
-			sb.append("<");
+			sb.append("[");
 			Iterator<Site> i = typeArguments.values().iterator();
 			sb.append(i.next().getTemplate().getName());
 			while(i.hasNext()){
 				sb.append(",").append(i.next().getTemplate().getName());
 			}
-			sb.append(">");
+			sb.append("]");
 		}
 		return sb.toString();
 	}

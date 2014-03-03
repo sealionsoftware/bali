@@ -17,4 +17,7 @@ public interface Value<T extends Value> {
 	@Operator("==")
 	public Boolean equalTo(@Name("operand") T operand);
 
+	@Operator("!=")
+	public Boolean notEqualTo(@Name("operand") T operand);
+
 }

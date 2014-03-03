@@ -18,9 +18,9 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 	private ClassLibrary library;
 
 	private List<SiteSignatureVisitor> interfaceVisitors = new ArrayList<>();
+	private SiteSignatureVisitor superClassVisitor ;
 
 	private Deque<SiteContext> typeParamStack = new LinkedList<>();
-
 	private Map<String, Type> typeVariableBounds;
 
 	public ClassSignatureVisitor(ClassLibrary library, Map<String, Type> typeVariableBounds) {
@@ -52,16 +52,9 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 		return interfaceVisitor;
 	}
 
-	public void visitTypeVariable(String name) {
-		super.visitTypeVariable(name);
-	}
-
-	public void visitClassType(String name) {
-		super.visitClassType(name);
-	}
-
-	public void visitTypeArgument() {
-		super.visitTypeArgument();
+	public SignatureVisitor visitSuperclass() {
+		superClassVisitor = new SiteSignatureVisitor(library, typeVariableBounds, false, false);
+		return superClassVisitor;
 	}
 
 	public SignatureVisitor visitTypeArgument(char wildcard) {
@@ -82,6 +75,10 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 			ret.add(visitor.getSite());
 		}
 		return ret;
+	}
+
+	public Type getSuperType(){
+		return superClassVisitor != null ? superClassVisitor.getSite() : null;
 	}
 
 	private class SiteContext {
