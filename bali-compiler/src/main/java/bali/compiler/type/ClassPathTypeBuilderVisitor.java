@@ -1,8 +1,10 @@
 package bali.compiler.type;
 
 import bali.annotation.Kind;
+import bali.annotation.MetaType;
 import bali.annotation.Name;
 import bali.annotation.Nullable;
+import bali.annotation.SelfTyped;
 import bali.annotation.ThreadSafe;
 import bali.compiler.reference.Reference;
 import org.objectweb.asm.AnnotationVisitor;
@@ -31,6 +33,10 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 			org.objectweb.asm.Type.getType(ThreadSafe.class).getDescriptor();
 	private static String PARAM_NAME_ANNOTATION_DESC =
 			org.objectweb.asm.Type.getType(Name.class).getDescriptor();
+	private static String SELF_TYPED_ANNOTATION_DESC =
+			org.objectweb.asm.Type.getType(SelfTyped.class).getDescriptor();
+	private static String METATYPE_ANNOTATION_DESC =
+			org.objectweb.asm.Type.getType(MetaType.class).getDescriptor();
 
 	private ClassLibrary library;
 
@@ -45,6 +51,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 	private List<Method> methods = new ArrayList<>();
 	private List<Operator> operators = new ArrayList<>();
 	private List<UnaryOperator> unaryOperators = new ArrayList<>();
+	private List<Declaration<Site>> properties = new ArrayList<>();
 
 	private Map<String, Type> typeVariableBounds = new HashMap<>();
 
@@ -87,7 +94,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 
 	public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
 
-		if (desc.equals("Lbali/annotation/MetaType;")){
+		if (METATYPE_ANNOTATION_DESC.equals(desc)){
 			return new AnnotationVisitor(Opcodes.ASM4) {
 				public void visitEnum(String name, String desc, String value) {
 					if (name.equals("value")){
@@ -133,6 +140,8 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 					returnData.nullable = true;
 				} else if (THREADSAFE_ANNOTATION_DESC.equals(desc)){
 					returnData.threadSafe = true;
+				} else if (SELF_TYPED_ANNOTATION_DESC.equals(desc)){
+					returnData.selfTyped = true;
 				}
 
 				return super.visitAnnotation(desc, visible);
@@ -151,6 +160,8 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 					parameterData.get(index).nullable = true;
 				} else if (THREADSAFE_ANNOTATION_DESC.equals(desc)){
 					parameterData.get(index).threadSafe = true;
+				} else if (SELF_TYPED_ANNOTATION_DESC.equals(desc)){
+					parameterData.get(index).selfTyped = true;
 				}
 
 				return super.visitAnnotation(desc, visible);
@@ -165,25 +176,32 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 				if (signature != null) {
 					MethodSignatureVisitor visitor = new MethodSignatureVisitor(library, typeVariableBounds, returnData, parameterData);
 					new SignatureReader(signature).accept(visitor);
-
 					returnType = visitor.getReturnType();
 					int i = 0;
 					parameterDeclarations = new ArrayList<>();
 					for (Site parameterType : visitor.getParameterTypes()) {
-						parameterDeclarations.add(new Declaration<>(parameterData.get(i++).name, parameterType));
+						ParameterData data = parameterData.get(i++);
+						parameterDeclarations.add(new Declaration<>(data.name, parameterType));
 					}
 				} else {
 					org.objectweb.asm.Type methodType = org.objectweb.asm.Type.getMethodType(desc);
 					org.objectweb.asm.Type methodReturnType = methodType.getReturnType();
 					if (!methodReturnType.getClassName().equals(void.class.getName())) {
-						returnType = new ParameterisedSite(library.getReference(methodReturnType.getClassName()), returnData.nullable, returnData.threadSafe); //TODO - parameterized return types
+						returnType = makeSite(
+								library.getReference(methodReturnType.getClassName()),
+								returnData
+						);
 					}
 					parameterDeclarations = new ArrayList<>();
 					int i = 0;
 					for (org.objectweb.asm.Type parameterType : methodType.getArgumentTypes()) {
-						Site parameterSite = new ParameterisedSite(library.getReference(parameterType.getClassName()));
+						ParameterData data = parameterData.get(i++);
+						Site parameterSite = makeSite(
+								library.getReference(parameterType.getClassName()),
+								data
+						);
 						parameterDeclarations.add(new Declaration<>(
-								parameterData.get(i++).name,
+								data.name,
 								parameterSite
 						));
 					}
@@ -221,6 +239,14 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 							parameterDeclarations
 					));
 				}
+			}
+
+			private Site makeSite(Reference<Class> type, SiteData data){
+				Site ret = new ParameterisedSite(type, data.nullable, data.threadSafe);
+				if (data.selfTyped){
+					ret = new SelfSite(ret);
+				}
+				return ret;
 			}
 		};
 	}
@@ -287,7 +313,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 						Collections.<Method>emptyList(),
 						Collections.<Operator>emptyList(),
 						Collections.<UnaryOperator>emptyList(),
-						Collections.<Declaration<Site>>emptyList(),
+						properties,
 						metaType
 				);
 				break;

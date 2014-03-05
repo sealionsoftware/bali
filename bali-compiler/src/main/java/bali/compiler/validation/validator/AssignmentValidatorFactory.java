@@ -6,6 +6,8 @@ import bali.compiler.parser.tree.FieldNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.ReferenceAssignmentNode;
 import bali.compiler.parser.tree.ReferenceNode;
+import bali.compiler.type.ClassLibrary;
+import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.Site;
 import bali.compiler.validation.ValidationFailure;
 
@@ -18,7 +20,7 @@ import java.util.List;
  */
 public class AssignmentValidatorFactory implements ValidatorFactory {
 
-	public Validator createValidator() {
+	public Validator createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
 
 		return new Validator() {
 

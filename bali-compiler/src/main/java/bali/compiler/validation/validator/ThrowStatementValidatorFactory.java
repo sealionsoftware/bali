@@ -7,6 +7,7 @@ import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.parser.tree.ThrowStatementNode;
 import bali.compiler.type.ClassLibrary;
+import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.ParameterisedSite;
 import bali.compiler.type.Site;
 import bali.compiler.validation.ValidationFailure;
@@ -23,14 +24,10 @@ import java.util.List;
  */
 public class ThrowStatementValidatorFactory implements ValidatorFactory {
 
-	private Site throwableType;
-
-	public ThrowStatementValidatorFactory(ClassLibrary library) {
-		throwableType = new ParameterisedSite(library.getReference(Exception.class.getName()));
-	}
-
-	public Validator createValidator() {
+	public Validator createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
 		return new Validator() {
+
+			private Site throwableType = new ParameterisedSite(library.getReference(Exception.class.getName()));;
 
 			public List<ValidationFailure> validate(Node node, Control control) {
 				List<ValidationFailure> ret = new ArrayList<>();

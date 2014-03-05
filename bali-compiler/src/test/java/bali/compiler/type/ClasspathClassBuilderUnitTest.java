@@ -17,7 +17,9 @@ import java.util.List;
  */
 public class ClasspathClassBuilderUnitTest {
 
-	private ClasspathTypeBuilder builder = new ClasspathTypeBuilder(new ClassLibrary());
+	private ClassLoader loader = Thread.currentThread().getContextClassLoader();
+	private ClassLibrary library = new ClassLibrary(loader);
+	private ClasspathTypeBuilder builder = new ClasspathTypeBuilder(library, loader);
 
 	@Test
 	public void testBuildVanillaType() {

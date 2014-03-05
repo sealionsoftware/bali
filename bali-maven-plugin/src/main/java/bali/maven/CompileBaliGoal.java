@@ -13,16 +13,19 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-// TODO: At the moment this is using the plugin classpath - needs to assemble its own
 @org.apache.maven.plugins.annotations.Mojo(
 		name = "compile-bali",
 		defaultPhase = LifecyclePhase.COMPILE,
@@ -36,9 +39,10 @@ public class CompileBaliGoal implements Mojo {
 	private File baseDirectory;
 	@Parameter(property = "project.build.directory")
 	private File targetDirectory;
-
 	@Parameter(property = "project.artifact")
 	private Artifact artifact;
+	@Parameter(property = "project.dependencyArtifacts")
+	private Set<Artifact> dependencyArtifacts;
 
 	private BaliCompiler compiler = new BaliCompiler();
 	private Log log;
@@ -63,8 +67,8 @@ public class CompileBaliGoal implements Mojo {
 
 		List<PackageDescription> packageDescriptions = new ArrayList<>();
 		for (File sourceFile : sourceFiles) {
-			String fileName = sourceFile.getName();
-			String packageName = fileName.substring(0, fileName.length() - BaliCompiler.BALI_SOURCE_FILE_EXTENSION.length());
+			String relativePath = sourceFile.toURI().getPath().substring(sourceDirectory.toURI().getPath().length());
+			String packageName = relativePath.substring(0, relativePath.length() - BaliCompiler.BALI_SOURCE_FILE_EXTENSION.length()).replaceAll("/", ".");
 			try {
 				packageDescriptions.add(new PackageDescription(
 						packageName,
@@ -76,11 +80,17 @@ public class CompileBaliGoal implements Mojo {
 		}
 
 		try {
+			int i = 0;
+			URL[] dependencies = new URL[dependencyArtifacts.size()];
+			for (Artifact dependencyArtifact : dependencyArtifacts){
+				dependencies[i++] = dependencyArtifact.getFile().toURI().toURL();
+			}
+			URLClassLoader classLoader = new URLClassLoader(dependencies, Thread.currentThread().getContextClassLoader());
 
 			targetDirectory.mkdirs();
 			File outputFile = new File(targetDirectory, moduleName + ".bar");
 			OutputStream os = new FileOutputStream(outputFile);
-			compiler.compile(packageDescriptions, os);
+			compiler.compile(packageDescriptions, os, classLoader);
 			artifact.setFile(outputFile);
 			log.info("Compilation complete");
 
@@ -88,8 +98,17 @@ public class CompileBaliGoal implements Mojo {
 			List<String> failedFiles = e.getFailedFiles();
 			for (String failedFile : failedFiles) {
 				List<ValidationFailure> failures = e.getFailures(failedFile);
-				if (failures.size() > 0) {
-					log.error("Unit " + failedFile + BaliCompiler.BALI_SOURCE_FILE_EXTENSION + " failed with " + failures.size() + " errors");
+				int numberOfFailures = failures.size();
+				if (numberOfFailures > 0) {
+					StringBuilder message = new StringBuilder("Unit ")
+							.append(failedFile)
+							.append(" failed with ")
+							.append(numberOfFailures)
+							.append(" error");
+					if (numberOfFailures > 1){
+						message.append("s");
+					}
+					log.error(message.toString());
 					for (ValidationFailure failure : failures) {
 						Node node = failure.getNode();
 						log.error("\t" + node.getLine() + ":" + node.getCharacter() + " " + failure.getMessage());
@@ -98,7 +117,7 @@ public class CompileBaliGoal implements Mojo {
 			}
 			throw new MojoExecutionException("Compilation failed");
 		} catch (Exception e) {
-			throw new MojoFailureException("An Exception occured whilst compiling", e);
+			throw new MojoFailureException(e.getMessage(), e);
 		}
 	}
 

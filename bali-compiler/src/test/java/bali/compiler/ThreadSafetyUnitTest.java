@@ -24,14 +24,22 @@ public class ThreadSafetyUnitTest {
 	@Test(expected = ValidationException.class)
 	public void testVariableAssignFail() throws Exception {
 		InputStream is = classLoader.getResourceAsStream(TEST_TARGETS_NAME + "/fail/varassign.bali");
-		compiler.compile(Collections.singletonList(new PackageDescription("fail", is)), Mockito.mock(OutputStream.class));
+		compiler.compile(
+				Collections.singletonList(new PackageDescription("fail", is)),
+				Mockito.mock(OutputStream.class),
+				classLoader
+		);
 	}
 
 	@Test
 	public void testVariableAssignPass() throws Exception {
 		InputStream is = classLoader.getResourceAsStream(TEST_TARGETS_NAME + "/pass/varassign.bali");
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		compiler.compile(Collections.singletonList(new PackageDescription("pass", is)), os);
+		compiler.compile(
+				Collections.singletonList(new PackageDescription("pass", is)),
+				os,
+				classLoader
+		);
 		Assert.assertTrue(os.toByteArray().length > 1024);
 	}
 

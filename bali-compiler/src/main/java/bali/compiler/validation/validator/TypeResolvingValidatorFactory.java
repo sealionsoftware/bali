@@ -8,6 +8,7 @@ import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.reference.Reference;
 import bali.compiler.type.Class;
 import bali.compiler.type.ClassLibrary;
+import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.ParameterisedSite;
 import bali.compiler.type.Site;
 import bali.compiler.validation.ValidationFailure;
@@ -28,13 +29,7 @@ import java.util.Map;
  */
 public class TypeResolvingValidatorFactory implements ValidatorFactory {
 
-	private ClassLibrary library;
-
-	public TypeResolvingValidatorFactory(ClassLibrary library) {
-		this.library = library;
-	}
-
-	public Validator createValidator() {
+	public Validator createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
 
 		return new Validator() {
 

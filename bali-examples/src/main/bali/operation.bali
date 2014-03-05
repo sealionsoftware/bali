@@ -9,7 +9,7 @@ object OperationDoer implements Executable {
  	    String s = NUMBER_FACTORY.format(n) + "!";
  	    CONSOLE << s;
 
- 	    if (true & (false | (true ^ false))){
+ 	    if (true & false | true ^ false){
  	        CONSOLE << "evaluated compound expression to true";
  	    }
  	}

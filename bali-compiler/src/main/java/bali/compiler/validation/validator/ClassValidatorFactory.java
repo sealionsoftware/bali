@@ -5,6 +5,7 @@ import bali.compiler.parser.tree.DeclarationNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.type.ClassLibrary;
+import bali.compiler.type.ConstantLibrary;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.Collections;
@@ -24,13 +25,7 @@ import java.util.Set;
  */
 public class ClassValidatorFactory implements ValidatorFactory {
 
-	private ClassLibrary library;
-
-	public ClassValidatorFactory(ClassLibrary library) {
-		this.library = library;
-	}
-
-	public Validator createValidator() {
+	public Validator createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
 		return new Validator() {
 
 			private String unitName;

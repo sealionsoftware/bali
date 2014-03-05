@@ -4,6 +4,7 @@ import bali.compiler.parser.tree.BeanNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.type.Class;
 import bali.compiler.type.ClassLibrary;
+import bali.compiler.type.ConstantLibrary;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.Collections;
@@ -17,13 +18,7 @@ import java.util.List;
  */
 public class BeanValidatorFactory implements ValidatorFactory {
 
-	private ClassLibrary library;
-
-	public BeanValidatorFactory(ClassLibrary library) {
-		this.library = library;
-	}
-
-	public Validator createValidator() {
+	public Validator createValidator(final ClassLibrary library, final ConstantLibrary constantLibraryv) {
 		return new Validator() {
 			public List<ValidationFailure> validate(Node node, Control control) {
 

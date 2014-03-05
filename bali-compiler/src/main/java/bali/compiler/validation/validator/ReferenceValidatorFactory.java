@@ -18,6 +18,7 @@ import bali.compiler.parser.tree.RunStatementNode;
 import bali.compiler.parser.tree.StatementNode;
 import bali.compiler.parser.tree.VariableNode;
 import bali.compiler.reference.SimpleReference;
+import bali.compiler.type.ClassLibrary;
 import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.Declaration;
 import bali.compiler.type.ParameterisedSite;
@@ -39,13 +40,7 @@ import java.util.Map;
  */
 public class ReferenceValidatorFactory implements ValidatorFactory {
 
-	private ConstantLibrary library;
-
-	public ReferenceValidatorFactory(ConstantLibrary library) {
-		this.library = library;
-	}
-
-	public Validator createValidator() {
+	public Validator createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
 		return new Validator() {
 
 			private Deque<Scope> scopeStack = new ArrayDeque<>();
@@ -110,7 +105,7 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 				Deque<Scope> unitLevelScopes = new ArrayDeque<>();
 				String pkgName = "_";
 				try {
-					List<Declaration<Site>> packageConstants = library.getConstants(pkgName);
+					List<Declaration<Site>> packageConstants = constantLibrary.getConstants(pkgName);
 					Scope scope = new Scope(
 							ReferenceNode.ReferenceScope.STATIC,
 							pkgName,
@@ -127,9 +122,9 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 				String compilationUnitName = unit.getName();
 				int i = -1;
 				do {
-					i = compilationUnitName.indexOf('.', i);
+					i = compilationUnitName.indexOf('.', i + 1);
 					pkgName = i > 0 ? compilationUnitName.substring(0, i) : compilationUnitName;
-					List<Declaration<Site>> packageConstants = library.getConstants(pkgName);
+					List<Declaration<Site>> packageConstants = constantLibrary.getConstants(pkgName);
 					Scope scope = new Scope(
 							ReferenceNode.ReferenceScope.STATIC,
 							pkgName + "._",
@@ -168,7 +163,7 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 						null,
 						true
 				);
-				for (DeclarationNode declaration : method.getArguments()) {
+				for (DeclarationNode declaration : method.getParameters()) {
 					scope.add(declaration.getName(), declaration.getType().getSite());
 				}
 				pushAndWalk(agent, scope);

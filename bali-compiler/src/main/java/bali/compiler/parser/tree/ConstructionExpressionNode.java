@@ -10,11 +10,9 @@ import java.util.List;
  * User: Richard
  * Date: 05/05/13
  */
-public class ConstructionExpressionNode extends ExpressionNode {
+public class ConstructionExpressionNode extends ParametrisedExpressionNode {
 
 	private String className;
-	private List<ExpressionNode> arguments = new ArrayList<>();
-
 	private BlockingReference<Site> type = new BlockingReference<>();
 
 	public ConstructionExpressionNode(Integer line, Integer character) {
@@ -33,17 +31,8 @@ public class ConstructionExpressionNode extends ExpressionNode {
 		this.type.set(type);
 	}
 
-	public void addArgument(ExpressionNode argument) {
-		children.add(argument);
-		arguments.add(argument);
-	}
-
 	public Site getType() {
 		return type.get();
-	}
-
-	public List<ExpressionNode> getArguments() {
-		return arguments;
 	}
 
 	public String toString() {

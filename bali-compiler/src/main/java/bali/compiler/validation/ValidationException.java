@@ -23,4 +23,8 @@ public class ValidationException extends Exception {
 	public List<ValidationFailure> getFailures(String packageName) {
 		return new ArrayList<>(failures.get(packageName));
 	}
+
+	public String toString() {
+		return failures.values().toString();
+	}
 }

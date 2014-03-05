@@ -21,15 +21,13 @@ public class SiteSignatureVisitor extends SignatureVisitor {
 
 	private String className;
 	private List<SiteSignatureVisitor> typeArgumentVisitors = new LinkedList<>();
-	private boolean nullable;
-	private boolean threadSafe;
+	private SiteData data;
 
-	public SiteSignatureVisitor(ClassLibrary library, Map<String, Type> typeVariableBounds, Boolean nullable, Boolean threadSafe) {
+	public SiteSignatureVisitor(ClassLibrary library, Map<String, Type> typeVariableBounds, SiteData data) {
 		super(Opcodes.ASM4);
 		this.library = library;
 		this.typeVariableBounds = typeVariableBounds;
-		this.nullable = nullable;
-		this.threadSafe = threadSafe;
+		this.data = data;
 	}
 
 	public void visitEnd() {
@@ -45,7 +43,10 @@ public class SiteSignatureVisitor extends SignatureVisitor {
 			typeArguments.add(visitor.getSite());
 		}
 
-		site = new ParameterisedSite(typeReference, typeArguments, nullable, threadSafe);
+		site = new ParameterisedSite(typeReference, typeArguments, data.nullable, data.threadSafe);
+		if (data.selfTyped){
+			site = new SelfSite(site);
+		}
 		super.visitEnd();
 	}
 
@@ -59,7 +60,7 @@ public class SiteSignatureVisitor extends SignatureVisitor {
 	}
 
 	public SignatureVisitor visitTypeArgument(char wildcard) {
-		SiteSignatureVisitor visitor = new SiteSignatureVisitor(library, typeVariableBounds, false, false); //TODO Java 8 Class annotations so type arguments can be nullable, threadsafe
+		SiteSignatureVisitor visitor = new SiteSignatureVisitor(library, typeVariableBounds, new SiteData()); //TODO Java 8 Class annotations so type arguments can be nullable, threadsafe
 		typeArgumentVisitors.add(visitor);
 		return visitor;
 	}

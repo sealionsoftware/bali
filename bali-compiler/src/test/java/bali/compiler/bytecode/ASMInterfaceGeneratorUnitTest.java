@@ -2,7 +2,7 @@ package bali.compiler.bytecode;
 
 import bali.Number;
 import bali.compiler.GeneratedClass;
-import bali.compiler.parser.tree.ArgumentDeclarationNode;
+import bali.compiler.parser.tree.ParameterNode;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.MethodNode;
 import bali.compiler.parser.tree.SiteNode;
@@ -93,13 +93,13 @@ public class ASMInterfaceGeneratorUnitTest {
 		type.setClassName("Number");
 		type.setSite(new TestVanillaSite(Number.class));
 
-		ArgumentDeclarationNode argument = new ArgumentDeclarationNode();
+		ParameterNode argument = new ParameterNode();
 		argument.setType(type);
 		argument.setName("anArgument");
 
 		MethodNode declaration = new MethodNode();
 		declaration.setName("aMethod");
-		declaration.addArgument(argument);
+		declaration.addParameter(argument);
 
 		iface.addMethod(declaration);
 

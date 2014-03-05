@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.objectweb.asm.signature.SignatureReader;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -14,18 +15,21 @@ import java.util.List;
  */
 public class MethodSignatureVisitorUnitTest {
 
-	private MethodSignatureVisitor visitor = new MethodSignatureVisitor(new ClassLibrary(), new HashMap<String, Type>(), new SiteData(), Arrays.asList(new SiteData()));
+	private MethodSignatureVisitor visitor = new MethodSignatureVisitor(
+			new ClassLibrary(Thread.currentThread().getContextClassLoader()),
+			new HashMap<String, Type>(), new SiteData(), Collections.<SiteData>emptyList()
+	);
 
 	@Test
 	public void testParameterizedReturnMethod() throws Exception {
 
 		new SignatureReader("()TT;").accept(visitor);
-		Site returnType = visitor.getReturnType();
+		Type returnType = visitor.getReturnType();
 		List<Site> parameters = visitor.getParameterTypes();
 
 		Assert.assertNotNull(returnType);
-		Assert.assertTrue(returnType instanceof VariableSite);
-		Assert.assertEquals("T", ((VariableSite) returnType).getName());
+		Assert.assertTrue(returnType instanceof VariableType);
+		Assert.assertEquals("T", ((VariableType) returnType).getName());
 		Assert.assertNotNull(parameters);
 		Assert.assertEquals(0, parameters.size());
 	}
@@ -34,14 +38,14 @@ public class MethodSignatureVisitorUnitTest {
 	public void testParameterizedMethodParameter() throws Exception {
 
 		new SignatureReader("(TT;)V").accept(visitor);
-		Site returnType = visitor.getReturnType();
+		Type returnType = visitor.getReturnType();
 		List<Site> parameters = visitor.getParameterTypes();
 
 		Assert.assertNull(returnType);
 		Assert.assertNotNull(parameters);
 		Assert.assertEquals(1, parameters.size());
-		Site parameter = parameters.get(0);
-		Assert.assertTrue(parameter instanceof VariableSite);
-		Assert.assertEquals("T", ((VariableSite) parameter).getName());
+		Type parameter = parameters.get(0);
+		Assert.assertTrue(parameter instanceof VariableType);
+		Assert.assertEquals("T", ((VariableType) parameter).getName());
 	}
 }

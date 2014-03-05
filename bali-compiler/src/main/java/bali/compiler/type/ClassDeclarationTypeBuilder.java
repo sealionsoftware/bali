@@ -1,7 +1,7 @@
 package bali.compiler.type;
 
 import bali.annotation.Kind;
-import bali.compiler.parser.tree.ArgumentDeclarationNode;
+import bali.compiler.parser.tree.ParameterNode;
 import bali.compiler.parser.tree.BeanNode;
 import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.parser.tree.InterfaceNode;
@@ -106,7 +106,7 @@ public class ClassDeclarationTypeBuilder {
 
 	private List<Declaration<Site>> getParameters(ObjectNode declaration) {
 		List<Declaration<Site>> arguments = new ArrayList<>();
-		for (ArgumentDeclarationNode declaredArgument : declaration.getArgumentDeclarations()) {
+		for (ParameterNode declaredArgument : declaration.getArgumentDeclarations()) {
 			arguments.add(new Declaration<>(
 					declaredArgument.getName(),
 					getType(declaredArgument.getType())
@@ -119,7 +119,7 @@ public class ClassDeclarationTypeBuilder {
 		List<Method> methods = new ArrayList<>();
 		for (MethodNode declaredMethod : declaration.getMethods()) {
 			List<Declaration<Site>> arguments = new ArrayList<>();
-			for (ArgumentDeclarationNode declaredArgument : declaredMethod.getArguments()) {
+			for (ParameterNode declaredArgument : declaredMethod.getParameters()) {
 				arguments.add(new Declaration<>(
 						declaredArgument.getName(),
 						getType(declaredArgument.getType())

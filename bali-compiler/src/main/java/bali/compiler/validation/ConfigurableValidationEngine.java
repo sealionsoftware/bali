@@ -1,6 +1,8 @@
 package bali.compiler.validation;
 
 import bali.compiler.parser.tree.CompilationUnitNode;
+import bali.compiler.type.ClassLibrary;
+import bali.compiler.type.ConstantLibrary;
 import bali.compiler.validation.validator.Validator;
 
 import java.util.HashMap;
@@ -19,7 +21,7 @@ public class ConfigurableValidationEngine implements ValidationEngine {
 		this.validators = validators;
 	}
 
-	public Map<String, List<ValidationFailure>> validate(List<CompilationUnitNode> units) {
+	public Map<String, List<ValidationFailure>> validate(List<CompilationUnitNode> units, ClassLibrary classLibrary, ConstantLibrary constantLibrary) {
 
 		Map<String, List<ValidationFailure>> failures = new HashMap<>();
 

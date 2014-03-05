@@ -1,4 +1,4 @@
-package bali.collection.standard;
+package bali.collection;
 
 import bali.Boolean;
 import bali.Integer;

@@ -9,6 +9,8 @@ import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.type.Class;
+import bali.compiler.type.ClassLibrary;
+import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.Declaration;
 import bali.compiler.type.Method;
 import bali.compiler.type.Site;
@@ -31,7 +33,7 @@ import java.util.Set;
  */
 public class ImplementationValidatorFactory implements ValidatorFactory {
 
-	public Validator createValidator() {
+	public Validator createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
 		return new Validator() {
 
 			private Set<bali.compiler.type.Class> interfaces;

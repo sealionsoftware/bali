@@ -16,9 +16,9 @@ public class ClasspathTypeBuilder {
 	private ClassLibrary library;
 	private ClassLoader classLoader;
 
-	public ClasspathTypeBuilder(ClassLibrary library) {
+	public ClasspathTypeBuilder(ClassLibrary library, ClassLoader classLoader) {
 		this.library = library;
-		this.classLoader = Thread.currentThread().getContextClassLoader();
+		this.classLoader = classLoader;
 	}
 
 	public Class build(String typeToBuild) {

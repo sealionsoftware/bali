@@ -14,7 +14,7 @@ import java.util.Collections;
  */
 public class ClassDeclarationClassBuilderUnitTest {
 
-	private ClassLibrary library = new ClassLibrary();
+	private ClassLibrary library = new ClassLibrary(Thread.currentThread().getContextClassLoader());
 	private ClassDeclarationTypeBuilder builder = new ClassDeclarationTypeBuilder();
 
 	@Test

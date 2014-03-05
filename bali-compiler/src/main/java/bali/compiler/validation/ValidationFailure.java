@@ -23,4 +23,8 @@ public class ValidationFailure {
 	public String getMessage() {
 		return message;
 	}
+
+	public String toString() {
+		return message;
+	}
 }

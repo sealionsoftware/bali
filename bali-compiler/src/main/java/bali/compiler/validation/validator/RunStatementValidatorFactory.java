@@ -5,6 +5,8 @@ import bali.compiler.parser.tree.InvocationNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.ReferenceNode;
 import bali.compiler.parser.tree.RunStatementNode;
+import bali.compiler.type.ClassLibrary;
+import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.Site;
 import bali.compiler.validation.ValidationFailure;
 
@@ -17,7 +19,7 @@ import java.util.List;
  */
 public class RunStatementValidatorFactory implements ValidatorFactory {
 
-	public Validator createValidator() {
+	public Validator createValidator(ClassLibrary classLibrary, ConstantLibrary constantLibrary) {
 
 		return new Validator(){
 

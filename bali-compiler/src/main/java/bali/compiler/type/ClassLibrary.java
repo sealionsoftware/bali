@@ -16,9 +16,14 @@ import java.util.Map;
  */
 public class ClassLibrary {
 
-	private final ClassDeclarationTypeBuilder declarationBuilder = new ClassDeclarationTypeBuilder();
-	private final ClasspathTypeBuilder classpathBuilder = new ClasspathTypeBuilder(this);
-	private final Map<String, Reference<Class>> types = new HashMap<>();{
+	private final ClassDeclarationTypeBuilder declarationBuilder;
+	private final ClasspathTypeBuilder classpathBuilder;
+	private final Map<String, Reference<Class>> types;
+
+	public ClassLibrary(ClassLoader dependencyLoader) {
+		declarationBuilder = new ClassDeclarationTypeBuilder();
+		classpathBuilder = new ClasspathTypeBuilder(this, dependencyLoader);
+		types = new HashMap<>();
 		types.put(Object.class.getName(), new SimpleReference<Class>(new MutableClassModel(Object.class.getName(),
 				null,
 				Collections.<Declaration<Type>>emptyList(),

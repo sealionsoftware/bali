@@ -3,7 +3,7 @@ package bali.compiler.bytecode;
 import bali.Boolean;
 import bali.Number;
 import bali.String;
-import bali.compiler.parser.tree.ArgumentDeclarationNode;
+import bali.compiler.parser.tree.ParameterNode;
 import bali.compiler.parser.tree.MethodNode;
 import bali.compiler.parser.tree.SiteNode;
 import junit.framework.Assert;
@@ -63,12 +63,12 @@ public class ASMConverterUnitTest {
 		SiteNode n = new SiteNode();
 		s.setSite(new TestVanillaSite(String.class));
 		n.setSite(new TestVanillaSite(Number.class));
-		ArgumentDeclarationNode argument1 = new ArgumentDeclarationNode(0, 0);
-		ArgumentDeclarationNode argument2 = new ArgumentDeclarationNode(0, 0);
+		ParameterNode argument1 = new ParameterNode(0, 0);
+		ParameterNode argument2 = new ParameterNode(0, 0);
 		argument1.setType(s);
 		argument2.setType(n);
-		declaration.addArgument(argument1);
-		declaration.addArgument(argument2);
+		declaration.addParameter(argument1);
+		declaration.addParameter(argument2);
 		Assert.assertEquals("(Lbali/String;Lbali/Number;)Lbali/Boolean;", converter.getMethodDescriptor(declaration));
 	}
 

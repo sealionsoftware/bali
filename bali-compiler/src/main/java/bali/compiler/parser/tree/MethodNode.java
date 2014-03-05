@@ -11,7 +11,7 @@ import java.util.List;
 public class MethodNode extends DeclarationNode {
 
 	private String operator;
-	private List<ArgumentDeclarationNode> argumentDeclarations = new ArrayList<>();
+	private List<ParameterNode> parameters = new ArrayList<>();
 
 	public MethodNode() {
 	}
@@ -20,13 +20,13 @@ public class MethodNode extends DeclarationNode {
 		super(line, character);
 	}
 
-	public List<ArgumentDeclarationNode> getArguments() {
-		return argumentDeclarations;
+	public List<ParameterNode> getParameters() {
+		return parameters;
 	}
 
-	public void addArgument(ArgumentDeclarationNode argumentDeclaration) {
+	public void addParameter(ParameterNode argumentDeclaration) {
 		children.add(argumentDeclaration);
-		this.argumentDeclarations.add(argumentDeclaration);
+		this.parameters.add(argumentDeclaration);
 	}
 
 	public String getOperator() {
@@ -48,14 +48,12 @@ public class MethodNode extends DeclarationNode {
 
 		MethodNode that = (MethodNode) o;
 
-		if (!argumentDeclarations.equals(that.argumentDeclarations)) return false;
-
-		return true;
+		return parameters.equals(that.parameters);
 	}
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		Iterator<ArgumentDeclarationNode> i = argumentDeclarations.iterator();
+		Iterator<ParameterNode> i = parameters.iterator();
 		if (i.hasNext()){
 			sb.append(i.next());
 			while (i.hasNext()){

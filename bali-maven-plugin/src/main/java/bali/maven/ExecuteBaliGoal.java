@@ -10,8 +10,10 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
+import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.List;
 
 
 @org.apache.maven.plugins.annotations.Mojo(
@@ -23,9 +25,10 @@ public class ExecuteBaliGoal implements Mojo {
 
 	@Parameter(property = "executableClassName")
 	private String executableClassName;
-
 	@Parameter(property = "project.artifact")
 	private Artifact artifact;
+	@Parameter(property = "project.resolvedArtifacts")
+	private List<Artifact> resolvedArtifacts;
 
 	private Log log;
 
@@ -39,7 +42,12 @@ public class ExecuteBaliGoal implements Mojo {
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		try {
-			ClassLoader classLoader = new URLClassLoader(new URL[]{artifact.getFile().toURI().toURL()}, Thread.currentThread().getContextClassLoader());
+			int i = 0;
+			URL[] dependencies = new URL[resolvedArtifacts.size()];
+			for (Artifact resolvedArtifact : resolvedArtifacts){
+				dependencies[i++] = resolvedArtifact.getFile().toURI().toURL();
+			}
+			ClassLoader classLoader = new URLClassLoader(new URL[]{artifact.getFile().toURI().toURL()}, new URLClassLoader(dependencies, Thread.currentThread().getContextClassLoader()));
 			Class executableClass = classLoader.loadClass(executableClassName);
 
 			Object executable =  executableClass.newInstance();
@@ -50,7 +58,7 @@ public class ExecuteBaliGoal implements Mojo {
 		} catch (ClassNotFoundException e) {
 			throw new MojoExecutionException("The specified class could not be found", e);
 		} catch (Throwable e) {
-			throw new MojoExecutionException("An error occured whilst running", e);
+			throw new MojoFailureException("An error occured whilst running", e);
 		}
 	}
 

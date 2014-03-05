@@ -32,13 +32,13 @@ public class MethodSignatureVisitor extends SignatureVisitor {
 	}
 
 	public SignatureVisitor visitReturnType() {
-		returnTypeVisitor = new SiteSignatureVisitor(library, typeVariableBounds, returnData.nullable, returnData.threadSafe);
+		returnTypeVisitor = new SiteSignatureVisitor(library, typeVariableBounds, returnData);
 		return returnTypeVisitor;
 	}
 
 	public SignatureVisitor visitParameterType() {
 		SiteData data = parameterData.poll();
-		SiteSignatureVisitor visitor = new SiteSignatureVisitor(library, typeVariableBounds, data.nullable, data.threadSafe);
+		SiteSignatureVisitor visitor = new SiteSignatureVisitor(library, typeVariableBounds, data);
 		parameterVisitors.add(visitor);
 		return visitor;
 	}

@@ -41,7 +41,7 @@ public class ParameterisedType implements Type {
 		this.typeArguments_in = typeArguments;
 	}
 
-	private void init(){
+	private synchronized void init(){
 
 		if (initialised){
 			return;
@@ -62,28 +62,15 @@ public class ParameterisedType implements Type {
 			this.typeArguments.put(typeParameter.getName(), typeArgument);
 		}
 
-		if (typeArguments.size() > 0){
-
-			if (template.getSuperType() != null){
-				superType = parametriseType(template.getSuperType());
-			}
-			interfaces = parametriseTypes(template.getInterfaces());
-			parameters =  parametriseDeclarationSites(template.getParameters());
-			methods = parametriseMethods(template.getMethods());
-			operators = parameteriseOperators(template.getOperators());
-			unaryOperators = parameteriseUnaryOperators(template.getUnaryOperators());
-			properties = parametriseDeclarationSites(template.getProperties());
-		} else {
-			if (template.getSuperType() != null){
-				superType = template.getSuperType();
-			}
-			interfaces = template.getInterfaces();
-			parameters =  template.getParameters();
-			methods = template.getMethods();
-			operators = template.getOperators();
-			unaryOperators = template.getUnaryOperators();
-			properties = template.getProperties();
+		if (template.getSuperType() != null) {
+			superType = parametriseType(template.getSuperType());
 		}
+		interfaces = parametriseInterfaces(template.getInterfaces());
+		parameters = parametriseParameters(template.getParameters(), superType);
+		methods = parametriseMethods(template.getMethods(), interfaces);
+		operators = parameteriseOperators(template.getOperators(), interfaces);
+		unaryOperators = parameteriseUnaryOperators(template.getUnaryOperators(), interfaces);
+		properties = parametriseProperties(template.getProperties(), superType);
 	}
 
 	private Type parametriseType(Type input){
@@ -110,16 +97,19 @@ public class ParameterisedType implements Type {
 			VariableType vt = (VariableType) input;
 			return typeArguments.get(vt.getName());
 		}
+		if (input instanceof SelfSite){
+			if (this instanceof Site){
+				return new SelfSite((Site) this);
+			} else {
+				return new SelfSite(new ParameterisedSite(template_in, false, false));
+			}
+		}
 		List<Site> parameters = input.getTypeArguments();
 		List<Site> newArguments = new ArrayList<>(parameters.size());
 		for (Site original : parameters){
 			newArguments.add(parametriseSite(original));
 		}
 		return new ParameterisedSite(new SimpleReference<>(input.getTemplate()), newArguments, input.isNullable(), input.isThreadSafe());
-	}
-
-	private Declaration<Type> parametriseDeclarationType(Declaration<Type> input){
-		return new Declaration<>(input.getName(), parametriseType(input.getType()));
 	}
 
 	private Declaration<Site> parametriseDeclarationSite(Declaration<Site> input){
@@ -138,26 +128,33 @@ public class ParameterisedType implements Type {
 		return new UnaryOperator(input.getName(), parametriseSite(input.getType()), input.getMethodName());
 	}
 
-	private List<Type> parametriseTypes(List<Type> input){
+	private List<Type> parametriseInterfaces(List<Type> input){
 		List<Type> ret = new ArrayList<>(input.size());
-		for (Type type : input){
-			ret.add(parametriseType(type));
+		for (Type iface : input){
+			ret.add(parametriseType(iface));
+			ret.addAll(parametriseInterfaces(iface.getInterfaces()));
 		}
 		return ret;
 	}
 
-	private List<Site> parametriseSites(List<Site> input){
-		List<Site> ret = new ArrayList<>(input.size());
-		for (Site type : input){
-			ret.add(parametriseSite(type));
+	private List<Declaration<Site>> parametriseParameters(List<Declaration<Site>> input, Type superType){
+		List<Declaration<Site>> ret = new ArrayList<>(input.size());
+		for (Declaration<Site> dec : input){
+			ret.add(parametriseDeclarationSite(dec));
+			if (superType != null){
+				ret.addAll(parametriseParameters(superType.getParameters(), superType.getSuperType()));
+			}
 		}
 		return ret;
 	}
 
-	private List<Declaration<Type>> parametriseDeclarationTypes(List<Declaration<Type>> input){
-		List<Declaration<Type>> ret = new ArrayList<>(input.size());
-		for (Declaration<Type> dec : input){
-			ret.add(parametriseDeclarationType(dec));
+	private List<Declaration<Site>> parametriseProperties(List<Declaration<Site>> input, Type superType){
+		List<Declaration<Site>> ret = new ArrayList<>(input.size());
+		for (Declaration<Site> dec : input){
+			ret.add(parametriseDeclarationSite(dec));
+			if (superType != null){
+				ret.addAll(parametriseProperties(superType.getProperties(), superType.getSuperType()));
+			}
 		}
 		return ret;
 	}
@@ -170,26 +167,35 @@ public class ParameterisedType implements Type {
 		return ret;
 	}
 
-	private List<Method> parametriseMethods(List<Method> input) {
+	private List<Method> parametriseMethods(List<Method> input, List<Type> interfaces) {
 		List<Method> ret = new ArrayList<>(input.size());
 		for (Method dec : input){
 			ret.add(parametriseMethod(dec));
 		}
-		return ret;
-	}
-
-	private List<Operator> parameteriseOperators(List<Operator> input) {
-		List<Operator> ret = new ArrayList<>(input.size());
-		for (Operator dec : input){
-			ret.add(parametriseOperator(dec));
+		for (Type iface : interfaces){
+			ret.addAll(parametriseMethods(iface.getMethods(), iface.getInterfaces()));
 		}
 		return ret;
 	}
 
-	private List<UnaryOperator> parameteriseUnaryOperators(List<UnaryOperator> input) {
+	private List<Operator> parameteriseOperators(List<Operator> input, List<Type> interfaces) {
+		List<Operator> ret = new ArrayList<>(input.size());
+		for (Operator dec : input){
+			ret.add(parametriseOperator(dec));
+		}
+		for(Type iface : interfaces){
+			ret.addAll(parameteriseOperators(iface.getOperators(), iface.getInterfaces()));
+		}
+		return ret;
+	}
+
+	private List<UnaryOperator> parameteriseUnaryOperators(List<UnaryOperator> input, List<Type> interfaces) {
 		List<UnaryOperator> ret = new ArrayList<>(input.size());
 		for (UnaryOperator dec : input){
 			ret.add(parametriseUnaryOperator(dec));
+		}
+		for(Type iface : interfaces){
+			ret.addAll(parameteriseUnaryOperators(iface.getUnaryOperators(), iface.getInterfaces()));
 		}
 		return ret;
 	}
@@ -276,9 +282,9 @@ public class ParameterisedType implements Type {
 		if (typeArguments.size() > 0){
 			sb.append("[");
 			Iterator<Site> i = typeArguments.values().iterator();
-			sb.append(i.next().getTemplate().getName());
+			sb.append(i.next().toString());
 			while(i.hasNext()){
-				sb.append(",").append(i.next().getTemplate().getName());
+				sb.append(",").append(i.next().toString());
 			}
 			sb.append("]");
 		}

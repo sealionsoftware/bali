@@ -26,7 +26,6 @@ import bali.compiler.validation.validator.BooleanLiteralValidatorFactory;
 import bali.compiler.validation.validator.BranchStatementValidatorFactory;
 import bali.compiler.validation.validator.ClassValidatorFactory;
 import bali.compiler.validation.validator.ConstantValidatorFactory;
-import bali.compiler.validation.validator.ConstructionValidatorFactory;
 import bali.compiler.validation.validator.ImplementationValidatorFactory;
 import bali.compiler.validation.validator.ImportsValidatorFactory;
 import bali.compiler.validation.validator.InterfaceValidatorFactory;
@@ -75,36 +74,33 @@ public class BaliCompiler {
 
 	public BaliCompiler() {
 
-		ClassLibrary library = new ClassLibrary();
-		ConstantLibrary constantLibrary = new ConstantLibrary(library);
+		parserManager = new ANTLRParserManager();
 
-		parserManager = new ANTLRParserManager(library);
-
-		validator = new MultiThreadedValidationEngine(library, constantLibrary, Arrays.asList(
-				new ImportsValidatorFactory(library),
-				new ResolvablesValidatorFactory(library),
-				new TypeResolvingValidatorFactory(library),
-				new BeanValidatorFactory(library),
-				new InterfaceValidatorFactory(library),
-				new ClassValidatorFactory(library),
-				new ConstantValidatorFactory(constantLibrary),
-				new BooleanLiteralValidatorFactory(library),
-				new NumberLiteralValidatorFactory(library),
-				new StringLiteralValidatorFactory(library),
-				new ArrayLiteralValidatorFactory(library),
-				new ReferenceValidatorFactory(constantLibrary),
+		validator = new MultiThreadedValidationEngine(Arrays.asList(
+				new ImportsValidatorFactory(),
+				new ResolvablesValidatorFactory(),
+				new TypeResolvingValidatorFactory(),
+				new BeanValidatorFactory(),
+				new InterfaceValidatorFactory(),
+				new ClassValidatorFactory(),
+				new ConstantValidatorFactory(),
+				new BooleanLiteralValidatorFactory(),
+				new NumberLiteralValidatorFactory(),
+				new StringLiteralValidatorFactory(),
+				new ArrayLiteralValidatorFactory(),
+				new ReferenceValidatorFactory(),
 				new InvocationValidatorFactory(),
 				new UnaryOperationValidatorFactory(),
 				new OperationValidatorFactory(),
 				new ReturnValueValidatorFactory(),
 				new ImplementationValidatorFactory(),
 				new AssignmentValidatorFactory(),
-				new ConstructionValidatorFactory(),
-				new ThrowStatementValidatorFactory(library),
+				new ThrowStatementValidatorFactory(),
 				new BranchStatementValidatorFactory(),
 				new RunStatementValidatorFactory(),
 				new SiteValidatorFactory()
 		));
+
 		packageBuilder = new ConfigurablePackageGenerator(
 				new ASMPackageClassGenerator(),
 				new ASMBeanGenerator(),
@@ -112,6 +108,7 @@ public class BaliCompiler {
 				new ASMClassGenerator(),
 				new ASMRunStatementGenerator()
 		);
+
 		moduleWriter = new JarPackager();
 
 	}
@@ -176,7 +173,7 @@ public class BaliCompiler {
 
 		try {
 
-			compiler.compile(packageDescriptions, os);
+			compiler.compile(packageDescriptions, os, Thread.currentThread().getContextClassLoader());
 
 		} catch (ValidationException e) {
 			os.close();
@@ -209,7 +206,10 @@ public class BaliCompiler {
 		return dir;
 	}
 
-	public void compile(List<PackageDescription> packageDescriptions, OutputStream output) throws Exception {
+	public void compile(List<PackageDescription> packageDescriptions, OutputStream output, ClassLoader dependencies) throws Exception {
+
+		ClassLibrary library = new ClassLibrary(dependencies);
+		ConstantLibrary constantLibrary = new ConstantLibrary(library);
 
 		List<CompilationUnitNode> compilationUnits = new ArrayList<>();
 
@@ -218,7 +218,7 @@ public class BaliCompiler {
 			compilationUnits.add(compilationUnit);
 		}
 
-		Map<String, List<ValidationFailure>> packageFailures = validator.validate(compilationUnits);
+		Map<String, List<ValidationFailure>> packageFailures = validator.validate(compilationUnits, library, constantLibrary);
 		if (packageFailures.size() > 0) {
 			throw new ValidationException(packageFailures);
 		}

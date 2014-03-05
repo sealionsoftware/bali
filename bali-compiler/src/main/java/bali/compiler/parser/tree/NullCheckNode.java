@@ -1,5 +1,7 @@
 package bali.compiler.parser.tree;
 
+import bali.compiler.reference.BlockingReference;
+import bali.compiler.reference.Reference;
 import bali.compiler.type.Site;
 
 /**
@@ -9,7 +11,7 @@ import bali.compiler.type.Site;
 public class NullCheckNode extends ExpressionNode {
 
 	private ExpressionNode target;
-	private Site type;
+	private Reference<Site> type = new BlockingReference<>();
 
 	public NullCheckNode() {
 	}
@@ -27,12 +29,12 @@ public class NullCheckNode extends ExpressionNode {
 		this.target = target;
 	}
 
-	public void setType(Site site) {
-		this.type = site;
+	public void setType(Site type) {
+		this.type.set(type);
 	}
 
 	public Site getType() {
-		return type;
+		return type.get();
 	}
 
 	public String toString(){

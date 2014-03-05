@@ -6,6 +6,8 @@ import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.ReturnStatementNode;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.parser.tree.StatementNode;
+import bali.compiler.type.ClassLibrary;
+import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.Site;
 import bali.compiler.validation.ValidationFailure;
 
@@ -19,9 +21,7 @@ import java.util.List;
  */
 public class ReturnValueValidatorFactory implements ValidatorFactory {
 
-
-
-	public Validator createValidator() {
+	public Validator createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
 
 		return new Validator() {
 
@@ -29,20 +29,17 @@ public class ReturnValueValidatorFactory implements ValidatorFactory {
 
 			public List<ValidationFailure> validate(Node node, Control control) {
 
-				List<ValidationFailure> failures;
 				if (node instanceof MethodDeclarationNode) {
-					failures = validate((MethodDeclarationNode) node);
+					return validate((MethodDeclarationNode) node, control);
 				} else if (node instanceof ReturnStatementNode) {
-					failures = validate((ReturnStatementNode) node);
-				} else {
-					failures = Collections.emptyList();
+					return validate((ReturnStatementNode) node);
 				}
 				control.validateChildren();
-				return failures;
+				return Collections.emptyList();
 			}
 
 			// Engages methods, ensures that their return values are correct
-			public List<ValidationFailure> validate(MethodDeclarationNode method) {
+			public List<ValidationFailure> validate(MethodDeclarationNode method, Control control) {
 
 				List<ValidationFailure> failures = new ArrayList<>();
 
@@ -61,6 +58,9 @@ public class ReturnValueValidatorFactory implements ValidatorFactory {
 				} else if (!(lastStatement instanceof ReturnStatementNode)) {
 					statements.add(new ReturnStatementNode());
 				}
+
+				control.validateChildren();
+				type = null;
 
 				return failures;
 			}

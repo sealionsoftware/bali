@@ -25,17 +25,13 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class MultiThreadedValidationEngine implements ValidationEngine {
 
-	private ClassLibrary classLibrary;
-	private ConstantLibrary constantLibrary;
 	private List<ValidatorFactory> validatorFactories;
 
-	public MultiThreadedValidationEngine(ClassLibrary classLibrary, ConstantLibrary constantLibrary, List<ValidatorFactory> validatorFactories) {
-		this.classLibrary = classLibrary;
-		this.constantLibrary = constantLibrary;
+	public MultiThreadedValidationEngine(List<ValidatorFactory> validatorFactories) {
 		this.validatorFactories = validatorFactories;
 	}
 
-	public Map<String, List<ValidationFailure>> validate(final List<CompilationUnitNode> units) {
+	public Map<String, List<ValidationFailure>> validate(final List<CompilationUnitNode> units, ClassLibrary classLibrary, ConstantLibrary constantLibrary) {
 
 		final Map<String,List<ValidationFailure>> validationFailures = new LinkedHashMap<>();
 		for (CompilationUnitNode compilationUnitNode : units){
@@ -54,13 +50,14 @@ public class MultiThreadedValidationEngine implements ValidationEngine {
 
 		final ReentrantLock lock = new ReentrantLock();
 		final List<BlockDeclaringThread> threads = new ArrayList<>();
+		final List<Exception> exceptions = Collections.synchronizedList(new ArrayList<Exception>());
 		final SimpleReference<Boolean> terminated = new SimpleReference<>(false);
 
 		for (final ValidatorFactory validatorFactory : validatorFactories) {
 			for (final CompilationUnitNode unit : units){
 				List<ValidationFailure> existingFailures = validationFailures.get(unit.getName());
 				final List<ValidationFailure> unitFailures = existingFailures != null ? existingFailures : Collections.synchronizedList(new ArrayList<ValidationFailure>());
-				final Validator validator = validatorFactory.createValidator();
+				final Validator validator = validatorFactory.createValidator(classLibrary, constantLibrary);
 				BlockDeclaringThread t = new BlockDeclaringThread(new Runnable() {
 					public void run() {
 						try {
@@ -69,6 +66,9 @@ public class MultiThreadedValidationEngine implements ValidationEngine {
 							);
 						} catch (TerminatedException e){
 							unitFailures.addAll(e.getFailures());
+							terminated.set(true);
+						} catch (Exception e){
+							exceptions.add(e);
 							terminated.set(true);
 						}
 					}
@@ -98,6 +98,10 @@ public class MultiThreadedValidationEngine implements ValidationEngine {
 			if (!unitFailures.isEmpty()){
 				ret.put(validationFailure.getKey(), validationFailure.getValue());
 			}
+		}
+
+		if (exceptions.size() > 0){
+			throw new RuntimeException("Compiler programming errors occured whilst compiling", exceptions.get(0));
 		}
 
 		if (terminated.get() && ret.size() == 0){

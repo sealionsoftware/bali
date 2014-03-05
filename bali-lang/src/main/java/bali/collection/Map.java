@@ -14,7 +14,7 @@ public interface Map<K extends Value<K>, V> extends Collection<Entry<K, V>> {
 
 	public V get(K key);
 
-	public void set(K key, V value);
+	public void put(K key, V value);
 
 	public Boolean contains(K key);
 

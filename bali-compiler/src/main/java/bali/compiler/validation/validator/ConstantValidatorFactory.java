@@ -3,6 +3,7 @@ package bali.compiler.validation.validator;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.ConstantNode;
 import bali.compiler.parser.tree.Node;
+import bali.compiler.type.ClassLibrary;
 import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.Declaration;
 import bali.compiler.type.Site;
@@ -18,13 +19,7 @@ import java.util.List;
  */
 public class ConstantValidatorFactory implements ValidatorFactory {
 
-	private ConstantLibrary library;
-
-	public ConstantValidatorFactory(ConstantLibrary library) {
-		this.library = library;
-	}
-
-	public Validator createValidator() {
+	public Validator createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
 		return new Validator() {
 
 			private List<Declaration<Site>> declarations = new ArrayList<>();
@@ -34,7 +29,7 @@ public class ConstantValidatorFactory implements ValidatorFactory {
 				if (node instanceof CompilationUnitNode){
 					String unitName = ((CompilationUnitNode) node).getName();
 					control.validateChildren();
-					library.addPackageConstants(unitName, declarations);
+					constantLibrary.addPackageConstants(unitName, declarations);
 				} else if (node instanceof ConstantNode){
 					ConstantNode constantNode = (ConstantNode) node;
 					declarations.add(

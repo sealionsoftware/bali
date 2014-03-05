@@ -51,7 +51,7 @@ public abstract class Node {
 			if (cause instanceof InterruptedException){
 				throw new TerminatedException(failures);
 			}
-//			throw e;
+			throw e;
 		}
 		return failures;
 	}

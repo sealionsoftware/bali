@@ -51,7 +51,7 @@ public class ParameterisedSite extends ParameterisedType implements Site {
 			sb.append("?");
 		}
 		if (threadsafe){
-			sb.append("!");
+			sb.append("@");
 		}
 		return sb.toString();
 	}

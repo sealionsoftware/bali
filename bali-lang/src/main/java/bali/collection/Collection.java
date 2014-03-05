@@ -6,6 +6,7 @@ import bali.Iterable;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 import bali.annotation.Operator;
+import bali.annotation.SelfTyped;
 
 /**
  * User: Richard
@@ -22,10 +23,13 @@ public interface Collection<T> extends Iterable<T> {
 	public T get(Integer index);
 
 	@Operator("+")
+	@SelfTyped
 	public Collection<T> join(Collection<T> operand);
 
+	@SelfTyped
 	public Collection<T> head(Integer index);
 
+	@SelfTyped
 	public Collection<T> tail(Integer index);
 
 }

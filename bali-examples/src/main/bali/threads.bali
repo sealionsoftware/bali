@@ -5,15 +5,15 @@ import bali.Executable
 import bali.Count
 import bali.Counter
 
-constant String! GREETING = "Hello World"
+constant String@ GREETING = "Hello World"
 
 object ThreadedExecutable() implements Executable {
 
  	method execute(){
 
 		Count i = new Counter();
-		while (++i < 100) {
-			Integer! imm = #i;
+		while (++i < 5) {
+			Integer@ imm = #i;
 			run {
 				CONSOLE << (GREETING + ": " + NUMBER_FACTORY.format(imm));
 			}

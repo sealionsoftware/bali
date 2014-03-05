@@ -1,6 +1,5 @@
 package bali.compiler.type;
 
-import bali.annotation.Hidden;
 import bali.annotation.Nullable;
 import bali.annotation.ThreadSafe;
 import bali.compiler.reference.Reference;
@@ -24,8 +23,6 @@ public class PackageConstantsBuilderVisitor extends ClassVisitor {
 			org.objectweb.asm.Type.getType(Nullable.class).getDescriptor();
 	private static final String THREADSAFE_ANNOTATION_NAME  =
 			org.objectweb.asm.Type.getType(ThreadSafe.class).getDescriptor();
-	private static final String HIDDEN_ANNOTATION_NAME  =
-			org.objectweb.asm.Type.getType(Hidden.class).getDescriptor();
 
 	private ClassLibrary library;
 
@@ -43,26 +40,23 @@ public class PackageConstantsBuilderVisitor extends ClassVisitor {
 
 			private boolean isNullable = false;
 			private boolean isThreadSafe = false;
-			private boolean isHidden = false;
 
 			public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
 				if (desc.equals(NULLABLE_ANNOTATION_NAME)){
 					isNullable = true;
 				} else if (desc.equals(THREADSAFE_ANNOTATION_NAME)){
 					isThreadSafe = true;
-				} else if (desc.equals(HIDDEN_ANNOTATION_NAME)){
-					isHidden = true;
 				}
 				return super.visitAnnotation(desc, visible);
 			}
 
 			public void visitEnd() {
-				if (isHidden){
-					return;
-				}
 				if (signature != null){
 					SignatureReader signatureReader = new SignatureReader(signature);
-					SiteSignatureVisitor fieldVisitor = new SiteSignatureVisitor(library, Collections.<String, Type>emptyMap(), isNullable, isThreadSafe);
+					SiteData data = new SiteData();
+					data.nullable = isNullable;
+					data.threadSafe = isThreadSafe;
+					SiteSignatureVisitor fieldVisitor = new SiteSignatureVisitor(library, Collections.<String, Type>emptyMap(), data);
 					signatureReader.accept(fieldVisitor);
 					declaredConstants.add(new Declaration<>(name, fieldVisitor.getSite()));
 				} else {

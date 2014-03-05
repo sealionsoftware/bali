@@ -25,6 +25,8 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collections;
+
 import static bali.number.NumberFactory.NUMBER_FACTORY;
 
 /**
@@ -97,6 +99,7 @@ public class ASMPackageClassGeneratorUnitTest {
 		type.setSite(new TestVanillaSite(Instantiatable.class));
 		ConstructionExpressionNode cv = new ConstructionExpressionNode(0, 0);
 		cv.setType(new TestVanillaSite(Instantiatable.class));
+		cv.setResolvedArguments(Collections.<ExpressionNode>emptyList());
 		testGenerateConstant(Instantiatable.class, cv, new Instantiatable());
 	}
 

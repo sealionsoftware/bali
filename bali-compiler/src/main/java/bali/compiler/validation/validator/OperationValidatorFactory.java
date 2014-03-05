@@ -2,6 +2,8 @@ package bali.compiler.validation.validator;
 
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.OperationNode;
+import bali.compiler.type.ClassLibrary;
+import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.Operator;
 import bali.compiler.type.Site;
 import bali.compiler.type.Type;
@@ -16,7 +18,7 @@ import java.util.List;
  */
 public class OperationValidatorFactory implements ValidatorFactory {
 
-	public Validator createValidator() {
+	public Validator createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
 
 		return new Validator() {
 
@@ -59,12 +61,6 @@ public class OperationValidatorFactory implements ValidatorFactory {
 				for (Operator operator : site.getOperators()) {
 					if (operator.getName().equals(name)) {
 						return operator;
-					}
-				}
-				for (Type iface : site.getInterfaces()){
-					Operator ret = getOperatorWithName(name, iface);
-					if (ret != null){
-						return ret;
 					}
 				}
 				return null;

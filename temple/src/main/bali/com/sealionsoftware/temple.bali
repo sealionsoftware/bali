@@ -2,15 +2,24 @@ import bali.Executable
 import bali.Boolean
 import bali.String
 import bali.Exception
+import bali.Count
+import bali.Counter
+import bali.Integer
+import bali.RuntimeException
+
+import bali.collection.Entry
+import bali.collection.Collection
+import bali.collection.HashMap
+
 import bali.io.Socket
 import bali.io.ServerSocket
 import bali.io.SocketMonitor
-import bali.Count
-import bali.Counter
+
 import bali.monitor.ConnectionMonitor
-import bali.Integer
 
 import bali.server.HttpHandler
+import bali.server.HttpResponse
+import bali.server.HttpRequest
 
 interface ProtocolHandler {
 
@@ -25,7 +34,6 @@ object StubRouter implements HttpHandler {
 			body: "Hello World"
 		);
 	}
-
 }
 
 object HttpProtocolHandler(HttpHandler router) implements ProtocolHandler {
@@ -34,26 +42,24 @@ object HttpProtocolHandler(HttpHandler router) implements ProtocolHandler {
 
 		CONSOLE << "Receiving Request";
 
-
-
 		String header = << connection;
 		if (?header){
 
-			List[String] requestLineElements = header.split(" ");
+			Collection[String] requestLineElements = header.split(" ");
 			if (requestLineElements.size() != 3){
 				throw new RuntimeException("The http header line was invalid as it had " + NUMBER_FACTORY.format(requestLineElements.size()) + " elements");
 			}
 
 			HttpRequest request = new HttpRequest(
-				httpMethod: headerElements#1,
-				path: headerElements#2,
+				httpMethod: requestLineElements#1,
+				path: requestLineElements#2,
 				headers: new HashMap()
 			);
 
 			while (true) {
                 String? read = << connection;
                 if (?read & read.length() > 0){
-					List[String] headerElements = header.split(": ");
+					Collection[String] headerElements = header.split(": ");
 					if (headerElements.size() != 2){
                     	throw new RuntimeException("The http header is invalid as it had " + NUMBER_FACTORY.format(headerElements.size()) + " elements");
                     }
@@ -62,23 +68,22 @@ object HttpProtocolHandler(HttpHandler router) implements ProtocolHandler {
                     break;
                 }
             }
-		} else {
-			return;
-		}
 
-        HttpResponse response = router.handle(request);
+	        HttpResponse response = router.handle(request);
+	        connection << "HTTP/1.1 " + NUMBER_FACTORY.format(response.status) + " OK";
 
+	        for (Entry[String, String] entry : response.headers){
+	            connection << entry.key + ": " + entry.value;
+	        }
 
-        connection << "HTTP/1.1 " + NUMBER_FACTORY.format(response.status) + " OK";
+	        connection << "";
+	        connection << response.body;
 
-        for (Entry[String, String] entry : response.headers){
-            connection << entry.key + ": " + entry.value;
+	        CONSOLE << "Response Completed";
+
+        } else {
+            return;
         }
-
-        connection << "";
-        connection << response.body;
-
-        CONSOLE << "Response Completed";
 	}
 
 }

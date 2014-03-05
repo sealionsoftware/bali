@@ -6,6 +6,7 @@ package bali.compiler.type;
  */
 public class SiteData {
 
+	public boolean selfTyped;
 	public boolean nullable;
 	public boolean threadSafe;
 

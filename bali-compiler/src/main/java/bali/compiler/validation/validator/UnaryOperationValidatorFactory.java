@@ -1,7 +1,12 @@
 package bali.compiler.validation.validator;
 
 import bali.compiler.parser.tree.Node;
+import bali.compiler.parser.tree.NullCheckNode;
 import bali.compiler.parser.tree.UnaryOperationNode;
+import bali.compiler.reference.Reference;
+import bali.compiler.type.ClassLibrary;
+import bali.compiler.type.ConstantLibrary;
+import bali.compiler.type.ParameterisedSite;
 import bali.compiler.type.Site;
 import bali.compiler.type.Type;
 import bali.compiler.type.UnaryOperator;
@@ -23,9 +28,11 @@ import java.util.List;
  */
 public class UnaryOperationValidatorFactory implements ValidatorFactory {
 
-	public Validator createValidator() {
+	public Validator createValidator(final ClassLibrary library, ConstantLibrary constantLibrary) {
 
 		return new Validator() {
+
+			private Reference<bali.compiler.type.Class> nullCheckClass = library.getReference(bali.Boolean.class.getName());
 
 			public List<ValidationFailure> validate(Node node, Control control) {
 
@@ -52,6 +59,9 @@ public class UnaryOperationValidatorFactory implements ValidatorFactory {
 					}
 
 					unary.setResolvedOperator(operator);
+				} else if (node instanceof NullCheckNode){
+					NullCheckNode nullCheckNode = (NullCheckNode) node;
+					nullCheckNode.setType(new ParameterisedSite(nullCheckClass, false, nullCheckNode.getTarget().getType().isThreadSafe()));
 				}
 
 				return ret;
@@ -61,12 +71,6 @@ public class UnaryOperationValidatorFactory implements ValidatorFactory {
 				for (UnaryOperator operator : site.getUnaryOperators()) {
 					if (operator.getName().equals(name)) {
 						return operator;
-					}
-				}
-				for (Type iface : site.getInterfaces()){
-					UnaryOperator ret = getUnaryOperatorWithName(name, iface);
-					if (ret != null){
-						return ret;
 					}
 				}
 				return null;

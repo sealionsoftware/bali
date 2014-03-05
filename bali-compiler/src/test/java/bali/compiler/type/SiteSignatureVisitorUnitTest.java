@@ -13,7 +13,11 @@ import java.util.HashMap;
  */
 public class SiteSignatureVisitorUnitTest {
 
-	private SiteSignatureVisitor visitor = new SiteSignatureVisitor(new ClassLibrary(), new HashMap<String, Type>(), false, false);
+	private SiteSignatureVisitor visitor = new SiteSignatureVisitor(
+			new ClassLibrary(Thread.currentThread().getContextClassLoader()),
+			new HashMap<String, Type>(),
+			new SiteData()
+	);
 
 	@Test
 	public void testVisitTypeVariable() throws Exception {

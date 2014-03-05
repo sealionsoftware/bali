@@ -34,6 +34,6 @@ public class Declaration<T extends Type> {
 	}
 
 	public String toString() {
-		return name;
+		return type != null ? type + " " + name : name;
 	}
 }

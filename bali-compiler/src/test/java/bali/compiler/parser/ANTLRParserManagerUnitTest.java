@@ -29,7 +29,7 @@ import org.junit.Test;
  */
 public class ANTLRParserManagerUnitTest {
 
-	private static ANTLRParserManager parserManager = new ANTLRParserManager(new ClassLibrary());
+	private static ANTLRParserManager parserManager = new ANTLRParserManager();
 
 	private static CompilationUnitNode unit;
 
@@ -117,13 +117,13 @@ public class ANTLRParserManagerUnitTest {
 		MethodDeclarationNode method = unit.getClasses().get(0).getMethods().get(0);
 		Assert.assertEquals("Name", "aMethod", method.getName());
 		Assert.assertEquals("Class", "Number", method.getType().getClassName());
-		Assert.assertEquals("Arguments", 1, method.getArguments().size());
+		Assert.assertEquals("Arguments", 1, method.getParameters().size());
 		Assert.assertEquals("Children", 3, method.getChildren().size());
 	}
 
 	@Test
 	public void testMethodArgument() {
-		DeclarationNode declaration = unit.getClasses().get(0).getMethods().get(0).getArguments().get(0);
+		DeclarationNode declaration = unit.getClasses().get(0).getMethods().get(0).getParameters().get(0);
 		Assert.assertEquals("Name", "anArgument", declaration.getName());
 		Assert.assertEquals("Class", "Number", declaration.getType().getClassName());
 		Assert.assertEquals("Children", 1, declaration.getChildren().size());

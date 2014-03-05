@@ -3,7 +3,7 @@ package bali.compiler.bytecode;
 import bali.Number;
 import bali.True;
 import bali.compiler.GeneratedClass;
-import bali.compiler.parser.tree.ArgumentDeclarationNode;
+import bali.compiler.parser.tree.ParameterNode;
 import bali.compiler.parser.tree.CodeBlockNode;
 import bali.compiler.parser.tree.FieldNode;
 import bali.compiler.parser.tree.InterfaceNode;
@@ -137,7 +137,7 @@ public class ASMClassGeneratorUnitTest {
 		type.setClassName("Number");
 		type.setSite(new TestVanillaSite(Number.class));
 
-		ArgumentDeclarationNode argument = new ArgumentDeclarationNode();
+		ParameterNode argument = new ParameterNode();
 		argument.setType(type);
 		argument.setName("anArgument");
 
@@ -146,7 +146,7 @@ public class ASMClassGeneratorUnitTest {
 
 		MethodDeclarationNode declaration = new MethodDeclarationNode();
 		declaration.setName("aMethod");
-		declaration.addArgument(argument);
+		declaration.addParameter(argument);
 		declaration.setBody(codeBlock);
 
 		clazz.addMethod(declaration);
@@ -165,7 +165,7 @@ public class ASMClassGeneratorUnitTest {
 		type.setClassName("Number");
 		type.setSite(new TestVanillaSite(Number.class));
 
-		ArgumentDeclarationNode argument = new ArgumentDeclarationNode();
+		ParameterNode argument = new ParameterNode();
 		argument.setType(type);
 		argument.setName("anArgument");
 
@@ -174,7 +174,7 @@ public class ASMClassGeneratorUnitTest {
 
 		MethodDeclarationNode declaration = new MethodDeclarationNode();
 		declaration.setName("aMethod");
-		declaration.addArgument(argument);
+		declaration.addParameter(argument);
 		declaration.setBody(codeBlock);
 		declaration.setDeclared(true);
 

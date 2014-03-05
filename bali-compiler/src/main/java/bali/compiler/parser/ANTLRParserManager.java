@@ -1,6 +1,7 @@
 package bali.compiler.parser;
 
-import bali.compiler.parser.tree.ArgumentDeclarationNode;
+import bali.compiler.parser.tree.ArgumentNode;
+import bali.compiler.parser.tree.ParameterNode;
 import bali.compiler.parser.tree.ArrayLiteralExpressionNode;
 import bali.compiler.parser.tree.BeanNode;
 import bali.compiler.parser.tree.BooleanLiteralExpressionNode;
@@ -50,6 +51,7 @@ import org.antlr.v4.runtime.DefaultErrorStrategy;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -62,12 +64,6 @@ import java.util.List;
  * Date: 30/04/13
  */
 public class ANTLRParserManager implements ParserManager {
-
-	private Site booleanType;
-
-	public ANTLRParserManager(ClassLibrary library) {
-		this.booleanType = new ParameterisedSite(library.getReference(bali.Boolean.class.getName()), false, true);
-	}
 
 	public CompilationUnitNode parse(InputStream compilationUnit, String name) throws Exception {
 
@@ -209,7 +205,7 @@ public class ANTLRParserManager implements ParserManager {
 		}
 		BaliParser.ParameterListContext parameterList = context.parameterList();
 		if (parameterList != null) for (BaliParser.ParameterContext parameter : parameterList.parameter()) {
-			method.addArgument(build(parameter));
+			method.addParameter(build(parameter));
 		}
 		method.setBody(build(context.codeBlock()));
 		return method;
@@ -402,8 +398,8 @@ public class ANTLRParserManager implements ParserManager {
 		return field;
 	}
 
-	private ArgumentDeclarationNode build(BaliParser.ParameterContext context) {
-		ArgumentDeclarationNode argumentDeclaration = new ArgumentDeclarationNode(l(context), c(context));
+	private ParameterNode build(BaliParser.ParameterContext context) {
+		ParameterNode argumentDeclaration = new ParameterNode(l(context), c(context));
 		argumentDeclaration.setName(context.IDENTIFIER().getText());
 		argumentDeclaration.setType(build(context.siteDefinition()));
 		return argumentDeclaration;
@@ -425,7 +421,7 @@ public class ANTLRParserManager implements ParserManager {
 		}
 		BaliParser.ParameterListContext adlc = context.parameterList();
 		if (adlc != null) for (BaliParser.ParameterContext parameter : adlc.parameter()) {
-			method.addArgument(build(parameter));
+			method.addParameter(build(parameter));
 		}
 		return method;
 	}
@@ -449,7 +445,6 @@ public class ANTLRParserManager implements ParserManager {
 
 	private NullCheckNode build(BaliParser.NullCheckContext context) {
 		NullCheckNode check = new NullCheckNode(l(context), c(context));
-		check.setType(booleanType);
 		check.setTarget(build(context.expressionForOperation()));
 		return check;
 	}
@@ -582,8 +577,14 @@ public class ANTLRParserManager implements ParserManager {
 		return value;
 	}
 
-	private ExpressionNode build(BaliParser.ArgumentContext context) {
-		return build(context.expression());
+	private ArgumentNode build(BaliParser.ArgumentContext context) {
+		ArgumentNode node = new ArgumentNode(l(context), c(context));
+		TerminalNode name = context.IDENTIFIER();
+		if (name != null){
+			node.setName(name.getText());
+		}
+		node.setValue(build(context.expression()));
+		return node;
 	}
 
 	private ExpressionNode build(BaliParser.ConstructionContext context) {

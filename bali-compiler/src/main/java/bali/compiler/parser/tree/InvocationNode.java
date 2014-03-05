@@ -4,20 +4,16 @@ import bali.compiler.reference.BlockingReference;
 import bali.compiler.type.Method;
 import bali.compiler.type.Site;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * User: Richard
  * Date: 02/05/13
  */
-public class InvocationNode extends ExpressionNode {
+public class InvocationNode extends ParametrisedExpressionNode {
 
 	private ExpressionNode target;
 	private String methodName;
-	private List<ExpressionNode> arguments = new ArrayList<>();
 
-	private BlockingReference<Method> resolvedMethod = new BlockingReference<>();
+	private BlockingReference<Site> resolvedType = new BlockingReference<>();
 	private BlockingReference<Site> targetType = new BlockingReference<>();
 
 	public InvocationNode() {
@@ -28,15 +24,11 @@ public class InvocationNode extends ExpressionNode {
 	}
 
 	public Site getType() {
-		return resolvedMethod.get().getType();
+		return resolvedType.get();
 	}
 
-	public Method getResolvedMethod(){
-		return resolvedMethod.get();
-	}
-
-	public void setResolvedMethod(Method resolvedMethod) {
-		this.resolvedMethod.set(resolvedMethod);
+	public void setResolvedType(Site resolvedType) {
+		this.resolvedType.set(resolvedType);
 	}
 
 	public Site getTargetType(){
@@ -56,21 +48,12 @@ public class InvocationNode extends ExpressionNode {
 		this.methodName = methodName;
 	}
 
-	public void addArgument(ExpressionNode argument) {
-		children.add(argument);
-		arguments.add(argument);
-	}
-
 	public ExpressionNode getTarget() {
 		return target;
 	}
 
 	public String getMethodName() {
 		return methodName;
-	}
-
-	public List<ExpressionNode> getArguments() {
-		return arguments;
 	}
 
 	public String toString() {
@@ -80,7 +63,7 @@ public class InvocationNode extends ExpressionNode {
 		}
 		sb.append(methodName);
 		sb.append("(");
-		for (ExpressionNode argument : arguments){
+		for (ArgumentNode argument : getArguments()){
 			sb.append(argument);
 		}
 		sb.append(")");

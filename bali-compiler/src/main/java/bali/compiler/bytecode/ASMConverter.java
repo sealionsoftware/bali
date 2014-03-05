@@ -1,6 +1,6 @@
 package bali.compiler.bytecode;
 
-import bali.compiler.parser.tree.ArgumentDeclarationNode;
+import bali.compiler.parser.tree.ParameterNode;
 import bali.compiler.parser.tree.MethodNode;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.type.Class;
@@ -34,8 +34,8 @@ public class ASMConverter {
 	}
 
 	public String getMethodDescriptor(MethodNode method) {
-		List<Class> argumentClasses = new ArrayList<>(method.getArguments().size());
-		for (ArgumentDeclarationNode argument : method.getArguments()){
+		List<Class> argumentClasses = new ArrayList<>(method.getParameters().size());
+		for (ParameterNode argument : method.getParameters()){
 			argumentClasses.add(argument.getType().getSite().getTemplate());
 		}
 		SiteNode returnType = method.getType();

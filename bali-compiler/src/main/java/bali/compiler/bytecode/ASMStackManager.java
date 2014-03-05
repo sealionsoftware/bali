@@ -82,7 +82,7 @@ public class ASMStackManager implements Opcodes {
 		Label start = new Label();
 		Label end = new Label();
 		v.visitLabel(start);
-		for (DeclarationNode declaration : method.getArguments()) {
+		for (DeclarationNode declaration : method.getParameters()) {
 			declaredVariables.put(
 					declaration.getName(),
 					new VariableInfo(
@@ -522,7 +522,7 @@ public class ASMStackManager implements Opcodes {
 		v.visitTypeInsn(NEW, internalName);
 		v.visitInsn(DUP);
 		List<Class> argumentClasses = new ArrayList<>();
-		for (ExpressionNode argumentValue : value.getArguments()) {
+		for (ExpressionNode argumentValue : value.getResolvedArguments()) {
 			push(argumentValue, v);
 			argumentClasses.add(argumentValue.getType().getTemplate());
 		}
@@ -534,7 +534,7 @@ public class ASMStackManager implements Opcodes {
 				value.getTarget(),
 				value.getTargetType(),
 				value.getType(),
-				value.getArguments(),
+				value.getResolvedArguments(),
 				value.getMethodName(),
 				v
 		);
