@@ -1,6 +1,5 @@
 package bali.compiler.parser.tree;
 
-import bali.compiler.reference.BlockingReference;
 import bali.compiler.type.Site;
 
 /**
@@ -10,7 +9,6 @@ import bali.compiler.type.Site;
 public class ReferenceAssignmentNode extends AssignmentNode {
 
 	private ReferenceNode reference;
-	private BlockingReference<String> setterName = new BlockingReference<>();
 
 	public ReferenceAssignmentNode() {
 	}
@@ -26,14 +24,6 @@ public class ReferenceAssignmentNode extends AssignmentNode {
 	public void setReference(ReferenceNode reference) {
 		this.reference = reference;
 		children.add(reference);
-	}
-
-	public void setSetterName(String setterName) {
-		this.setterName.set(setterName);
-	}
-
-	public String getSetterName() {
-		return setterName.get();
 	}
 
 	public Site getType() {

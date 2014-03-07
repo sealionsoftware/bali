@@ -10,10 +10,9 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.List;
+import java.util.Set;
 
 
 @org.apache.maven.plugins.annotations.Mojo(
@@ -27,8 +26,8 @@ public class ExecuteBaliGoal implements Mojo {
 	private String executableClassName;
 	@Parameter(property = "project.artifact")
 	private Artifact artifact;
-	@Parameter(property = "project.resolvedArtifacts")
-	private List<Artifact> resolvedArtifacts;
+	@Parameter(property = "project.dependencyArtifacts")
+	private Set<Artifact> dependencyArtifacts;
 
 	private Log log;
 
@@ -43,8 +42,8 @@ public class ExecuteBaliGoal implements Mojo {
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		try {
 			int i = 0;
-			URL[] dependencies = new URL[resolvedArtifacts.size()];
-			for (Artifact resolvedArtifact : resolvedArtifacts){
+			URL[] dependencies = new URL[dependencyArtifacts.size()];
+			for (Artifact resolvedArtifact : dependencyArtifacts){
 				dependencies[i++] = resolvedArtifact.getFile().toURI().toURL();
 			}
 			ClassLoader classLoader = new URLClassLoader(new URL[]{artifact.getFile().toURI().toURL()}, new URLClassLoader(dependencies, Thread.currentThread().getContextClassLoader()));

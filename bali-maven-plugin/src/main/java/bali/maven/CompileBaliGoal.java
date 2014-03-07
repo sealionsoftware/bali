@@ -72,7 +72,8 @@ public class CompileBaliGoal implements Mojo {
 			try {
 				packageDescriptions.add(new PackageDescription(
 						packageName,
-						new FileInputStream(sourceFile)
+						new FileInputStream(sourceFile),
+						sourceFile.getName()
 				));
 			} catch (FileNotFoundException fnfe){
 				log.error("File not found", fnfe);

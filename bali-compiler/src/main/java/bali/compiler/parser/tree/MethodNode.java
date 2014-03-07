@@ -1,5 +1,8 @@
 package bali.compiler.parser.tree;
 
+import bali.compiler.reference.BlockingReference;
+import bali.compiler.type.Method;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -40,7 +43,6 @@ public class MethodNode extends DeclarationNode {
 	public Boolean getFinal() {
 		return true;
 	}
-
 
 	public boolean equals(Object o) {
 		if (this == o) return true;

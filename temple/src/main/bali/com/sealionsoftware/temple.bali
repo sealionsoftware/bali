@@ -42,12 +42,12 @@ object HttpProtocolHandler(HttpHandler router) implements ProtocolHandler {
 
 		CONSOLE << "Receiving Request";
 
-		String header = << connection;
-		if (?header){
+		String? requestLine = << connection;
+		if (?requestLine){
 
-			Collection[String] requestLineElements = header.split(" ");
+			Collection[String] requestLineElements = requestLine / " ";
 			if (requestLineElements.size() != 3){
-				throw new RuntimeException("The http header line was invalid as it had " + NUMBER_FACTORY.format(requestLineElements.size()) + " elements");
+				throw new RuntimeException("The http request line was invalid as it had " + NUMBER_FACTORY.format(requestLineElements.size()) + " elements");
 			}
 
 			HttpRequest request = new HttpRequest(
@@ -57,9 +57,9 @@ object HttpProtocolHandler(HttpHandler router) implements ProtocolHandler {
 			);
 
 			while (true) {
-                String? read = << connection;
-                if (?read & read.length() > 0){
-					Collection[String] headerElements = header.split(": ");
+                String? header = << connection;
+                if (?header & header.size() > 0){
+					Collection[String] headerElements = header / ": ";
 					if (headerElements.size() != 2){
                     	throw new RuntimeException("The http header is invalid as it had " + NUMBER_FACTORY.format(headerElements.size()) + " elements");
                     }

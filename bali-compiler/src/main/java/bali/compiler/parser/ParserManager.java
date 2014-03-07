@@ -1,5 +1,6 @@
 package bali.compiler.parser;
 
+import bali.compiler.PackageDescription;
 import bali.compiler.parser.tree.CompilationUnitNode;
 
 import java.io.InputStream;
@@ -10,6 +11,6 @@ import java.io.InputStream;
  */
 public interface ParserManager {
 
-	public CompilationUnitNode parse(InputStream compilationUnit, String name) throws Exception;
+	public CompilationUnitNode parse(PackageDescription packageDescription) throws Exception;
 
 }

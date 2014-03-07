@@ -45,6 +45,7 @@ public abstract class Node {
 			}));
 		} catch (RuntimeException e){
 			if (e instanceof TerminatedException){
+				((TerminatedException) e).getFailures().addAll(failures);
 				throw e;
 			}
 			Throwable cause = e.getCause();

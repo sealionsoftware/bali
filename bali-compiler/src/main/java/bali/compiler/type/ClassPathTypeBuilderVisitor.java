@@ -9,6 +9,7 @@ import bali.annotation.ThreadSafe;
 import bali.compiler.reference.Reference;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureReader;
@@ -25,18 +26,20 @@ import java.util.Map;
  */
 public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 
-	private static String OPERATOR_ANNOTATION_DESC =
+	private static final String OPERATOR_ANNOTATION_DESC =
 			org.objectweb.asm.Type.getType(bali.annotation.Operator.class).getDescriptor();
-	private static String NULLABLE_ANNOTATION_DESC =
+	private static final String NULLABLE_ANNOTATION_DESC =
 			org.objectweb.asm.Type.getType(Nullable.class).getDescriptor();
-	private static String THREADSAFE_ANNOTATION_DESC =
+	private static final String THREADSAFE_ANNOTATION_DESC =
 			org.objectweb.asm.Type.getType(ThreadSafe.class).getDescriptor();
-	private static String PARAM_NAME_ANNOTATION_DESC =
+	private static final String PARAM_NAME_ANNOTATION_DESC =
 			org.objectweb.asm.Type.getType(Name.class).getDescriptor();
-	private static String SELF_TYPED_ANNOTATION_DESC =
+	private static final String SELF_TYPED_ANNOTATION_DESC =
 			org.objectweb.asm.Type.getType(SelfTyped.class).getDescriptor();
-	private static String METATYPE_ANNOTATION_DESC =
+	private static final String METATYPE_ANNOTATION_DESC =
 			org.objectweb.asm.Type.getType(MetaType.class).getDescriptor();
+
+	private static final int PUBLIC_STATIC = Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC;
 
 	private ClassLibrary library;
 
@@ -107,9 +110,50 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 		return super.visitAnnotation(desc, visible);
 	}
 
+	public FieldVisitor visitField(int access, final String name, final String desc, final String signature, final Object value) {
+		if ((access & PUBLIC_STATIC) != Opcodes.ACC_PUBLIC){
+			return null;
+		}
+
+		return new FieldVisitor(Opcodes.ASM4) {
+
+			private SiteData data = new SiteData();
+
+			public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+				if (NULLABLE_ANNOTATION_DESC.equals(desc)){
+					data.nullable = true;
+				} else if (THREADSAFE_ANNOTATION_DESC.equals(desc)){
+					data.threadSafe = true;
+				} else if (SELF_TYPED_ANNOTATION_DESC.equals(desc)){
+					data.selfTyped = true;
+				}
+				return super.visitAnnotation(desc, visible);
+			}
+
+			public void visitEnd() {
+
+				Site fieldType;
+				if (signature != null) {
+					SiteSignatureVisitor visitor = new SiteSignatureVisitor(library, typeVariableBounds, data);
+					new SignatureReader(signature).accept(visitor);
+					fieldType = visitor.getSite();
+				} else {
+					fieldType = makeSite(
+							library.getReference(org.objectweb.asm.Type.getType(desc).getClassName()),
+							data
+					);
+				}
+				properties.add(new Declaration<>(
+						name,
+						fieldType
+				));
+			}
+		};
+	}
+
 	public MethodVisitor visitMethod(int access, final String name, final String desc, final String signature, String[] exceptions) {
 
-		if ((access & Opcodes.ACC_PUBLIC) != Opcodes.ACC_PUBLIC){
+		if ((access & PUBLIC_STATIC) != Opcodes.ACC_PUBLIC){
 			return null;
 		}
 
@@ -241,17 +285,17 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 				}
 			}
 
-			private Site makeSite(Reference<Class> type, SiteData data){
-				Site ret = new ParameterisedSite(type, data.nullable, data.threadSafe);
-				if (data.selfTyped){
-					ret = new SelfSite(ret);
-				}
-				return ret;
-			}
+
 		};
 	}
 
-
+	private Site makeSite(Reference<Class> type, SiteData data){
+		Site ret = new ParameterisedSite(type, data.nullable, data.threadSafe);
+		if (data.selfTyped){
+			ret = new SelfSite(ret);
+		}
+		return ret;
+	}
 
 	public void visitEnd() {
 		super.visitEnd();

@@ -31,4 +31,5 @@ public class MethodDeclarationNode extends MethodNode {
 	public void setDeclared(Boolean declared) {
 		isDeclared = declared;
 	}
+
 }

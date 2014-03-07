@@ -163,7 +163,8 @@ public class BaliCompiler {
 			String packageName = fileName.substring(0, fileName.length() - BALI_SOURCE_FILE_EXTENSION.length());
 			packageDescriptions.add(new PackageDescription(
 					packageName,
-					new FileInputStream(sourceFile)
+					new FileInputStream(sourceFile),
+					fileName
 			));
 		}
 
@@ -214,7 +215,7 @@ public class BaliCompiler {
 		List<CompilationUnitNode> compilationUnits = new ArrayList<>();
 
 		for (PackageDescription packageDescription : packageDescriptions) {
-			CompilationUnitNode compilationUnit = parserManager.parse(packageDescription.file, packageDescription.name);
+			CompilationUnitNode compilationUnit = parserManager.parse(packageDescription);
 			compilationUnits.add(compilationUnit);
 		}
 

@@ -1,5 +1,6 @@
 package bali.compiler.validation.validator;
 
+import bali.compiler.BaliCompiler;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.InvocationNode;
 import bali.compiler.parser.tree.Node;
@@ -24,6 +25,7 @@ public class RunStatementValidatorFactory implements ValidatorFactory {
 		return new Validator(){
 
 			private String unitName;
+			private String sourceName;
 			private List<RunStatementNode> runStatementNodes;
 			private int runContextSize = 0;
 
@@ -35,6 +37,7 @@ public class RunStatementValidatorFactory implements ValidatorFactory {
 
 					CompilationUnitNode compilationUnitNode = (CompilationUnitNode) node;
 					unitName = compilationUnitNode.getName();
+					sourceName = compilationUnitNode.getSourceFile();
 					runStatementNodes = new ArrayList<>();
 					control.validateChildren();
 					compilationUnitNode.setRunStatements(runStatementNodes);
@@ -45,7 +48,7 @@ public class RunStatementValidatorFactory implements ValidatorFactory {
 
 					RunStatementNode runStatementNode = (RunStatementNode) node;
 					runStatementNode.setRunnableClassName(unitName + ".RunStatement$" + runStatementNodes.size());
-					runStatementNode.setSourceFileName(unitName + ".bali");
+					runStatementNode.setSourceFileName(sourceName);
 
 					runStatementNodes.add(runStatementNode);
 

@@ -33,6 +33,17 @@
 				<artifactId>bali-maven-plugin</artifactId>
 				<version>1.0-SNAPSHOT</version>
 				<extensions>true</extensions>
+				<executions>
+					<execution>
+						<id>temple</id>
+						<goals>
+							<goal>execute-bali</goal>
+						</goals>
+						<configuration>
+							<executableClassName>com.sealionsoftware.temple.TempleServer</executableClassName>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

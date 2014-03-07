@@ -15,6 +15,7 @@ import java.util.Map;
 public class CompilationUnitNode extends Node {
 
 	private String name;
+	private String sourceFile;
 	private List<ImportNode> imports = new ArrayList<>();
 	private List<ConstantNode> constants = new ArrayList<>();
 	private List<BeanNode> beans = new ArrayList<>();
@@ -30,6 +31,10 @@ public class CompilationUnitNode extends Node {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public void setSourceFile(String sourceFile) {
+		this.sourceFile = sourceFile;
 	}
 
 	public void addImport(ImportNode iport){
@@ -59,6 +64,10 @@ public class CompilationUnitNode extends Node {
 
 	public String getName() {
 		return name;
+	}
+
+	public String getSourceFile() {
+		return sourceFile;
 	}
 
 	public List<ImportNode> getImports() {

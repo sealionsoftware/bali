@@ -8,11 +8,25 @@ import java.io.InputStream;
  */
 public class PackageDescription {
 
-	public PackageDescription(String name, InputStream file) {
+	private String name;
+	private String sourceFileName;
+	private InputStream file;
+
+	public PackageDescription(String name, InputStream file, String sourceFileName) {
 		this.name = name;
 		this.file = file;
+		this.sourceFileName = sourceFileName;
 	}
 
-	public String name;
-	public InputStream file;
+	public String getName() {
+		return name;
+	}
+
+	public String getSourceFileName() {
+		return sourceFileName;
+	}
+
+	public InputStream getFile() {
+		return file;
+	}
 }

@@ -36,7 +36,7 @@ public class ASMPackageClassGenerator implements Generator<CompilationUnitNode, 
 		for (ConstantNode constant : input.getConstants()) {
 			cw.visitField(ACC_PUBLIC + ACC_FINAL + ACC_STATIC,
 					constant.getName(),
-					converter.getTypeDescriptor(constant.getType()),
+					converter.getTypeDescriptor(constant.getType().getSite().getTemplate()),
 					null,
 					null
 			).visitEnd();
@@ -55,7 +55,7 @@ public class ASMPackageClassGenerator implements Generator<CompilationUnitNode, 
 			ConstantNode constant = constantValueEntry.getKey();
 			ExpressionNode value = constantValueEntry.getValue();
 			manager.push(value, clinitv);
-			clinitv.visitFieldInsn(PUTSTATIC, qualified, constant.getName(), converter.getTypeDescriptor(constant.getType()));
+			clinitv.visitFieldInsn(PUTSTATIC, qualified, constant.getName(), converter.getTypeDescriptor(constant.getType().getSite().getTemplate()));
 		}
 		clinitv.visitInsn(RETURN);
 		clinitv.visitMaxs(1, 1);

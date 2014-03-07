@@ -61,6 +61,10 @@ public class VariableType implements Type {
 	}
 
 	public String toString(){
-		return name + " " + bound;
+		StringBuilder sb = new StringBuilder(name);
+		if (bound != null){
+			sb.append(" ").append(bound);
+		}
+		return sb.toString();
 	}
 }

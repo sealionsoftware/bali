@@ -6,11 +6,10 @@ import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.BeanNode;
 import bali.compiler.parser.tree.PropertyNode;
 import bali.compiler.type.Class;
+import bali.compiler.type.Site;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
-
 import java.util.Collections;
 
 /**
@@ -42,7 +41,7 @@ public class ASMBeanGenerator implements Generator<BeanNode, GeneratedClass> {
 		buildConstructor(cw, superClassInternalName);
 
 		for (PropertyNode property : input.getProperties()) {
-			buildProperty(property, cw, hostClassInternalName);
+			buildProperty(property, cw);
 		}
 
 		cw.visitEnd();
@@ -69,58 +68,19 @@ public class ASMBeanGenerator implements Generator<BeanNode, GeneratedClass> {
 
 	}
 
-	private void buildProperty(PropertyNode property, ClassWriter cw, String hostClassInternalName) {
+	private void buildProperty(PropertyNode property, ClassWriter cw) {
 
 		String propertyName = property.getName();
-		bali.compiler.type.Class aClass = property.getType().getSite().getTemplate();
-		String typeDesc = converter.getTypeDescriptor(aClass);
+		Site site = property.getType().getSite();
 
-		cw.visitField(ACC_PRIVATE,
+		cw.visitField(ACC_PUBLIC,
 				propertyName,
-				converter.getTypeDescriptor(property.getType()),
-				null,
+				converter.getTypeDescriptor(property.getType().getSite()),
+				converter.getSignature(site),
 				null
 		).visitEnd();
-
-		String propertyStem = propertyName.substring(0,1).toUpperCase() + propertyName.substring(1);
-
-		MethodVisitor getterVisitor = cw.visitMethod(ACC_PUBLIC + ACC_FINAL,
-				"get" + propertyStem,
-				converter.getMethodDescriptor(aClass, Collections.<Class>emptyList()),
-				null,
-				null
-		);
-
-		getterVisitor.visitCode();
-		getterVisitor.visitVarInsn(ALOAD, 0);
-		getterVisitor.visitFieldInsn(GETFIELD, hostClassInternalName, propertyName, converter.getTypeDescriptor(aClass));
-		getterVisitor.visitInsn(ARETURN);
-
-		getterVisitor.visitMaxs(1, 1);
-		getterVisitor.visitEnd();
-
-		MethodVisitor setterVisitor = cw.visitMethod(ACC_PUBLIC + ACC_FINAL,
-				"set" + propertyStem,
-				converter.getMethodDescriptor(null, Collections.singletonList(aClass)),
-				null,
-				null
-		);
-
-		setterVisitor.visitCode();
-
-		Label start = new Label();
-		Label end = new Label();
-
-		setterVisitor.visitLabel(start);
-		setterVisitor.visitVarInsn(ALOAD, 0);
-		setterVisitor.visitVarInsn(ALOAD, 1);
-		setterVisitor.visitFieldInsn(PUTFIELD, hostClassInternalName, propertyName, typeDesc);
-		setterVisitor.visitInsn(RETURN);
-		setterVisitor.visitLabel(end);
-		setterVisitor.visitLocalVariable(propertyName, typeDesc, null, start, end, 1);
-		setterVisitor.visitMaxs(2, 2);
-		setterVisitor.visitEnd();
-
 	}
+
+
 
 }

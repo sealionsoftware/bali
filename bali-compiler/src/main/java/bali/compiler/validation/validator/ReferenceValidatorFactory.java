@@ -323,7 +323,6 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 					value.setDeclaration( declarationScope.find(value.getName()));
 					value.setHostClass(declarationScope.getClassName());
 					value.setScope(declarationScope.getScope());
-					value.setGetterName(null);
 
 				} else {
 					String name = value.getName();
@@ -337,7 +336,6 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 					value.setDeclaration(propertyData.getProperty().getType());
 					value.setHostClass(propertyData.getHostClass());
 					value.setScope(ReferenceNode.ReferenceScope.FIELD);
-					value.setGetterName("get" + name.substring(0, 1).toUpperCase() + name.substring(1));
 				}
 
 				return failures;

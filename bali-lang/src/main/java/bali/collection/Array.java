@@ -55,7 +55,7 @@ public final class Array<E extends Value<E>> implements ValueCollection<E> {
 	}
 
 	public E get(Integer index) {
-		return elements[convert(index)];
+		return elements[convert(index) - 1];
 	}
 
 	public Boolean contains(@Name("value") E value) {

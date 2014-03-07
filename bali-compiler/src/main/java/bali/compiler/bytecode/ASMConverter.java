@@ -1,10 +1,12 @@
 package bali.compiler.bytecode;
 
-import bali.compiler.parser.tree.ParameterNode;
-import bali.compiler.parser.tree.MethodNode;
-import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.type.Class;
+import bali.compiler.type.Declaration;
+import bali.compiler.type.Method;
+import bali.compiler.type.Site;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.signature.SignatureVisitor;
+import org.objectweb.asm.signature.SignatureWriter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,43 +17,34 @@ import java.util.List;
  */
 public class ASMConverter {
 
-	public String getMethodDescriptor(Class returnClass, List<Class> argumentClasses) {
-		Type[] argTypes = new Type[argumentClasses.size()];
-		int i = 0;
-		for (bali.compiler.type.Class argumentClass : argumentClasses) {
-			argTypes[i++] = Type.getType(getTypeDescriptor(argumentClass));
+	public String getMethodDescriptor(Method method) {
+		List<Class> parameterClasses = new ArrayList<>();
+		for (Declaration<Site> declaration : method.getParameters()){
+			parameterClasses.add(declaration.getType().getTemplate());
 		}
-		return Type.getMethodType(Type.getType(getTypeDescriptor(returnClass)), argTypes).getDescriptor();
+		Class returnClass = method.getType() != null ? method.getType().getTemplate() : null;
+		return getMethodDescriptor(returnClass, parameterClasses);
 	}
 
-	public String getMethodDescriptor(SiteNode returnClass, List<SiteNode> argumentClasses) {
-		Type[] argTypes = new Type[argumentClasses.size()];
+	public String getMethodDescriptor(Class returnClass, List<Class> parameterClasses) {
+		Type[] parameterTypes = new Type[parameterClasses.size()];
 		int i = 0;
-		for (SiteNode argumentClass : argumentClasses) {
-			argTypes[i++] = Type.getType(getTypeDescriptor(argumentClass.getSite().getTemplate()));
+		for (bali.compiler.type.Class argumentClass : parameterClasses) {
+			parameterTypes[i++] = Type.getType(getTypeDescriptor(argumentClass));
 		}
-		return Type.getMethodType(Type.getType(getTypeDescriptor(returnClass)), argTypes).getDescriptor();
-	}
-
-	public String getMethodDescriptor(MethodNode method) {
-		List<Class> argumentClasses = new ArrayList<>(method.getParameters().size());
-		for (ParameterNode argument : method.getParameters()){
-			argumentClasses.add(argument.getType().getSite().getTemplate());
-		}
-		SiteNode returnType = method.getType();
-		return getMethodDescriptor(returnType != null ? returnType.getSite().getTemplate() : null, argumentClasses);
+		return Type.getMethodType(Type.getType(getTypeDescriptor(returnClass)), parameterTypes).getDescriptor();
 	}
 
 	public String getTypeDescriptor(String className) {
 		return (className == null ? Type.VOID_TYPE : Type.getObjectType(getInternalName(className))).getDescriptor();
 	}
 
-	public String getTypeDescriptor(SiteNode type) {
-		return getTypeDescriptor(type != null ? type.getSite().getTemplate() : null);
+	public String getTypeDescriptor(Class aClass) {
+		return getTypeDescriptor(aClass != null ? aClass.getName() : null);
 	}
 
-	public String getTypeDescriptor(Class aClass) {
-		return (aClass == null ? Type.VOID_TYPE : Type.getObjectType(getInternalName(aClass.getName()))).getDescriptor();
+	public String getTypeDescriptor(bali.compiler.type.Type site) {
+		return getTypeDescriptor(site.getTemplate());
 	}
 
 	public String getInternalName(String className) {
@@ -62,8 +55,19 @@ public class ASMConverter {
 		return getInternalName(aClass.getName());
 	}
 
-	public String getInternalName(SiteNode type) {
-		return getInternalName(type.getSite().getTemplate().getName());
+	public String getSignature(Site site){
+		SignatureWriter signatureWriter = new SignatureWriter();
+		visit(signatureWriter, site);
+		return signatureWriter.toString();
+	}
+
+	//TODO - this is well short of complete
+	private void visit(SignatureVisitor writer, Site site){
+		writer.visitClassType(getInternalName(site.getTemplate().getName()));
+		for (Site arg : site.getTypeArguments()){
+			visit(writer.visitTypeArgument('='), arg);
+		}
+		writer.visitEnd();
 	}
 
 }

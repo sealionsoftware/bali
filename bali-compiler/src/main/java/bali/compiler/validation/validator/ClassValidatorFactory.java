@@ -1,5 +1,6 @@
 package bali.compiler.validation.validator;
 
+import bali.compiler.BaliCompiler;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.DeclarationNode;
 import bali.compiler.parser.tree.Node;
@@ -28,7 +29,7 @@ public class ClassValidatorFactory implements ValidatorFactory {
 	public Validator createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
 		return new Validator() {
 
-			private String unitName;
+			private String sourceName;
 
 			public List<ValidationFailure> validate(Node node, Control control) {
 
@@ -46,13 +47,14 @@ public class ClassValidatorFactory implements ValidatorFactory {
 			}
 
 			public List<ValidationFailure> validate(CompilationUnitNode node) {
-				unitName = node.getName();
+				sourceName = node.getSourceFile();
 				return Collections.emptyList();
 			}
 
 			private List<ValidationFailure> validate(ObjectNode node) {
 
-				node.setSourceFile(unitName + ".bali");
+				node.setSourceFile(sourceName);
+
 				bali.compiler.type.Class resolved = library.addDeclaration(node);
 				node.setResolvedType(resolved);
 

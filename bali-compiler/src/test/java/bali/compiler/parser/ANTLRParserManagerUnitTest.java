@@ -1,5 +1,6 @@
 package bali.compiler.parser;
 
+import bali.compiler.PackageDescription;
 import bali.compiler.parser.tree.BeanNode;
 import bali.compiler.parser.tree.BooleanLiteralExpressionNode;
 import bali.compiler.parser.tree.CodeBlockNode;
@@ -35,7 +36,11 @@ public class ANTLRParserManagerUnitTest {
 
 	@BeforeClass
 	public static void setUp() throws Exception {
-		unit = parserManager.parse(ANTLRParserManager.class.getResourceAsStream("../example.bali"), "example");
+		unit = parserManager.parse(new PackageDescription(
+				"example",
+				ANTLRParserManager.class.getResourceAsStream("../example.bali"),
+				"example.bali"
+		));
 	}
 
 	@Test

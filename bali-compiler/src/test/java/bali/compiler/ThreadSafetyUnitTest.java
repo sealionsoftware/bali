@@ -25,7 +25,7 @@ public class ThreadSafetyUnitTest {
 	public void testVariableAssignFail() throws Exception {
 		InputStream is = classLoader.getResourceAsStream(TEST_TARGETS_NAME + "/fail/varassign.bali");
 		compiler.compile(
-				Collections.singletonList(new PackageDescription("fail", is)),
+				Collections.singletonList(new PackageDescription("fail", is, "fail.bali")),
 				Mockito.mock(OutputStream.class),
 				classLoader
 		);
@@ -36,7 +36,7 @@ public class ThreadSafetyUnitTest {
 		InputStream is = classLoader.getResourceAsStream(TEST_TARGETS_NAME + "/pass/varassign.bali");
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		compiler.compile(
-				Collections.singletonList(new PackageDescription("pass", is)),
+				Collections.singletonList(new PackageDescription("pass", is, "pass.bali")),
 				os,
 				classLoader
 		);

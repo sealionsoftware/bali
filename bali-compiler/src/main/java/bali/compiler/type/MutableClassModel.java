@@ -25,6 +25,21 @@ public class MutableClassModel implements Class {
 	private List<Declaration<Site>> properties;
 	private Kind metaType;
 
+	public MutableClassModel(String name) {
+		this(
+				name,
+				null,
+				Collections.<Declaration<Type>>emptyList(),
+				Collections.<Type>emptyList(),
+				Collections.<Declaration<Site>>emptyList(),
+				Collections.<Method>emptyList(),
+				Collections.<Operator>emptyList(),
+				Collections.<UnaryOperator>emptyList(),
+				Collections.<Declaration<Site>>emptyList(),
+				null
+		);
+	}
+
 	public MutableClassModel(String name, Type superType, List<Declaration<Type>> typeParameters, List<Type> interfaces, List<Declaration<Site>> parameters, List<Method> methods, List<Operator> operators, List<UnaryOperator> unaryOperators, List<Declaration<Site>> properties, Kind metaType) {
 		this.name = name;
 		this.superType = superType;
@@ -36,17 +51,6 @@ public class MutableClassModel implements Class {
 		this.unaryOperators = unaryOperators;
 		this.properties = properties;
 		this.metaType = metaType;
-	}
-
-	public MutableClassModel(String name) {
-		this.name = name;
-		this.typeParameters = Collections.emptyList();
-		this.interfaces = Collections.emptyList();
-		this.parameters = Collections.emptyList();
-		this.methods = Collections.emptyList();
-		this.operators = Collections.emptyList();
-		this.unaryOperators = Collections.emptyList();
-		this.properties = Collections.emptyList();
 	}
 
 	public String getName() {
@@ -150,39 +154,21 @@ public class MutableClassModel implements Class {
 				return new Method(name, unaryOperator.getType(), Collections.<Declaration<Site>>emptyList());
 			}
 		}
-		for (Declaration<Site> property : properties){
-			if (getGetterName(property.getName()).equals(name)){
-				return new Method(name, property.getType(), Collections.<Declaration<Site>>emptyList());
-			}
-			if (getSetterName(property.getName()).equals(name)){
-				return new Method(name, null, Collections.singletonList(property));
-			}
-		}
 		return null;
 	}
 
-	//TODO: this shouldn't live here
-	private String getGetterName(String propertyName){
-		return "get" + getStem(propertyName);
-	}
-	private String getSetterName(String propertyName){
-		return "set" + getStem(propertyName);
-	}
-	private String getStem(String propertyName){
-		return propertyName.substring(0,1).toUpperCase() + propertyName.substring(1);
-	}
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(name);
 		if (typeParameters.size() > 0){
-			sb.append("<");
+			sb.append("[");
 			Iterator<Declaration<Type>> i = typeParameters.iterator();
 			sb.append(i.next().getName());
 			while(i.hasNext()){
 				sb.append(",").append(i.next().getName());
 			}
-			sb.append(">");
+			sb.append("]");
 		}
 		return sb.toString();
 	}

@@ -1,5 +1,6 @@
 package bali.compiler.parser;
 
+import bali.compiler.PackageDescription;
 import bali.compiler.parser.tree.ArgumentNode;
 import bali.compiler.parser.tree.ParameterNode;
 import bali.compiler.parser.tree.ArrayLiteralExpressionNode;
@@ -42,9 +43,6 @@ import bali.compiler.parser.tree.TryStatementNode;
 import bali.compiler.parser.tree.UnaryOperationNode;
 import bali.compiler.parser.tree.VariableNode;
 import bali.compiler.parser.tree.WhileStatementNode;
-import bali.compiler.type.ClassLibrary;
-import bali.compiler.type.ParameterisedSite;
-import bali.compiler.type.Site;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.DefaultErrorStrategy;
@@ -53,7 +51,6 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
@@ -65,9 +62,9 @@ import java.util.List;
  */
 public class ANTLRParserManager implements ParserManager {
 
-	public CompilationUnitNode parse(InputStream compilationUnit, String name) throws Exception {
+	public CompilationUnitNode parse(PackageDescription description) throws Exception {
 
-		ANTLRInputStream input = new ANTLRInputStream(new InputStreamReader(compilationUnit));
+		ANTLRInputStream input = new ANTLRInputStream(new InputStreamReader(description.getFile()));
 		Lexer lexer = new BaliLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		tokens.fill();
@@ -77,16 +74,17 @@ public class ANTLRParserManager implements ParserManager {
 
 		int errors = parser.getNumberOfSyntaxErrors();
 		if (errors > 0) {
-			throw new Exception("Could not parse " + name + " [" + errors + " errors]");
+			throw new Exception("Could not parse " + description.getSourceFileName() + " [" + errors + " errors]");
 		}
 
-		return build(context, name);
+		return build(context, description.getName(), description.getSourceFileName());
 	}
 
-	private CompilationUnitNode build(BaliParser.PackageDeclarationContext context, String name) throws Exception {
+	private CompilationUnitNode build(BaliParser.PackageDeclarationContext context, String name, String source) throws Exception {
 
 		CompilationUnitNode cu = new CompilationUnitNode(l(context), c(context));
 		cu.setName(name);
+		cu.setSourceFile(source);
 
 		for (BaliParser.ImportDeclarationContext idc : context.importDeclaration()) {
 			cu.addImport(build(idc));

@@ -1,11 +1,14 @@
 package bali.compiler.type;
 
+import bali.*;
+import bali.Number;
 import bali.annotation.Kind;
-import bali.compiler.bytecode.TestVanillaSite;
+import bali.compiler.bytecode.TestSite;
 import bali.compiler.bytecode.TestVariableSite;
 import junit.framework.Assert;
 import org.junit.Test;
 
+import java.lang.String;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -38,10 +41,10 @@ public class ClasspathClassBuilderUnitTest {
 		Assert.assertEquals(1, interfaces.size());
 		Assert.assertEquals(3, methods.size());
 
-		checkType(new TestVanillaSite(VanillaInterface.class), interfaces.get(0));
+		checkType(new TestSite(VanillaInterface.class), interfaces.get(0));
 
 		Method expectation;
-		Site expectationSite = new TestVanillaSite(bali.String.class);
+		Site expectationSite = new TestSite(bali.String.class);
 		Declaration<Site> expectationDeclaration = new Declaration<>("parameter", expectationSite);
 
 		// Method aVoidMethod
@@ -82,7 +85,7 @@ public class ClasspathClassBuilderUnitTest {
 		Method methodExpectation;
 		Operator operatorExpectation;
 		UnaryOperator unaryOperatorExpectation;
-		Site expectationSite = new TestVanillaSite(bali.String.class);
+		Site expectationSite = new TestSite(bali.String.class);
 		Declaration<Site> expectationDeclaration = new Declaration<>("argument", expectationSite);
 
 		// Method aVoidMethod
@@ -132,17 +135,17 @@ public class ClasspathClassBuilderUnitTest {
 
 		Assert.assertEquals(ParametrizedObject.class.getName(), aClass.getName());
 		Assert.assertEquals(1, aClass.getTypeParameters().size());
-		Assert.assertEquals(Collections.<Site>emptyList(), aClass.getInterfaces());
+		Assert.assertEquals(Collections.<Type>emptyList(), aClass.getInterfaces());
 		Assert.assertEquals(2, methods.size());
 
 		Method methodExpectation;
-		Site expectationSite = new TestVanillaSite(B.class);
+		Site expectationSite = new TestSite(B.class, Arrays.<Site>asList(new TestVariableSite("T", null)));
 
 		Declaration typeParameterDeclaration = aClass.getTypeParameters().get(0);
 		Assert.assertEquals("T", typeParameterDeclaration.getName());
 		checkType(expectationSite, typeParameterDeclaration.getType());
 
-		expectationSite = new TestVariableSite("T", new TestVanillaSite(B.class));
+		expectationSite = new TestVariableSite("T", expectationSite);
 		Declaration<Site> expectationDeclaration = new Declaration<>("t", expectationSite);
 
 		// Method getT
@@ -164,22 +167,13 @@ public class ClasspathClassBuilderUnitTest {
 
 		Assert.assertEquals(Kind.INTERFACE, aClass.getMetaType());
 
-		List<Method> methods = aClass.getMethods();
 		List<Type> interfaces = aClass.getInterfaces();
-		List<Operator> operators = aClass.getOperators();
-		List<UnaryOperator> unaryOperators = aClass.getUnaryOperators();
 
 		Assert.assertEquals(SubInterface.class.getName(), aClass.getName());
 		Assert.assertEquals(Collections.<Declaration<Type>>emptyList(), aClass.getTypeParameters());
 		Assert.assertEquals(1, interfaces.size());
-//		Assert.assertEquals(1, methods.size());
-//		Assert.assertEquals(1, operators.size());
-//		Assert.assertEquals(1, unaryOperators.size());
 
-		checkType(new TestVanillaSite(SuperInterface.class), interfaces.get(0));
-//		checkMethod(new Method("aMethod", null, Collections.<Declaration>emptyList()), methods.get(0));
-//		checkUnaryOperator(new UnaryOperator("#", null, "anUnaryOperator"), unaryOperators.get(0));
-//		checkOperator(new Operator("~", null, new TestVanillaSite(bali.String.class), "anOperator"), operators.get(0));
+		checkType(new TestSite(SuperInterface.class), interfaces.get(0));
 	}
 
 	@Test
@@ -189,24 +183,13 @@ public class ClasspathClassBuilderUnitTest {
 
 		Assert.assertEquals(Kind.INTERFACE, aClass.getMetaType());
 
-		List<Method> methods = aClass.getMethods();
 		List<Type> interfaces = aClass.getInterfaces();
-		List<Operator> operators = aClass.getOperators();
-		List<UnaryOperator> unaryOperators = aClass.getUnaryOperators();
-
-		Site expectationSite = new TestVanillaSite(D.class);
 
 		Assert.assertEquals(ParameterizedSubInterface.class.getName(), aClass.getName());
-		Assert.assertEquals(Collections.<Declaration>emptyList(), aClass.getTypeParameters());
+		Assert.assertEquals(Collections.<Declaration<Type>>emptyList(), aClass.getTypeParameters());
 		Assert.assertEquals(1, interfaces.size());
-//		Assert.assertEquals(1, methods.size());
-//		Assert.assertEquals(1, operators.size());
-//		Assert.assertEquals(1, unaryOperators.size());
 
-		checkType(new TestVanillaSite(ParameterizedSuperInterface.class), interfaces.get(0));
-//		checkMethod(new Method("aMethod", expectationSite, Collections.<Declaration>emptyList()), methods.get(0));
-//		checkUnaryOperator(new UnaryOperator("#", expectationSite, "anUnaryOperator"), unaryOperators.get(0));
-//		checkOperator(new Operator("~", null, expectationSite, "anOperator"), operators.get(0));
+		checkType(new TestSite(ParameterizedSuperInterface.class, Arrays.<Site>asList(new TestVariableSite("T", new TestSite(C.class)))), interfaces.get(0));
 	}
 
 	private void checkMethod(

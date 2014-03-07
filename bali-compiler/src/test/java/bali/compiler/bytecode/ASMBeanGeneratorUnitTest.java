@@ -1,17 +1,21 @@
 package bali.compiler.bytecode;
 
 import bali.Number;
+import bali.collection.Map;
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.BeanNode;
 import bali.compiler.parser.tree.PropertyNode;
 import bali.compiler.parser.tree.SiteNode;
+import bali.compiler.type.ParameterisedSite;
+import bali.compiler.type.Site;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Arrays;
 
 /**
  * User: Richard
@@ -20,7 +24,6 @@ import java.util.List;
 public class ASMBeanGeneratorUnitTest {
 
 	private static Generator<BeanNode, GeneratedClass> generator = new ASMBeanGenerator();
-
 	private BeanNode bean;
 
 	@Before
@@ -30,18 +33,17 @@ public class ASMBeanGeneratorUnitTest {
 	}
 
 	@Test
-	public void testGenerateEmptyBean() throws Exception {
+	public void testEmptyBean() throws Exception {
 
 		Class loadedClass = build();
-		Assert.assertEquals("Number of setters", 0, getSetters(loadedClass).size());
-		Assert.assertEquals("Number of getters", 0, getGetters(loadedClass).size());
+		Assert.assertEquals("Number of public fields", 0, loadedClass.getFields().length);
 	}
 
 	@Test
-	public void testGenerateSimpleBean() throws Exception {
+	public void testSimpleBean() throws Exception {
 
 		SiteNode type = new SiteNode();
-		type.setSite(new TestVanillaSite(Number.class));
+		type.setSite(new TestSite(Number.class));
 		PropertyNode propertyNode = new PropertyNode();
 		propertyNode.setName("aProperty");
 		propertyNode.setType(type);
@@ -49,25 +51,20 @@ public class ASMBeanGeneratorUnitTest {
 		bean.addProperty(propertyNode);
 
 		Class loadedClass = build();
-		List<Method> setters = getSetters(loadedClass);
-		List<Method> getters = getGetters(loadedClass);
+		Field[] publicFields = loadedClass.getFields();
 
-		Assert.assertEquals("Number of setters", 1, setters.size());
-		Assert.assertEquals("Number of getters", 1, getters.size());
+		Assert.assertEquals("Number of public fields", 1, publicFields.length);
 
-		Assert.assertEquals("Setter Name", "setAProperty", setters.get(0).getName());
-		Assert.assertEquals("Setter Class", Number.class, setters.get(0).getParameterTypes()[0]);
-
-		Assert.assertEquals("Getter Name", "getAProperty", getters.get(0).getName());
-		Assert.assertEquals("Getter Class", Number.class, getters.get(0).getReturnType());
+		Assert.assertEquals("Field Name", "aProperty", publicFields[0].getName());
+		Assert.assertEquals("Field Class", Number.class, publicFields[0].getType());
 
 	}
 
 	@Test
-	public void testGenerateExtendedBean() throws Exception {
+	public void testExtendedBean() throws Exception {
 
 		SiteNode type = new SiteNode();
-		type.setSite(new TestVanillaSite(Number.class));
+		type.setSite(new TestSite(Number.class));
 		PropertyNode propertyNode = new PropertyNode();
 		propertyNode.setName("aProperty");
 		propertyNode.setType(type);
@@ -75,127 +72,45 @@ public class ASMBeanGeneratorUnitTest {
 		bean.addProperty(propertyNode);
 
 		SiteNode superBean = new SiteNode();
-		superBean.setSite(new TestVanillaSite(ASuperBean.class));
+		superBean.setSite(new TestSite(ASuperBean.class));
 		bean.setSuperType(superBean);
 
 		Class loadedClass = build();
-		List<Method> setters = getSetters(loadedClass);
-		List<Method> getters = getGetters(loadedClass);
+		Field[] fields = loadedClass.getFields();
 
-		Assert.assertEquals("Number of setters", 2, setters.size());
-		Assert.assertEquals("Number of getters", 2, getters.size());
+		Assert.assertEquals("Number of public fields", 2, fields.length);
 	}
 
-//
-//	@Test
-//	public void testGenerateInterfaceExtension() throws Exception {
-//
-//		SiteNode type = new SiteNode();
-//		type.setSite(new TestVanillaSite(ASuperInterface.class));
-//
-//		iface.addImplementation(type);
-//
-//		Class loadedClass = build();
-//
-//		Assert.assertEquals("# Super interfaces", 1, loadedClass.getInterfaces().length);
-//		Assert.assertEquals("Superinterfaces name", "bali.compiler.bytecode.ASuperInterface", loadedClass.getInterfaces()[0].getName());
-//
-//	}
-//
-//	@Test
-//	public void testGenerateInterfaceWithVoidDeclaration() throws Exception {
-//
-//		MethodNode declaration = new MethodNode();
-//		declaration.setName("aMethod");
-//
-//		iface.addMethod(declaration);
-//
-//		Class loadedClass = build();
-//		java.lang.reflect.Method declaredMethod = loadedClass.getMethod("aMethod", new Class[]{});
-//
-//		Assert.assertEquals("Number of methods", 1, loadedClass.getMethods().length);
-//		Assert.assertEquals("Return Class", void.class, declaredMethod.getReturnType());
-//	}
-//
-//	@Test
-//	public void testGenerateInterfaceWithNumberReturnDeclaration() throws Exception {
-//
-//		SiteNode type = new SiteNode();
-//		type.setClassName("Number");
-//		type.setSite(new TestVanillaSite(Number.class));
-//
-//		MethodNode declaration = new MethodNode();
-//		declaration.setName("aMethod");
-//		declaration.setType(type);
-//
-//		iface.addMethod(declaration);
-//
-//		Class loadedClass = build();
-//		java.lang.reflect.Method declaredMethod = loadedClass.getMethod("aMethod", new Class[]{});
-//
-//		Assert.assertEquals("Number of methods", 1, loadedClass.getMethods().length);
-//		Assert.assertEquals("Return Class", Number.class, declaredMethod.getReturnType());
-//	}
-//
-//	@Test
-//	public void testGenerateInterfaceWithNumberParamDeclaration() throws Exception {
-//
-//		SiteNode type = new SiteNode();
-//		type.setClassName("Number");
-//		type.setSite(new TestVanillaSite(Number.class));
-//
-//		ParameterNode argument = new ParameterNode();
-//		argument.setType(type);
-//		argument.setName("anArgument");
-//
-//		MethodNode declaration = new MethodNode();
-//		declaration.setName("aMethod");
-//		declaration.addParameter(argument);
-//
-//		iface.addMethod(declaration);
-//
-//		Class loadedClass = build();
-//		java.lang.reflect.Method declaredMethod = loadedClass.getMethod("aMethod", new Class[]{Number.class});
-//
-//		Assert.assertEquals("Number of methods", 1, loadedClass.getMethods().length);
-//		Assert.assertEquals("Return Class", void.class, declaredMethod.getReturnType());
-//	}
+	@Test
+	public void testBeanWithParametrizedProperty() throws Exception {
 
-	private List<Method> getSetters(Class clazz){
-		List<Method> ret = new ArrayList<>();
-		Method[] methods = clazz.getMethods();
-		for (Method method : methods){
-			String name = method.getName();
-			if (name.startsWith("set")
-					&& name.length() > 3
-					&& method.getReturnType() == void.class
-					&& method.getParameterTypes().length == 1){
-				ret.add(method);
-			}
-		}
-		return ret;
-	}
+		SiteNode type = new SiteNode();
+		type.setSite(new TestSite(Map.class, Arrays.<Site>asList(new TestSite(String.class), new TestSite(Number.class))));
 
-	private List<Method> getGetters(Class clazz){
-		List<Method> ret = new ArrayList<>();
-		Method[] methods = clazz.getMethods();
-		for (Method method : methods){
-			String name = method.getName();
-			if (name.startsWith("get")
-					&& name.length() > 3
-					&& method.getParameterTypes().length == 0
-					&& method.getReturnType() != void.class
-					&& !name.equals("getClass")){
-				ret.add(method);
-			}
-		}
-		return ret;
+		PropertyNode propertyNode = new PropertyNode();
+		propertyNode.setName("aProperty");
+		propertyNode.setType(type);
+
+		bean.addProperty(propertyNode);
+
+		Class loadedClass = build();
+		Field[] fields = loadedClass.getFields();
+
+		Assert.assertEquals("Number of public fields", 1, fields.length);
+		Field field = fields[0];
+		Type genericType = field.getGenericType();
+		Assert.assertTrue("Field is a Parametrized Type", genericType instanceof ParameterizedType);
+		ParameterizedType parameterizedType = (ParameterizedType) genericType;
+		Type[] typeArguments = parameterizedType.getActualTypeArguments();
+		Assert.assertEquals("Number of type arguments", 2, typeArguments.length);
+		Assert.assertEquals("Type argument 0 is a String", String.class, typeArguments[0]);
+		Assert.assertEquals("Type argument 1 is a String", Number.class, typeArguments[1]);
+
 	}
 
 	private Class build() throws Exception {
 		GeneratedClass generated = generator.build(bean);
 		return new ByteArrayClassLoader(generated.getCode()).findClass("bali.test.ABean");
 	}
-
 
 }

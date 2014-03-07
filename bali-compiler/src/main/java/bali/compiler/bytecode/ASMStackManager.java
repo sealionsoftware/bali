@@ -210,38 +210,29 @@ public class ASMStackManager implements Opcodes {
 		ExpressionNode targetNode = referenceNode.getTarget();
 		ExpressionNode value = statement.getValue();
 
-		if (targetNode == null){
-
-			switch (referenceNode.getScope()){
-				case FIELD: {
+		switch (referenceNode.getScope()){
+			case FIELD: {
+				if (targetNode != null){
+					push(targetNode, v);
+				} else {
 					v.visitVarInsn(ALOAD, 0);
-					push(statement.getValue(), v);
-					v.visitFieldInsn(PUTFIELD,
-							converter.getInternalName(referenceNode.getHostClass()),
-							referenceNode.getName(),
-							converter.getTypeDescriptor(referenceNode.getType().getTemplate())
-					);
-				} break;
-				case VARIABLE: {
-					Integer index = declaredVariables.get(referenceNode.getName()).getIndex();
-					push(statement.getValue(), v);
-					v.visitVarInsn(ASTORE, index);
-				} break;
-				default: {
-					throw new RuntimeException("Cannot compile assignment to variable in scope " + referenceNode.getScope());
 				}
-			}
 
-		} else {
-			Class targetClass = targetNode.getType().getTemplate();
-			push(targetNode, v);
-			if (value != null){
-				push(statement.getValue(), v);
-			} else {
-				throw new RuntimeException("Reference assignment requires a value");
+				push(value, v);
+				v.visitFieldInsn(PUTFIELD,
+						converter.getInternalName(referenceNode.getHostClass()),
+						referenceNode.getName(),
+						converter.getTypeDescriptor(referenceNode.getType())
+				);
+			} break;
+			case VARIABLE: {
+				Integer index = declaredVariables.get(referenceNode.getName()).getIndex();
+				push(value, v);
+				v.visitVarInsn(ASTORE, index);
+			} break;
+			default: {
+				throw new RuntimeException("Cannot compile assignment to variable in scope " + referenceNode.getScope());
 			}
-
-			v.visitMethodInsn(invokeInsn(targetClass), converter.getInternalName(targetClass), statement.getSetterName(), converter.getMethodDescriptor(null, Collections.singletonList(referenceNode.getType().getTemplate())));
 		}
 	}
 
@@ -487,17 +478,7 @@ public class ASMStackManager implements Opcodes {
 	public void push(ReferenceNode value, MethodVisitor v) {
 
 		ExpressionNode target = value.getTarget();
-		if (target != null){
-			pushInvocation(
-				target,
-				target.getType(),
-				value.getType(),
-				Collections.<ExpressionNode>emptyList(),
-				value.getGetterName(),
-				v
-			);
-			return;
-		}
+
 
 		switch (value.getScope()) {
 			case STATIC: {
@@ -505,7 +486,11 @@ public class ASMStackManager implements Opcodes {
 			}
 			break;
 			case FIELD: {
-				v.visitVarInsn(ALOAD, 0);
+				if (target != null){
+					push(target, v);
+				} else {
+					v.visitVarInsn(ALOAD, 0);
+				}
 				v.visitFieldInsn(GETFIELD, converter.getInternalName(value.getHostClass()), value.getName(), converter.getTypeDescriptor(value.getType().getTemplate()));
 			}
 			break;
@@ -516,17 +501,21 @@ public class ASMStackManager implements Opcodes {
 		}
 	}
 
-
 	public void push(ConstructionExpressionNode value, MethodVisitor v) {
-		String internalName = converter.getInternalName(value.getType().getTemplate());
+
+		Class targetClass = value.getType().getTemplate();
+		String internalName = converter.getInternalName(targetClass);
+		List<Class> parameterClasses = new ArrayList<>();
+		for (Declaration<Site> type : targetClass.getParameters()){
+			parameterClasses.add(type.getType().getTemplate());
+		}
+
 		v.visitTypeInsn(NEW, internalName);
 		v.visitInsn(DUP);
-		List<Class> argumentClasses = new ArrayList<>();
 		for (ExpressionNode argumentValue : value.getResolvedArguments()) {
 			push(argumentValue, v);
-			argumentClasses.add(argumentValue.getType().getTemplate());
 		}
-		v.visitMethodInsn(INVOKESPECIAL, internalName, "<init>", converter.getMethodDescriptor(null, argumentClasses));
+		v.visitMethodInsn(INVOKESPECIAL, internalName, "<init>", converter.getMethodDescriptor(null, parameterClasses));
 	}
 
 	public void push(InvocationNode value, MethodVisitor v) {

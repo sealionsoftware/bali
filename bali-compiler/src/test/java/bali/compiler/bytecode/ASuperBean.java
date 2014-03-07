@@ -6,13 +6,5 @@ package bali.compiler.bytecode;
  */
 public class ASuperBean {
 
-	private Number aSuperProperty;
-
-	public Number getASuperProperty() {
-		return aSuperProperty;
-	}
-
-	public void setASuperProperty(Number aSuperProperty) {
-		this.aSuperProperty = aSuperProperty;
-	}
+	public Number aSuperProperty;
 }

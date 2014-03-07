@@ -94,8 +94,8 @@ public class TypeResolvingValidatorFactory implements ValidatorFactory {
 						return ret;
 					}
 				}
-
-				type.setType(new ParameterisedSite(reference, false, false));
+				Class referenced = reference.get();
+				type.setType(new ParameterisedSite(reference, false, referenced.getMetaType().isThreadSafe()));
 				return ret;
 			}
 		};

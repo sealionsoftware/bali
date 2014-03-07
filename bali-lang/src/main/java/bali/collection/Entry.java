@@ -1,7 +1,7 @@
 package bali.collection;
 
-import bali.*;
 import bali.Boolean;
+import bali.Value;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 import bali.annotation.Name;
@@ -13,30 +13,14 @@ import bali.annotation.Name;
 @MetaType(Kind.BEAN)
 public class Entry<K extends Value<K>, V> implements Value<Entry<K, V>> {
 
-	private K key;
-	private V value;
-
-	public K getKey() {
-		return key;
-	}
-
-	public void setKey(K key) {
-		this.key = key;
-	}
-
-	public V getValue() {
-		return value;
-	}
-
-	public void setValue(V value) {
-		this.value = value;
-	}
+	public K key;
+	public V value;
 
 	public Boolean equalTo(@Name("operand") Entry<K, V> operand) {
-		return key.equalTo(operand.getKey());
+		return key.equalTo(operand.key);
 	}
 
 	public Boolean notEqualTo(@Name("operand") Entry<K, V> operand) {
-		return key.notEqualTo(operand.getKey());
+		return key.notEqualTo(operand.key);
 	}
 }

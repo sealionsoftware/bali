@@ -5,9 +5,15 @@ import bali.annotation.MetaType;
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.MethodNode;
+import bali.compiler.parser.tree.ParameterNode;
 import bali.compiler.parser.tree.SiteNode;
+import bali.compiler.type.*;
+import bali.compiler.type.Class;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: Richard
@@ -41,9 +47,17 @@ public class ASMInterfaceGenerator implements Generator<InterfaceNode, Generated
 		cw.visitEnd();
 
 		for (MethodNode method : input.getMethods()) {
+			String methodName = method.getName();
+
+			List<Class> parameterClasses = new ArrayList<>();
+			for (ParameterNode declaration : method.getParameters()){
+				parameterClasses.add(declaration.getType().getSite().getTemplate());
+			}
+			Class returnClass = method.getType() != null ? method.getType().getSite().getTemplate() : null;
+
 			cw.visitMethod(ACC_PUBLIC + ACC_ABSTRACT,
-					method.getName(),
-					converter.getMethodDescriptor(method),
+					methodName,
+					converter.getMethodDescriptor(returnClass, parameterClasses),
 					null,
 					null
 			).visitEnd();

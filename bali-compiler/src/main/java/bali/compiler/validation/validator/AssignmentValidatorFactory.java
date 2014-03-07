@@ -60,13 +60,9 @@ public class AssignmentValidatorFactory implements ValidatorFactory {
 
 				List<ValidationFailure> failures = new ArrayList<>();
 				ReferenceNode reference = statement.getReference();
-				String name = reference.getName();
 
 				if (reference.getFinal()) {
 					failures.add(new ValidationFailure(statement, "Cannot assign an expression to a constant reference"));
-				}
-				if (reference.getTarget() != null){
-					statement.setSetterName("set" + name.substring(0, 1).toUpperCase() + name.substring(1));
 				}
 
 				return failures;

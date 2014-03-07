@@ -4,6 +4,9 @@ import bali.compiler.reference.BlockingReference;
 import bali.compiler.type.Method;
 import bali.compiler.type.Site;
 
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * User: Richard
  * Date: 02/05/13
@@ -62,9 +65,14 @@ public class InvocationNode extends ParametrisedExpressionNode {
 			sb.append(target).append(".");
 		}
 		sb.append(methodName);
+		List<ArgumentNode> argumentNodes = getArguments();
 		sb.append("(");
-		for (ArgumentNode argument : getArguments()){
-			sb.append(argument);
+		Iterator<ArgumentNode> i = argumentNodes.iterator();
+		if (i.hasNext()){
+			sb.append(i.next());
+		}
+		while (i.hasNext()){
+			sb.append(",").append(i.next());
 		}
 		sb.append(")");
 		return sb.toString();

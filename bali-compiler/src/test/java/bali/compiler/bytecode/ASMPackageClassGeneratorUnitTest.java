@@ -49,7 +49,7 @@ public class ASMPackageClassGeneratorUnitTest {
 	public void testNumberConstant() throws Exception {
 		NumberLiteralExpressionNode nlv = new NumberLiteralExpressionNode(0, 0);
 		nlv.setSerialization("1");
-		nlv.setType(new TestVanillaSite(Number.class));
+		nlv.setType(new TestSite(Number.class));
 		testGenerateConstant(Number.class, nlv, new Byte((byte) 1));
 	}
 
@@ -57,7 +57,7 @@ public class ASMPackageClassGeneratorUnitTest {
 	public void testStringConstant() throws Exception {
 		StringLiteralExpressionNode slv = new StringLiteralExpressionNode();
 		slv.setSerialization("Hello World");
-		slv.setType(new TestVanillaSite((String.class)));
+		slv.setType(new TestSite((String.class)));
 		testGenerateConstant(String.class, slv, new CharArrayString("Hello World".toCharArray()));
 	}
 
@@ -65,7 +65,7 @@ public class ASMPackageClassGeneratorUnitTest {
 	public void testBooleanConstant() throws Exception {
 		BooleanLiteralExpressionNode blv = new BooleanLiteralExpressionNode();
 		blv.setSerialization("true");
-		blv.setType(new TestVanillaSite((Boolean.class)));
+		blv.setType(new TestSite((Boolean.class)));
 		testGenerateConstant(Boolean.class, blv, True.TRUE);
 	}
 
@@ -84,7 +84,7 @@ public class ASMPackageClassGeneratorUnitTest {
 		llv.addValue(two);
 		llv.addValue(three);
 
-		llv.setType(new TestVanillaSite((ValueCollection.class)));
+		llv.setType(new TestSite((ValueCollection.class)));
 
 		testGenerateConstant(ValueCollection.class, llv, new Array<>(new Number[]{
 				NUMBER_FACTORY.forDecimalString("1".toCharArray()),
@@ -96,9 +96,9 @@ public class ASMPackageClassGeneratorUnitTest {
 	@Test
 	public void testNewObjectConstant() throws Exception {
 		SiteNode type = new SiteNode(0, 0);
-		type.setSite(new TestVanillaSite(Instantiatable.class));
+		type.setSite(new TestSite(Instantiatable.class));
 		ConstructionExpressionNode cv = new ConstructionExpressionNode(0, 0);
-		cv.setType(new TestVanillaSite(Instantiatable.class));
+		cv.setType(new TestSite(Instantiatable.class));
 		cv.setResolvedArguments(Collections.<ExpressionNode>emptyList());
 		testGenerateConstant(Instantiatable.class, cv, new Instantiatable());
 	}
@@ -106,7 +106,7 @@ public class ASMPackageClassGeneratorUnitTest {
 	public <T extends Value<T>> void testGenerateConstant(java.lang.Class<T> clazz, ExpressionNode value, T expectation) throws Exception {
 
 		SiteNode type = new SiteNode();
-		type.setSite(new TestVanillaSite(clazz));
+		type.setSite(new TestSite(clazz));
 
 		ConstantNode constant = new ConstantNode();
 		constant.setName("aConstant");

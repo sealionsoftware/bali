@@ -4,6 +4,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureVisitor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,9 +31,7 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 	}
 
 	public void visitFormalTypeParameter(String name) {
-
 		typeParamStack.push(new SiteContext(name));
-
 		super.visitFormalTypeParameter(name);
 	}
 
@@ -66,6 +65,7 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 		for (SiteContext context : typeParamStack) {
 			ret.add(new Declaration<>(context.name, (Type) context.typeVisitor.getSite()));
 		}
+		Collections.reverse(ret);
 		return ret;
 	}
 
