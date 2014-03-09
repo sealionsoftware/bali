@@ -70,16 +70,17 @@ public class ClassDeclarationTypeBuilder {
 
 	public Class build(BeanNode declaration) {
 		SiteNode superType = declaration.getSuperType();
+		List<Declaration<Site>> properties = getProperties(declaration);
 		return new MutableClassModel(
 				declaration.getQualifiedClassName(),
 				superType != null ? superType.getSite() : null ,
 				getTypeParameters(declaration),
 				Collections.<Type>emptyList(),
-				Collections.<Declaration<Site>>emptyList(),
+				properties,
 				Collections.<Method>emptyList(),
 				Collections.<Operator>emptyList(),
 				Collections.<UnaryOperator>emptyList(),
-				getProperties(declaration),
+				properties,
 				Kind.BEAN
 		);
 	}
@@ -106,7 +107,7 @@ public class ClassDeclarationTypeBuilder {
 
 	private List<Declaration<Site>> getParameters(ObjectNode declaration) {
 		List<Declaration<Site>> arguments = new ArrayList<>();
-		for (ParameterNode declaredArgument : declaration.getArgumentDeclarations()) {
+		for (ParameterNode declaredArgument : declaration.getParameters()) {
 			arguments.add(new Declaration<>(
 					declaredArgument.getName(),
 					getType(declaredArgument.getType())

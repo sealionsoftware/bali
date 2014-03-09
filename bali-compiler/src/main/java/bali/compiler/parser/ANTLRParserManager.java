@@ -182,7 +182,7 @@ public class ANTLRParserManager implements ParserManager {
 		}
 		BaliParser.ParameterListContext parameterList = context.parameterList();
 		if (parameterList != null) for (BaliParser.ParameterContext parameter : parameterList.parameter()) {
-			clazz.addArgument(build(parameter));
+			clazz.addParameter(build(parameter));
 		}
 		for (BaliParser.FieldDeclarationContext fdc : context.fieldDeclaration()) {
 			clazz.addField(build(fdc));

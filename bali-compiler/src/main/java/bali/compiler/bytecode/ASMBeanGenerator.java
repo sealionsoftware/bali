@@ -2,15 +2,21 @@ package bali.compiler.bytecode;
 
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
+import bali.annotation.Name;
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.BeanNode;
 import bali.compiler.parser.tree.PropertyNode;
+import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.type.Class;
+import bali.compiler.type.Declaration;
 import bali.compiler.type.Site;
+import bali.compiler.type.Type;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
-import java.util.Collections;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: Richard
@@ -19,6 +25,7 @@ import java.util.Collections;
 public class ASMBeanGenerator implements Generator<BeanNode, GeneratedClass> {
 
 	private ASMConverter converter = new ASMConverter();
+	private String nameAnnotationDescriptor = converter.getTypeDescriptor(Name.class.getName());
 
 	public GeneratedClass build(BeanNode input) throws Exception {
 
@@ -38,7 +45,7 @@ public class ASMBeanGenerator implements Generator<BeanNode, GeneratedClass> {
 		av.visitEnum("value", converter.getTypeDescriptor(Kind.class.getName()), Kind.BEAN.name());
 		av.visitEnd();
 
-		buildConstructor(cw, superClassInternalName);
+		buildConstructor(cw, superClassInternalName, hostClassInternalName, input);
 
 		for (PropertyNode property : input.getProperties()) {
 			buildProperty(property, cw);
@@ -49,23 +56,71 @@ public class ASMBeanGenerator implements Generator<BeanNode, GeneratedClass> {
 		return new GeneratedClass(input.getClassName(), cw.toByteArray());
 	}
 
-	private void buildConstructor(ClassWriter cw, String superClassInternalName) {
+	private void buildConstructor(ClassWriter cw, String superClassInternalName, String hostClassInternalName, BeanNode input) {
 
+		List<Declaration<Site>> superParameters = new ArrayList<>();
+		SiteNode superClass = input.getSuperType();
+		if (superClass != null){
+			superParameters.addAll(getAllParameters(superClass.getSite()));
+		}
+		List<Declaration<Site>> allParams = new ArrayList<>(superParameters);
+		for (PropertyNode propertyNode : input.getProperties()){
+			allParams.add(new Declaration<>(propertyNode.getName(), propertyNode.getType().getSite()));
+		}
+
+		List<Site> allParamSites = new ArrayList<>();
+		List<Class> allParamClasses = new ArrayList<>();
+		for (Declaration<Site> param : allParams){
+			Site paramType = param.getType();
+			allParamSites.add(paramType);
+			allParamClasses.add(paramType.getTemplate());
+		}
 		MethodVisitor initv = cw.visitMethod(ACC_PUBLIC,
 				"<init>",
-				converter.getMethodDescriptor(null, Collections.<Class>emptyList()),
-				null,
+				converter.getMethodDescriptor(null, allParamClasses),
+				converter.getMethodSignature(null, allParamSites),
 				null
 		);
+
+		//TODO: nullable, threadsafe annotations
+		int i = 0;
+		for (Declaration<Site> param : allParams){
+			initv.visitParameterAnnotation(i++, nameAnnotationDescriptor, true).visit("value", param.getName());
+		}
+		List<Class> superParamClasses = new ArrayList<>();
+		for (Declaration<Site> param : superParameters){
+			superParamClasses.add(param.getType().getTemplate());
+		}
 
 		initv.visitCode();
 		initv.visitVarInsn(ALOAD, 0);
 		initv.visitInsn(DUP);
-		initv.visitMethodInsn(INVOKESPECIAL, superClassInternalName, "<init>", "()V");
+		int j = 1;
+		for (; j <= superParameters.size() ;){
+			initv.visitVarInsn(ALOAD, j++);
+		}
+		initv.visitMethodInsn(INVOKESPECIAL, superClassInternalName, "<init>", converter.getMethodDescriptor(null, superParamClasses));
+
+		for (PropertyNode propertyNode : input.getProperties()){
+			initv.visitVarInsn(ALOAD, 0);
+			initv.visitVarInsn(ALOAD, j++);
+			initv.visitFieldInsn(PUTFIELD, hostClassInternalName, propertyNode.getName(), converter.getTypeDescriptor(propertyNode.getType().getSite()));
+		}
+
 		initv.visitInsn(RETURN);
 		initv.visitMaxs(1, 1);
 		initv.visitEnd();
 
+	}
+
+	private List<Declaration<Site>> getAllParameters(Type type){
+		List<Declaration<Site>> ret = new ArrayList<>();
+		Type superType = type.getSuperType();
+		if (superType != null){
+			ret.addAll(getAllParameters(superType));
+		}
+		ret.addAll(type.getParameters());
+		return ret;
 	}
 
 	private void buildProperty(PropertyNode property, ClassWriter cw) {

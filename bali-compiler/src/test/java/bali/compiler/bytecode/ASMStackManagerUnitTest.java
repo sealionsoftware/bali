@@ -8,7 +8,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 /**
- * TODO: This sucks
+ * TODO
  * <p/>
  * User: Richard
  * Date: 14/05/13

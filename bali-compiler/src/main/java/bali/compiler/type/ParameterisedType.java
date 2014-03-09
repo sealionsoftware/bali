@@ -52,7 +52,7 @@ public class ParameterisedType implements Type {
 
 		List<Declaration<Type>> typeParameters = template.getTypeParameters();
 		if (typeArguments_in.size() != typeParameters.size()){
-			throw new RuntimeException("Invalid Type Arguments " + typeArguments + " required: " + typeParameters);
+			throw new RuntimeException("Invalid Type Arguments " + typeArguments_in + " required: " + typeParameters);
 		}
 
 		this.typeArguments = new LinkedHashMap<>();

@@ -16,6 +16,11 @@ public class Entry<K extends Value<K>, V> implements Value<Entry<K, V>> {
 	public K key;
 	public V value;
 
+	public Entry(K key, V value) {
+		this.key = key;
+		this.value = value;
+	}
+
 	public Boolean equalTo(@Name("operand") Entry<K, V> operand) {
 		return key.equalTo(operand.key);
 	}

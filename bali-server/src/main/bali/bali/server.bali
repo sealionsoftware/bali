@@ -4,14 +4,6 @@ import bali.Integer
 import bali.collection.Map
 import bali.collection.Collection
 
-
-interface WebApplication extends Closable, HttpHandler {
-
-	declare ResourceSpecifications getResourceSpecifications
-	declare initialise(Resources resources)
-
-}
-
 interface HttpHandler {
 
 	declare HttpResponse handle(HttpRequest request)
@@ -30,24 +22,6 @@ bean HttpResponse {
 
 	property Integer status
 	property Map[String, String] headers
-	property String body
-
-}
-
-bean ResourceSpecifications {
-
-	property Collection[String] dataSourceNames
-	property Collection[String] parameterNames
-
-}
-
-bean Resources {
-
-	property Map[String, DataSource] dataSources
-	property Map[String, String] parameters
-
-}
-
-bean DataSource {
+	property String? body
 
 }

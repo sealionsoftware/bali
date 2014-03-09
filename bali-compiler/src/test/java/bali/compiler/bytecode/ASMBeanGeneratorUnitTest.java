@@ -1,17 +1,18 @@
 package bali.compiler.bytecode;
 
+import bali.Boolean;
 import bali.Number;
 import bali.collection.Map;
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.BeanNode;
 import bali.compiler.parser.tree.PropertyNode;
 import bali.compiler.parser.tree.SiteNode;
-import bali.compiler.type.ParameterisedSite;
 import bali.compiler.type.Site;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -34,9 +35,11 @@ public class ASMBeanGeneratorUnitTest {
 
 	@Test
 	public void testEmptyBean() throws Exception {
-
 		Class loadedClass = build();
+		Constructor[] constructors = loadedClass.getConstructors();
 		Assert.assertEquals("Number of public fields", 0, loadedClass.getFields().length);
+		Assert.assertEquals("Single Construtor", 1, constructors.length);
+		Assert.assertEquals("Number of constructor arguments", 0, constructors[0].getParameterTypes().length);
 	}
 
 	@Test
@@ -51,12 +54,20 @@ public class ASMBeanGeneratorUnitTest {
 		bean.addProperty(propertyNode);
 
 		Class loadedClass = build();
+
 		Field[] publicFields = loadedClass.getFields();
-
 		Assert.assertEquals("Number of public fields", 1, publicFields.length);
+		Field propertyField = publicFields[0];
+		Assert.assertEquals("Field Name", "aProperty", propertyField.getName());
+		Assert.assertEquals("Field Class", Number.class, propertyField.getType());
 
-		Assert.assertEquals("Field Name", "aProperty", publicFields[0].getName());
-		Assert.assertEquals("Field Class", Number.class, publicFields[0].getType());
+		Constructor[] constructors = loadedClass.getConstructors();
+		Assert.assertEquals("Single Construtor", 1, constructors.length);
+		Constructor constructor = constructors[0];
+		Class<?>[] parameterClasses = constructor.getParameterTypes();
+		Assert.assertEquals("Number of constructor parameters", 1, parameterClasses.length);
+		Class parameterClass = parameterClasses[0];
+		Assert.assertEquals("Constructor Parameter Class", Number.class, parameterClass);
 
 	}
 
@@ -64,7 +75,7 @@ public class ASMBeanGeneratorUnitTest {
 	public void testExtendedBean() throws Exception {
 
 		SiteNode type = new SiteNode();
-		type.setSite(new TestSite(Number.class));
+		type.setSite(new TestSite(bali.Boolean.class));
 		PropertyNode propertyNode = new PropertyNode();
 		propertyNode.setName("aProperty");
 		propertyNode.setType(type);
@@ -76,9 +87,17 @@ public class ASMBeanGeneratorUnitTest {
 		bean.setSuperType(superBean);
 
 		Class loadedClass = build();
-		Field[] fields = loadedClass.getFields();
 
+		Field[] fields = loadedClass.getFields();
 		Assert.assertEquals("Number of public fields", 2, fields.length);
+
+		Constructor[] constructors = loadedClass.getConstructors();
+		Assert.assertEquals("Single Construtor", 1, constructors.length);
+		Constructor constructor = constructors[0];
+		Class<?>[] parameterClasses = constructor.getParameterTypes();
+		Assert.assertEquals("Number of constructor parameters", 2, parameterClasses.length);
+		Assert.assertEquals("First Constructor Parameter Class", Number.class, parameterClasses[0]);
+		Assert.assertEquals("Second Constructor Parameter Class", Boolean.class, parameterClasses[1]);
 	}
 
 	@Test

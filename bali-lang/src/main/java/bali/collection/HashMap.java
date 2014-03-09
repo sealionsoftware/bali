@@ -10,7 +10,7 @@ import bali.annotation.MetaType;
 import static bali.Primitive.convert;
 
 /**
- * TODO
+ * TODO - non delegated implementation
  * User: Richard
  * Date: 05/03/14
  */
@@ -56,6 +56,21 @@ public class HashMap<K extends Value<K>, V> implements Map<K,V> {
 	}
 
 	public Iterator<Entry<K, V>> iterator() {
-		throw new RuntimeException("Not Implemented Yet");
+
+		final java.util.Iterator<java.util.Map.Entry<K, V>> delegateIterator = this.delegate.entrySet().iterator();
+
+		return new Iterator<Entry<K, V>>() {
+			public Boolean hasNext() {
+				return convert(delegateIterator.hasNext());
+			}
+
+			public Entry<K, V> next() {
+				java.util.Map.Entry<K, V> delegateEntry = delegateIterator.next();
+				return new Entry<>(
+						delegateEntry.getKey(),
+						delegateEntry.getValue()
+				);
+			}
+		};
 	}
 }

@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class ObjectNode extends MethodDeclaringClassNode<MethodDeclarationNode> {
 
-	private final List<ParameterNode> argumentDeclarations = new ArrayList<>();
+	private final List<ParameterNode> parameters = new ArrayList<>();
 	private final List<FieldNode> fields = new ArrayList<>();
 
 	private BlockingReference<String> sourceFile = new BlockingReference<>();
@@ -24,13 +24,13 @@ public class ObjectNode extends MethodDeclaringClassNode<MethodDeclarationNode> 
 		super(line, character);
 	}
 
-	public List<ParameterNode> getArgumentDeclarations() {
-		return argumentDeclarations;
+	public List<ParameterNode> getParameters() {
+		return parameters;
 	}
 
-	public void addArgument(ParameterNode argumentDeclaration) {
-		this.argumentDeclarations.add(argumentDeclaration);
-		children.add(argumentDeclaration);
+	public void addParameter(ParameterNode parameter) {
+		this.parameters.add(parameter);
+		children.add(parameter);
 	}
 
 	public List<FieldNode> getFields() {

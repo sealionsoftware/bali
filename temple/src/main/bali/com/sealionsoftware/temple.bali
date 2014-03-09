@@ -31,7 +31,8 @@ object StubRouter implements HttpHandler {
 	method HttpResponse handle(HttpRequest request){
 		return new HttpResponse(
 			status: 200,
-			body: "Hello World"
+			body: "Hello World",
+			headers: new HashMap()
 		);
 	}
 }

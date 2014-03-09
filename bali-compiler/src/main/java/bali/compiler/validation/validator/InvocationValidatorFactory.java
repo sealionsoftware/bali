@@ -100,7 +100,7 @@ public class InvocationValidatorFactory implements ValidatorFactory {
 
 				boolean hasNull = false;
 				boolean hasNamed = false;
-				Map<String, ExpressionNode> namedArgumentsMap = new HashMap<>();
+				Map<String, ArgumentNode> namedArgumentsMap = new HashMap<>();
 				List<ExpressionNode> resolvedArguments = new ArrayList<>();
 				List<ValidationFailure> failures = new ArrayList<>();
 				for (ArgumentNode argumentNode : node.getArguments()){
@@ -113,27 +113,35 @@ public class InvocationValidatorFactory implements ValidatorFactory {
 						if (namedArgumentsMap.containsKey(name)){
 							failures.add(new ValidationFailure(argumentNode.getValue(), "Repeated argument " + name));
 						}
-						namedArgumentsMap.put(name, argumentNode.getValue());
+						namedArgumentsMap.put(name, argumentNode);
 					}
 				}
 				if (hasNull && hasNamed){
-					throw new RuntimeException("A argument list cannot mix named and unnamed arguments");
+					failures.add(new ValidationFailure(node, "A argument list cannot mix named and unnamed arguments"));
+					return failures;
 				}
 				if (hasNull){
 					List<ArgumentNode> arguments = node.getArguments();
 					if (arguments.size() != parameters.size()){
-						throw new RuntimeException("Invalid number of arguments");
+						failures.add(new ValidationFailure(node, "Invalid number of arguments"));
+						return failures;
 					}
-				}
-
-				if (hasNamed){
+				} else {
+					boolean fail = false;
 					for (Declaration<Site> parameter : parameters){
 						String parameterName = parameter.getName();
-						ExpressionNode resolvedArgument = namedArgumentsMap.get(parameterName);
+						ArgumentNode resolvedArgument = namedArgumentsMap.remove(parameterName);
 						if (resolvedArgument == null && !parameter.getType().isNullable()){
 							failures.add(new ValidationFailure(node, "Parameter " + parameter + " is required"));
+							fail = true;
 						}
-						resolvedArguments.add(resolvedArgument);
+						resolvedArguments.add(resolvedArgument != null ? resolvedArgument.getValue() : null);
+					}
+					for (Map.Entry<String, ArgumentNode> argument : namedArgumentsMap.entrySet()){
+						failures.add(new ValidationFailure(argument.getValue(), "No parameter " + argument.getKey() + " required for this call"));
+					}
+					if (fail){
+						return failures;
 					}
 				}
 				node.setResolvedArguments(resolvedArguments);

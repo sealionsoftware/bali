@@ -11,6 +11,7 @@ import bali.compiler.type.ClassLibrary;
 import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.ParameterisedSite;
 import bali.compiler.type.Site;
+import bali.compiler.type.TypeArgumentInferringSite;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -95,7 +96,7 @@ public class TypeResolvingValidatorFactory implements ValidatorFactory {
 					}
 				}
 				Class referenced = reference.get();
-				type.setType(new ParameterisedSite(reference, false, referenced.getMetaType().isThreadSafe()));
+				type.setType(new TypeArgumentInferringSite(referenced, false, referenced.getMetaType().isThreadSafe()));
 				return ret;
 			}
 		};

@@ -2,6 +2,8 @@ package bali;
 
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
+import bali.annotation.Name;
+import bali.annotation.Nullable;
 
 import static bali.Primitive.convert;
 
@@ -14,12 +16,10 @@ public class Counter implements Count {
 
 	private int count;
 
-	public Counter() {
-		this.count = 0;
-	}
-
-	public Counter(Integer count) {
-		this.count = convert(count);
+	public Counter(@Nullable @Name("start") Integer count) {
+		if (count != null){
+			this.count = convert(count);
+		}
 	}
 
 	public Integer increment() {

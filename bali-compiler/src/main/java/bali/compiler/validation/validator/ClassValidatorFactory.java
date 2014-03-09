@@ -1,6 +1,5 @@
 package bali.compiler.validation.validator;
 
-import bali.compiler.BaliCompiler;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.DeclarationNode;
 import bali.compiler.parser.tree.Node;
@@ -61,7 +60,7 @@ public class ClassValidatorFactory implements ValidatorFactory {
 				Set<String> memberNames = new HashSet<>();
 				List<ValidationFailure> failures = new LinkedList<>();
 				List<DeclarationNode> members = new LinkedList<>();
-				members.addAll(node.getArgumentDeclarations());
+				members.addAll(node.getParameters());
 				members.addAll(node.getFields());
 				members.addAll(node.getMethods());
 

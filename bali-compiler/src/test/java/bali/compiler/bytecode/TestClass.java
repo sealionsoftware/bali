@@ -8,6 +8,7 @@ import bali.compiler.type.Site;
 import bali.compiler.type.Type;
 import bali.compiler.type.UnaryOperator;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,7 +46,19 @@ public class TestClass implements bali.compiler.type.Class {
 	}
 
 	public List<Declaration<Site>> getParameters() {
-		return Collections.emptyList();
+		Constructor[] constructors = delegate.getConstructors();
+		if (constructors.length == 0){
+			return Collections.emptyList();
+		}
+		Constructor c = delegate.getConstructors()[0];
+		List<Declaration<Site>> ret = new ArrayList<>();
+		for(Class type : c.getParameterTypes()){
+			ret.add(new Declaration<Site>(
+					"test",
+					new TestSite(type)
+			));
+		}
+		return ret;
 	}
 
 	public List<Operator> getOperators() {

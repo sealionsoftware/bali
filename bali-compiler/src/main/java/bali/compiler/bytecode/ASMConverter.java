@@ -4,6 +4,7 @@ import bali.compiler.type.Class;
 import bali.compiler.type.Declaration;
 import bali.compiler.type.Method;
 import bali.compiler.type.Site;
+import org.antlr.v4.parse.ANTLRParser;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureVisitor;
 import org.objectweb.asm.signature.SignatureWriter;
@@ -58,6 +59,28 @@ public class ASMConverter {
 	public String getSignature(Site site){
 		SignatureWriter signatureWriter = new SignatureWriter();
 		visit(signatureWriter, site);
+		return signatureWriter.toString();
+	}
+
+	public String getMethodSignature(Method method){
+		List<Site> parameterTypes = new ArrayList<>();
+		for (Declaration<Site> parameter : method.getParameters()){
+			parameterTypes.add(parameter.getType());
+		}
+		return getMethodSignature(method.getType(), parameterTypes);
+	}
+
+	public String getMethodSignature(Site returnType, List<Site> parameterTypes){
+		SignatureWriter signatureWriter = new SignatureWriter();
+		for (Site parameterType : parameterTypes){
+			visit(signatureWriter.visitParameterType(), parameterType);
+		}
+		SignatureVisitor returnVisitor = signatureWriter.visitReturnType();
+		if (returnType != null){
+			visit(returnVisitor, returnType);
+		} else {
+			returnVisitor.visitBaseType('V');
+		}
 		return signatureWriter.toString();
 	}
 

@@ -428,8 +428,8 @@ public class ASMStackManager implements Opcodes {
 			push((NullCheckNode) value, v);
 		} else if (value instanceof OperationNode) {
 			push((OperationNode) value, v);
-		} else {
-			throw new RuntimeException("Cannot push value of type " + value + " onto the stack");
+		} else if (value == null) {
+			v.visitInsn(ACONST_NULL);
 		}
 	}
 

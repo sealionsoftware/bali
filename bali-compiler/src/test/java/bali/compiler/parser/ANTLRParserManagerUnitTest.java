@@ -19,7 +19,6 @@ import bali.compiler.parser.tree.ReferenceNode;
 import bali.compiler.parser.tree.ReturnStatementNode;
 import bali.compiler.parser.tree.VariableNode;
 import bali.compiler.parser.tree.WhileStatementNode;
-import bali.compiler.type.ClassLibrary;
 import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -85,7 +84,7 @@ public class ANTLRParserManagerUnitTest {
 	public void testClass() {
 		ObjectNode clazz = unit.getClasses().get(0);
 		Assert.assertEquals("Name", "AnImplementation", clazz.getClassName());
-		Assert.assertEquals("Arguments", 1, clazz.getArgumentDeclarations().size());
+		Assert.assertEquals("Arguments", 1, clazz.getParameters().size());
 		Assert.assertEquals("Interfaces", 1, clazz.getImplementations().size());
 		Assert.assertEquals("Interface Name", "AnInterface", clazz.getImplementations().get(0).getClassName());
 		Assert.assertEquals("Fields", 1, clazz.getFields().size());
@@ -103,7 +102,7 @@ public class ANTLRParserManagerUnitTest {
 
 	@Test
 	public void testConstructionArguments() {
-		DeclarationNode declaration = unit.getClasses().get(0).getArgumentDeclarations().get(0);
+		DeclarationNode declaration = unit.getClasses().get(0).getParameters().get(0);
 		Assert.assertEquals("Name", "aParameter", declaration.getName());
 		Assert.assertEquals("Class", "Number", declaration.getType().getClassName());
 		Assert.assertEquals("Children", 1, declaration.getChildren().size());

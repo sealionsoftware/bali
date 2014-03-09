@@ -6,6 +6,7 @@ import bali.annotation.Name;
 import bali.annotation.Nullable;
 import bali.annotation.SelfTyped;
 import bali.annotation.ThreadSafe;
+import bali.collection.Collection;
 import bali.compiler.reference.Reference;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
@@ -59,6 +60,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 	private Map<String, Type> typeVariableBounds = new HashMap<>();
 
 	private Type nullBound;
+	private boolean constructorSet = false;
 
 	public ClassPathTypeBuilderVisitor(ClassLibrary library) {
 		super(Opcodes.ASM4);
@@ -253,10 +255,10 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 
 				if (name.equals("<init>")) {
 					// The method is a constructor
-
-					if (constructorParameters == null) {
-						constructorParameters = parameterDeclarations;
+					if (constructorParameters != null){
+						throw new RuntimeException("Cannot load class with multiple constructors as a Bali type");
 					}
+					constructorParameters = parameterDeclarations;
 				} else if (isOperator) switch (parameterDeclarations.size()) {
 					case 1:
 						// The method is an operator
@@ -304,66 +306,20 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 			throw new RuntimeException("The type " + className + " has no @MetaType annotation and is therefore not a valid Bali type");
 		}
 
-		switch (metaType) {
-			case OBJECT:
-				classpathClass = new MutableClassModel(
-						className,
-						null,
-						typeParameters,
-						interfaces,
-						constructorParameters,
-						methods,
-						Collections.<Operator>emptyList(),
-						Collections.<UnaryOperator>emptyList(),
-						Collections.<Declaration<Site>>emptyList(),
-						metaType
-					);
-				break;
-			case MONITOR:
-				classpathClass = new MutableClassModel(
-						className,
-						null,
-						typeParameters,
-						interfaces,
-						constructorParameters,
-						methods,
-						Collections.<Operator>emptyList(),
-						Collections.<UnaryOperator>emptyList(),
-						Collections.<Declaration<Site>>emptyList(),
-						metaType
-				);
-				break;
-			case INTERFACE:
-				classpathClass = new MutableClassModel(
-						className,
-						null,
-						typeParameters,
-						interfaces,
-						Collections.<Declaration<Site>>emptyList(),
-						methods,
-						operators,
-						unaryOperators,
-						Collections.<Declaration<Site>>emptyList(),
-						metaType
-				);
-				break;
-			case BEAN:
-				classpathClass = new MutableClassModel(
-						className,
-						superType,
-						typeParameters,
-						Collections.<Type>emptyList(),
-						Collections.<Declaration<Site>>emptyList(),
-						Collections.<Method>emptyList(),
-						Collections.<Operator>emptyList(),
-						Collections.<UnaryOperator>emptyList(),
-						properties,
-						metaType
-				);
-				break;
-			default:
-				throw new RuntimeException("Cannot load classes of metatype " + metaType + " from the classpath yet");
-		}
+		List<Declaration<Site>> constructorParameters = this.constructorParameters != null ? this.constructorParameters : Collections.<Declaration<Site>>emptyList();
+
+		classpathClass = new MutableClassModel(
+				className,
+				superType,
+				typeParameters,
+				interfaces,
+				constructorParameters,
+				methods,
+				operators,
+				unaryOperators,
+				properties,
+				metaType
+		);
 	}
 
 	public Class getClasspathClass() {

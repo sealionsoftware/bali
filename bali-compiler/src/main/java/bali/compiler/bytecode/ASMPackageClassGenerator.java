@@ -4,6 +4,7 @@ import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.ConstantNode;
 import bali.compiler.parser.tree.ExpressionNode;
+import bali.compiler.type.Site;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
@@ -32,12 +33,14 @@ public class ASMPackageClassGenerator implements Generator<CompilationUnitNode, 
 				"java/lang/Object",
 				null);
 
+		//TODO Annotations
 		Map<ConstantNode, ExpressionNode> constantValues = new HashMap<>();
 		for (ConstantNode constant : input.getConstants()) {
+			Site type = constant.getType().getSite();
 			cw.visitField(ACC_PUBLIC + ACC_FINAL + ACC_STATIC,
 					constant.getName(),
-					converter.getTypeDescriptor(constant.getType().getSite().getTemplate()),
-					null,
+					converter.getTypeDescriptor(type),
+					converter.getSignature(type),
 					null
 			).visitEnd();
 			constantValues.put(constant, constant.getValue());

@@ -5,6 +5,7 @@ import bali.Counter;
 import bali.Integer;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
+import bali.number.NumberFactory;
 
 /**
  * User: Richard
@@ -16,7 +17,7 @@ public class CounterMonitor implements Count {
 	private Counter delegate;
 
 	public CounterMonitor() {
-		delegate = new Counter();
+		delegate = new Counter(null);
 	}
 
 	public CounterMonitor(Integer count) {

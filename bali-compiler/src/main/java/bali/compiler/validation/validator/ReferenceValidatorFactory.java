@@ -143,7 +143,7 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 
 			private void validate(ObjectNode clazz, Control agent) {
 				List<DeclarationNode> referenceableFields = new ArrayList<>();
-				referenceableFields.addAll(clazz.getArgumentDeclarations());
+				referenceableFields.addAll(clazz.getParameters());
 				referenceableFields.addAll(clazz.getFields());
 
 				Scope scope = new Scope(

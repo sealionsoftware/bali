@@ -11,8 +11,7 @@ import bali.compiler.parser.tree.FieldNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.SiteNode;
-import bali.compiler.type.Method;
-import bali.compiler.type.Type;
+import bali.compiler.type.Site;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
@@ -40,7 +39,7 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 		cw.visit(V1_7,
 				ACC_PUBLIC + ACC_SUPER + ACC_FINAL,
 				converter.getInternalName(input.getQualifiedClassName()),
-				null,
+				null, //TODO: signature
 				"java/lang/Object",
 				interfaceNames);
 
@@ -51,19 +50,21 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 		av.visitEnd();
 
 		for (FieldNode field : input.getFields()) {
+			Site type = field.getType().getSite();
 			cw.visitField(ACC_PRIVATE,
 					field.getName(),
-					converter.getTypeDescriptor(field.getType().getSite().getTemplate()),
-					null,
+					converter.getTypeDescriptor(type),
+					converter.getSignature(type),
 					null
 			).visitEnd();
 		}
 
-		for (DeclarationNode argument : input.getArgumentDeclarations()) {
+		for (DeclarationNode parameter : input.getParameters()) {
+			Site type = parameter.getType().getSite();
 			cw.visitField(ACC_PRIVATE + ACC_FINAL,
-					argument.getName(),
-					converter.getTypeDescriptor(argument.getType().getSite().getTemplate()),
-					null,
+					parameter.getName(),
+					converter.getTypeDescriptor(type),
+					converter.getSignature(type),
 					null
 			).visitEnd();
 		}
@@ -83,15 +84,18 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 
 		ASMStackManager manager = new ASMStackManager(converter);
 
-		List<Class> argClasses = new ArrayList<>();
-		for (DeclarationNode argument : input.getArgumentDeclarations()) {
-			argClasses.add(argument.getType().getSite().getTemplate());
+		List<Site> parameterSites = new ArrayList<>();
+		List<Class> parameterClasses = new ArrayList<>();
+		for (ParameterNode declaration : input.getParameters()){
+			Site parameterSite = declaration.getType().getSite();
+			parameterSites.add(parameterSite);
+			parameterClasses.add(parameterSite.getTemplate());
 		}
 
 		MethodVisitor initv = cw.visitMethod(ACC_PUBLIC,
 				"<init>",
-				converter.getMethodDescriptor(null, argClasses),
-				null,
+				converter.getMethodDescriptor(null, parameterClasses),
+				converter.getMethodSignature(null, parameterSites),
 				null
 		);
 
@@ -101,7 +105,7 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 		initv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V");
 
 		int i = 1;
-		for (DeclarationNode declaration : input.getArgumentDeclarations()) {
+		for (DeclarationNode declaration : input.getParameters()) {
 			initv.visitInsn(DUP);
 			initv.visitVarInsn(ALOAD, i++);
 			initv.visitFieldInsn(PUTFIELD,
@@ -137,15 +141,20 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 			flags += ACC_FINAL;
 		}
 
+		List<Site> parameterSites = new ArrayList<>();
 		List<Class> parameterClasses = new ArrayList<>();
 		for (ParameterNode declaration : method.getParameters()){
-			parameterClasses.add(declaration.getType().getSite().getTemplate());
+			Site parameterSite = declaration.getType().getSite();
+			parameterSites.add(parameterSite);
+			parameterClasses.add(parameterSite.getTemplate());
 		}
-		Class returnClass = method.getType() != null ? method.getType().getSite().getTemplate() : null;
+		Site returnSite = method.getType() != null ? method.getType().getSite() : null;
+		Class returnClass = returnSite != null ? returnSite.getTemplate() : null;
+
 		MethodVisitor methodVisitor = cw.visitMethod(flags,
 				method.getName(),
 				converter.getMethodDescriptor(returnClass, parameterClasses),
-				null,
+				converter.getMethodSignature(returnSite, parameterSites),
 				null
 		);
 
@@ -166,25 +175,6 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 		methodVisitor.visitMaxs(1, 1);
 		methodVisitor.visitEnd();
 
-	}
-
-	private class InlineValue {
-
-		private Type type;
-		private ExpressionNode value;
-
-		private InlineValue(Type type, ExpressionNode value) {
-			this.type = type;
-			this.value = value;
-		}
-
-		public Type getType() {
-			return type;
-		}
-
-		public ExpressionNode getValue() {
-			return value;
-		}
 	}
 
 }

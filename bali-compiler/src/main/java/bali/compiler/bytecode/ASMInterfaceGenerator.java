@@ -49,16 +49,21 @@ public class ASMInterfaceGenerator implements Generator<InterfaceNode, Generated
 		for (MethodNode method : input.getMethods()) {
 			String methodName = method.getName();
 
+			List<Site> parameterSites = new ArrayList<>();
 			List<Class> parameterClasses = new ArrayList<>();
 			for (ParameterNode declaration : method.getParameters()){
-				parameterClasses.add(declaration.getType().getSite().getTemplate());
+				Site parameterSite = declaration.getType().getSite();
+				parameterSites.add(parameterSite);
+				parameterClasses.add(parameterSite.getTemplate());
 			}
-			Class returnClass = method.getType() != null ? method.getType().getSite().getTemplate() : null;
+			Site returnSite = method.getType() != null ? method.getType().getSite() : null;
+			Class returnClass = returnSite != null ? returnSite.getTemplate() : null;
 
+			//TODO Annotations
 			cw.visitMethod(ACC_PUBLIC + ACC_ABSTRACT,
 					methodName,
 					converter.getMethodDescriptor(returnClass, parameterClasses),
-					null,
+					converter.getMethodSignature(returnSite, parameterSites),
 					null
 			).visitEnd();
 		}
