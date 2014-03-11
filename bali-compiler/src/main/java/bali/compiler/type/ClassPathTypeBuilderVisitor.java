@@ -6,7 +6,6 @@ import bali.annotation.Name;
 import bali.annotation.Nullable;
 import bali.annotation.SelfTyped;
 import bali.annotation.ThreadSafe;
-import bali.collection.Collection;
 import bali.compiler.reference.Reference;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;

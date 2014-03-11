@@ -1,9 +1,9 @@
 package bali.compiler.bytecode;
 
 import bali.compiler.reference.SimpleReference;
-import bali.compiler.type.*;
+import bali.compiler.type.ParameterisedSite;
+import bali.compiler.type.Site;
 
-import java.lang.Class;
 import java.util.Collections;
 import java.util.List;
 

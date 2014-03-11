@@ -3,12 +3,9 @@ package bali.collection;
 import bali.Boolean;
 import bali.Integer;
 import bali.Iterator;
-import bali.Number;
 import bali.Primitive;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
-import bali.collection.Collection;
-import bali.collection.List;
 
 import static bali.Primitive.convert;
 

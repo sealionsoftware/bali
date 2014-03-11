@@ -6,7 +6,6 @@ import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.ConstructionExpressionNode;
 import bali.compiler.parser.tree.FieldNode;
 import bali.compiler.parser.tree.Node;
-import bali.compiler.parser.tree.ParametrisedExpressionNode;
 import bali.compiler.reference.Reference;
 import bali.compiler.type.Class;
 import bali.compiler.type.ClassLibrary;

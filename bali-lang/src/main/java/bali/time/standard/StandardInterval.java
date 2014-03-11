@@ -2,8 +2,6 @@ package bali.time.standard;
 
 import bali.Boolean;
 import bali.Number;
-import bali.annotation.Kind;
-import bali.annotation.MetaType;
 import bali.annotation.Name;
 import bali.time.Interval;
 

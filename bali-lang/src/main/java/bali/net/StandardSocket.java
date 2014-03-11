@@ -1,11 +1,11 @@
 package bali.net;
 
 
-import bali.String;
 import bali.Boolean;
 import bali.Character;
 import bali.Initialisable;
 import bali.Iterator;
+import bali.String;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

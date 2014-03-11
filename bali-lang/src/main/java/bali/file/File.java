@@ -2,8 +2,8 @@ package bali.file;
 
 import bali.Closable;
 import bali.Iterable;
-import bali.String;
 import bali.ReaderWriter;
+import bali.String;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 

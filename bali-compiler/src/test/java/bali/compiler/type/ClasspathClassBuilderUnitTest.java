@@ -1,14 +1,11 @@
 package bali.compiler.type;
 
-import bali.*;
-import bali.Number;
 import bali.annotation.Kind;
 import bali.compiler.bytecode.TestSite;
 import bali.compiler.bytecode.TestVariableSite;
 import junit.framework.Assert;
 import org.junit.Test;
 
-import java.lang.String;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;

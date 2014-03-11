@@ -1,6 +1,5 @@
 package bali.compiler.validation.validator;
 
-import bali.compiler.BaliCompiler;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.InvocationNode;
 import bali.compiler.parser.tree.Node;

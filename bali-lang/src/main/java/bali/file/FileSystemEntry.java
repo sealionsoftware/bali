@@ -1,7 +1,7 @@
 package bali.file;
 
-import bali.String;
 import bali.Boolean;
+import bali.String;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 

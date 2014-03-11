@@ -1,18 +1,16 @@
 package bali.collection;
 
 import bali.Boolean;
-import bali.False;
 import bali.Integer;
 import bali.Iterator;
-import bali.True;
 import bali.Value;
 import bali.annotation.Name;
 
 import java.util.Arrays;
 
-import static bali.Primitive.convert;
-import static bali.Boolean.TRUE;
 import static bali.Boolean.FALSE;
+import static bali.Boolean.TRUE;
+import static bali.Primitive.convert;
 
 /**
  * User: Richard

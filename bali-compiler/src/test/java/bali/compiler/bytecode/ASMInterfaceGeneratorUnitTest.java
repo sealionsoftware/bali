@@ -2,9 +2,9 @@ package bali.compiler.bytecode;
 
 import bali.Number;
 import bali.compiler.GeneratedClass;
-import bali.compiler.parser.tree.ParameterNode;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.MethodNode;
+import bali.compiler.parser.tree.ParameterNode;
 import bali.compiler.parser.tree.SiteNode;
 import junit.framework.Assert;
 import org.junit.Before;

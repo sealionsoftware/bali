@@ -5,7 +5,6 @@ import bali.Counter;
 import bali.Integer;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
-import bali.number.NumberFactory;
 
 /**
  * User: Richard

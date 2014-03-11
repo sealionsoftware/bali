@@ -5,8 +5,8 @@ import bali.Number;
 import bali.annotation.Name;
 
 import static bali.False.FALSE;
-import static bali.True.TRUE;
 import static bali.Primitive.convert;
+import static bali.True.TRUE;
 
 /**
  * User: Richard

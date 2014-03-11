@@ -1,12 +1,10 @@
 package bali.compiler.type;
 
-import bali.annotation.Kind;
 import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.reference.BlockingReference;
 import bali.compiler.reference.Reference;
 import bali.compiler.reference.SimpleReference;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 

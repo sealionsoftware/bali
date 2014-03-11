@@ -4,7 +4,6 @@ import bali.compiler.type.Class;
 import bali.compiler.type.Declaration;
 import bali.compiler.type.Method;
 import bali.compiler.type.Site;
-import org.antlr.v4.parse.ANTLRParser;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureVisitor;
 import org.objectweb.asm.signature.SignatureWriter;

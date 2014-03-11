@@ -1,8 +1,6 @@
 package bali.time.standard;
 
 import bali.Number;
-import bali.annotation.Kind;
-import bali.annotation.MetaType;
 import bali.time.Time;
 
 /**

@@ -1,9 +1,9 @@
 package bali.net;
 
-import bali.String;
-import bali.Iterable;
 import bali.Closable;
+import bali.Iterable;
 import bali.ReaderWriter;
+import bali.String;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 

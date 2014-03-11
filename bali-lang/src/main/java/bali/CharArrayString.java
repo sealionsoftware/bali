@@ -6,9 +6,10 @@ import bali.collection.Collection;
 import bali.collection.ValueCollection;
 
 import java.util.Arrays;
-import static bali.Primitive.convert;
-import static bali.Boolean.TRUE;
+
 import static bali.Boolean.FALSE;
+import static bali.Boolean.TRUE;
+import static bali.Primitive.convert;
 
 /**
  * User: Richard
