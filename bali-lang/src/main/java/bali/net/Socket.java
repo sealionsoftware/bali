@@ -1,6 +1,9 @@
-package bali.io;
+package bali.net;
 
 import bali.String;
+import bali.Iterable;
+import bali.Closable;
+import bali.ReaderWriter;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 
@@ -9,12 +12,6 @@ import bali.annotation.MetaType;
  * Date: 06/02/14
  */
 @MetaType(Kind.INTERFACE)
-public interface Host {
-
-	public String shortName();
-
-	public String canonicalName();
-
-	public IPAddress ipAddress();
+public interface Socket extends ReaderWriter, Iterable<String>, Closable {
 
 }

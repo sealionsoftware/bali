@@ -1,6 +1,5 @@
-package bali.io;
+package bali.net;
 
-import bali.*;
 import bali.annotation.Name;
 
 /**

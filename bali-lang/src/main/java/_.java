@@ -4,8 +4,10 @@ import bali.Number;
 import bali.ReaderWriter;
 import bali.Serializer;
 import bali.annotation.ThreadSafe;
-import bali.io.NetworkManager;
-import bali.io.StandardNetworkManager;
+import bali.file.FileManager;
+import bali.file.StandardFileManager;
+import bali.net.NetworkManager;
+import bali.net.StandardNetworkManager;
 import bali.number.NumberFactory;
 import bali.time.Clock;
 import bali.time.SystemClock;
@@ -37,6 +39,9 @@ public final class _ {
 
 	@ThreadSafe
 	public static final NetworkManager NETWORK_MANAGER = new StandardNetworkManager();
+
+	@ThreadSafe
+	public static final FileManager FILE_MANAGER = new StandardFileManager();
 
 
 }

@@ -112,11 +112,11 @@ siteDefinition:             className ('['  siteDefinitionList ']')? AT? QM? ;
 
 siteDefinitionList:         siteDefinition (',' siteDefinition)* ;
 
-typeDefinition:             className ('['  typeVarDeclarationList ']')? ;
+typeDefinition:             className ('['  typeParamDeclarationList ']')? ;
 
-typeVarDeclaration:         className? IDENTIFIER ;
+typeParamDeclaration:       siteDefinition? IDENTIFIER ;
 
-typeVarDeclarationList:     typeVarDeclaration (',' typeVarDeclaration)* ;
+typeParamDeclarationList:   typeParamDeclaration (',' typeParamDeclaration)* ;
 
 parameter:                  siteDefinition IDENTIFIER ;
 

@@ -9,7 +9,7 @@ import bali.annotation.Name;
  * Date: 04/07/13
  */
 @MetaType(Kind.INTERFACE)
-public interface Formatter<T extends Value> {
+public interface Formatter<T> {
 
 	public String format(@Name("in") T in);
 

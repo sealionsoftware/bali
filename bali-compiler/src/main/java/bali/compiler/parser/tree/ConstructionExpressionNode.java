@@ -3,6 +3,8 @@ package bali.compiler.parser.tree;
 import bali.compiler.reference.BlockingReference;
 import bali.compiler.type.Site;
 
+import java.util.Iterator;
+
 /**
  * User: Richard
  * Date: 05/05/13
@@ -33,6 +35,15 @@ public class ConstructionExpressionNode extends ParametrisedExpressionNode {
 	}
 
 	public String toString() {
-		return className;
+		StringBuilder sb = new StringBuilder("new ");
+		sb.append(className).append("(");
+		Iterator<ArgumentNode> i = getArguments().iterator();
+		if (i.hasNext()){
+			sb.append(i.next());
+		}
+		while(i.hasNext()){
+			sb.append(", ").append(i.next());
+		}
+		return sb.append(")").toString();
 	}
 }

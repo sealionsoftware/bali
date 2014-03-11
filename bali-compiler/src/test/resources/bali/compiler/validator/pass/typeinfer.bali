@@ -1,0 +1,33 @@
+import bali.String
+import bali.Executable
+
+constant B b = new B()
+
+constant A[B] a = new A(b)
+
+bean A[T] {
+	property T aProperty
+}
+
+bean B {
+}
+
+bean C {
+	property A[B] aProperty
+}
+
+object Test implements Executable {
+
+	field A[B] a = new A(b)
+
+	method execute {
+
+	    A[B] a = new A(b);
+	    aMethod(new A(b));
+	    C c = new C(new A(b));
+	}
+
+	method aMethod(A[B] ab){
+	}
+
+}

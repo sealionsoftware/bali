@@ -205,10 +205,16 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 				ExpressionNode target = node.getTarget();
 				if (target instanceof ReferenceNode){
 					ReferenceNode referenceNode = (ReferenceNode) target;
-					String name = referenceNode.getName();
-					Site oldSite = getSiteForReference(name);
-					Site newSite = new ParameterisedSite(new SimpleReference<>(oldSite.getTemplate()), oldSite.getTypeArguments(), false, oldSite.isThreadSafe());
-					conditional.overrideType(name, newSite);
+					if (referenceNode.getTarget() == null){
+						String name = referenceNode.getName();
+						Site oldSite = getSiteForReference(name);
+						Site newSite = new ParameterisedSite(new SimpleReference<>(oldSite.getTemplate()), oldSite.getTypeArguments(), false, oldSite.isThreadSafe());
+						conditional.overrideType(name, newSite);
+					} else {
+						//TODO
+						throw new RuntimeException("Nullsafe type overrides on properties are not supported get");
+					}
+
 				}
 			}
 

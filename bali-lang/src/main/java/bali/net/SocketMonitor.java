@@ -1,4 +1,4 @@
-package bali.io;
+package bali.net;
 
 import bali.annotation.Kind;
 import bali.annotation.MetaType;

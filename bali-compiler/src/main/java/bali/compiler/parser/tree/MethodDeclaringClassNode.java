@@ -33,7 +33,7 @@ public abstract class MethodDeclaringClassNode<M extends MethodNode> extends Cla
 		return typeParameters;
 	}
 
-	public void addParameter(TypeParameterNode parameter) {
+	public void addTypeParameter(TypeParameterNode parameter) {
 		children.add(parameter);
 		typeParameters.add(parameter);
 	}

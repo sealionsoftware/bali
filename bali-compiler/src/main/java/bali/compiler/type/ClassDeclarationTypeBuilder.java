@@ -97,6 +97,7 @@ public class ClassDeclarationTypeBuilder {
 
 		List<Declaration<Type>> parameters = new ArrayList<>();
 		for (TypeParameterNode declaredParameter : declaration.getTypeParameters()) {
+
 			parameters.add(new Declaration<Type>(
 					declaredParameter.getName(),
 					getType(declaredParameter.getType())
@@ -161,6 +162,6 @@ public class ClassDeclarationTypeBuilder {
 	}
 
 	private Site getType(SiteNode reference) {
-		return reference.getSite();
+		return reference != null ? reference.getSite() : null;
 	}
 }

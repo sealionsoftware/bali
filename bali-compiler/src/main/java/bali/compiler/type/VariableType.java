@@ -8,12 +8,14 @@ import java.util.List;
  */
 public class VariableType implements Type {
 
+	private static final Type VOID_TYPE = new VoidType();
+
 	private String name;
 	private Type bound;
 
 	public VariableType(String name, Type bound) {
 		this.name = name;
-		this.bound = bound;
+		this.bound = bound != null ? bound : VOID_TYPE;
 	}
 
 	public String getName() {
@@ -21,6 +23,13 @@ public class VariableType implements Type {
 	}
 
 	public boolean isAssignableTo(Type t) {
+		if (t == this){
+			return true;
+		}
+		if (t instanceof VariableType){
+			VariableType vt = (VariableType) t;
+			return name.equals(vt.getName());
+		}
 		return bound.isAssignableTo(t);
 	}
 
@@ -62,7 +71,7 @@ public class VariableType implements Type {
 
 	public String toString(){
 		StringBuilder sb = new StringBuilder(name);
-		if (bound != null){
+		if (!VOID_TYPE.equals(bound)){
 			sb.append(" ").append(bound);
 		}
 		return sb.toString();

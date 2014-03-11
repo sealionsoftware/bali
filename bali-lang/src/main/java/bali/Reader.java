@@ -12,8 +12,12 @@ import bali.annotation.Operator;
 @MetaType(Kind.INTERFACE)
 public interface Reader {
 
+	@Operator("<")
+	@Nullable
+	public Character read();
+
 	@Operator("<<")
 	@Nullable
-	public String readLine() throws java.lang.Exception;
+	public String readLine();
 
 }

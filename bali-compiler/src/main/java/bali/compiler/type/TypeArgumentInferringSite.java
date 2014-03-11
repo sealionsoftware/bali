@@ -1,8 +1,7 @@
 package bali.compiler.type;
 
-import bali.compiler.reference.SimpleReference;
+import bali.compiler.reference.Reference;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,14 +11,10 @@ import java.util.List;
 public class TypeArgumentInferringSite implements Site {
 
 	private Site delegate;
-	private Class template;
-	private Boolean nullable;
-	private Boolean threadsafe;
+	private Reference<Class> template;
 
-	public TypeArgumentInferringSite(Class template, Boolean nullable, Boolean threadsafe) {
+	public TypeArgumentInferringSite(Reference<Class> template) {
 		this.template = template;
-		this.nullable = nullable;
-		this.threadsafe = threadsafe;
 	}
 
 	public Boolean isNullable() {
@@ -37,17 +32,19 @@ public class TypeArgumentInferringSite implements Site {
 	//TODO - this needs to be much tighter
 	public boolean isAssignableTo(Type t) {
 		if (delegate == null){
-			List<Declaration<Type>> params = template.getTypeParameters();
+			Class referenced = template.get();
+			boolean threadsafe = referenced.getMetaType().isThreadSafe();
+			List<Declaration<Type>> params = template.get().getTypeParameters();
 			int noParams = params.size();
 			if (noParams > 0){
 				List<Site> typeArguments = t.getTypeArguments();
 				if (noParams == typeArguments.size()){
-					delegate = new ParameterisedSite(new SimpleReference<>(template), t.getTypeArguments(), nullable, threadsafe);
+					delegate = new ParameterisedSite(template, t.getTypeArguments(), false, threadsafe);
 				} else {
 					throw new RuntimeException("Could not infer Type Arguments. Context arguments: " + typeArguments + " required parameters: " + params);
 				}
 			} else {
-				delegate = new ParameterisedSite(new SimpleReference<>(template), nullable, threadsafe);
+				delegate = new ParameterisedSite(template, false, threadsafe);
 			}
 		}
 		return delegate.isAssignableTo(t);
@@ -86,6 +83,10 @@ public class TypeArgumentInferringSite implements Site {
 	}
 
 	public Class getTemplate() {
-		return template;
+		return template.get();
+	}
+
+	public String toString() {
+		return delegate.toString();
 	}
 }

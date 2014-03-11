@@ -64,8 +64,8 @@ public class ASMConverterUnitTest {
 //		ParameterNode argument2 = new ParameterNode(0, 0);
 //		argument1.setType(s);
 //		argument2.setType(n);
-//		declaration.addParameter(argument1);
-//		declaration.addParameter(argument2);
+//		declaration.addTypeParameter(argument1);
+//		declaration.addTypeParameter(argument2);
 //		Assert.assertEquals("(Lbali/String;Lbali/Number;)Lbali/Boolean;", converter.getMethodDescriptor(declaration));
 //	}
 

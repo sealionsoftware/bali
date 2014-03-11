@@ -37,7 +37,7 @@ public abstract class ClassNode extends Node {
 		return typeParameters;
 	}
 
-	public void addParameter(TypeParameterNode parameter) {
+	public void addTypeParameter(TypeParameterNode parameter) {
 		children.add(parameter);
 		typeParameters.add(parameter);
 	}

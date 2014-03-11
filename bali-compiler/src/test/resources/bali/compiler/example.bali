@@ -65,7 +65,8 @@ object AnImplementation(Number aParameter) implements AnInterface {
  	    }
 
  	    ABean aBean = new AnotherBean(
- 	        aString: "test"
+ 	        aString: "test",
+ 	        aNumber: 1
  	    );
         aBean.aNumber = 4;
 

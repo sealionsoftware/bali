@@ -4,8 +4,6 @@ import bali.annotation.Kind;
 import bali.annotation.MetaType;
 import bali.annotation.Operator;
 
-import java.io.IOException;
-
 /**
  * User: Richard
  * Date: 07/07/13
@@ -13,7 +11,10 @@ import java.io.IOException;
 @MetaType(Kind.INTERFACE)
 public interface Writer {
 
+	@Operator("<")
+	public void write(Character in);
+
 	@Operator("<<")
-	public void writeLine(String in) throws IOException;
+	public void writeLine(String in);
 
 }

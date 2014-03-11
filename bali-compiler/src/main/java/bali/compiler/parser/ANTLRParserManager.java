@@ -40,6 +40,7 @@ import bali.compiler.parser.tree.StringLiteralExpressionNode;
 import bali.compiler.parser.tree.SwitchStatementNode;
 import bali.compiler.parser.tree.ThrowStatementNode;
 import bali.compiler.parser.tree.TryStatementNode;
+import bali.compiler.parser.tree.TypeParameterNode;
 import bali.compiler.parser.tree.UnaryOperationNode;
 import bali.compiler.parser.tree.VariableNode;
 import bali.compiler.parser.tree.WhileStatementNode;
@@ -130,15 +131,16 @@ public class ANTLRParserManager implements ParserManager {
 	private BeanNode build(BaliParser.BeanDeclarationContext context) {
 		BeanNode bean = new BeanNode(l(context), c(context));
 
-		bean.setClassName(context.typeDefinition().getText());
+		bean.setClassName(context.typeDefinition().className().getText());
 
 		if(context.siteDefinition()!= null){
 			bean.setSuperType(build(context.siteDefinition()));
 		}
 
-//		for (BaliParser.TypeDeclarationContext typeIdentifier : context.typeDeclaration()){
-//			bean.addParameter(getTemplate(typeIdentifier));
-//		}
+		BaliParser.TypeParamDeclarationListContext tpdlc = context.typeDefinition().typeParamDeclarationList();
+		if (tpdlc != null) for (BaliParser.TypeParamDeclarationContext typeIdentifier : tpdlc.typeParamDeclaration()){
+			bean.addTypeParameter(build(typeIdentifier));
+		}
 
 		for (BaliParser.PropertyDeclarationContext pdc : context.propertyDeclaration()) {
 			bean.addProperty(build(pdc));
@@ -150,11 +152,13 @@ public class ANTLRParserManager implements ParserManager {
 	private InterfaceNode build(BaliParser.InterfaceDeclarationContext context) {
 		InterfaceNode iface = new InterfaceNode(l(context), c(context));
 
-		iface.setClassName(context.typeDefinition().getText());
+		iface.setClassName(context.typeDefinition().className().getText());
 
-//		for (TerminalNode typeIdentifier : context.typeDeclarationList().typeIdentifier()){
-//			iface.addParameter(getTemplate(typeIdentifier));
-//		}
+		BaliParser.TypeParamDeclarationListContext tpdlc = context.typeDefinition().typeParamDeclarationList();
+		if (tpdlc != null) for (BaliParser.TypeParamDeclarationContext typeIdentifier : tpdlc.typeParamDeclaration()){
+			iface.addTypeParameter(build(typeIdentifier));
+		}
+
 		if (context.siteDefinitionList() != null) {
 			for (BaliParser.SiteDefinitionContext typeDeclaration : context.siteDefinitionList().siteDefinition()) {
 				iface.addImplementation(build(typeDeclaration));
@@ -167,31 +171,44 @@ public class ANTLRParserManager implements ParserManager {
 		return iface;
 	}
 
+	private TypeParameterNode build(BaliParser.TypeParamDeclarationContext context){
+		TypeParameterNode ret = new TypeParameterNode();
+		ret.setName(context.IDENTIFIER().getText());
+		BaliParser.SiteDefinitionContext sdc = context.siteDefinition();
+		if (sdc != null){
+			ret.setType(build(context.siteDefinition()));
+		}
+
+		return ret;
+	}
+
 	private ObjectNode build(BaliParser.ObjectDeclarationContext context) throws Exception {
-		ObjectNode clazz = new ObjectNode(l(context), c(context));
-		clazz.setClassName(context.typeDefinition().className().getText());
+		ObjectNode object = new ObjectNode(l(context), c(context));
+		object.setClassName(context.typeDefinition().className().getText());
 
 
-//		for (TerminalNode typeIdentifier : context.typeDeclarationList().typeIdentifier()){
-//			clazz.addParameter(getTemplate(typeIdentifier));
-//		}
+		BaliParser.TypeParamDeclarationListContext tpdlc = context.typeDefinition().typeParamDeclarationList();
+		if (tpdlc != null) for (BaliParser.TypeParamDeclarationContext typeIdentifier : tpdlc.typeParamDeclaration()){
+			object.addTypeParameter(build(typeIdentifier));
+		}
+
 		if (context.siteDefinitionList() != null) {
 			for (BaliParser.SiteDefinitionContext typeDeclaration : context.siteDefinitionList().siteDefinition()) {
-				clazz.addImplementation(build(typeDeclaration));
+				object.addImplementation(build(typeDeclaration));
 			}
 		}
 		BaliParser.ParameterListContext parameterList = context.parameterList();
 		if (parameterList != null) for (BaliParser.ParameterContext parameter : parameterList.parameter()) {
-			clazz.addParameter(build(parameter));
+			object.addParameter(build(parameter));
 		}
 		for (BaliParser.FieldDeclarationContext fdc : context.fieldDeclaration()) {
-			clazz.addField(build(fdc));
+			object.addField(build(fdc));
 		}
 		for (BaliParser.MethodDeclarationContext mdc : context.methodDeclaration()) {
-			clazz.addMethod(build(mdc));
+			object.addMethod(build(mdc));
 		}
 
-		return clazz;
+		return object;
 	}
 
 	private MethodDeclarationNode build(BaliParser.MethodDeclarationContext context) throws Exception {

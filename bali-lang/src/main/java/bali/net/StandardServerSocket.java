@@ -1,4 +1,4 @@
-package bali.io;
+package bali.net;
 
 /**
  * User: Richard

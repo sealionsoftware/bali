@@ -6,20 +6,25 @@ import bali.Count
 import bali.Counter
 import bali.Integer
 import bali.RuntimeException
-
+import bali.Serializer
+import bali.collection.Map
 import bali.collection.Entry
 import bali.collection.Collection
 import bali.collection.HashMap
-
-import bali.io.Socket
-import bali.io.ServerSocket
-import bali.io.SocketMonitor
-
+import bali.net.Socket
+import bali.net.IPAddress
+import bali.net.ServerSocket
+import bali.net.SocketMonitor
+import bali.file.File
 import bali.monitor.ConnectionMonitor
-
 import bali.server.HttpHandler
 import bali.server.HttpResponse
 import bali.server.HttpRequest
+
+import com.sealionsoftware.storage.BeanStore
+import com.sealionsoftware.storage.FileBeanStore
+
+constant String@ CONFIG_FILE_NAME = "temple.config"
 
 interface ProtocolHandler {
 
@@ -30,8 +35,7 @@ object StubRouter implements HttpHandler {
 
 	method HttpResponse handle(HttpRequest request){
 		return new HttpResponse(
-			status: 200,
-			body: "Hello World",
+			status: 404,
 			headers: new HashMap()
 		);
 	}
@@ -57,18 +61,17 @@ object HttpProtocolHandler(HttpHandler router) implements ProtocolHandler {
 				headers: new HashMap()
 			);
 
-			while (true) {
-                String? header = << connection;
-                if (?header & header.size() > 0){
-					Collection[String] headerElements = header / ": ";
-					if (headerElements.size() != 2){
-                    	throw new RuntimeException("The http header is invalid as it had " + NUMBER_FACTORY.format(headerElements.size()) + " elements");
-                    }
-					request.headers.put(headerElements#1, headerElements#2);
-                } else {
-                    break;
+			for (String header : connection){
+				if (header.size() > 0){
+					break;
+				}
+                Collection[String] headerElements = header / ": ";
+                Integer headerElementSize = headerElements.size();
+                if (headerElementSize != 2){
+                    throw new RuntimeException("The http header is invalid as it had $headerElementSize elements");
                 }
-            }
+                request.headers.put(headerElements#1, headerElements#2);
+			}
 
 	        HttpResponse response = router.handle(request);
 	        connection << "HTTP/1.1 " + NUMBER_FACTORY.format(response.status) + " OK";
@@ -78,12 +81,12 @@ object HttpProtocolHandler(HttpHandler router) implements ProtocolHandler {
 	        }
 
 	        connection << "";
-	        connection << response.body;
+	        String? body = response.body;
+	        if (?body){
+	            connection << body;
+	        }
 
 	        CONSOLE << "Response Completed";
-
-        } else {
-            return;
         }
 	}
 
@@ -91,17 +94,30 @@ object HttpProtocolHandler(HttpHandler router) implements ProtocolHandler {
 
 object TempleServer implements Executable {
 
+	field ServerConfiguration configuration
+	field BeanStore[ServerConfiguration] configStore
+
 	method execute {
 
 		CONSOLE << "Starting Temple";
+
+		File? configFile = FILE_MANAGER.getFile(CONFIG_FILE_NAME);
+		if (?configFile){
+
+			configStore = new FileBeanStore(configFile, new ConfigSerializer());
+			configuration = configStore.load();
+
+		} else {
+			throw new RuntimeException("Could not find config file");
+		}
+
+
 		ServerSocket port = NETWORK_MANAGER.openPort(8080);
 		ConnectionMonitor[Socket]@ monitor = new SocketMonitor(port);
-		Count count = new Counter();
 
 		while (true){
 
 			monitor.waitForConnection();
-			Integer@ requestNo = ++count;
 
 			run {
 
@@ -123,3 +139,48 @@ object TempleServer implements Executable {
 
 }
 
+object ConfigSerializer implements Serializer[ServerConfiguration] {
+
+	method String format(ServerConfiguration configuration){
+		return "TEST";
+	}
+
+	method ServerConfiguration parse(String configuration){
+    	return new ServerConfiguration(
+    	    webApplications: new HashMap(),
+    	    bindings: new HashMap(),
+    	    resources: new HashMap()
+    	);
+    }
+
+}
+
+bean ServerConfiguration {
+
+	property Map[String, WebAppConfiguration] webApplications
+	property Map[IPAddress, Map[Integer, String]] bindings
+	property Map[String, ResourceConfiguration] resources
+
+}
+
+bean WebAppConfiguration {
+
+	property String groupId
+	property String artifactId
+	property String versionId
+
+	property Map[String, String] parameters
+	property Map[String, String] resources
+
+}
+
+bean ResourceConfiguration {
+
+	property String groupId
+	property String artifactId
+	property String versionId
+
+	property Map[String, String] parameters
+	property Map[String, String] resources
+
+}

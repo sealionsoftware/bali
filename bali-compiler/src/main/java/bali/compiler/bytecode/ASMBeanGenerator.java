@@ -3,16 +3,21 @@ package bali.compiler.bytecode;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 import bali.annotation.Name;
+import bali.annotation.Nullable;
+import bali.annotation.SelfTyped;
+import bali.annotation.ThreadSafe;
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.BeanNode;
 import bali.compiler.parser.tree.PropertyNode;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.type.Class;
 import bali.compiler.type.Declaration;
+import bali.compiler.type.SelfSite;
 import bali.compiler.type.Site;
 import bali.compiler.type.Type;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 
 import java.util.ArrayList;
@@ -26,6 +31,9 @@ public class ASMBeanGenerator implements Generator<BeanNode, GeneratedClass> {
 
 	private ASMConverter converter = new ASMConverter();
 	private String nameAnnotationDescriptor = converter.getTypeDescriptor(Name.class.getName());
+	private String nullableAnnotationDescriptor = converter.getTypeDescriptor(Nullable.class.getName());
+	private String threadSafeAnnotationDescriptor = converter.getTypeDescriptor(ThreadSafe.class.getName());
+	private String selfTypedAnnotationDescriptor = converter.getTypeDescriptor(SelfTyped.class.getName());
 
 	public GeneratedClass build(BeanNode input) throws Exception {
 
@@ -82,10 +90,20 @@ public class ASMBeanGenerator implements Generator<BeanNode, GeneratedClass> {
 				null
 		);
 
-		//TODO: nullable, threadsafe annotations
 		int i = 0;
 		for (Declaration<Site> param : allParams){
-			initv.visitParameterAnnotation(i++, nameAnnotationDescriptor, true).visit("value", param.getName());
+			initv.visitParameterAnnotation(i, nameAnnotationDescriptor, true).visit("value", param.getName());
+			Site paramType = param.getType();
+			if (paramType.isNullable()){
+				initv.visitParameterAnnotation(i, nullableAnnotationDescriptor, true);
+			}
+			if (paramType.isThreadSafe()){
+				initv.visitParameterAnnotation(i, threadSafeAnnotationDescriptor, true);
+			}
+			if (paramType instanceof SelfSite){
+				initv.visitParameterAnnotation(i, selfTypedAnnotationDescriptor, true);
+			}
+			i++;
 		}
 		List<Class> superParamClasses = new ArrayList<>();
 		for (Declaration<Site> param : superParameters){
@@ -128,12 +146,24 @@ public class ASMBeanGenerator implements Generator<BeanNode, GeneratedClass> {
 		String propertyName = property.getName();
 		Site site = property.getType().getSite();
 
-		cw.visitField(ACC_PUBLIC,
+		FieldVisitor visitor = cw.visitField(ACC_PUBLIC,
 				propertyName,
 				converter.getTypeDescriptor(property.getType().getSite()),
 				converter.getSignature(site),
 				null
-		).visitEnd();
+		);
+
+		if (site.isNullable()){
+			visitor.visitAnnotation(nullableAnnotationDescriptor, true);
+		}
+		if (site.isThreadSafe()){
+			visitor.visitAnnotation(threadSafeAnnotationDescriptor, true);
+		}
+		if (site instanceof SelfSite){
+			visitor.visitAnnotation(selfTypedAnnotationDescriptor, true);
+		}
+
+		visitor.visitEnd();
 	}
 
 

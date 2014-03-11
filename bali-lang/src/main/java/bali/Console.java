@@ -1,9 +1,9 @@
 package bali;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.util.Arrays;
 
 import static bali.Primitive.convert;
 
@@ -13,10 +13,8 @@ import static bali.Primitive.convert;
  */
 public final class Console implements ReaderWriter {
 
-	private static final int BUFFER_SIZE = 256;
-
 	private final PrintStream ps = System.out;
-	private final InputStream is = System.in;
+	private final BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
 	public Console() {}
 
@@ -25,20 +23,23 @@ public final class Console implements ReaderWriter {
 	}
 
 	public synchronized String readLine(){
-		char[] in = new char[BUFFER_SIZE];
-		int i = 0;
 		try {
-			char n;
-			while((n = (char) is.read()) != '\n'){
-				in[i++] = n;
-				if (i % BUFFER_SIZE == 0){
-					in = Arrays.copyOf(in, i + BUFFER_SIZE);
-				}
-			}
-
+			return convert(in.readLine());
 		} catch (IOException e) {
 			throw new java.lang.RuntimeException("IOException whilst reading from standard in");
 		}
-		return Primitive.convert(Arrays.copyOf(in, i));
+	}
+
+	public synchronized Character read() {
+		try {
+			char read = (char) in.read();
+			return read > 0 ? convert(read) : null;
+		} catch (IOException e) {
+			throw new java.lang.RuntimeException("IOException whilst reading from standard in");
+		}
+	}
+
+	public synchronized void write(Character in) {
+		ps.print(convert(in));
 	}
 }

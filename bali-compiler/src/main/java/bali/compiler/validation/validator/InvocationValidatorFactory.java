@@ -40,20 +40,18 @@ public class InvocationValidatorFactory implements ValidatorFactory {
 
 				if (node instanceof ObjectNode){
 					thisSite = new ParameterisedSite(new SimpleReference<>(((ObjectNode) node).getResolvedType()));
+				} else if (node instanceof InvocationNode){
+					return validate((InvocationNode) node, control);
+				} else if (node instanceof ConstructionExpressionNode){
+					return validate((ConstructionExpressionNode) node, control);
 				}
 
 				control.validateChildren();
 
-				if (node instanceof InvocationNode){
-					return validate((InvocationNode) node);
-				} else if (node instanceof ConstructionExpressionNode){
-					return validate((ConstructionExpressionNode) node);
-				}
-
 				return Collections.emptyList();
 			}
 
-			public List<ValidationFailure> validate(InvocationNode node) {
+			public List<ValidationFailure> validate(InvocationNode node, Control control) {
 
 				List<ValidationFailure> ret = new ArrayList<>();
 				ExpressionNode target = node.getTarget();
@@ -77,21 +75,22 @@ public class InvocationValidatorFactory implements ValidatorFactory {
 				node.setResolvedType(method.getType());
 
 				ret.addAll(getResolvedArguments(node, method.getParameters()));
+				control.validateChildren();
 				return ret;
-
 			}
 
-			public List<ValidationFailure> validate(ConstructionExpressionNode node) {
+			public List<ValidationFailure> validate(ConstructionExpressionNode node, Control control) {
 
 				List<ValidationFailure> ret = new ArrayList<>();
-				bali.compiler.type.Class expressionClass = node.getType().getTemplate();
+				Type expressionType = node.getType();
 
-				if (!expressionClass.getMetaType().isConstructable()) {
+				if (!expressionType.getTemplate().getMetaType().isConstructable()) {
 					ret.add(new ValidationFailure(node, "Cannot instanciate an interface type"));
 					return ret;
 				}
 
-				ret.addAll(getResolvedArguments(node, expressionClass.getParameters()));
+				ret.addAll(getResolvedArguments(node, expressionType.getParameters()));
+				control.validateChildren();
 				return ret;
 
 			}
@@ -126,16 +125,27 @@ public class InvocationValidatorFactory implements ValidatorFactory {
 						failures.add(new ValidationFailure(node, "Invalid number of arguments"));
 						return failures;
 					}
+					Iterator<ArgumentNode> i = arguments.iterator();
+					for (Declaration<Site> parameter : parameters){
+						i.next().setResolvedType(parameter.getType());
+					}
 				} else {
 					boolean fail = false;
 					for (Declaration<Site> parameter : parameters){
 						String parameterName = parameter.getName();
+						Site parameterType = parameter.getType();
 						ArgumentNode resolvedArgument = namedArgumentsMap.remove(parameterName);
-						if (resolvedArgument == null && !parameter.getType().isNullable()){
+						if (resolvedArgument == null && !parameterType.isNullable()){
 							failures.add(new ValidationFailure(node, "Parameter " + parameter + " is required"));
 							fail = true;
 						}
-						resolvedArguments.add(resolvedArgument != null ? resolvedArgument.getValue() : null);
+						if (resolvedArgument != null){
+							resolvedArguments.add(resolvedArgument.getValue());
+							resolvedArgument.setResolvedType(parameterType);
+						} else {
+							resolvedArguments.add(null);
+						}
+
 					}
 					for (Map.Entry<String, ArgumentNode> argument : namedArgumentsMap.entrySet()){
 						failures.add(new ValidationFailure(argument.getValue(), "No parameter " + argument.getKey() + " required for this call"));
@@ -150,7 +160,7 @@ public class InvocationValidatorFactory implements ValidatorFactory {
 				while (i.hasNext()){
 					ExpressionNode argument = i.next();
 					if (argument != null){
-						Declaration parameter = j.next();
+						Declaration<Site> parameter = j.next();
 						if (!argument.getType().isAssignableTo(parameter.getType())){
 							failures.add(new ValidationFailure(node, "Invalid argument type " + argument.getType() + " for parameter " + parameter + "."));
 						}

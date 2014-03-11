@@ -24,17 +24,7 @@ public class ClassLibrary {
 		declarationBuilder = new ClassDeclarationTypeBuilder();
 		classpathBuilder = new ClasspathTypeBuilder(this, dependencyLoader);
 		types = new HashMap<>();
-		types.put(Object.class.getName(), new SimpleReference<Class>(new MutableClassModel(Object.class.getName(),
-				null,
-				Collections.<Declaration<Type>>emptyList(),
-				Collections.<Type>emptyList(),
-				Collections.<Declaration<Site>>emptyList(),
-				Collections.<Method>emptyList(),
-				Collections.<Operator>emptyList(),
-				Collections.<UnaryOperator>emptyList(),
-				Collections.<Declaration<Site>>emptyList(),
-				Kind.OBJECT
-		)));
+		types.put(Object.class.getName(), new SimpleReference<Class>(new MutableClassModel(Object.class.getName())));
 	}
 
 	public void notifyOfDeclaration(String qualifiedClassName) {

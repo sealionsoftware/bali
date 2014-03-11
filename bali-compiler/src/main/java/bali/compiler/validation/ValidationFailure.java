@@ -25,6 +25,6 @@ public class ValidationFailure {
 	}
 
 	public String toString() {
-		return message;
+		return message + " (line " + node.getLine() + ")";
 	}
 }

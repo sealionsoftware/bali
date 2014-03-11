@@ -36,7 +36,7 @@ public class MutableClassModel implements Class {
 				Collections.<Operator>emptyList(),
 				Collections.<UnaryOperator>emptyList(),
 				Collections.<Declaration<Site>>emptyList(),
-				null
+				Kind.INTERFACE
 		);
 	}
 

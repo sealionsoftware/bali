@@ -39,8 +39,10 @@ import bali.compiler.validation.validator.RunStatementValidatorFactory;
 import bali.compiler.validation.validator.SiteValidatorFactory;
 import bali.compiler.validation.validator.StringLiteralValidatorFactory;
 import bali.compiler.validation.validator.ThrowStatementValidatorFactory;
+import bali.compiler.validation.validator.TypeInferringValidatorFactory;
 import bali.compiler.validation.validator.TypeResolvingValidatorFactory;
 import bali.compiler.validation.validator.UnaryOperationValidatorFactory;
+import bali.compiler.validation.validator.UnitValidatorFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -77,9 +79,11 @@ public class BaliCompiler {
 		parserManager = new ANTLRParserManager();
 
 		validator = new MultiThreadedValidationEngine(Arrays.asList(
+				new UnitValidatorFactory(),
 				new ImportsValidatorFactory(),
 				new ResolvablesValidatorFactory(),
 				new TypeResolvingValidatorFactory(),
+				new TypeInferringValidatorFactory(),
 				new BeanValidatorFactory(),
 				new InterfaceValidatorFactory(),
 				new ClassValidatorFactory(),
