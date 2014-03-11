@@ -16,7 +16,7 @@ public class InvocationNode extends ParametrisedExpressionNode {
 	private ExpressionNode target;
 	private String methodName;
 
-	private BlockingReference<Site> resolvedType = new BlockingReference<>();
+	private BlockingReference<Method> resolvedMethod = new BlockingReference<>();
 	private BlockingReference<Site> targetType = new BlockingReference<>();
 
 	public InvocationNode() {
@@ -27,11 +27,15 @@ public class InvocationNode extends ParametrisedExpressionNode {
 	}
 
 	public Site getType() {
-		return resolvedType.get();
+		return resolvedMethod.get().getType();
 	}
 
-	public void setResolvedType(Site resolvedType) {
-		this.resolvedType.set(resolvedType);
+	public void setResolvedMethod(Method resolvedMethod) {
+		this.resolvedMethod.set(resolvedMethod);
+	}
+
+	public Method getResolvedMethod() {
+		return this.resolvedMethod.get();
 	}
 
 	public Site getTargetType(){

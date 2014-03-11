@@ -7,8 +7,8 @@ import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.MethodNode;
 import bali.compiler.parser.tree.ParameterNode;
 import bali.compiler.parser.tree.SiteNode;
-import bali.compiler.type.*;
 import bali.compiler.type.Class;
+import bali.compiler.type.Site;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
 

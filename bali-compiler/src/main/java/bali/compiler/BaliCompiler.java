@@ -19,6 +19,7 @@ import bali.compiler.validation.MultiThreadedValidationEngine;
 import bali.compiler.validation.ValidationEngine;
 import bali.compiler.validation.ValidationException;
 import bali.compiler.validation.ValidationFailure;
+import bali.compiler.validation.validator.ArgumentValidatorFactory;
 import bali.compiler.validation.validator.ArrayLiteralValidatorFactory;
 import bali.compiler.validation.validator.AssignmentValidatorFactory;
 import bali.compiler.validation.validator.BeanValidatorFactory;
@@ -93,6 +94,7 @@ public class BaliCompiler {
 				new StringLiteralValidatorFactory(),
 				new ArrayLiteralValidatorFactory(),
 				new ReferenceValidatorFactory(),
+				new ArgumentValidatorFactory(),
 				new InvocationValidatorFactory(),
 				new UnaryOperationValidatorFactory(),
 				new OperationValidatorFactory(),

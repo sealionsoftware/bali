@@ -1,6 +1,5 @@
 package bali.compiler.validation.validator;
 
-import bali.compiler.parser.tree.ArgumentNode;
 import bali.compiler.parser.tree.ConstructionExpressionNode;
 import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.InvocationNode;
@@ -19,10 +18,8 @@ import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * User: Richard
@@ -72,10 +69,9 @@ public class InvocationValidatorFactory implements ValidatorFactory {
 					ret.add(new ValidationFailure(node, "Could not resolve method with name " + node.getMethodName()));
 					return ret;
 				}
-				node.setResolvedType(method.getType());
+				node.setResolvedMethod(method);
 
-				ret.addAll(getResolvedArguments(node, method.getParameters()));
-				control.validateChildren();
+				ret.addAll(checkArguments(node, method.getParameters(), control));
 				return ret;
 			}
 
@@ -89,72 +85,17 @@ public class InvocationValidatorFactory implements ValidatorFactory {
 					return ret;
 				}
 
-				ret.addAll(getResolvedArguments(node, expressionType.getParameters()));
-				control.validateChildren();
+				ret.addAll(checkArguments(node, expressionType.getParameters(), control));
 				return ret;
 
 			}
 
-			private List<ValidationFailure> getResolvedArguments(ParametrisedExpressionNode node, List<Declaration<Site>> parameters){
+			private List<ValidationFailure> checkArguments(ParametrisedExpressionNode node, List<Declaration<Site>> parameters, Control control){
 
-				boolean hasNull = false;
-				boolean hasNamed = false;
-				Map<String, ArgumentNode> namedArgumentsMap = new HashMap<>();
-				List<ExpressionNode> resolvedArguments = new ArrayList<>();
+				List<ExpressionNode> resolvedArguments = node.getResolvedArguments();
 				List<ValidationFailure> failures = new ArrayList<>();
-				for (ArgumentNode argumentNode : node.getArguments()){
-					String name = argumentNode.getName();
-					if (name == null){
-						hasNull = true;
-						resolvedArguments.add(argumentNode.getValue());
-					} else {
-						hasNamed = true;
-						if (namedArgumentsMap.containsKey(name)){
-							failures.add(new ValidationFailure(argumentNode.getValue(), "Repeated argument " + name));
-						}
-						namedArgumentsMap.put(name, argumentNode);
-					}
-				}
-				if (hasNull && hasNamed){
-					failures.add(new ValidationFailure(node, "A argument list cannot mix named and unnamed arguments"));
-					return failures;
-				}
-				if (hasNull){
-					List<ArgumentNode> arguments = node.getArguments();
-					if (arguments.size() != parameters.size()){
-						failures.add(new ValidationFailure(node, "Invalid number of arguments"));
-						return failures;
-					}
-					Iterator<ArgumentNode> i = arguments.iterator();
-					for (Declaration<Site> parameter : parameters){
-						i.next().setResolvedType(parameter.getType());
-					}
-				} else {
-					boolean fail = false;
-					for (Declaration<Site> parameter : parameters){
-						String parameterName = parameter.getName();
-						Site parameterType = parameter.getType();
-						ArgumentNode resolvedArgument = namedArgumentsMap.remove(parameterName);
-						if (resolvedArgument == null && !parameterType.isNullable()){
-							failures.add(new ValidationFailure(node, "Parameter " + parameter + " is required"));
-							fail = true;
-						}
-						if (resolvedArgument != null){
-							resolvedArguments.add(resolvedArgument.getValue());
-							resolvedArgument.setResolvedType(parameterType);
-						} else {
-							resolvedArguments.add(null);
-						}
 
-					}
-					for (Map.Entry<String, ArgumentNode> argument : namedArgumentsMap.entrySet()){
-						failures.add(new ValidationFailure(argument.getValue(), "No parameter " + argument.getKey() + " required for this call"));
-					}
-					if (fail){
-						return failures;
-					}
-				}
-				node.setResolvedArguments(resolvedArguments);
+				control.validateChildren();
 				Iterator<ExpressionNode> i = resolvedArguments.iterator();
 				Iterator<Declaration<Site>> j = parameters.iterator();
 				while (i.hasNext()){

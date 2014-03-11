@@ -96,8 +96,9 @@ public class TypeInferringValidatorFactory implements ValidatorFactory {
 				}
 
 				Class resolved = reference.get();
+				Boolean threadSafe = resolved.getMetaType().isThreadSafe();
 				if (resolved.getTypeParameters().size() == 0){
-					type.setType(new ParameterisedSite(reference));
+					type.setType(new ParameterisedSite(reference, false, threadSafe));
 				} else {
 
 					Site context = contextSite.peek();
@@ -131,7 +132,7 @@ public class TypeInferringValidatorFactory implements ValidatorFactory {
 						return ret;
 					}
 
-					type.setType(new ParameterisedSite(reference, typeArguments, false, resolved.getMetaType().isThreadSafe()));
+					type.setType(new ParameterisedSite(reference, typeArguments, false, threadSafe));
 				}
 
 				control.validateChildren();
