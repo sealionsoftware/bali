@@ -619,8 +619,8 @@ public class ASMStackManager implements Opcodes {
 	private void checkCast(Site valueType, Class erasedClass, MethodVisitor v){
 		if(valueType != null){
 			Class valueClass = valueType.getTemplate();
-			if (valueClass != null && erasedClass != null && !valueClass.equals(erasedClass)) {
-				v.visitTypeInsn(CHECKCAST, converter.getInternalName(erasedClass));
+			if (valueClass != null && !valueClass.equals(erasedClass)) {
+				v.visitTypeInsn(CHECKCAST, converter.getInternalName(valueClass));
 			}
 		}
 	}

@@ -9,8 +9,6 @@ import java.util.List;
  */
 public class VariableType implements Type {
 
-	private static final Type VOID_TYPE = new VoidType();
-
 	private String name;
 	private Type bound;
 
@@ -101,10 +99,10 @@ public class VariableType implements Type {
 	}
 
 	public String toString(){
-		StringBuilder sb = new StringBuilder(name);
-		if (!VOID_TYPE.equals(bound)){
-			sb.append(" ").append(bound);
+		StringBuilder sb = new StringBuilder();
+		if (bound != null){
+			sb.append(bound).append(" ");
 		}
-		return sb.toString();
+		return sb.append(name).toString();
 	}
 }
