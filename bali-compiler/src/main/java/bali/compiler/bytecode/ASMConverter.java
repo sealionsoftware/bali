@@ -3,6 +3,7 @@ package bali.compiler.bytecode;
 import bali.compiler.type.Class;
 import bali.compiler.type.Declaration;
 import bali.compiler.type.Method;
+import bali.compiler.type.MutableClassModel;
 import bali.compiler.type.Site;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureVisitor;
@@ -17,16 +18,25 @@ import java.util.List;
  */
 public class ASMConverter {
 
+	private static Class VOID_TEMPLATE = new MutableClassModel(Object.class.getName());
+
 	public String getMethodDescriptor(Method method) {
-		List<Class> parameterClasses = new ArrayList<>();
+		List<Site> parameterTypes = new ArrayList<>();
 		for (Declaration<Site> declaration : method.getParameters()){
-			parameterClasses.add(declaration.getType().getTemplate());
+			parameterTypes.add(declaration.getType());
 		}
-		Class returnClass = method.getType() != null ? method.getType().getTemplate() : null;
-		return getMethodDescriptor(returnClass, parameterClasses);
+		return getMethodDescriptor(method.getType(), parameterTypes);
 	}
 
-	public String getMethodDescriptor(Class returnClass, List<Class> parameterClasses) {
+	public String getMethodDescriptor(Site returnSite, List<Site> parameterSites) {
+		List<Class> parameterClasses = new ArrayList<>();
+		for (Site parameterSite : parameterSites){
+			parameterClasses.add(getErasure(parameterSite));
+		}
+		return getMethodDescriptor(getErasure(returnSite), parameterClasses);
+	}
+
+	private String getMethodDescriptor(Class returnClass, List<Class> parameterClasses) {
 		Type[] parameterTypes = new Type[parameterClasses.size()];
 		int i = 0;
 		for (bali.compiler.type.Class argumentClass : parameterClasses) {
@@ -52,7 +62,7 @@ public class ASMConverter {
 	}
 
 	public String getInternalName(Class aClass) {
-		return getInternalName(aClass.getName());
+		return getInternalName(aClass != null ? aClass.getName() : VOID_TEMPLATE.getName());
 	}
 
 	public String getSignature(Site site){
@@ -85,11 +95,24 @@ public class ASMConverter {
 
 	//TODO - this is well short of complete
 	private void visit(SignatureVisitor writer, Site site){
-		writer.visitClassType(getInternalName(site.getTemplate().getName()));
+		Class clazz = site.getTemplate();
+		String internalName = getInternalName(clazz);
+		writer.visitClassType(getInternalName(internalName));
 		for (Site arg : site.getTypeArguments()){
 			visit(writer.visitTypeArgument('='), arg);
 		}
 		writer.visitEnd();
+	}
+
+	public Class getErasure(Site site){
+		if (site == null){
+			return null;
+		}
+		Class template = site.getTemplate();
+		if (template == null){
+			return VOID_TEMPLATE;
+		}
+		return template;
 	}
 
 }

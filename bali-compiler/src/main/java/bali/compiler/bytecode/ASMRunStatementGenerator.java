@@ -3,6 +3,7 @@ package bali.compiler.bytecode;
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.RunStatementNode;
 import bali.compiler.type.Class;
+import bali.compiler.type.Site;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
@@ -53,11 +54,11 @@ public class ASMRunStatementGenerator implements Generator<RunStatementNode, Gen
 
 	private void buildConstructor(ClassWriter cw, RunStatementNode input) {
 
-		List<Class> parameterClasses = getParameterTypes(input.getArguments());
+		List<Site> parameterTypes = getParameterTypes(input.getArguments());
 
 		MethodVisitor initv = cw.visitMethod(ACC_PUBLIC,
 				"<init>",
-				converter.getMethodDescriptor(null, parameterClasses),
+				converter.getMethodDescriptor(null, parameterTypes),
 				null,
 				null
 		);
@@ -116,12 +117,12 @@ public class ASMRunStatementGenerator implements Generator<RunStatementNode, Gen
 
 	}
 
-	private List<Class> getParameterTypes(List<RunStatementNode.RunArgument> arguments) {
-		List<Class> parameterClasses = new ArrayList<>();
+	private List<Site> getParameterTypes(List<RunStatementNode.RunArgument> arguments) {
+		List<Site> parameterTypes = new ArrayList<>();
 		for (RunStatementNode.RunArgument declaration : arguments){
-			parameterClasses.add(declaration.getType().getTemplate());
+			parameterTypes.add(declaration.getType());
 		}
-		return parameterClasses;
+		return parameterTypes;
 	}
 
 

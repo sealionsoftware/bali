@@ -1,5 +1,6 @@
 package bali.compiler.type;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ public class VariableType implements Type {
 
 	public VariableType(String name, Type bound) {
 		this.name = name;
-		this.bound = bound != null ? bound : VOID_TYPE;
+		this.bound = bound;
 	}
 
 	public String getName() {
@@ -30,42 +31,72 @@ public class VariableType implements Type {
 			VariableType vt = (VariableType) t;
 			return name.equals(vt.getName());
 		}
+		if (bound == null){
+			return true;
+		}
 		return bound.isAssignableTo(t);
 	}
 
 	public Type getSuperType() {
+		if (bound == null){
+			return null;
+		}
 		return bound.getSuperType();
 	}
 
 	public List<Site> getTypeArguments() {
+		if (bound == null){
+			return Collections.emptyList();
+		}
 		return bound.getTypeArguments();
 	}
 
 	public List<Declaration<Site>> getParameters() {
+		if (bound == null){
+			return Collections.emptyList();
+		}
 		return bound.getParameters();
 	}
 
 	public List<Method> getMethods() {
+		if (bound == null){
+			return Collections.emptyList();
+		}
 		return bound.getMethods();
 	}
 
 	public List<Type> getInterfaces() {
+		if (bound == null){
+			return Collections.emptyList();
+		}
 		return bound.getInterfaces();
 	}
 
 	public List<Operator> getOperators() {
+		if (bound == null){
+			return Collections.emptyList();
+		}
 		return bound.getOperators();
 	}
 
 	public List<UnaryOperator> getUnaryOperators() {
+		if (bound == null){
+			return Collections.emptyList();
+		}
 		return bound.getUnaryOperators();
 	}
 
 	public List<Declaration<Site>> getProperties() {
+		if (bound == null){
+			return Collections.emptyList();
+		}
 		return bound.getProperties();
 	}
 
 	public Class getTemplate() {
+		if (bound == null){
+			return null;
+		}
 		return bound.getTemplate();
 	}
 

@@ -4,6 +4,7 @@ import bali.Boolean;
 import bali.Number;
 import bali.String;
 import bali.compiler.type.Class;
+import bali.compiler.type.Site;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -35,11 +36,11 @@ public class ASMConverterUnitTest {
 
 	@Test
 	public void testMethodDescriptorString() throws Exception {
-		Assert.assertEquals("()V", converter.getMethodDescriptor(null, new ArrayList<Class>()));
-		List<bali.compiler.type.Class> argumentTypes = new ArrayList<>();
-		argumentTypes.add(new TestClass(String.class));
-		argumentTypes.add(new TestClass(Number.class));
-		Assert.assertEquals("(Lbali/String;Lbali/Number;)Lbali/Boolean;", converter.getMethodDescriptor(new TestClass(Boolean.class), argumentTypes));
+		Assert.assertEquals("()V", converter.getMethodDescriptor(null, new ArrayList<Site>()));
+		List<bali.compiler.type.Site> argumentTypes = new ArrayList<>();
+		argumentTypes.add(new TestSite(String.class));
+		argumentTypes.add(new TestSite(Number.class));
+		Assert.assertEquals("(Lbali/String;Lbali/Number;)Lbali/Boolean;", converter.getMethodDescriptor(new TestSite(Boolean.class), argumentTypes));
 	}
 
 //	TODO

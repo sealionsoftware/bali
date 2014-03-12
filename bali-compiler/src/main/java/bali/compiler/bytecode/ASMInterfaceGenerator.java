@@ -7,7 +7,6 @@ import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.MethodNode;
 import bali.compiler.parser.tree.ParameterNode;
 import bali.compiler.parser.tree.SiteNode;
-import bali.compiler.type.Class;
 import bali.compiler.type.Site;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -50,19 +49,16 @@ public class ASMInterfaceGenerator implements Generator<InterfaceNode, Generated
 			String methodName = method.getName();
 
 			List<Site> parameterSites = new ArrayList<>();
-			List<Class> parameterClasses = new ArrayList<>();
 			for (ParameterNode declaration : method.getParameters()){
 				Site parameterSite = declaration.getType().getSite();
 				parameterSites.add(parameterSite);
-				parameterClasses.add(parameterSite.getTemplate());
 			}
 			Site returnSite = method.getType() != null ? method.getType().getSite() : null;
-			Class returnClass = returnSite != null ? returnSite.getTemplate() : null;
 
 			//TODO Annotations
 			cw.visitMethod(ACC_PUBLIC + ACC_ABSTRACT,
 					methodName,
-					converter.getMethodDescriptor(returnClass, parameterClasses),
+					converter.getMethodDescriptor(returnSite, parameterSites),
 					converter.getMethodSignature(returnSite, parameterSites),
 					null
 			).visitEnd();

@@ -363,14 +363,14 @@ public class ASMStackManager implements Opcodes {
 		v.visitTypeInsn(NEW, runnableClassName);
 		v.visitInsn(DUP);
 
-		List<Class> parameterClasses = new ArrayList<>();
+		List<Site> parameterTypes = new ArrayList<>();
 		for (RunStatementNode.RunArgument argument : statement.getArguments()){
-			Class parameterClass = argument.getType().getTemplate();
-			parameterClasses.add(parameterClass);
+			Site parameterType = argument.getType();
+			parameterTypes.add(parameterType);
 			switch (argument.getScope()) {
 				case FIELD: {
 					v.visitVarInsn(ALOAD, 0);
-					v.visitFieldInsn(GETFIELD, converter.getInternalName(argument.getHostClassName()), argument.getName(), converter.getTypeDescriptor(parameterClass));
+					v.visitFieldInsn(GETFIELD, converter.getInternalName(argument.getHostClassName()), argument.getName(), converter.getTypeDescriptor(parameterType));
 				}
 				break;
 				case VARIABLE: {
@@ -380,7 +380,7 @@ public class ASMStackManager implements Opcodes {
 			}
 		}
 
-		v.visitMethodInsn(INVOKESPECIAL, runnableClassName, "<init>", converter.getMethodDescriptor(null, parameterClasses));
+		v.visitMethodInsn(INVOKESPECIAL, runnableClassName, "<init>", converter.getMethodDescriptor(null, parameterTypes));
 		v.visitMethodInsn(INVOKESPECIAL, "java/lang/Thread", "<init>", "(Ljava/lang/Runnable;)V");
 		v.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Thread", "start", "()V");
 
@@ -505,9 +505,9 @@ public class ASMStackManager implements Opcodes {
 
 		Class targetClass = value.getType().getTemplate();
 		String internalName = converter.getInternalName(targetClass);
-		List<Class> parameterClasses = new ArrayList<>();
+		List<Site> parameterTypes = new ArrayList<>();
 		for (Declaration<Site> type : targetClass.getParameters()){
-			parameterClasses.add(type.getType().getTemplate());
+			parameterTypes.add(type.getType());
 		}
 
 		v.visitTypeInsn(NEW, internalName);
@@ -515,7 +515,7 @@ public class ASMStackManager implements Opcodes {
 		for (ExpressionNode argumentValue : value.getResolvedArguments()) {
 			push(argumentValue, v);
 		}
-		v.visitMethodInsn(INVOKESPECIAL, internalName, "<init>", converter.getMethodDescriptor(null, parameterClasses));
+		v.visitMethodInsn(INVOKESPECIAL, internalName, "<init>", converter.getMethodDescriptor(null, parameterTypes));
 	}
 
 	public void push(InvocationNode value, MethodVisitor v) {
@@ -599,15 +599,11 @@ public class ASMStackManager implements Opcodes {
 		}
 
 		Iterator<ExpressionNode> i = arguments.iterator();
-		List<Class> erasedParameters = new ArrayList<>();
 		for (Declaration<Site> erasedParameter : earasedParameters){
 			Class parameterClass = erasedParameter.getType().getTemplate();
 			ExpressionNode argument = i.next();
 			push(argument, v);
-			if (!argument.getType().getTemplate().equals(parameterClass)){
-				v.visitTypeInsn(CHECKCAST, converter.getInternalName(parameterClass.getName()));
-			}
-			erasedParameters.add(parameterClass);
+			checkCast(argument.getType(), parameterClass, v);
 		}
 
 		Type erasedType = erasedMethod.getType();
@@ -615,9 +611,17 @@ public class ASMStackManager implements Opcodes {
 		v.visitMethodInsn(invokeInsn(targetType.getTemplate()),
 				converter.getInternalName(targetType.getTemplate()),
 				methodName,
-				converter.getMethodDescriptor(erasedClass, erasedParameters));
-		if (valueType != null && !valueType.getTemplate().equals(erasedClass)) {
-			v.visitTypeInsn(CHECKCAST, converter.getInternalName(erasedClass));
+				converter.getMethodDescriptor(erasedMethod));
+
+		checkCast(valueType, erasedClass, v);
+	}
+
+	private void checkCast(Site valueType, Class erasedClass, MethodVisitor v){
+		if(valueType != null){
+			Class valueClass = valueType.getTemplate();
+			if (valueClass != null && erasedClass != null && !valueClass.equals(erasedClass)) {
+				v.visitTypeInsn(CHECKCAST, converter.getInternalName(erasedClass));
+			}
 		}
 	}
 

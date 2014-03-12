@@ -53,7 +53,7 @@ public class ReturnValueValidatorFactory implements ValidatorFactory {
 
 				if (method.getType() != null) {
 					if (!(lastStatement instanceof ReturnStatementNode)) {
-						failures.add(new ValidationFailure(lastStatement, "Method does not return a " + method.getType()));
+						failures.add(new ValidationFailure(method, "Method does not return a " + method.getType()));
 					}
 				} else if (!(lastStatement instanceof ReturnStatementNode)) {
 					statements.add(new ReturnStatementNode());

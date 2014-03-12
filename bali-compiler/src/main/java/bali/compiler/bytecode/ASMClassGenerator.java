@@ -10,7 +10,6 @@ import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.ParameterNode;
 import bali.compiler.parser.tree.SiteNode;
-import bali.compiler.type.Class;
 import bali.compiler.type.Site;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -85,16 +84,14 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 		ASMStackManager manager = new ASMStackManager(converter);
 
 		List<Site> parameterSites = new ArrayList<>();
-		List<Class> parameterClasses = new ArrayList<>();
 		for (ParameterNode declaration : input.getParameters()){
 			Site parameterSite = declaration.getType().getSite();
 			parameterSites.add(parameterSite);
-			parameterClasses.add(parameterSite.getTemplate());
 		}
 
 		MethodVisitor initv = cw.visitMethod(ACC_PUBLIC,
 				"<init>",
-				converter.getMethodDescriptor(null, parameterClasses),
+				converter.getMethodDescriptor(null, parameterSites),
 				converter.getMethodSignature(null, parameterSites),
 				null
 		);
@@ -142,18 +139,15 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 		}
 
 		List<Site> parameterSites = new ArrayList<>();
-		List<Class> parameterClasses = new ArrayList<>();
 		for (ParameterNode declaration : method.getParameters()){
 			Site parameterSite = declaration.getType().getSite();
 			parameterSites.add(parameterSite);
-			parameterClasses.add(parameterSite.getTemplate());
 		}
 		Site returnSite = method.getType() != null ? method.getType().getSite() : null;
-		Class returnClass = returnSite != null ? returnSite.getTemplate() : null;
 
 		MethodVisitor methodVisitor = cw.visitMethod(flags,
 				method.getName(),
-				converter.getMethodDescriptor(returnClass, parameterClasses),
+				converter.getMethodDescriptor(returnSite, parameterSites),
 				converter.getMethodSignature(returnSite, parameterSites),
 				null
 		);

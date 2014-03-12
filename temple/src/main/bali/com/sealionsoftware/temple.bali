@@ -27,7 +27,6 @@ import com.sealionsoftware.storage.FileBeanStore
 constant String@ CONFIG_FILE_NAME = "temple.config"
 
 interface ProtocolHandler {
-
 	declare handle(Socket connection)
 }
 
@@ -94,8 +93,8 @@ object HttpProtocolHandler(HttpHandler router) implements ProtocolHandler {
 
 object TempleServer implements Executable {
 
-	field ServerConfiguration configuration
-	field BeanStore[ServerConfiguration] configStore
+//	field ServerConfiguration configuration
+//	field BeanStore[ServerConfiguration] configStore
 
 	method execute {
 
@@ -104,8 +103,8 @@ object TempleServer implements Executable {
 		File? configFile = FILE_MANAGER.getFile(CONFIG_FILE_NAME);
 		if (?configFile){
 
-			configStore = new FileBeanStore(configFile, new ConfigSerializer());
-			configuration = configStore.load();
+			BeanStore[ServerConfiguration] configStore = new FileBeanStore(configFile, new ConfigSerializer());
+			ServerConfiguration configuration = configStore.load();
 
 		} else {
 			throw new RuntimeException("Could not find config file");
@@ -136,7 +135,6 @@ object TempleServer implements Executable {
 		port.close();
 		CONSOLE << "Temple Exiting";
 	}
-
 }
 
 object ConfigSerializer implements Serializer[ServerConfiguration] {

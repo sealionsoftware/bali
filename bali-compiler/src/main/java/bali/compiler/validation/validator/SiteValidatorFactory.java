@@ -27,20 +27,21 @@ public class SiteValidatorFactory implements ValidatorFactory {
 					Site site = siteNode.getSite();
 					Class aClass = site.getTemplate();
 
-					if (!aClass.getMetaType().isReference()){
-						failures.add(new ValidationFailure(
-							siteNode,
-							"Declared site must be of interface type"
-						));
-					}
+					if (aClass != null){
+						if (!aClass.getMetaType().isReference()){
+							failures.add(new ValidationFailure(
+									siteNode,
+									"Declared site must be of interface type"
+							));
+						}
 
-					if (siteNode.getParameters().size() != aClass.getTypeParameters().size()){
-						failures.add(new ValidationFailure(
-								siteNode,
-								"Invalid parameterisation: " + siteNode.getParameters() + " => " + aClass.getTypeParameters()
-						));
+						if (siteNode.getParameters().size() != aClass.getTypeParameters().size()){
+							failures.add(new ValidationFailure(
+									siteNode,
+									"Invalid parameterisation: " + siteNode.getParameters() + " => " + aClass.getTypeParameters()
+							));
+						}
 					}
-
 				}
 				control.validateChildren();
 				return failures;

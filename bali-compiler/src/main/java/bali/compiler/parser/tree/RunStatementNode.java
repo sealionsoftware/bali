@@ -55,7 +55,7 @@ public class RunStatementNode extends ControlExpressionNode {
 		this.arguments.set(argumnets);
 	}
 
-	public static class RunArgument extends Declaration {
+	public static class RunArgument extends Declaration<Site> {
 
 		private ReferenceNode.ReferenceScope scope;
 		private String hostClassName;

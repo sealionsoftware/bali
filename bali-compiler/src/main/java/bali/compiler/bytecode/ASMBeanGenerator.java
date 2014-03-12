@@ -77,15 +77,13 @@ public class ASMBeanGenerator implements Generator<BeanNode, GeneratedClass> {
 		}
 
 		List<Site> allParamSites = new ArrayList<>();
-		List<Class> allParamClasses = new ArrayList<>();
 		for (Declaration<Site> param : allParams){
 			Site paramType = param.getType();
 			allParamSites.add(paramType);
-			allParamClasses.add(paramType.getTemplate());
 		}
 		MethodVisitor initv = cw.visitMethod(ACC_PUBLIC,
 				"<init>",
-				converter.getMethodDescriptor(null, allParamClasses),
+				converter.getMethodDescriptor(null, allParamSites),
 				converter.getMethodSignature(null, allParamSites),
 				null
 		);
@@ -105,9 +103,9 @@ public class ASMBeanGenerator implements Generator<BeanNode, GeneratedClass> {
 			}
 			i++;
 		}
-		List<Class> superParamClasses = new ArrayList<>();
+		List<Site> superParamTypes = new ArrayList<>();
 		for (Declaration<Site> param : superParameters){
-			superParamClasses.add(param.getType().getTemplate());
+			superParamTypes.add(param.getType());
 		}
 
 		initv.visitCode();
@@ -117,7 +115,7 @@ public class ASMBeanGenerator implements Generator<BeanNode, GeneratedClass> {
 		for (; j <= superParameters.size() ;){
 			initv.visitVarInsn(ALOAD, j++);
 		}
-		initv.visitMethodInsn(INVOKESPECIAL, superClassInternalName, "<init>", converter.getMethodDescriptor(null, superParamClasses));
+		initv.visitMethodInsn(INVOKESPECIAL, superClassInternalName, "<init>", converter.getMethodDescriptor(null, superParamTypes));
 
 		for (PropertyNode propertyNode : input.getProperties()){
 			initv.visitVarInsn(ALOAD, 0);
