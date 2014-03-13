@@ -53,11 +53,11 @@ public class StandardDirectoryUnitTest {
 
 	@Test
 	public void testGetFile() throws Exception{
-		java.io.File toLookUp = new java.io.File(delegate, "toLookUp");
+		java.io.File toLookUp = new java.io.File(delegate, "toLookUpFile");
 		toLookUp.createNewFile();
-		File lookedup = directory.getFile(convert("toLookUp"));
+		File lookedup = directory.getFile(convert("toLookUpFile"));
 		Assert.assertNotNull("Looked up File is not null", lookedup);
-		Assert.assertEquals("Looked up File is called toLookUp", "toLookUp", convert(lookedup.getName()));
+		Assert.assertEquals("Looked up File is called toLookUp", "toLookUpFile", convert(lookedup.getName()));
 	}
 
 	@Test
