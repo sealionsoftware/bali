@@ -140,10 +140,10 @@ public class ParameterisedType implements Type {
 	private List<Declaration<Site>> parametriseParameters(List<Declaration<Site>> input, Type superType){
 		List<Declaration<Site>> ret = new ArrayList<>(input.size());
 		for (Declaration<Site> dec : input){
-			ret.add(parametriseDeclarationSite(dec));
 			if (superType != null){
 				ret.addAll(parametriseParameters(superType.getParameters(), superType.getSuperType()));
 			}
+			ret.add(parametriseDeclarationSite(dec));
 		}
 		return ret;
 	}

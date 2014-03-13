@@ -1,17 +1,11 @@
 package bali.file;
 
-import org.junit.AfterClass;
+import bali.collection.Collection;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-
-import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.util.UUID;
 
 import static bali.Primitive.convert;
 
@@ -21,14 +15,17 @@ import static bali.Primitive.convert;
  */
 public class StandardDirectoryUnitTest {
 
-	private static java.io.File delegate;
-
+    private static java.io.File delegate;
 	private Directory directory = new StandardDirectory(delegate);
 
 	@BeforeClass
 	public static void setUp() throws Exception {
-		java.io.File tmp = new java.io.File(System.getProperty("java.io.tmpdir"));
-		delegate = new java.io.File(tmp, "unittests");
+		String tempPath = System.getProperty("project.build.directory");
+		if (tempPath == null){
+			tempPath = System.getProperty("java.io.tmpdir");
+		}
+		java.io.File tmp = new java.io.File(tempPath);
+		delegate = new java.io.File(new java.io.File(new java.io.File(tmp, "unittests"), StandardDirectoryUnitTest.class.getName()), UUID.randomUUID().toString());
 		delegate.mkdirs();
 	}
 
@@ -46,26 +43,40 @@ public class StandardDirectoryUnitTest {
 		Assert.assertEquals("Created File is called testFile", "testFile", convert(created.getName()));
 	}
 
-	@AfterClass
-	public static void tearDown() throws Exception{
-		Files.walkFileTree(delegate.toPath(), new SimpleFileVisitor<Path>() {
-			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-				Files.delete(file);
-				return FileVisitResult.CONTINUE;
-			}
-			public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-				Files.delete(file);
-				return FileVisitResult.CONTINUE;
-			}
-			public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-				if (exc == null) {
-					Files.delete(dir);
-					return FileVisitResult.CONTINUE;
-				} else {
-					throw exc;
-				}
-			}
-		});
+	@Test
+	public void testDelete(){
+		java.io.File toDelete = new java.io.File(delegate, "toDelete");
+		toDelete.mkdir();
+		new StandardDirectory(toDelete).delete();
+		Assert.assertFalse("Directory toDelete no longer exists", toDelete.exists());
 	}
+
+	@Test
+	public void testGetFile() throws Exception{
+		java.io.File toLookUp = new java.io.File(delegate, "toLookUp");
+		toLookUp.createNewFile();
+		File lookedup = directory.getFile(convert("toLookUp"));
+		Assert.assertNotNull("Looked up File is not null", lookedup);
+		Assert.assertEquals("Looked up File is called toLookUp", "toLookUp", convert(lookedup.getName()));
+	}
+
+	@Test
+	public void testGetDirectory() throws Exception{
+		java.io.File toLookUp = new java.io.File(delegate, "toLookUp");
+		toLookUp.mkdir();
+		Directory lookedup = directory.getDirectory(convert("toLookUp"));
+		Assert.assertNotNull("Looked up Directory is not null", lookedup);
+		Assert.assertEquals("Looked up Directory is called toLookUp", "toLookUp", convert(lookedup.getName()));
+	}
+
+	@Test
+	public void testGetChildren() throws Exception{
+		java.io.File toList = new java.io.File(delegate, "toList");
+		toList.mkdir();
+		Collection<Directory> listed = directory.getChildren();
+		Assert.assertNotNull("Listed Directories are not null", listed);
+		Assert.assertFalse("List size is not zero", convert(listed.isEmpty()));
+	}
+
 
 }

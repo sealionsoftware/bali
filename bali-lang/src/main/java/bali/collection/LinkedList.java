@@ -3,58 +3,82 @@ package bali.collection;
 import bali.Boolean;
 import bali.Integer;
 import bali.Iterator;
-import bali.Primitive;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
+import bali.annotation.Nullable;
 
 import static bali.Primitive.convert;
 
 /**
- * TODO
  * User: Richard
  * Date: 27/08/13
  */
 @MetaType(Kind.OBJECT)
 public final class LinkedList<T> implements List<T> {
 
-	public LinkedList(){}
-	private int size;
+	private int size = 0;
 
-	public LinkedList(Collection<T> in) {
-		Iterator<T> iterator = in.iterator();
-		while (convert(iterator.hasNext())){
-			add(iterator.next());
+	private Link<T> first = new Link<>();
+	private Link<T> last = first;
+
+	public LinkedList(@Nullable Collection<T> in) {
+		if (in != null){
+			Iterator<T> iterator = in.iterator();
+			while (convert(iterator.hasNext())){
+				add(iterator.next());
+			}
 		}
 	}
 
-	private Link<T> start;
-
 	public T get(Integer index) {
-		return null;
+		return getLink(convert(index)).item;
 	}
 
 	public void set(Integer index, T object) {
+		getLink(convert(index)).item = object;
+	}
 
+	private Link<T> getLink(int i){
+		Link<T> current = first;
+		while (--i > 0){
+			current = current.next;
+		}
+		return current;
 	}
 
 	public Integer size() {
-		return Primitive.convert(size);
+		return convert(size);
 	}
 
 	public void add(T object) {
+		Link<T> newLink = new Link<>();
+		last.item = object;
+		last.next = newLink;
+		last = newLink;
+		size++;
 	}
 
 	public void remove(Integer index) {
+		int i = convert(index);
+		if (i == 1){
+			first = first.next;
+		} else if (i == size){
+			getLink(i - 1).next = null;
+		} else {
+			Link before = getLink(i - 1);
+			before.next = before.next.next;
+		}
+		size--;
 	}
 
 	public Iterator<T> iterator() {
 
 		return new Iterator<T>() {
 
-			private Link<T> current = start;
+			private Link<T> current = first;
 
 			public bali.Boolean hasNext() {
-				return convert(start.next != null);
+				return convert(current.next != null);
 			}
 
 			public T next() {
@@ -75,14 +99,20 @@ public final class LinkedList<T> implements List<T> {
 	}
 
 	public Collection<T> join(Collection<T> operand) {
-		return null;
+		Iterator<T> iterator = operand.iterator();
+		while (convert(iterator.hasNext())){
+			add(iterator.next());
+		}
+		return this;
 	}
 
 	public Collection<T> head(Integer index) {
-		return null;
+		first = getLink(convert(index));
+		return this;
 	}
 
 	public Collection<T> tail(Integer index) {
-		return null;
+		last = getLink(convert(index));
+		return this;
 	}
 }

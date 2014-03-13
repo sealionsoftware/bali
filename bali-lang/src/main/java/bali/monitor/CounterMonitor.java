@@ -5,6 +5,8 @@ import bali.Counter;
 import bali.Integer;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
+import bali.annotation.Nullable;
+import bali.annotation.ThreadSafe;
 
 /**
  * User: Richard
@@ -15,11 +17,7 @@ public class CounterMonitor implements Count {
 
 	private Counter delegate;
 
-	public CounterMonitor() {
-		delegate = new Counter(null);
-	}
-
-	public CounterMonitor(Integer count) {
+	public CounterMonitor(@Nullable @ThreadSafe Integer count) {
 		delegate = new Counter(count);
 	}
 

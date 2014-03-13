@@ -506,9 +506,7 @@ public class ASMStackManager implements Opcodes {
 		Class targetClass = value.getType().getTemplate();
 		String internalName = converter.getInternalName(targetClass);
 		List<Site> parameterTypes = new ArrayList<>();
-		for (Declaration<Site> type : targetClass.getParameters()){
-			parameterTypes.add(type.getType());
-		}
+		collectParameters(targetClass, parameterTypes);
 
 		v.visitTypeInsn(NEW, internalName);
 		v.visitInsn(DUP);
@@ -516,6 +514,16 @@ public class ASMStackManager implements Opcodes {
 			push(argumentValue, v);
 		}
 		v.visitMethodInsn(INVOKESPECIAL, internalName, "<init>", converter.getMethodDescriptor(null, parameterTypes));
+	}
+
+	private void collectParameters(Class clazz, List<Site> parameterTypes){
+		Type superType = clazz.getSuperType();
+		if (superType != null){
+			collectParameters(superType.getTemplate(), parameterTypes);
+		}
+		for (Declaration<Site> parameter : clazz.getParameters()){
+			parameterTypes.add(parameter.getType());
+		}
 	}
 
 	public void push(InvocationNode value, MethodVisitor v) {

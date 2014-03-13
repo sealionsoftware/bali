@@ -24,7 +24,7 @@ public class StandardDirectory implements Directory {
 	}
 
 	public Collection<Directory> getChildren() {
-		List<Directory> ret = new LinkedList<>();
+		List<Directory> ret = new LinkedList<>(null);
 		java.io.File[] children = delegate.listFiles();
 		if (children == null){
 			return ret;
@@ -38,7 +38,7 @@ public class StandardDirectory implements Directory {
 	}
 
 	public Collection<File> getFiles() {
-		List<File> ret = new LinkedList<>();
+		List<File> ret = new LinkedList<>(null);
 		java.io.File[] children = delegate.listFiles();
 		if (children == null){
 			return ret;

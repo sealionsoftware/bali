@@ -10,7 +10,7 @@ import bali.annotation.MetaType;
 import static bali.Primitive.convert;
 
 /**
- * TODO - non delegated implementation
+ * TODO - non delegated implementation that respects bali key equality
  * User: Richard
  * Date: 05/03/14
  */
