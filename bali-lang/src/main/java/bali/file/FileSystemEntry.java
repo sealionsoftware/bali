@@ -4,6 +4,7 @@ import bali.Boolean;
 import bali.String;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
+import bali.annotation.Nullable;
 
 /**
  * User: Richard
@@ -16,6 +17,7 @@ public interface FileSystemEntry {
 
 	public String getName();
 
+	@Nullable
 	public Directory getParent();
 
 	public Boolean isWritable();
