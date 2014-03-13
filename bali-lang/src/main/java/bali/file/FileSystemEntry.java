@@ -12,6 +12,8 @@ import bali.annotation.MetaType;
 @MetaType(Kind.INTERFACE)
 public interface FileSystemEntry {
 
+	public String getPath();
+
 	public String getName();
 
 	public Directory getParent();

@@ -10,6 +10,6 @@ import bali.annotation.MetaType;
 @MetaType(Kind.INTERFACE)
 public interface Closable {
 
-	public void close() throws java.lang.Exception;
+	public void close();
 
 }

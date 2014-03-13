@@ -29,13 +29,21 @@ public class StandardSocket implements Socket, Initialisable {
 		this.delegate = delegate;
 	}
 
-	public void initalise() throws java.lang.Exception {
-		input = new BufferedReader(new InputStreamReader(delegate.getInputStream()));
-		output = new BufferedWriter(new OutputStreamWriter(delegate.getOutputStream()));
+	public void initalise() {
+		try {
+			input = new BufferedReader(new InputStreamReader(delegate.getInputStream()));
+			output = new BufferedWriter(new OutputStreamWriter(delegate.getOutputStream()));
+		} catch (IOException e){
+			throw new RuntimeException("Error initialising socket", e);
+		}
 	}
 
-	public void close() throws Exception {
-		delegate.close();
+	public void close() {
+		try {
+			delegate.close();
+		} catch (IOException e) {
+			throw new RuntimeException("Error closing socket", e);
+		}
 	}
 
 	public String readLine() {

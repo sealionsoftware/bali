@@ -11,7 +11,11 @@ import bali.collection.Collection;
  * Date: 09/03/14
  */
 @MetaType(Kind.INTERFACE)
-public interface Directory extends FileManager, FileSystemEntry, Iterable<File> {
+public interface Directory extends FileSystemEntry, Iterable<File> {
+
+	public File getFile(String name);
+
+	public Directory getDirectory(String name);
 
 	public Collection<Directory> getChildren();
 

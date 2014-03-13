@@ -15,4 +15,8 @@ public interface FileManager {
 
 	public Directory getDirectory(String name);
 
+	public Directory getHomeDirectory();
+
+	public Directory getCurrentDirectory();
+
 }
