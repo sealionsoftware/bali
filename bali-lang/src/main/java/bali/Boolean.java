@@ -17,7 +17,7 @@ public interface Boolean extends Value<Boolean> {
 	public static final java.lang.String AND = "&";
 	public static final java.lang.String OR = "|";
 
-	@Operator("~")
+	@Operator("!")
 	Boolean not();
 
 	@Operator(AND)

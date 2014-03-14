@@ -31,14 +31,21 @@ public final class LinkedList<T> implements List<T> {
 	}
 
 	public T get(Integer index) {
-		return getLink(convert(index)).item;
+		Link<T> l = getLink(convert(index));
+		return l != null ? l.item : null;
 	}
 
 	public void set(Integer index, T object) {
-		getLink(convert(index)).item = object;
+		Link<T> l = getLink(convert(index));
+		if (l != null){
+			getLink(convert(index)).item = object;
+		}
 	}
 
 	private Link<T> getLink(int i){
+		if (i < 1 || i > size){
+			return null;
+		}
 		Link<T> current = first;
 		while (--i > 0){
 			current = current.next;
@@ -107,12 +114,33 @@ public final class LinkedList<T> implements List<T> {
 	}
 
 	public Collection<T> head(Integer index) {
-		first = getLink(convert(index));
+		int i = convert(index);
+		if (i < size){
+			if (i < 1){
+				clear();
+			} else {
+				last = getLink(i);
+				size = i;
+			}
+		}
 		return this;
 	}
 
 	public Collection<T> tail(Integer index) {
-		last = getLink(convert(index));
+		int i = convert(index);
+		if (i > 1){
+			if (i > size){
+				clear();
+			} else {
+				first = getLink(i);
+				size = size - i + 1;
+			}
+		}
 		return this;
+	}
+
+	private void clear() {
+		last = first = new Link<>();
+		size = 0;
 	}
 }

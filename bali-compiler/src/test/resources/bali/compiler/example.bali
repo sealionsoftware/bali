@@ -55,7 +55,7 @@ object AnImplementation(Number aParameter) implements AnInterface {
 		Iterable[Number] numbers = [3,4,5];
  	    Boolean stop = false;
 
- 	    while(~stop){
+ 	    while(!stop){
 	        for (Number number : numbers){
 	            aVariable = aVariable + number;
 	        }

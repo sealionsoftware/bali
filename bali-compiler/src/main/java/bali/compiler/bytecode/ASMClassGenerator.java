@@ -159,7 +159,7 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 			methodVisitor.visitLocalVariable(
 					variable.getName(),
 					converter.getTypeDescriptor(variable.getType()),
-					null,
+					converter.getSignature(variable.getType()),
 					variable.getStart(),
 					variable.getEnd(),
 					variable.getIndex()

@@ -16,6 +16,7 @@ import bali.net.IPAddress
 import bali.net.ServerSocket
 import bali.net.SocketMonitor
 import bali.file.File
+import bali.file.Directory
 import bali.monitor.ConnectionMonitor
 import bali.server.HttpHandler
 import bali.server.HttpResponse
@@ -99,12 +100,7 @@ object TempleServer implements Executable {
 
 		CONSOLE << "Starting Temple";
 
-		File? configFile = FILE_MANAGER.getFile(CONFIG_FILE_NAME);
-		if (?configFile){
-			configStore = new FileBeanStore(configFile, new ConfigSerializer());
-		} else {
-			throw new RuntimeException("Could not find config file");
-		}
+		configStore = new FileBeanStore(getConfigFile(), new ConfigSerializer());
 
 		ServerConfiguration configuration = configStore.load();
 
@@ -132,6 +128,12 @@ object TempleServer implements Executable {
 		port.close();
 		CONSOLE << "Temple Exiting";
 	}
+
+	method File getConfigFile(){
+		Directory home = FILE_MANAGER.getHomeDirectory();
+		Directory configDirectory = home.createDirectory(".temple");
+    	return configDirectory.createFile(CONFIG_FILE_NAME);
+	}
 }
 
 object ConfigSerializer implements Serializer[ServerConfiguration] {
@@ -140,12 +142,13 @@ object ConfigSerializer implements Serializer[ServerConfiguration] {
 		return "TEST";
 	}
 
-	method ServerConfiguration parse(String configuration){
-    	return new ServerConfiguration(
-    	    webApplications: new HashMap(),
-    	    bindings: new HashMap(),
-    	    resources: new HashMap()
-    	);
+	method String parse(String configuration){
+//    	return new ServerConfiguration(
+//    	    webApplications: new HashMap(),
+//    	    bindings: new HashMap(),
+//    	    resources: new HashMap()
+//    	);
+		return "";
     }
 
 }

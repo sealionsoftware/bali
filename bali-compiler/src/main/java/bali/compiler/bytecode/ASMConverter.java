@@ -54,7 +54,11 @@ public class ASMConverter {
 	}
 
 	public String getTypeDescriptor(bali.compiler.type.Type site) {
-		return getTypeDescriptor(site.getTemplate());
+		if (site == null){
+			return getTypeDescriptor((String) null);
+		}
+		Class template = site.getTemplate();
+		return getTypeDescriptor(template != null ? template : VOID_TEMPLATE);
 	}
 
 	public String getInternalName(String className) {

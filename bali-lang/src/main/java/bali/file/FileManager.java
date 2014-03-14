@@ -3,6 +3,8 @@ package bali.file;
 import bali.String;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
+import bali.annotation.Name;
+import bali.annotation.Nullable;
 
 /**
  * User: Richard
@@ -11,9 +13,11 @@ import bali.annotation.MetaType;
 @MetaType(Kind.INTERFACE)
 public interface FileManager {
 
-	public File getFile(String name);
+	@Nullable
+	public File getFile(@Name("name") String name);
 
-	public Directory getDirectory(String name);
+	@Nullable
+	public Directory getDirectory(@Name("name") String name);
 
 	public Directory getHomeDirectory();
 

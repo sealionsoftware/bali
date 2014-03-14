@@ -4,6 +4,8 @@ import bali.Iterable;
 import bali.String;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
+import bali.annotation.Name;
+import bali.annotation.Nullable;
 import bali.collection.Collection;
 
 /**
@@ -13,16 +15,18 @@ import bali.collection.Collection;
 @MetaType(Kind.INTERFACE)
 public interface Directory extends FileSystemEntry, Iterable<File> {
 
-	public File getFile(String name);
+	@Nullable
+	public File getFile(@Name("name") String name);
 
-	public Directory getDirectory(String name);
+	@Nullable
+	public Directory getDirectory(@Name("name") String name);
 
 	public Collection<Directory> getChildren();
 
 	public Collection<File> getFiles();
 
-	public File createFile(String name);
+	public File createFile(@Name("name") String name);
 
-	public Directory createDirectory(String name);
+	public Directory createDirectory(@Name("name") String name);
 
 }

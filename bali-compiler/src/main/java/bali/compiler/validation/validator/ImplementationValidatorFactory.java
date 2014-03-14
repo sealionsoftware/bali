@@ -14,6 +14,7 @@ import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.Declaration;
 import bali.compiler.type.Method;
 import bali.compiler.type.Site;
+import bali.compiler.type.Type;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class ImplementationValidatorFactory implements ValidatorFactory {
 	public Validator createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
 		return new Validator() {
 
-			private Set<bali.compiler.type.Class> interfaces;
+			private Set<bali.compiler.type.Class> interfaceTypes;
 
 			public List<ValidationFailure> validate(Node node, Control control) {
 
@@ -68,7 +69,7 @@ public class ImplementationValidatorFactory implements ValidatorFactory {
 					}
 				}
 
-				this.interfaces = interfaces;
+				this.interfaceTypes = interfaces;
 				return Collections.emptyList();
 			}
 
@@ -80,7 +81,7 @@ public class ImplementationValidatorFactory implements ValidatorFactory {
 
 					Site ifaceSite = type.getSite();
 
-					if (!interfaces.contains(ifaceSite.getTemplate())) {
+					if (!interfaceTypes.contains(ifaceSite.getTemplate())) {
 						failures.add(
 								new ValidationFailure(objectNode, "Implementation declaration " + type.getClassName() + " is not a recognised interface")
 						);
@@ -88,8 +89,8 @@ public class ImplementationValidatorFactory implements ValidatorFactory {
 					}
 
 					for (MethodDeclarationNode methodNode : objectNode.getMethods()) {
-						for (Class iface : interfaces) {
-							Method methodDeclaration = iface.getMethod(methodNode.getName());
+						for (Type iface : ifaceSite.getInterfaces()) {
+							Method methodDeclaration = iface.getTemplate().getMethod(methodNode.getName());
 							if (methodDeclaration != null) {
 								methodNode.setDeclared(true);
 								break;

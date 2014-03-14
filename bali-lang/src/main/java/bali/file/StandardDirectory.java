@@ -54,21 +54,20 @@ public class StandardDirectory implements Directory {
 	public File createFile(String name) {
 		java.io.File newFile = new java.io.File(delegate, convert(name));
 		try {
-			if (!newFile.createNewFile()){
-				throw new RuntimeException("Directory already contains a child named " + name);
+			if (!newFile.exists()){
+				newFile.createNewFile();
 			}
+			return new StandardFile(newFile);
 		} catch (IOException e) {
 			throw new RuntimeException("Could not create file", e);
 		}
-		return new StandardFile(newFile);
 	}
 
 	public Directory createDirectory(String name) {
 		java.io.File newDirectory = new java.io.File(delegate, convert(name));
-		if (newDirectory.exists()){
-			throw new RuntimeException("Directory already contains a child named " + name);
+		if (!newDirectory.exists()){
+			newDirectory.mkdir();
 		}
-		newDirectory.mkdir();
 		return new StandardDirectory(newDirectory);
 	}
 
