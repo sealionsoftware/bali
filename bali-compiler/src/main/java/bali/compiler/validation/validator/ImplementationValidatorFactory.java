@@ -5,6 +5,7 @@ import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.ImportNode;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
+import bali.compiler.parser.tree.MethodDeclaringClassNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.SiteNode;
@@ -89,9 +90,8 @@ public class ImplementationValidatorFactory implements ValidatorFactory {
 					}
 
 					for (MethodDeclarationNode methodNode : objectNode.getMethods()) {
-						for (Type iface : ifaceSite.getInterfaces()) {
-							Method methodDeclaration = iface.getTemplate().getMethod(methodNode.getName());
-							if (methodDeclaration != null) {
+						for (Method declared : ifaceSite.getMethods()){
+							if (declared.getName().equals(methodNode.getName())){
 								methodNode.setDeclared(true);
 								break;
 							}
