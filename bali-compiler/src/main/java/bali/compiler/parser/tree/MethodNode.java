@@ -1,5 +1,7 @@
 package bali.compiler.parser.tree;
 
+import bali.compiler.type.Site;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -52,14 +54,23 @@ public class MethodNode extends DeclarationNode {
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		Iterator<ParameterNode> i = parameters.iterator();
-		if (i.hasNext()){
-			sb.append(i.next());
-			while (i.hasNext()){
-				sb.append(",").append(i.next());
-			}
+		SiteNode returnType = getType();
+		if (returnType != null){
+			sb.append(returnType).append(" ");
 		}
-		return getName() + "(" + sb + ")";
+		sb.append(getName());
+		if (!parameters.isEmpty()){
+			sb.append("(");
+			Iterator<ParameterNode> i = parameters.iterator();
+			if (i.hasNext()){
+				sb.append(i.next());
+				while (i.hasNext()){
+					sb.append(",").append(i.next());
+				}
+			}
+			sb.append(")");
+		}
+		return sb.toString();
 	}
 
 }

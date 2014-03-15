@@ -14,7 +14,7 @@ public interface Class {
 
 	public String getName();
 
-	public Type getSuperType();
+	public List<Type> getSuperTypes();
 
 	public List<Declaration<Type>> getTypeParameters();
 

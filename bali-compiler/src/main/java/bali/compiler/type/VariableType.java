@@ -35,11 +35,11 @@ public class VariableType implements Type {
 		return bound.isAssignableTo(t);
 	}
 
-	public Type getSuperType() {
+	public List<Type> getSuperTypes() {
 		if (bound == null){
 			return null;
 		}
-		return bound.getSuperType();
+		return bound.getSuperTypes();
 	}
 
 	public List<Site> getTypeArguments() {
@@ -96,6 +96,13 @@ public class VariableType implements Type {
 			return null;
 		}
 		return bound.getTemplate();
+	}
+
+	public Method getMethod(String name) {
+		if (bound == null){
+			return null;
+		}
+		return bound.getMethod(name);
 	}
 
 	public String toString(){

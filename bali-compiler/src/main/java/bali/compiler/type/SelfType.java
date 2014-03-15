@@ -18,8 +18,8 @@ public class SelfType implements Type {
 		return self.isAssignableTo(t);
 	}
 
-	public Type getSuperType() {
-		return self.getSuperType();
+	public List<Type> getSuperTypes(){
+		return self.getSuperTypes();
 	}
 
 	public List<Site> getTypeArguments() {
@@ -52,6 +52,10 @@ public class SelfType implements Type {
 
 	public Class getTemplate() {
 		return self.getTemplate();
+	}
+
+	public Method getMethod(String name) {
+		return self.getMethod(name);
 	}
 
 	public String toString(){

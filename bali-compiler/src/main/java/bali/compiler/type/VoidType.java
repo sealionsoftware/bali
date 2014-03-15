@@ -13,8 +13,8 @@ public class VoidType implements Type {
 		return false;
 	}
 
-	public Type getSuperType() {
-		return null;
+	public List<Type> getSuperTypes() {
+		return Collections.emptyList();
 	}
 
 	public List<Site> getTypeArguments() {
@@ -47,6 +47,10 @@ public class VoidType implements Type {
 
 	public Class getTemplate() {
 		return new MutableClassModel(void.class.getName());
+	}
+
+	public Method getMethod(String name) {
+		return null;
 	}
 
 	public String toString(){

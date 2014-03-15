@@ -12,6 +12,8 @@ import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.ParameterNode;
 import bali.compiler.parser.tree.ReturnStatementNode;
 import bali.compiler.parser.tree.SiteNode;
+import bali.compiler.type.Site;
+import bali.number.BigInteger;
 import bali.number.Byte;
 import junit.framework.Assert;
 import org.junit.Before;
@@ -165,30 +167,37 @@ public class ASMClassGeneratorUnitTest {
 		type.setClassName("Number");
 		type.setSite(new TestSite(Number.class));
 
+		Site ifaceSite = new TestSite(ASuperInterface.class);
+
 		ParameterNode argument = new ParameterNode();
 		argument.setType(type);
 		argument.setName("anArgument");
 
+		NumberLiteralExpressionNode nlen = new NumberLiteralExpressionNode();
+		nlen.setSerialization("1");
+		nlen.setType(new TestSite(bali.Integer.class));
+		ReturnStatementNode rsn = new ReturnStatementNode();
+		rsn.setValue(nlen);
 		CodeBlockNode codeBlock = new CodeBlockNode();
-		codeBlock.addStatement(new ReturnStatementNode());
+		codeBlock.addStatement(rsn);
 
 		MethodDeclarationNode declaration = new MethodDeclarationNode();
 		declaration.setName("aMethod");
 		declaration.addParameter(argument);
 		declaration.setBody(codeBlock);
-		declaration.setDeclared(true);
+		declaration.setDeclared(ifaceSite.getMethod("aMethod"));
 
 		SiteNode ifaceType = new SiteNode();
 		InterfaceNode iface = new InterfaceNode();
 		iface.setQualifiedClassName("bali.compiler.bytecode.ASuperInterface");
 		iface.addMethod(declaration);
-		ifaceType.setSite(new TestSite(ASuperInterface.class));
+		ifaceType.setSite(ifaceSite);
 
 		clazz.addMethod(declaration);
 		clazz.addImplementation(ifaceType);
 
 		java.lang.Class loadedClass = build();
-		java.lang.reflect.Method declaredMethod = loadedClass.getDeclaredMethod("aMethod", new java.lang.Class[]{Number.class});
+		java.lang.reflect.Method declaredMethod = loadedClass.getDeclaredMethod("aMethod", new java.lang.Class[]{bali.Integer.class});
 
 		Assert.assertEquals("Number of interfaces", 1, loadedClass.getInterfaces().length);
 		Assert.assertEquals("Is Method implementation public?", true, Modifier.isPublic(declaredMethod.getModifiers()));

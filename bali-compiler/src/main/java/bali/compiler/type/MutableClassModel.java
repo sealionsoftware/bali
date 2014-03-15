@@ -15,7 +15,7 @@ import java.util.List;
 public class MutableClassModel implements Class {
 
 	private String name;
-	private Type superType;
+	private List<Type> superTypes;
 	private List<Declaration<Type>> typeParameters;
 	private List<Type> interfaces;
 	private List<Declaration<Site>> parameters;
@@ -28,7 +28,7 @@ public class MutableClassModel implements Class {
 	public MutableClassModel(String name) {
 		this(
 				name,
-				null,
+				Collections.<Type>emptyList(),
 				Collections.<Declaration<Type>>emptyList(),
 				Collections.<Type>emptyList(),
 				Collections.<Declaration<Site>>emptyList(),
@@ -40,9 +40,9 @@ public class MutableClassModel implements Class {
 		);
 	}
 
-	public MutableClassModel(String name, Type superType, List<Declaration<Type>> typeParameters, List<Type> interfaces, List<Declaration<Site>> parameters, List<Method> methods, List<Operator> operators, List<UnaryOperator> unaryOperators, List<Declaration<Site>> properties, Kind metaType) {
+	public MutableClassModel(String name, List<Type> superTypes, List<Declaration<Type>> typeParameters, List<Type> interfaces, List<Declaration<Site>> parameters, List<Method> methods, List<Operator> operators, List<UnaryOperator> unaryOperators, List<Declaration<Site>> properties, Kind metaType) {
 		this.name = name;
-		this.superType = superType;
+		this.superTypes = superTypes;
 		this.typeParameters = typeParameters;
 		this.interfaces = interfaces;
 		this.parameters = parameters;
@@ -57,8 +57,8 @@ public class MutableClassModel implements Class {
 		return name;
 	}
 
-	public Type getSuperType() {
-		return superType;
+	public List<Type> getSuperTypes() {
+		return superTypes;
 	}
 
 	public List<Declaration<Type>> getTypeParameters() {
@@ -93,8 +93,8 @@ public class MutableClassModel implements Class {
 		return metaType;
 	}
 
-	public void setSuperType(Type superType) {
-		this.superType = superType;
+	public void setSuperTypes(List<Type> superTypes) {
+		this.superTypes = superTypes;
 	}
 
 	public void setMetaType(Kind metaType) {
@@ -154,6 +154,13 @@ public class MutableClassModel implements Class {
 				return new Method(name, unaryOperator.getType(), Collections.<Declaration<Site>>emptyList());
 			}
 		}
+		for (Type superType : superTypes){
+			Method superMethod = superType.getTemplate().getMethod(name);
+			if (superMethod != null){
+				return superMethod;
+			}
+		}
+
 		return null;
 	}
 

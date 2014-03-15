@@ -10,6 +10,7 @@ import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.ParameterNode;
 import bali.compiler.parser.tree.SiteNode;
+import bali.compiler.type.Method;
 import bali.compiler.type.Site;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -133,22 +134,30 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 	private void buildMethod(MethodDeclarationNode method, ClassWriter cw) {
 
 		ASMStackManager manager = new ASMStackManager(converter);
-		int flags = (method.getDeclared() ? ACC_PUBLIC : ACC_PRIVATE);
-		if (method.getFinal()) {
-			flags += ACC_FINAL;
-		}
+		int flags = method.getFinal() ? ACC_FINAL : 0;
+		Method declared = method.getDeclared();
+		String descriptor, signature;
 
-		List<Site> parameterSites = new ArrayList<>();
-		for (ParameterNode declaration : method.getParameters()){
-			Site parameterSite = declaration.getType().getSite();
-			parameterSites.add(parameterSite);
+		if (declared != null){
+			flags += ACC_PUBLIC;
+			descriptor = converter.getMethodDescriptor(declared);
+			signature = converter.getMethodSignature(declared);
+		} else {
+			flags += ACC_PRIVATE;
+			List<Site> parameterSites = new ArrayList<>();
+			for (ParameterNode declaration : method.getParameters()){
+				Site parameterSite = declaration.getType().getSite();
+				parameterSites.add(parameterSite);
+			}
+			Site returnSite = method.getType() != null ? method.getType().getSite() : null;
+			descriptor = converter.getMethodDescriptor(returnSite, parameterSites);
+			signature = converter.getMethodSignature(returnSite, parameterSites);
 		}
-		Site returnSite = method.getType() != null ? method.getType().getSite() : null;
 
 		MethodVisitor methodVisitor = cw.visitMethod(flags,
 				method.getName(),
-				converter.getMethodDescriptor(returnSite, parameterSites),
-				converter.getMethodSignature(returnSite, parameterSites),
+				descriptor,
+				signature,
 				null
 		);
 

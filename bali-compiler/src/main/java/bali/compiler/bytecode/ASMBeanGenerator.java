@@ -131,8 +131,7 @@ public class ASMBeanGenerator implements Generator<BeanNode, GeneratedClass> {
 
 	private List<Declaration<Site>> getAllParameters(Type type){
 		List<Declaration<Site>> ret = new ArrayList<>();
-		Type superType = type.getSuperType();
-		if (superType != null){
+		for (Type superType : type.getSuperTypes()){
 			ret.addAll(getAllParameters(superType));
 		}
 		ret.addAll(type.getParameters());

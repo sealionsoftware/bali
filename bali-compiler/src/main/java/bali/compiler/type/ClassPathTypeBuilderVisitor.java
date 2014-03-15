@@ -48,7 +48,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 
 	private String className;
 	private List<Declaration<Type>> typeParameters = new ArrayList<>();
-	private Type superType;
+	private List<Type> superTypes;
 	private List<Type> interfaces = new ArrayList<>();
 	private List<Declaration<Site>> constructorParameters;
 	private List<Method> methods = new ArrayList<>();
@@ -59,7 +59,6 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 	private Map<String, Type> typeVariableBounds = new HashMap<>();
 
 	private Type nullBound;
-	private boolean constructorSet = false;
 
 	public ClassPathTypeBuilderVisitor(ClassLibrary library) {
 		super(Opcodes.ASM4);
@@ -81,17 +80,31 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 				Type bound = typeParameter.getType();
 				typeVariableBounds.put(typeParameter.getName(), bound != null ? bound : nullBound);
 			}
-			this.interfaces = visitor.getInterfaces();
-			this.superType = visitor.getSuperType();
+
+			if ((access & Opcodes.ACC_INTERFACE) > 0){
+				this.superTypes = visitor.getInterfaces();
+				this.interfaces = Collections.emptyList();
+			} else {
+				Type superType = visitor.getSuperType();
+				this.superTypes = superType != null ? Collections.singletonList(superType) : Collections.<Type>emptyList();
+				this.interfaces = visitor.getInterfaces();
+			}
+
 		} else {
 			List<Type> ifaces = new ArrayList<>();
 			for (String iface : interfaces){
 				Reference<Class> ref = library.getReference(iface.replaceAll("/", "."));
 				ifaces.add(new ParameterisedType(ref));
 			}
-			this.interfaces = ifaces;
-			if (superName != null){
-				this.superType = new ParameterisedType(library.getReference(superName.replaceAll("/", ".")));
+
+			if ((access & Opcodes.ACC_INTERFACE) > 0){
+				this.interfaces = Collections.emptyList();
+				this.superTypes = ifaces;
+			} else {
+				this.interfaces = ifaces;
+				if (superName != null){
+					this.superTypes = Collections.<Type>singletonList(new ParameterisedType(library.getReference(superName.replaceAll("/", "."))));
+				}
 			}
 		}
 	}
@@ -309,7 +322,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 
 		classpathClass = new MutableClassModel(
 				className,
-				superType,
+				superTypes,
 				typeParameters,
 				interfaces,
 				constructorParameters,

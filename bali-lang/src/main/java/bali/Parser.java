@@ -2,6 +2,7 @@ package bali;
 
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
+import bali.annotation.Name;
 
 /**
  * User: Richard
@@ -10,6 +11,6 @@ import bali.annotation.MetaType;
 @MetaType(Kind.INTERFACE)
 public interface Parser<T> {
 
-	public T parse(String serialization);
+	public T parse(@Name("serialization") String serialization);
 
 }

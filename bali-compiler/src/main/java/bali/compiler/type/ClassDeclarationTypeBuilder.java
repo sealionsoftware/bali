@@ -41,7 +41,7 @@ public class ClassDeclarationTypeBuilder {
 	public Class build(ObjectNode declaration) {
 		return new MutableClassModel(
 				declaration.getQualifiedClassName(),
-				null,
+				Collections.<Type>emptyList(),
 				getTypeParameters(declaration),
 				getInterfaces(declaration),
 				getParameters(declaration),
@@ -56,7 +56,7 @@ public class ClassDeclarationTypeBuilder {
 	public Class build(InterfaceNode declaration) {
 		return new MutableClassModel(
 				declaration.getQualifiedClassName(),
-				null,
+				Collections.<Type>emptyList(),
 				getTypeParameters(declaration),
 				getInterfaces(declaration),
 				Collections.<Declaration<Site>>emptyList(),
@@ -71,9 +71,10 @@ public class ClassDeclarationTypeBuilder {
 	public Class build(BeanNode declaration) {
 		SiteNode superType = declaration.getSuperType();
 		List<Declaration<Site>> properties = getProperties(declaration);
+		List<Type> superTypes = superType != null ? Collections.<Type>singletonList(superType.getSite()) : Collections.<Type>emptyList();
 		return new MutableClassModel(
 				declaration.getQualifiedClassName(),
-				superType != null ? superType.getSite() : null ,
+				superTypes,
 				getTypeParameters(declaration),
 				Collections.<Type>emptyList(),
 				properties,

@@ -49,12 +49,12 @@ public class ClasspathClassBuilderUnitTest {
 		expectation = new Method("aVoidMethod", null, Collections.<Declaration<Site>>emptyList());
 		checkMethod(expectation, methods.get(0));
 
-//		Method aVoidMethodWithArgument
+		// Method aVoidMethodWithArgument
 
 		expectation = new Method("aVoidMethodWithParameter", null, Arrays.asList(expectationDeclaration));
 		checkMethod(expectation, methods.get(1));
 
-//		Method aStringMethod
+		// Method aStringMethod
 
 		expectation = new Method("aStringMethod", expectationDeclaration.getType(), Collections.<Declaration<Site>>emptyList());
 		checkMethod(expectation, methods.get(2));
@@ -164,13 +164,13 @@ public class ClasspathClassBuilderUnitTest {
 
 		Assert.assertEquals(Kind.INTERFACE, aClass.getMetaType());
 
-		List<Type> interfaces = aClass.getInterfaces();
+		List<Type> superTypes = aClass.getSuperTypes();
 
 		Assert.assertEquals(SubInterface.class.getName(), aClass.getName());
 		Assert.assertEquals(Collections.<Declaration<Type>>emptyList(), aClass.getTypeParameters());
-		Assert.assertEquals(1, interfaces.size());
+		Assert.assertEquals(1, superTypes.size());
 
-		checkType(new TestSite(SuperInterface.class), interfaces.get(0));
+		checkType(new TestSite(SuperInterface.class), superTypes.get(0));
 	}
 
 	@Test
@@ -180,13 +180,13 @@ public class ClasspathClassBuilderUnitTest {
 
 		Assert.assertEquals(Kind.INTERFACE, aClass.getMetaType());
 
-		List<Type> interfaces = aClass.getInterfaces();
+		List<Type> superTypes = aClass.getSuperTypes();
 
 		Assert.assertEquals(ParameterizedSubInterface.class.getName(), aClass.getName());
 		Assert.assertEquals(Collections.<Declaration<Type>>emptyList(), aClass.getTypeParameters());
-		Assert.assertEquals(1, interfaces.size());
+		Assert.assertEquals(1, superTypes.size());
 
-		checkType(new TestSite(ParameterizedSuperInterface.class, Arrays.<Site>asList(new TestVariableSite("T", new TestSite(C.class)))), interfaces.get(0));
+		checkType(new TestSite(ParameterizedSuperInterface.class, Arrays.<Site>asList(new TestVariableSite("T", new TestSite(C.class)))), superTypes.get(0));
 	}
 
 	private void checkMethod(

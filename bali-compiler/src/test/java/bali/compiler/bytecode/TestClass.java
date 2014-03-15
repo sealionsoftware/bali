@@ -30,8 +30,8 @@ public class TestClass implements bali.compiler.type.Class {
 		return delegate.getName();
 	}
 
-	public Type getSuperType() {
-		return null;
+	public List<Type> getSuperTypes() {
+		return Collections.emptyList();
 	}
 
 	public List<Declaration<Type>> getTypeParameters() {
@@ -78,7 +78,23 @@ public class TestClass implements bali.compiler.type.Class {
 	}
 
 	public List<Method> getMethods() {
-		return Collections.emptyList();
+		java.lang.reflect.Method[] methods = delegate.getMethods();
+		List<Method> ret = new ArrayList<>(methods.length);
+		for (java.lang.reflect.Method method : methods){
+			List<Declaration<Site>> parameters = new ArrayList<>();
+			for (Class parameterType : method.getParameterTypes()){
+				parameters.add(new Declaration<Site>(
+					null,
+					new TestSite(parameterType)
+				));
+			}
+			ret.add(new Method(
+					method.getName(),
+					new TestSite(method.getReturnType()),
+					parameters
+			));
+		}
+		return ret;
 	}
 
 	public Kind getMetaType() {

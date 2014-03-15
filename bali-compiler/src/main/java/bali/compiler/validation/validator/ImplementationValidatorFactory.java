@@ -5,7 +5,6 @@ import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.ImportNode;
 import bali.compiler.parser.tree.InterfaceNode;
 import bali.compiler.parser.tree.MethodDeclarationNode;
-import bali.compiler.parser.tree.MethodDeclaringClassNode;
 import bali.compiler.parser.tree.Node;
 import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.SiteNode;
@@ -15,7 +14,6 @@ import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.Declaration;
 import bali.compiler.type.Method;
 import bali.compiler.type.Site;
-import bali.compiler.type.Type;
 import bali.compiler.validation.ValidationFailure;
 
 import java.util.ArrayList;
@@ -78,6 +76,10 @@ public class ImplementationValidatorFactory implements ValidatorFactory {
 
 				List<ValidationFailure> failures = new ArrayList<>();
 
+				for (MethodDeclarationNode methodNode : objectNode.getMethods()) {
+					methodNode.setDeclared(getDeclaredMethod(objectNode, methodNode.getName()));
+				}
+
 				for (SiteNode type : objectNode.getImplementations()) {
 
 					Site ifaceSite = type.getSite();
@@ -89,19 +91,10 @@ public class ImplementationValidatorFactory implements ValidatorFactory {
 						continue;
 					}
 
-					for (MethodDeclarationNode methodNode : objectNode.getMethods()) {
-						for (Method declared : ifaceSite.getMethods()){
-							if (declared.getName().equals(methodNode.getName())){
-								methodNode.setDeclared(true);
-								break;
-							}
-						}
-					}
-
 					for (Method method : ifaceSite.getMethods()) {
 						List<Site> ifaceMethodParameter = new ArrayList<>();
-						for (Declaration<Site> declaration : method.getParameters()) {
-							ifaceMethodParameter.add(declaration.getType());
+						for (Declaration<Site> parameterDeclaration : method.getParameters()) {
+							ifaceMethodParameter.add(parameterDeclaration.getType());
 						}
 						Method implementation = objectNode.getResolvedType().getMethod(method.getName());
 						if (implementation == null) {
@@ -121,15 +114,36 @@ public class ImplementationValidatorFactory implements ValidatorFactory {
 						for (Declaration<Site> implementationParameter : implementationParameters){
 							Site ifaceParameter = ifaceParameters.next();
 							if (!implementationParameter.getType().isAssignableTo(ifaceParameter)){
-								new ValidationFailure(objectNode, "Implementation parameter " + implementationParameter.getName() + " is not assignable to declared parameter type " + ifaceParameter);
+								failures.add(
+										new ValidationFailure(objectNode, "Implementation parameter " + implementationParameter.getName() + " is not assignable to declared parameter type " + ifaceParameter)
+								);
 							}
 						}
+						Site implementationReturn = implementation.getType();
+						if (implementationReturn == null){
+							if (method.getType() != null){
+								failures.add(
+										new ValidationFailure(objectNode, "Declared void method cannot be implemented with a return type ")
+								);
+							}
+						} else if (!implementationReturn.isAssignableTo(method.getType())){
+							failures.add(
+									new ValidationFailure(objectNode, "Implementation return type " + implementation.getType() + " is not assignable to declared return type " + method.getType())
+							);
+						}
 					}
-
-
-
 				}
 				return failures;
+			}
+
+			private Method getDeclaredMethod(ObjectNode objectNode, String name){
+				for (SiteNode type : objectNode.getImplementations()){
+					Method declared = type.getSite().getTemplate().getMethod(name);
+					if (declared != null){
+						return declared;
+					}
+				}
+				return null;
 			}
 		};
 	}

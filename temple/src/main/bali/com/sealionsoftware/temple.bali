@@ -36,7 +36,8 @@ object StubRouter implements HttpHandler {
 	method HttpResponse handle(HttpRequest request){
 		return new HttpResponse(
 			status: 404,
-			headers: new HashMap()
+			headers: new HashMap(),
+			body: "Not Found"
 		);
 	}
 }
@@ -142,13 +143,12 @@ object ConfigSerializer implements Serializer[ServerConfiguration] {
 		return "TEST";
 	}
 
-	method String parse(String configuration){
-//    	return new ServerConfiguration(
-//    	    webApplications: new HashMap(),
-//    	    bindings: new HashMap(),
-//    	    resources: new HashMap()
-//    	);
-		return "";
+	method ServerConfiguration parse(String configuration){
+    	return new ServerConfiguration(
+    	    webApplications: new HashMap(),
+    	    bindings: new HashMap(),
+    	    resources: new HashMap()
+    	);
     }
 
 }

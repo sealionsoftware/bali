@@ -1,5 +1,6 @@
 package bali.compiler.type;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -17,5 +18,19 @@ public class Method extends Declaration<Site> {
 
 	public List<Declaration<Site>> getParameters() {
 		return parameters;
+	}
+
+	public String toString(){
+		StringBuilder sb = new StringBuilder(super.toString());
+		if (parameters.size() > 0){
+			sb.append("(");
+			Iterator<Declaration<Site>> i = parameters.iterator();
+			sb.append(i.next());
+			while (i.hasNext()){
+				sb.append(",").append(i.next());
+			}
+			sb.append("(");
+		}
+		return sb.toString();
 	}
 }

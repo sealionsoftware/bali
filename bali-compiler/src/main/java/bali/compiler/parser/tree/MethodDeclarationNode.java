@@ -1,5 +1,7 @@
 package bali.compiler.parser.tree;
 
+import bali.compiler.type.Method;
+
 /**
  * User: Richard
  * Date: 29/04/13
@@ -7,7 +9,7 @@ package bali.compiler.parser.tree;
 public class MethodDeclarationNode extends MethodNode {
 
 	private CodeBlockNode body;
-	private Boolean isDeclared = Boolean.FALSE;
+	private Method declared;
 
 	public MethodDeclarationNode() {}
 
@@ -24,12 +26,12 @@ public class MethodDeclarationNode extends MethodNode {
 		return body;
 	}
 
-	public Boolean getDeclared() {
-		return isDeclared;
+	public Method getDeclared() {
+		return declared;
 	}
 
-	public void setDeclared(Boolean declared) {
-		isDeclared = declared;
+	public void setDeclared(Method declared) {
+		this.declared= declared;
 	}
 
 }

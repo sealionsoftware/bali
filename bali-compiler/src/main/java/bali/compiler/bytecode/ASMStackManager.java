@@ -517,8 +517,7 @@ public class ASMStackManager implements Opcodes {
 	}
 
 	private void collectParameters(Class clazz, List<Site> parameterTypes){
-		Type superType = clazz.getSuperType();
-		if (superType != null){
+		for (Type superType : clazz.getSuperTypes()){
 			collectParameters(superType.getTemplate(), parameterTypes);
 		}
 		for (Declaration<Site> parameter : clazz.getParameters()){
@@ -600,7 +599,7 @@ public class ASMStackManager implements Opcodes {
 			v.visitVarInsn(ALOAD, 0);
 		}
 
-		Method erasedMethod = getMethod(targetType.getTemplate(), methodName);
+		Method erasedMethod = targetType.getTemplate().getMethod(methodName);
 		List<Declaration<Site>> earasedParameters  = erasedMethod.getParameters();
 		if (earasedParameters.size() != arguments.size()){
 			throw new RuntimeException("The number of arguments must equal the number of parameters to write an invocation");
@@ -632,25 +631,6 @@ public class ASMStackManager implements Opcodes {
 			}
 		}
 	}
-
-	private Method getMethod(Class erased, String name){
-		Method ret = erased.getMethod(name);
-		if (ret != null){
-			return ret;
-		}
-		for (Type iface : erased.getInterfaces()){
-			ret = getMethod(iface.getTemplate(), name);
-			if (ret != null){
-				return ret;
-			}
-		}
-		Type superType = erased.getSuperType();
-		if (superType != null){
-			return getMethod(superType.getTemplate(), name);
-		}
-		return null;
-	}
-
 
 	public void push(int i, MethodVisitor v) {
 		if (i >= -1 && i <= 5) {

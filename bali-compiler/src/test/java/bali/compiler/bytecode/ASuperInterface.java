@@ -1,6 +1,6 @@
 package bali.compiler.bytecode;
 
-import bali.number.BigInteger;
+import bali.Integer;
 
 /**
  * User: Richard
@@ -8,6 +8,6 @@ import bali.number.BigInteger;
  */
 public interface ASuperInterface {
 
-	public BigInteger aMethod(BigInteger number);
+	public Integer aMethod(Integer number);
 
 }

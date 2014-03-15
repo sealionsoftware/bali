@@ -353,9 +353,6 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 		for (Declaration<Site> p : site.getProperties())
 			if(p.getName().equals(name))
 				return new PropertyData(p, site.getTemplate().getName());
-		Type superType = site.getSuperType();
-		if (superType != null)
-			return getProperty(superType, name);
 		return null;
 	}
 

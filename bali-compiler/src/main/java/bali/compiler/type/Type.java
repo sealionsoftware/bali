@@ -10,7 +10,7 @@ public interface Type {
 
 	boolean isAssignableTo(Type t);
 
-	Type getSuperType();
+	List<Type> getSuperTypes();
 
 	List<Site> getTypeArguments();
 
@@ -27,5 +27,7 @@ public interface Type {
 	List<Declaration<Site>> getProperties();
 
 	Class getTemplate();
+
+	Method getMethod(String name);
 
 }
