@@ -17,7 +17,7 @@ import static org.junit.Assert.assertNotNull;
  */
 public class LinkedListUnitTest {
 
-	private LinkedList<String> list = new LinkedList<>(new Array<>(new String[]{
+	private LinkedList<String> list = new LinkedList<>(null, new Array<>(new String[]{
 			convert("TEST1"),
 			convert("TEST2"),
 			convert("TEST3")
@@ -26,7 +26,7 @@ public class LinkedListUnitTest {
 	@Test
 	public void testIsEmpty(){
 		assertFalse(convert(list.isEmpty()));
-		assertTrue(convert(new LinkedList<>(null).isEmpty()));
+		assertTrue(convert(new LinkedList<>(null, null).isEmpty()));
 	}
 
 	@Test
@@ -91,7 +91,7 @@ public class LinkedListUnitTest {
 	@Test
 	public void testJoin(){
 
-		LinkedList<String> listTwo = new LinkedList<>(new Array<>(new String[]{
+		LinkedList<String> listTwo = new LinkedList<>(null, new Array<>(new String[]{
 				convert("TEST4"),
 				convert("TEST5"),
 				convert("TEST6")

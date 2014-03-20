@@ -2,6 +2,7 @@ package bali.net;
 
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
+import bali.annotation.Parameters;
 import bali.monitor.ConnectionMonitor;
 
 /**
@@ -14,6 +15,7 @@ public class SocketMonitor implements ConnectionMonitor<Socket> {
 	private ServerSocket serverSocket;
 	private Socket connection;
 
+	@Parameters
 	public SocketMonitor(ServerSocket serverSocket) {
 		this.serverSocket = serverSocket;
 	}

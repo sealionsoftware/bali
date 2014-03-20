@@ -6,6 +6,8 @@ import bali.Iterator;
 import bali.Value;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
+import bali.annotation.Parameters;
+import bali.type.Type;
 
 import static bali.Primitive.convert;
 
@@ -18,6 +20,13 @@ import static bali.Primitive.convert;
 public class HashMap<K extends Value<K>, V> implements Map<K,V> {
 
 	private java.util.Map<K, V> delegate = new java.util.HashMap<>();
+
+	public HashMap() {
+	}
+
+	@Parameters
+	public HashMap(Type K, Type V) {
+	}
 
 	public V get(K key) {
 		return delegate.get(key);
@@ -67,6 +76,8 @@ public class HashMap<K extends Value<K>, V> implements Map<K,V> {
 			public Entry<K, V> next() {
 				java.util.Map.Entry<K, V> delegateEntry = delegateIterator.next();
 				return new Entry<>(
+						null,
+						null,
 						delegateEntry.getKey(),
 						delegateEntry.getValue()
 				);

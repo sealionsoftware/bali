@@ -1,6 +1,9 @@
 package bali;
 
+import bali.collection.Collection;
 import bali.number.NumberFactory;
+
+import java.util.ArrayList;
 
 /**
  * User: Richard
@@ -19,10 +22,6 @@ public class Primitive {
 	public static Integer convert(long in) {
 		return NumberFactory.NUMBER_FACTORY.forLong(in);
 	}
-
-//	public static long convert(Long in) {
-//		return NumberFactory.NUMBER_FACTORY.valueOf(in);
-//	}
 
 	public static Boolean convert(boolean in) {
 		return in ? Boolean.TRUE : Boolean.FALSE;
@@ -50,5 +49,14 @@ public class Primitive {
 
 	public static char convert(Character in) {
 		return ((CharCharacter) in).value;
+	}
+
+	public static <T> ArrayList<T> convert(Collection<T> in) {
+		ArrayList<T> ret = new ArrayList<>();
+		Iterator<T> i = in.iterator();
+		while(convert(i.hasNext())){
+			ret.add(i.next());
+		}
+		return ret;
 	}
 }

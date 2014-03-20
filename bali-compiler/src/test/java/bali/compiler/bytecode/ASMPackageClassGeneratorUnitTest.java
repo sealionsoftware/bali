@@ -20,6 +20,7 @@ import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.NumberLiteralExpressionNode;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.parser.tree.StringLiteralExpressionNode;
+import bali.compiler.type.Site;
 import bali.number.Byte;
 import junit.framework.Assert;
 import org.junit.Before;
@@ -84,7 +85,7 @@ public class ASMPackageClassGeneratorUnitTest {
 		llv.addValue(two);
 		llv.addValue(three);
 
-		llv.setType(new TestSite((ValueCollection.class)));
+		llv.setType(new TestSite(ValueCollection.class, Collections.<Site>singletonList(new TestSite(Number.class))));
 
 		testGenerateConstant(ValueCollection.class, llv, new Array<>(new Number[]{
 				NUMBER_FACTORY.forDecimalString("1".toCharArray()),

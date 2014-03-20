@@ -2,8 +2,6 @@ import bali.Executable
 import bali.Boolean
 import bali.String
 import bali.Exception
-import bali.Count
-import bali.Counter
 import bali.Integer
 import bali.RuntimeException
 import bali.Serializer
@@ -25,7 +23,9 @@ import bali.server.HttpRequest
 import com.sealionsoftware.storage.BeanStore
 import com.sealionsoftware.storage.FileBeanStore
 
-constant String@ CONFIG_FILE_NAME = "temple.config"
+import com.sealionsoftware.json.JSONSerializer
+
+constant String@ CONFIG_FILE_NAME = "temple.json"
 
 interface ProtocolHandler {
 	declare handle(Socket connection)
@@ -90,85 +90,77 @@ object HttpProtocolHandler(HttpHandler router) implements ProtocolHandler {
 	        CONSOLE << "Response Completed";
         }
 	}
-
 }
 
 object TempleServer implements Executable {
 
-	field BeanStore[ServerConfiguration] configStore
+	field BeanStore[ServerConfiguration] configurationStore
+	field ServerConfiguration configuration
 
 	method execute {
 
 		CONSOLE << "Starting Temple";
 
-		configStore = new FileBeanStore(getConfigFile(), new ConfigSerializer());
+		loadConfiguration();
+		setUpApplications();
+		startServer();
 
-		ServerConfiguration configuration = configStore.load();
-
-		ServerSocket port = NETWORK_MANAGER.openPort(8080);
-		ConnectionMonitor[Socket]@ monitor = new SocketMonitor(port);
-
-		while (true){
-
-			monitor.waitForConnection();
-
-			run {
-
-				Socket connection = monitor.getConnection();
-				ProtocolHandler handler = new HttpProtocolHandler(new StubRouter());
-
-				try {
-					handler.handle(connection);
-				} catch (Exception e){
-					CONSOLE << "Error Processing Request: " + e.getMessage();
-				}
-				connection.close();
-			}
-		}
-
-		port.close();
 		CONSOLE << "Temple Exiting";
 	}
 
-	method File getConfigFile(){
+	method loadConfiguration {
+    	configurationStore = new FileBeanStore(getConfigFile(), new JSONSerializer());
+    	configuration = configurationStore.load();
+    }
+
+    method setUpApplications {
+
+		for (Entry[String, ResourceConfiguration] resource : configuration.resources){
+			CONSOLE << "Loading resource " + resource.key;
+		}
+
+		for (Entry[String, ResourceConfiguration] webApplication : configuration.webApplications){
+        	CONSOLE << "Loading application " + webApplication.key;
+        }
+    }
+
+    method startServer {
+
+    	ServerSocket port = NETWORK_MANAGER.openPort(8080);
+    	ConnectionMonitor[Socket]@ monitor = new SocketMonitor(port);
+
+    	while (true){
+
+    		monitor.waitForConnection();
+            run {
+
+    			Socket connection = monitor.getConnection();
+    			ProtocolHandler handler = new HttpProtocolHandler(new StubRouter());
+
+    			try {
+    				handler.handle(connection);
+    			} catch (Exception e){
+    				CONSOLE << "Error Processing Request: " + e.getMessage();
+    			}
+    			connection.close();
+    		}
+    	}
+
+    	port.close();
+    }
+
+	method File getConfigFile {
 		Directory home = FILE_MANAGER.getHomeDirectory();
 		Directory configDirectory = home.createDirectory(".temple");
     	return configDirectory.createFile(CONFIG_FILE_NAME);
 	}
 }
 
-object ConfigSerializer implements Serializer[ServerConfiguration] {
-
-	method String format(ServerConfiguration configuration){
-		return "TEST";
-	}
-
-	method ServerConfiguration parse(String configuration){
-    	return new ServerConfiguration(
-    	    webApplications: new HashMap(),
-    	    bindings: new HashMap(),
-    	    resources: new HashMap()
-    	);
-    }
-
-}
-
 bean ServerConfiguration {
 
-	property Map[String, WebAppConfiguration] webApplications
+	property Map[String, ResourceConfiguration] webApplications
 	property Map[IPAddress, Map[Integer, String]] bindings
 	property Map[String, ResourceConfiguration] resources
-
-}
-
-bean WebAppConfiguration {
-
-	property String groupId
-	property String artifactId
-	property String versionId
-
-	property Map[String, String] parameters
-	property Map[String, String] resources
 
 }
 

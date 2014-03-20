@@ -1,6 +1,5 @@
 package bali;
 
-
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 import bali.annotation.Operator;

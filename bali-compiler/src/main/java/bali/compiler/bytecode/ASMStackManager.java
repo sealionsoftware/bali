@@ -503,17 +503,28 @@ public class ASMStackManager implements Opcodes {
 
 	public void push(ConstructionExpressionNode value, MethodVisitor v) {
 
-		Class targetClass = value.getType().getTemplate();
+		Site targetType = value.getType();
+		Class targetClass = targetType.getTemplate();
 		String internalName = converter.getInternalName(targetClass);
 		List<Site> parameterTypes = new ArrayList<>();
 		collectParameters(targetClass, parameterTypes);
 
 		v.visitTypeInsn(NEW, internalName);
 		v.visitInsn(DUP);
+		if (targetClass.getMetaType().isReified()){
+			for (Type type : targetType.getTypeArguments()) {
+				push(type, v);
+			}
+		}
 		for (ExpressionNode argumentValue : value.getResolvedArguments()) {
 			push(argumentValue, v);
 		}
 		v.visitMethodInsn(INVOKESPECIAL, internalName, "<init>", converter.getMethodDescriptor(null, parameterTypes));
+	}
+
+	public void push(Type type, MethodVisitor v) {
+		v.visitLdcInsn(type.toString());
+		v.visitMethodInsn(INVOKESTATIC, "bali/type/TypeFactory", "getType", "(Ljava/lang/String;)Lbali/type/Type;");
 	}
 
 	private void collectParameters(Class clazz, List<Site> parameterTypes){

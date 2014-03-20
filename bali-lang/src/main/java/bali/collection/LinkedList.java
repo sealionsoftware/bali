@@ -6,6 +6,8 @@ import bali.Iterator;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 import bali.annotation.Nullable;
+import bali.annotation.Parameters;
+import bali.type.Type;
 
 import static bali.Primitive.convert;
 
@@ -21,7 +23,11 @@ public final class LinkedList<T> implements List<T> {
 	private Link<T> first = new Link<>();
 	private Link<T> last = first;
 
-	public LinkedList(@Nullable Collection<T> in) {
+	public LinkedList() {
+	}
+
+	@Parameters
+	public LinkedList(Type T, @Nullable Collection<T> in) {
 		if (in != null){
 			Iterator<T> iterator = in.iterator();
 			while (convert(iterator.hasNext())){
@@ -42,7 +48,7 @@ public final class LinkedList<T> implements List<T> {
 		}
 	}
 
-	private Link<T> getLink(int i){
+	private Link<T> getLink(long i){
 		if (i < 1 || i > size){
 			return null;
 		}
@@ -96,7 +102,7 @@ public final class LinkedList<T> implements List<T> {
 		};
 	}
 
-	private class Link<T> {
+	private static class Link<T> {
 		public Link<T> next;
 		public T item;
 	}

@@ -7,7 +7,7 @@ import bali.Count
 import bali.Counter
 import bali.RuntimeException
 
-object CompoundExecutable() implements Executable {
+object CompoundExecutable implements Executable {
 
 	field Count? i
 

@@ -5,6 +5,8 @@ import bali.Value;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 import bali.annotation.Name;
+import bali.annotation.Parameters;
+import bali.type.Type;
 
 /**
  * User: Richard
@@ -13,10 +15,15 @@ import bali.annotation.Name;
 @MetaType(Kind.BEAN)
 public class Entry<K extends Value<K>, V> implements Value<Entry<K, V>> {
 
-	public K key;
-	public V value;
+	public final K key;
+	public final V value;
 
 	public Entry(K key, V value) {
+		this(null, null, key, value);
+	}
+
+	@Parameters
+	public Entry(Type K, Type V, K key, V value) {
 		this.key = key;
 		this.value = value;
 	}

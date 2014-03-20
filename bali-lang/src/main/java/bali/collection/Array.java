@@ -19,11 +19,9 @@ import static bali.Primitive.convert;
 public final class Array<E extends Value<E>> implements ValueCollection<E> {
 
 	private final E[] elements;
-	private final E[] empty;
 
 	public Array(E[] elements){
 		this.elements = elements;
-		this.empty = Arrays.copyOf(elements, 0);
 	}
 
 	public Integer size() {
@@ -98,7 +96,7 @@ public final class Array<E extends Value<E>> implements ValueCollection<E> {
 	public Collection<E> tail(Integer index) {
 		int i = convert(index);
 		if (i >= elements.length){
-			return new Array<>(empty);
+			return new Array<>(Arrays.copyOf(elements, 0));
 		}
 		return new Array<>(Arrays.copyOfRange(elements, 0, i));
 	}

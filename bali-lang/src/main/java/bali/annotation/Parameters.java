@@ -4,14 +4,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.CONSTRUCTOR;
 
 /**
  * User: Richard
- * Date: 09/09/13
+ * Date: 20/03/14
  */
-@Target(PARAMETER)
+@Target(CONSTRUCTOR)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Name {
-	public String value();
+public @interface Parameters {
 }

@@ -4,6 +4,7 @@ import bali.annotation.Kind;
 import bali.annotation.MetaType;
 import bali.annotation.Name;
 import bali.annotation.Nullable;
+import bali.annotation.Parameters;
 import bali.annotation.SelfTyped;
 import bali.annotation.ThreadSafe;
 import bali.compiler.GeneratedClass;
@@ -87,6 +88,8 @@ public class ASMBeanGenerator implements Generator<BeanNode, GeneratedClass> {
 				converter.getMethodSignature(null, allParamSites),
 				null
 		);
+
+		initv.visitAnnotation(converter.getTypeDescriptor(Parameters.class.getName()), true).visitEnd();
 
 		int i = 0;
 		for (Declaration<Site> param : allParams){

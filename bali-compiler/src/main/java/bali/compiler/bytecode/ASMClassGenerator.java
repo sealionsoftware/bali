@@ -2,6 +2,7 @@ package bali.compiler.bytecode;
 
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
+import bali.annotation.Parameters;
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.DeclarationNode;
 import bali.compiler.parser.tree.ExpressionNode;
@@ -59,6 +60,15 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 			).visitEnd();
 		}
 
+		for (DeclarationNode parameter : input.getTypeParameters()) {
+			cw.visitField(ACC_PRIVATE + ACC_FINAL,
+					parameter.getName(),
+					"Lbali/type/Type;",
+					"Lbali/type/Type;",
+					null
+			).visitEnd();
+		}
+
 		for (DeclarationNode parameter : input.getParameters()) {
 			Site type = parameter.getType().getSite();
 			cw.visitField(ACC_PRIVATE + ACC_FINAL,
@@ -97,17 +107,28 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 				null
 		);
 
+		initv.visitAnnotation(converter.getTypeDescriptor(Parameters.class.getName()), true).visitEnd();
+
 		initv.visitCode();
 		initv.visitVarInsn(ALOAD, 0);
 		initv.visitInsn(DUP);
 		initv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V");
 
 		int i = 1;
+		String qualifiedClassName = converter.getInternalName(input.getQualifiedClassName());
+		for (DeclarationNode declaration : input.getTypeParameters()) {
+			initv.visitInsn(DUP);
+			initv.visitVarInsn(ALOAD, i++);
+			initv.visitFieldInsn(PUTFIELD,
+					qualifiedClassName,
+					declaration.getName(),
+					"Lbali/type/Type;");
+		}
 		for (DeclarationNode declaration : input.getParameters()) {
 			initv.visitInsn(DUP);
 			initv.visitVarInsn(ALOAD, i++);
 			initv.visitFieldInsn(PUTFIELD,
-					converter.getInternalName(input.getQualifiedClassName()),
+					qualifiedClassName,
 					declaration.getName(),
 					converter.getTypeDescriptor(declaration.getType().getSite().getTemplate()));
 		}
@@ -122,8 +143,8 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 						node.getName(),
 						converter.getTypeDescriptor(node.getType().getSite().getTemplate()));
 			}
-
 		}
+
 		initv.visitInsn(POP);
 		initv.visitInsn(RETURN);
 		initv.visitMaxs(1, 1);

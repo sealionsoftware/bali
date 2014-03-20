@@ -16,6 +16,7 @@
 		<module>bali-lang</module>
 		<module>bali-compiler</module>
 		<module>bali-maven-plugin</module>
+		<module>bali-json</module>
 		<!--<module>bali-examples</module>-->
 		<!--<module>temple</module>-->
 	</modules>

@@ -4,6 +4,7 @@ import bali.annotation.Kind;
 import bali.annotation.MetaType;
 import bali.annotation.Name;
 import bali.annotation.Nullable;
+import bali.annotation.Parameters;
 import bali.annotation.SelfTyped;
 import bali.annotation.ThreadSafe;
 import bali.compiler.reference.Reference;
@@ -38,6 +39,8 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 			org.objectweb.asm.Type.getType(SelfTyped.class).getDescriptor();
 	private static final String METATYPE_ANNOTATION_DESC =
 			org.objectweb.asm.Type.getType(MetaType.class).getDescriptor();
+	private static final String PARAMETERS_ANNOTATION_DESC =
+			org.objectweb.asm.Type.getType(Parameters.class).getDescriptor();
 
 	private static final int PUBLIC_STATIC = Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC;
 
@@ -176,6 +179,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 		return new MethodVisitor(Opcodes.ASM4, super.visitMethod(access, name, desc, signature, exceptions)) {
 
 			private boolean isOperator;
+			private boolean isParameters;
 			private String operatorName;
 			private SiteData returnData = new SiteData();
 			private List<ParameterData> parameterData = new ArrayList<>(numberOfParameters);{
@@ -186,7 +190,9 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 
 			public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
 
-				if (OPERATOR_ANNOTATION_DESC.equals(desc)) {
+				if (PARAMETERS_ANNOTATION_DESC.equals(desc)){
+					isParameters = true;
+				} else if (OPERATOR_ANNOTATION_DESC.equals(desc)) {
 					isOperator = true;
 					return new AnnotationVisitor(Opcodes.ASM4, super.visitAnnotation(desc, visible)) {
 						public void visit(String name, Object value) {
@@ -267,10 +273,12 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 
 				if (name.equals("<init>")) {
 					// The method is a constructor
-					if (constructorParameters != null){
-						throw new RuntimeException("Cannot load class with multiple constructors as a Bali type");
+					if (isParameters){
+						if (constructorParameters != null){
+							throw new RuntimeException("Cannot load class with multiple @Parameters constructors as a Bali type");
+						}
+						constructorParameters = parameterDeclarations;
 					}
-					constructorParameters = parameterDeclarations;
 				} else if (isOperator) switch (parameterDeclarations.size()) {
 					case 1:
 						// The method is an operator
