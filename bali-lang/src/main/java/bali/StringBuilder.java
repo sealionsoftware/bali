@@ -11,7 +11,9 @@ import bali.collection.ValueCollection;
  * Date: 10/03/14
  */
 @MetaType(Kind.OBJECT)
-public class StringBuffer implements String {
+public class StringBuilder implements String {
+
+	char[] characters = new char[255];
 
 	public String uppercase() {
 		throw new java.lang.RuntimeException("Not implemented yet");

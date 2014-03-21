@@ -29,7 +29,7 @@ public class Method extends Declaration<Site> {
 			while (i.hasNext()){
 				sb.append(",").append(i.next());
 			}
-			sb.append("(");
+			sb.append(")");
 		}
 		return sb.toString();
 	}

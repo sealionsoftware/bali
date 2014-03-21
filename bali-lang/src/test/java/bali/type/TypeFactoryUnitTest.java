@@ -53,6 +53,24 @@ public class TypeFactoryUnitTest {
 		Assert.assertEquals("bali.type.A", convert(subParameterType.getClassName()));
 	}
 
+	@Test
+	public void testSelfParameterisedMultiple(){
+		String typeName = "bali.type.B[bali.type.C[bali.type.A,bali.type.A]]";
+		Type t = TypeFactory.getType(typeName);
+		Assert.assertNotNull(t);
+		Assert.assertEquals("bali.type.B", convert(t.getClassName()));
+		Type parameterType = t.getTypeArguments().get(convert(1));
+		Assert.assertEquals("bali.type.C", convert(parameterType.getClassName()));
+		Assert.assertFalse(convert(parameterType.getTypeArguments().isEmpty()));
+		Assert.assertEquals(2, convert(parameterType.getTypeArguments().size()));
+		Type parameterTypeOne = parameterType.getTypeArguments().get(convert(1));
+		Assert.assertNotNull(parameterTypeOne);
+		Assert.assertEquals("bali.type.A", convert(parameterTypeOne.getClassName()));
+		Type parameterTypeTwo = parameterType.getTypeArguments().get(convert(1));
+		Assert.assertNotNull(parameterTypeTwo);
+		Assert.assertEquals("bali.type.A", convert(parameterTypeTwo.getClassName()));
+	}
+
 
 
 }

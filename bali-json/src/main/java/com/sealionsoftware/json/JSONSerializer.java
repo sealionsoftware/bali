@@ -190,7 +190,7 @@ public class JSONSerializer<T> implements Serializer<T> {
 
 		try {
 
-			Class<C> clazz = (Class<C>) Class.forName(convert(type.getClassName()));
+			Class<C> clazz = (Class<C>) Thread.currentThread().getContextClassLoader().loadClass(convert(type.getClassName()));
 
 			Map<String, JsonValueContext> hashedValues = new HashMap<>();
 			for (MemberContext member : context.member()){
@@ -206,8 +206,14 @@ public class JSONSerializer<T> implements Serializer<T> {
 			while (convert(i.hasNext())){
 				Declaration parameter = i.next();
 				JsonValueContext valueContext = hashedValues.get(convert(parameter.name));
-				Object value = valueContext != null ? create(parameter.type, valueContext) : null;
-				arguments[j++] = value;
+				if (valueContext == null){
+					if (!convert(parameter.nullable)){
+						throw new RuntimeException("Parameter " + parameter.name + " is required");
+					}
+					arguments[j++] = null;
+				} else {
+					arguments[j++] = create(parameter.type, valueContext);
+				}
 			}
 
 			return constructor.newInstance(arguments);

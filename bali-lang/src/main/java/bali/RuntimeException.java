@@ -3,6 +3,8 @@ package bali;
 
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
+import bali.annotation.Name;
+import bali.annotation.Parameters;
 
 /**
  * User: Richard
@@ -13,7 +15,8 @@ public class RuntimeException implements Exception {
 
 	private String message;
 
-	public RuntimeException(String message) {
+	@Parameters
+	public RuntimeException(@Name("name") String message) {
 		this.message = message;
 	}
 

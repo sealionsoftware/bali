@@ -37,9 +37,12 @@ import bali.compiler.parser.tree.TryStatementNode;
 import bali.compiler.parser.tree.UnaryOperationNode;
 import bali.compiler.parser.tree.VariableNode;
 import bali.compiler.parser.tree.WhileStatementNode;
+import bali.compiler.reference.SimpleReference;
 import bali.compiler.type.Class;
 import bali.compiler.type.Declaration;
 import bali.compiler.type.Method;
+import bali.compiler.type.MutableClassModel;
+import bali.compiler.type.ParameterisedSite;
 import bali.compiler.type.Site;
 import bali.compiler.type.Type;
 import org.objectweb.asm.Label;
@@ -61,6 +64,7 @@ import java.util.Map;
  */
 public class ASMStackManager implements Opcodes {
 
+	public static final Site TYPE_SITE = new ParameterisedSite(new SimpleReference<Class>(new MutableClassModel(bali.type.Type.class.getName())));
 	private static final int[] INTCODES = new int[]{ICONST_M1, ICONST_0, ICONST_1, ICONST_2, ICONST_3, ICONST_4, ICONST_5};
 
 	private ASMConverter converter;
@@ -507,15 +511,15 @@ public class ASMStackManager implements Opcodes {
 		Class targetClass = targetType.getTemplate();
 		String internalName = converter.getInternalName(targetClass);
 		List<Site> parameterTypes = new ArrayList<>();
-		collectParameters(targetClass, parameterTypes);
-
 		v.visitTypeInsn(NEW, internalName);
 		v.visitInsn(DUP);
 		if (targetClass.getMetaType().isReified()){
 			for (Type type : targetType.getTypeArguments()) {
 				push(type, v);
+				parameterTypes.add(TYPE_SITE);
 			}
 		}
+		collectParameters(targetClass, parameterTypes);
 		for (ExpressionNode argumentValue : value.getResolvedArguments()) {
 			push(argumentValue, v);
 		}

@@ -151,4 +151,10 @@ public class JSONSerializerUnitTest {
 		assertEquals(1, convert(a.b.aNumber));
 	}
 
+	@Test(expected = java.lang.RuntimeException.class)
+	public void testParseBeanWithRequiredProperty(){
+		JSONSerializer<C> serializer = new JSONSerializer<>(new LazyReflectedType(convert(C.class.getName()), _.EMPTY));
+		serializer.parse(convert("{}"));
+	}
+
 }

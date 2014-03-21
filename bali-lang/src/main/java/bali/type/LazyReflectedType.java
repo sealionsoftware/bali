@@ -4,6 +4,7 @@ import bali.Iterator;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 import bali.annotation.Name;
+import bali.annotation.Nullable;
 import bali.annotation.Parameters;
 import bali.collection.Collection;
 import bali.collection.LinkedList;
@@ -38,7 +39,7 @@ public class LazyReflectedType<T> implements Type {
 
 		try {
 
-			template = (Class<T>) Class.forName(convert(className));
+			template = (Class<T>) Thread.currentThread().getContextClassLoader().loadClass(convert(className));
 			TypeVariable[] typeParameters = template.getTypeParameters();
 			if (typeParameters.length != convert(typeArguments.size())){
 				throw new RuntimeException("Invalid type arguments");
@@ -73,16 +74,20 @@ public class LazyReflectedType<T> implements Type {
 		if (parameters == null){
 			List<Declaration> parameters = new LinkedList<>();
 			Constructor<T> constructor = getParametersConstructor(template);
-			Name[] names = getNameAnnotations(constructor.getParameterAnnotations());
+			Annotation[][] paramAnnotations = constructor.getParameterAnnotations();
+			Name[] names = getAnnotations(paramAnnotations, new Name[paramAnnotations.length]);
+			Nullable[] nullables = getAnnotations(paramAnnotations, new Nullable[paramAnnotations.length]);
 			java.lang.reflect.Type[] paramTypes = constructor.getGenericParameterTypes();
 			for (int i = 0 ; i < names.length ; i++){
 				Name name = names[i];
+				Nullable nullable = nullables[i];
 				if (name == null){
 					throw new RuntimeException("Parameter " + i + " of class " + template + " is not named properly");
 				}
 				parameters.add(new Declaration(
 						convert(names[i].value()),
-						getTypeFor(paramTypes[i])
+						getTypeFor(paramTypes[i]),
+						convert(nullable != null)
 				));
 			}
 
@@ -90,13 +95,13 @@ public class LazyReflectedType<T> implements Type {
 		}
 	}
 
-	private Name[] getNameAnnotations(Annotation[][] parameterListAnnotations){
-		Name[] ret = new Name[parameterListAnnotations.length];
+	private <A extends Annotation> A[] getAnnotations(Annotation[][] parameterListAnnotations, A[] ret){
 		int i = 0;
+		Class<A> componentType = (Class<A>) ret.getClass().getComponentType();
 		for (Annotation[] parameterAnnotations : parameterListAnnotations){
 			for (Annotation parameterAnnotation : parameterAnnotations){
-				if (Name.class.isAssignableFrom(parameterAnnotation.annotationType())){
-					ret[i] = (Name) parameterAnnotation;
+				if (componentType.isAssignableFrom(parameterAnnotation.annotationType())){
+					ret[i] = (A) parameterAnnotation;
 					break;
 				}
 			}

@@ -277,7 +277,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 						if (constructorParameters != null){
 							throw new RuntimeException("Cannot load class with multiple @Parameters constructors as a Bali type");
 						}
-						constructorParameters = parameterDeclarations;
+						constructorParameters = parameterDeclarations.subList(typeParameters.size(), parameterDeclarations.size());
 					}
 				} else if (isOperator) switch (parameterDeclarations.size()) {
 					case 1:

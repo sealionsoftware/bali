@@ -40,7 +40,13 @@ public class Primitive {
 	}
 
 	public static java.lang.String convert(String in) {
-		return new java.lang.String(((CharArrayString) in).characters);
+		if (in instanceof CharArrayString){
+			return new java.lang.String(((CharArrayString) in).characters);
+		}
+		if (in instanceof StringBuilder){
+			return new java.lang.String(((StringBuilder) in).characters);
+		}
+		throw new java.lang.RuntimeException("Cannot convert String of type " + in.getClass());
 	}
 
 	public static Character convert(char in) {

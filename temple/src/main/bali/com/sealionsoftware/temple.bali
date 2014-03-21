@@ -61,31 +61,31 @@ object HttpProtocolHandler(HttpHandler router) implements ProtocolHandler {
 				path: requestLineElements#2,
 				headers: new HashMap()
 			);
-
-			for (String header : connection){
-				if (header.size() > 0){
-					break;
-				}
-                Collection[String] headerElements = header / ": ";
-                Integer headerElementSize = headerElements.size();
-                if (headerElementSize != 2){
-                    throw new RuntimeException("The http header is invalid as it had $headerElementSize elements");
-                }
-                request.headers.put(headerElements#1, headerElements#2);
-			}
-
-	        HttpResponse response = router.handle(request);
-	        connection << "HTTP/1.1 " + NUMBER_FACTORY.format(response.status) + " OK";
-
-	        for (Entry[String, String] entry : response.headers){
-	            connection << entry.key + ": " + entry.value;
-	        }
-
-	        connection << "";
-	        String? body = response.body;
-	        if (?body){
-	            connection << body;
-	        }
+//
+//			for (String header : connection){
+//				if (header.size() > 0){
+//					break;
+//				}
+//                Collection[String] headerElements = header / ": ";
+//                Integer headerElementSize = headerElements.size();
+//                if (headerElementSize != 2){
+//                    throw new RuntimeException("The http header is invalid as it had $headerElementSize elements");
+//                }
+//                request.headers.put(headerElements#1, headerElements#2);
+//			}
+//
+//	        HttpResponse response = router.handle(request);
+//	        connection << "HTTP/1.1 " + NUMBER_FACTORY.format(response.status) + " OK";
+//
+//	        for (Entry[String, String] entry : response.headers){
+//	            connection << entry.key + ": " + entry.value;
+//	        }
+//
+//	        connection << "";
+//	        String? body = response.body;
+//	        if (?body){
+//	            connection << body;
+//	        }
 
 	        CONSOLE << "Response Completed";
         }

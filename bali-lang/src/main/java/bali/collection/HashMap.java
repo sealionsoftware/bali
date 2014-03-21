@@ -6,6 +6,7 @@ import bali.Iterator;
 import bali.Value;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
+import bali.annotation.Name;
 import bali.annotation.Parameters;
 import bali.type.Type;
 
@@ -25,7 +26,7 @@ public class HashMap<K extends Value<K>, V> implements Map<K,V> {
 	}
 
 	@Parameters
-	public HashMap(Type K, Type V) {
+	public HashMap(@Name("K") Type K, @Name("V") Type V) {
 	}
 
 	public V get(K key) {

@@ -1,5 +1,5 @@
 import bali.String
-import bali.StringBuffer
+import bali.StringBuilder
 import bali.Serializer
 import bali.file.File
 
@@ -13,7 +13,7 @@ interface BeanStore[T] {
 object FileBeanStore[T](File file, Serializer[T] serializer) implements BeanStore[T] {
 
 	method T load {
-		String buffer = new StringBuffer();
+		String buffer = new StringBuilder();
 		for (String line : file){
 			buffer = buffer + line;
 		}

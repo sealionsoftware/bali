@@ -1,5 +1,6 @@
 package bali.type;
 
+import bali.Boolean;
 import bali.String;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
@@ -16,8 +17,8 @@ public class Method extends Declaration {
 	public Collection<Declaration> arguments;
 
 	@Parameters
-	public Method(String name, Type type, Collection<Declaration> arguments) {
-		super(name, type);
+	public Method(String name, Type type, Boolean nullable, Collection<Declaration> arguments) {
+		super(name, type, nullable);
 		this.arguments = arguments;
 	}
 }

@@ -40,6 +40,9 @@ public class ExecuteBaliGoal implements Mojo {
 	}
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
+
+		Thread t = Thread.currentThread();
+		ClassLoader original = t.getContextClassLoader();
 		try {
 			int i = 0;
 			URL[] dependencies = new URL[dependencyArtifacts.size()];
@@ -53,11 +56,14 @@ public class ExecuteBaliGoal implements Mojo {
 			if (!(executable instanceof Executable)){
 				throw new MojoExecutionException("The specified class is not an instance of " + Executable.class);
 			}
+			t.setContextClassLoader(classLoader);
 			((Executable) executable).execute();
 		} catch (ClassNotFoundException e) {
 			throw new MojoExecutionException("The specified class could not be found", e);
 		} catch (Throwable e) {
 			throw new MojoFailureException("An error occured whilst running", e);
+		} finally {
+			t.setContextClassLoader(original);
 		}
 	}
 

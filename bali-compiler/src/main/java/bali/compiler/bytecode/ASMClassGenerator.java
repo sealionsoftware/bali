@@ -11,6 +11,8 @@ import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.ParameterNode;
 import bali.compiler.parser.tree.SiteNode;
+import bali.compiler.reference.SimpleReference;
+import bali.compiler.type.Class;
 import bali.compiler.type.Method;
 import bali.compiler.type.Site;
 import org.objectweb.asm.AnnotationVisitor;
@@ -95,6 +97,9 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 		ASMStackManager manager = new ASMStackManager(converter);
 
 		List<Site> parameterSites = new ArrayList<>();
+		for (DeclarationNode declaration : input.getTypeParameters()) {
+			parameterSites.add(ASMStackManager.TYPE_SITE);
+		}
 		for (ParameterNode declaration : input.getParameters()){
 			Site parameterSite = declaration.getType().getSite();
 			parameterSites.add(parameterSite);
