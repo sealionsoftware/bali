@@ -2,6 +2,7 @@ package com.sealionsoftware.json;
 
 import bali.Iterator;
 import bali.Serializer;
+import bali.Value;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 import bali.annotation.Name;
@@ -30,6 +31,7 @@ import java.util.Map;
 
 import static bali.Primitive.convert;
 import static bali.compiler.parser.JsonParser.JsonObjectContext;
+import static bali.compiler.parser.JsonParser.JsonArrayContext;
 import static bali.compiler.parser.JsonParser.JsonBooleanContext;
 import static bali.compiler.parser.JsonParser.JsonNumberContext;
 import static bali.compiler.parser.JsonParser.JsonStringContext;
@@ -239,28 +241,71 @@ public class JSONSerializer<T> implements Serializer<T> {
 	}
 
 	private Object create(Type type, JsonValueContext context){
+		//TODO: need "is assignable" method on Type
 		String className = convert(type.getClassName());
+		Collection<Type> typeArguments = type.getTypeArguments();
 		if ("bali.String".equals(className)){
 			JsonStringContext jsonStringContext = context.jsonString();
 			if (jsonStringContext == null){
 				throw new RuntimeException("Serialized property is of incorrect type");
 			}
 			return convert(trimString(jsonStringContext.STRING()));
-		} if ("bali.Boolean".equals(className)){
+		}
+		if ("bali.Boolean".equals(className)){
 			JsonBooleanContext jsonBooleanContext = context.jsonBoolean();
 			if (jsonBooleanContext == null){
 				throw new RuntimeException("Serialized property is of incorrect type");
 			}
 			return convert("true".equals(jsonBooleanContext.getText()));
-		} if ("bali.Number".equals(className) || "bali.Integer".equals(className)){
+		}
+		if ("bali.Number".equals(className) || "bali.Integer".equals(className)){
 			JsonNumberContext jsonNumberContext = context.jsonNumber();
 			if (jsonNumberContext == null){
 				throw new RuntimeException("Serialized property is of incorrect type");
 			}
 			return NumberFactory.NUMBER_FACTORY.forDecimalString(jsonNumberContext.NUMBER().getText().toCharArray());
-		} else if (context.jsonObject() != null){
+		}
+		if ("bali.collection.Map".equals(className)){
+			JsonArrayContext jsonArrayContext = context.jsonArray();
+			if (jsonArrayContext == null){
+				throw new RuntimeException("Serialized property is of incorrect type");
+			}
+			bali.collection.Map ret = new bali.collection.HashMap();
+			for (JsonValueContext jsonValue : jsonArrayContext.jsonValue()){
+				JsonObjectContext entry = jsonValue.jsonObject();
+				Type keyType = typeArguments.get(convert(1));
+				Type valueType = typeArguments.get(convert(2));
+				Value key = null;
+				Object value = null;
+				for (MemberContext memberContext : entry.member()){
+					String entryPropertyName = trimString(memberContext.STRING());
+					if ("key".equals(entryPropertyName)){
+						key = (Value) create(keyType, memberContext.jsonValue());
+					} else if ("value".equals(entryPropertyName)){
+						value =  create(valueType, memberContext.jsonValue());
+					}
+				}
+				if (key != null){
+					ret.put(key, value);
+				}
+			}
+			return ret;
+		}
+		if ("bali.collection.Collection".equals(className)){
+			JsonArrayContext jsonArrayContext = context.jsonArray();
+			if (jsonArrayContext == null){
+				throw new RuntimeException("Serialized property is of incorrect type");
+			}
+			bali.collection.List<Object> ret = new bali.collection.LinkedList<>();
+			Type elementType = typeArguments.get(convert(1));
+			for (JsonValueContext value : jsonArrayContext.jsonValue()){
+				ret.add(create(elementType, value));
+			}
+			return ret;
+		}
+		if (context.jsonObject() != null){
 			return create(type, context.jsonObject());
 		}
-		return null;
+		throw new RuntimeException("Could not create object");
 	}
 }

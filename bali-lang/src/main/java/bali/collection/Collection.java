@@ -5,6 +5,7 @@ import bali.Integer;
 import bali.Iterable;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
+import bali.annotation.Nullable;
 import bali.annotation.Operator;
 import bali.annotation.SelfTyped;
 
@@ -20,6 +21,7 @@ public interface Collection<T> extends Iterable<T> {
 	public Boolean isEmpty();
 
 	@Operator("#")
+	@Nullable
 	public T get(Integer index);
 
 	@Operator("+")

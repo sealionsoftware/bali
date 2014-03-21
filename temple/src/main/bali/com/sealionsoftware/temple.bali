@@ -61,31 +61,31 @@ object HttpProtocolHandler(HttpHandler router) implements ProtocolHandler {
 				path: requestLineElements#2,
 				headers: new HashMap()
 			);
-//
-//			for (String header : connection){
-//				if (header.size() > 0){
-//					break;
-//				}
-//                Collection[String] headerElements = header / ": ";
-//                Integer headerElementSize = headerElements.size();
-//                if (headerElementSize != 2){
-//                    throw new RuntimeException("The http header is invalid as it had $headerElementSize elements");
-//                }
-//                request.headers.put(headerElements#1, headerElements#2);
-//			}
-//
-//	        HttpResponse response = router.handle(request);
-//	        connection << "HTTP/1.1 " + NUMBER_FACTORY.format(response.status) + " OK";
-//
-//	        for (Entry[String, String] entry : response.headers){
-//	            connection << entry.key + ": " + entry.value;
-//	        }
-//
-//	        connection << "";
-//	        String? body = response.body;
-//	        if (?body){
-//	            connection << body;
-//	        }
+
+			for (String header : connection){
+				if (header.size() > 0){
+					break;
+				}
+                Collection[String] headerElements = header / ": ";
+                Integer headerElementSize = headerElements.size();
+                if (headerElementSize != 2){
+                    throw new RuntimeException("The http header is invalid as it had $headerElementSize elements");
+                }
+                request.headers.put(headerElements#1, headerElements#2);
+			}
+
+	        HttpResponse response = router.handle(request);
+	        connection << "HTTP/1.1 " + NUMBER_FACTORY.format(response.status) + " OK";
+
+	        for (Entry[String, String] entry : response.headers){
+	            connection << entry.key + ": " + entry.value;
+	        }
+
+	        connection << "";
+	        String? body = response.body;
+	        if (?body){
+	            connection << body;
+	        }
 
 	        CONSOLE << "Response Completed";
         }
@@ -109,8 +109,22 @@ object TempleServer implements Executable {
 	}
 
 	method loadConfiguration {
-    	configurationStore = new FileBeanStore(getConfigFile(), new JSONSerializer());
-    	configuration = configurationStore.load();
+
+		Directory configDirectory = getConfigDirectory();
+		File? configFile = configDirectory.getFile(CONFIG_FILE_NAME);
+
+		Serializer[ServerConfiguration] configurationSerializer = new JSONSerializer();
+
+		if (?configFile){
+			configurationStore = new FileBeanStore(configFile, configurationSerializer);
+			configuration = configurationStore.load();
+		} else {
+			File configFile = configDirectory.createFile(CONFIG_FILE_NAME);
+			configurationStore = new FileBeanStore(configFile, configurationSerializer);
+			configuration = new ServerConfiguration(new HashMap(),new HashMap(), new HashMap());
+			configurationStore.save(configuration);
+		}
+
     }
 
     method setUpApplications {
@@ -149,10 +163,9 @@ object TempleServer implements Executable {
     	port.close();
     }
 
-	method File getConfigFile {
+	method Directory getConfigDirectory {
 		Directory home = FILE_MANAGER.getHomeDirectory();
-		Directory configDirectory = home.createDirectory(".temple");
-    	return configDirectory.createFile(CONFIG_FILE_NAME);
+		return home.createDirectory(".temple");
 	}
 }
 

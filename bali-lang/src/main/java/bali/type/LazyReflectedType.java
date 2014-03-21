@@ -1,8 +1,6 @@
 package bali.type;
 
 import bali.Iterator;
-import bali.annotation.Kind;
-import bali.annotation.MetaType;
 import bali.annotation.Name;
 import bali.annotation.Nullable;
 import bali.annotation.Parameters;
@@ -75,8 +73,8 @@ public class LazyReflectedType<T> implements Type {
 			List<Declaration> parameters = new LinkedList<>();
 			Constructor<T> constructor = getParametersConstructor(template);
 			Annotation[][] paramAnnotations = constructor.getParameterAnnotations();
-			Name[] names = getAnnotations(paramAnnotations, new Name[paramAnnotations.length]);
-			Nullable[] nullables = getAnnotations(paramAnnotations, new Nullable[paramAnnotations.length]);
+			Name[] names = gatherAnnotations(paramAnnotations, new Name[paramAnnotations.length]);
+			Nullable[] nullables = gatherAnnotations(paramAnnotations, new Nullable[paramAnnotations.length]);
 			java.lang.reflect.Type[] paramTypes = constructor.getGenericParameterTypes();
 			for (int i = 0 ; i < names.length ; i++){
 				Name name = names[i];
@@ -95,7 +93,7 @@ public class LazyReflectedType<T> implements Type {
 		}
 	}
 
-	private <A extends Annotation> A[] getAnnotations(Annotation[][] parameterListAnnotations, A[] ret){
+	private <A extends Annotation> A[] gatherAnnotations(Annotation[][] parameterListAnnotations, A[] ret){
 		int i = 0;
 		Class<A> componentType = (Class<A>) ret.getClass().getComponentType();
 		for (Annotation[] parameterAnnotations : parameterListAnnotations){

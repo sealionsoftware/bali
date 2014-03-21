@@ -44,7 +44,7 @@ public class Primitive {
 			return new java.lang.String(((CharArrayString) in).characters);
 		}
 		if (in instanceof StringBuilder){
-			return new java.lang.String(((StringBuilder) in).characters);
+			return new java.lang.String(((StringBuilder) in).getChars());
 		}
 		throw new java.lang.RuntimeException("Cannot convert String of type " + in.getClass());
 	}
