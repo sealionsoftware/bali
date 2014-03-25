@@ -29,7 +29,7 @@ public class StandardSocket implements Socket, Initialisable {
 		this.delegate = delegate;
 	}
 
-	public void initalise() {
+	public void initialise() {
 		try {
 			input = new BufferedReader(new InputStreamReader(delegate.getInputStream()));
 			output = new BufferedWriter(new OutputStreamWriter(delegate.getOutputStream()));

@@ -3,6 +3,9 @@ package bali.compiler.parser.tree;
 import bali.compiler.reference.BlockingReference;
 import bali.compiler.type.Site;
 
+import java.lang.Integer;
+import java.util.UUID;
+
 /**
  * User: Richard
  * Date: 02/05/13
@@ -16,6 +19,7 @@ public class ReferenceNode extends ExpressionNode {
 	private BlockingReference<ReferenceScope> scope = new BlockingReference<>();
 	private BlockingReference<Site> declaration = new BlockingReference<>();
 	private BlockingReference<Boolean> isFinal = new BlockingReference<>();
+	private BlockingReference<UUID> id = new BlockingReference<>();
 
 	public ReferenceNode() {
 	}
@@ -66,6 +70,14 @@ public class ReferenceNode extends ExpressionNode {
 
 	public void setFinal(Boolean aFinal) {
 		isFinal.set(aFinal);
+	}
+
+	public UUID getId() {
+		return id.get();
+	}
+
+	public void setId(UUID id) {
+		this.id.set(id);
 	}
 
 	public ExpressionNode getTarget() {

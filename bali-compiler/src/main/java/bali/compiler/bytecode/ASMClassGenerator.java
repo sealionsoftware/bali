@@ -190,6 +190,7 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 		methodVisitor.visitCode();
 		manager.execute(method, methodVisitor);
 
+		int i = 1;
 		for (VariableInfo variable : manager.getDeclaredVariables()) {
 			methodVisitor.visitLocalVariable(
 					variable.getName(),
@@ -197,7 +198,7 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 					converter.getSignature(variable.getType()),
 					variable.getStart(),
 					variable.getEnd(),
-					variable.getIndex()
+					i++
 			);
 		}
 

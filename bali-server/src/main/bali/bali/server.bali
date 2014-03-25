@@ -1,12 +1,25 @@
 import bali.Closable
 import bali.String
 import bali.Integer
+
+import bali.Initialisable
+
 import bali.collection.Map
 import bali.collection.Collection
 
 interface HttpHandler {
 
 	declare HttpResponse handle(HttpRequest request)
+
+}
+
+interface WebApplication extends HttpHandler, Initialisable, Closable {
+
+}
+
+interface Resource[T] {
+
+	declare T createConnection()
 
 }
 
@@ -25,3 +38,5 @@ bean HttpResponse {
 	property String? body
 
 }
+
+

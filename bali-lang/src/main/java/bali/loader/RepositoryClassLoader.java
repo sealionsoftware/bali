@@ -1,4 +1,4 @@
-package bali.classloader;
+package bali.loader;
 
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;

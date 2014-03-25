@@ -50,13 +50,12 @@ public class ExecuteBaliGoal implements Mojo {
 				dependencies[i++] = resolvedArtifact.getFile().toURI().toURL();
 			}
 			ClassLoader classLoader = new URLClassLoader(new URL[]{artifact.getFile().toURI().toURL()}, new URLClassLoader(dependencies, Thread.currentThread().getContextClassLoader()));
+			t.setContextClassLoader(classLoader);
 			Class executableClass = classLoader.loadClass(executableClassName);
-
 			Object executable =  executableClass.newInstance();
 			if (!(executable instanceof Executable)){
 				throw new MojoExecutionException("The specified class is not an instance of " + Executable.class);
 			}
-			t.setContextClassLoader(classLoader);
 			((Executable) executable).execute();
 		} catch (ClassNotFoundException e) {
 			throw new MojoExecutionException("The specified class could not be found", e);

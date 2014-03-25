@@ -53,10 +53,9 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.UUID;
 
 /**
  * User: Richard
@@ -68,7 +67,7 @@ public class ASMStackManager implements Opcodes {
 	private static final int[] INTCODES = new int[]{ICONST_M1, ICONST_0, ICONST_1, ICONST_2, ICONST_3, ICONST_4, ICONST_5};
 
 	private ASMConverter converter;
-	private Map<String, VariableInfo> declaredVariables = new HashMap<>();
+	private List<VariableInfo> declaredVariables = new ArrayList<>();
 	private Deque<Label> scopeHorizonStack = new ArrayDeque<>();
 	private Deque<LoopContext> loopContextStack = new ArrayDeque<>();
 
@@ -77,7 +76,7 @@ public class ASMStackManager implements Opcodes {
 	}
 
 	public List<VariableInfo> getDeclaredVariables() {
-		return new ArrayList<>(declaredVariables.values());
+		return declaredVariables;
 	}
 
 	// Execute Methods
@@ -87,14 +86,13 @@ public class ASMStackManager implements Opcodes {
 		Label end = new Label();
 		v.visitLabel(start);
 		for (DeclarationNode declaration : method.getParameters()) {
-			declaredVariables.put(
-					declaration.getName(),
+			declaredVariables.add(
 					new VariableInfo(
 							declaration.getName(),
 							declaration.getType().getSite(),
 							start,
 							end,
-							declaredVariables.size() + 1
+							declaration.getId()
 					)
 			);
 		}
@@ -204,8 +202,7 @@ public class ASMStackManager implements Opcodes {
 		}
 		Label varStart = new Label();
 		v.visitLabel(varStart);
-		DeclarationNode declaration = variable.getDeclaration();
-		addToVariables(declaration.getName(), declaration.getType().getSite(), varStart, scopeHorizonStack.peek(), v);
+		addToVariables(variable.getDeclaration(), varStart, scopeHorizonStack.peek(), v);
 	}
 
 	private void execute(ReferenceAssignmentNode statement, MethodVisitor v) {
@@ -230,9 +227,8 @@ public class ASMStackManager implements Opcodes {
 				);
 			} break;
 			case VARIABLE: {
-				Integer index = declaredVariables.get(referenceNode.getName()).getIndex();
 				push(value, v);
-				v.visitVarInsn(ASTORE, index);
+				v.visitVarInsn(ASTORE, getIndex(referenceNode.getId()));
 			} break;
 			default: {
 				throw new RuntimeException("Cannot compile assignment to variable in scope " + referenceNode.getScope());
@@ -288,9 +284,8 @@ public class ASMStackManager implements Opcodes {
 		v.visitInsn(DUP);
 		v.visitMethodInsn(INVOKEINTERFACE, "bali/Iterator", "next", "()Ljava/lang/Object;");
 		DeclarationNode element = statement.getElement();
-		SiteNode variableType = element.getType();
-		v.visitTypeInsn(CHECKCAST, converter.getInternalName(variableType.getSite().getTemplate().getName()));
-		addToVariables(element.getName(), element.getType().getSite(), start, end, v);
+		v.visitTypeInsn(CHECKCAST, converter.getInternalName(element.getType().getSite().getTemplate().getName()));
+		addToVariables(element, start, end, v);
 		loopContextStack.push(new LoopContext(start, end));
 		execute(statement.getBody(), v);
 		loopContextStack.pop();
@@ -340,12 +335,11 @@ public class ASMStackManager implements Opcodes {
 			Label catchEnd = new Label();
 			DeclarationNode declaration = catchStatement.getDeclaration();
 			Site site = declaration.getType().getSite();
-			String name = declaration.getName();
 			v.visitInsn(DUP);
 			v.visitTypeInsn(INSTANCEOF, converter.getInternalName(site.getTemplate()));
 			v.visitJumpInsn(IFEQ, catchEnd);
 			v.visitInsn(DUP);
-			addToVariables(name, site, catchStart, catchEnd, v);
+			addToVariables(declaration, catchStart, catchEnd, v);
 			v.visitLabel(catchStart);
 			execute(catchStatement.getBody(), v);
 			v.visitLabel(catchEnd);
@@ -378,7 +372,7 @@ public class ASMStackManager implements Opcodes {
 				}
 				break;
 				case VARIABLE: {
-					v.visitVarInsn(ALOAD, declaredVariables.get(argument.getName()).getIndex());
+					v.visitVarInsn(ALOAD, getIndex(argument.getId()));
 				}
 				break;
 			}
@@ -387,22 +381,30 @@ public class ASMStackManager implements Opcodes {
 		v.visitMethodInsn(INVOKESPECIAL, runnableClassName, "<init>", converter.getMethodDescriptor(null, parameterTypes));
 		v.visitMethodInsn(INVOKESPECIAL, "java/lang/Thread", "<init>", "(Ljava/lang/Runnable;)V");
 		v.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Thread", "start", "()V");
-
 	}
 
-	private void addToVariables(String name, Site type, Label start, Label end, MethodVisitor v) {
-		Integer variableIndex = declaredVariables.size() + 1;
-		declaredVariables.put(
-				name,
+	private void addToVariables(DeclarationNode declaration, Label start, Label end, MethodVisitor v) {
+		declaredVariables.add(
 				new VariableInfo(
-						name,
-						type,
+						declaration.getName(),
+						declaration.getType().getSite(),
 						start,
 						end,
-						variableIndex
+						declaration.getId()
 				)
 		);
-		v.visitVarInsn(ASTORE, variableIndex);
+		v.visitVarInsn(ASTORE, declaredVariables.size());
+	}
+
+	private int getIndex(UUID id){
+		int i = 0;
+		for (VariableInfo var : declaredVariables){
+			i++;
+			if (id.equals(var.getId())){
+				return i;
+			}
+		}
+		throw new RuntimeException("Compiler error, no variable with id " + id + " has been registered for this method");
 	}
 
 	private int invokeInsn(Class t) {
@@ -482,8 +484,6 @@ public class ASMStackManager implements Opcodes {
 	public void push(ReferenceNode value, MethodVisitor v) {
 
 		ExpressionNode target = value.getTarget();
-
-
 		switch (value.getScope()) {
 			case STATIC: {
 				v.visitFieldInsn(GETSTATIC, converter.getInternalName(value.getHostClass()), value.getName(), converter.getTypeDescriptor(value.getType().getTemplate()));
@@ -499,7 +499,7 @@ public class ASMStackManager implements Opcodes {
 			}
 			break;
 			case VARIABLE: {
-				v.visitVarInsn(ALOAD, declaredVariables.get(value.getName()).getIndex());
+				v.visitVarInsn(ALOAD, getIndex(value.getId()));
 			}
 			break;
 		}

@@ -1,5 +1,10 @@
 package bali.compiler.parser.tree;
 
+import bali.compiler.reference.BlockingReference;
+import bali.compiler.reference.Reference;
+
+import java.util.UUID;
+
 /**
  * User: Richard
  * Date: 29/04/13
@@ -8,6 +13,8 @@ public abstract class DeclarationNode extends Node {
 
 	private SiteNode type;
 	private String name;
+
+	private UUID id = UUID.randomUUID();
 
 	public DeclarationNode() {
 	}
@@ -31,6 +38,10 @@ public abstract class DeclarationNode extends Node {
 	public void setType(SiteNode type) {
 		children.add(type);
 		this.type = type;
+	}
+
+	public UUID getId() {
+		return id;
 	}
 
 	public abstract Boolean getFinal();

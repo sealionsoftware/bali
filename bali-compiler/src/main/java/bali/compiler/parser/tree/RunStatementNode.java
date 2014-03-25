@@ -5,6 +5,7 @@ import bali.compiler.type.Declaration;
 import bali.compiler.type.Site;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * User: Richard
@@ -51,19 +52,21 @@ public class RunStatementNode extends ControlExpressionNode {
 		return arguments.get();
 	}
 
-	public void setArguments(List<RunArgument> argumnets) {
-		this.arguments.set(argumnets);
+	public void setArguments(List<RunArgument> arguments) {
+		this.arguments.set(arguments);
 	}
 
 	public static class RunArgument extends Declaration<Site> {
 
 		private ReferenceNode.ReferenceScope scope;
 		private String hostClassName;
+		private UUID id;
 
-		public RunArgument(String name, Site type, ReferenceNode.ReferenceScope scope, String hostClassName) {
+		public RunArgument(String name, Site type, ReferenceNode.ReferenceScope scope, String hostClassName, UUID id) {
 			super(name, type);
 			this.scope = scope;
 			this.hostClassName = hostClassName;
+			this.id = id;
 		}
 
 		public ReferenceNode.ReferenceScope getScope() {
@@ -72,6 +75,10 @@ public class RunStatementNode extends ControlExpressionNode {
 
 		public String getHostClassName() {
 			return hostClassName;
+		}
+
+		public UUID getId() {
+			return id;
 		}
 	}
 }

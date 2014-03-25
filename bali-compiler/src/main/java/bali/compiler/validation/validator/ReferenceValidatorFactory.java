@@ -1,5 +1,6 @@
 package bali.compiler.validation.validator;
 
+import bali.compiler.bytecode.VariableInfo;
 import bali.compiler.parser.tree.CatchStatementNode;
 import bali.compiler.parser.tree.CodeBlockNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
@@ -33,6 +34,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * User: Richard
@@ -60,14 +62,14 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 				} else if (node instanceof ControlExpressionNode
 						|| node instanceof ExpressionNode){
 
-					Map<String, Site> originals = new HashMap<>();
+					Map<String, VariableData> originals = new HashMap<>();
 					StatementNode cen = (StatementNode) node;
 					for (Map.Entry<String, Site> typeOverride: cen.getTypeOverrides().entrySet() ){
 						String reference = typeOverride.getKey();
 						Scope overriddenScope = getScopeForReference(reference);
-						Site overriddenSite = overriddenScope.find(reference);
-						originals.put(reference, overriddenSite);
-						overriddenScope.add(reference, typeOverride.getValue());
+						VariableData overriddenData = overriddenScope.find(reference);
+						originals.put(reference, overriddenData);
+						overriddenScope.add(new VariableData(reference, typeOverride.getValue(), overriddenData.id));
 					}
 
 					try {
@@ -88,10 +90,10 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 							control.validateChildren();
 						}
 					} finally {
-						for (Map.Entry<String, Site> typeOverride: originals.entrySet()){
+						for (Map.Entry<String, VariableData> typeOverride: originals.entrySet()){
 							String reference = typeOverride.getKey();
 							Scope overriddenScope = getScopeForReference(reference);
-							overriddenScope.add(reference, typeOverride.getValue());
+							overriddenScope.add(typeOverride.getValue());
 						}
 					}
 				} else {
@@ -112,7 +114,7 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 							true
 					);
 					for (Declaration<Site> declaration : packageConstants) {
-						scope.add(declaration.getName(), declaration.getType());
+						scope.add(new VariableData(declaration.getName(), declaration.getType(), null));
 					}
 					unitLevelScopes.push(scope);
 				} catch (Exception e){
@@ -131,7 +133,7 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 							true
 					);
 					for (Declaration<Site> declaration : packageConstants) {
-						scope.add(declaration.getName(), declaration.getType());
+						scope.add(new VariableData(declaration.getName(), declaration.getType(), null));
 					}
 					unitLevelScopes.push(scope);
 				} while (i > 0);
@@ -152,7 +154,7 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 						false
 				);
 				for (DeclarationNode field : referenceableFields) {
-					scope.add(field.getName(), field.getType().getSite());
+					scope.add(createData(field));
 				}
 				pushAndWalk(agent, scope);
 			}
@@ -164,7 +166,7 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 						true
 				);
 				for (DeclarationNode declaration : method.getParameters()) {
-					scope.add(declaration.getName(), declaration.getType().getSite());
+					scope.add(createData(declaration));
 				}
 				pushAndWalk(agent, scope);
 			}
@@ -224,8 +226,7 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 						null,
 						true
 				);
-				DeclarationNode element = statement.getElement();
-				scope.add(element.getName(), element.getType().getSite());
+				scope.add(createData(statement.getElement()));
 				pushAndWalk(agent, scope);
 			}
 
@@ -236,7 +237,7 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 						true
 				);
 				DeclarationNode element = statement.getDeclaration();
-				scope.add(element.getName(), element.getType().getSite());
+				scope.add(new VariableData(element.getName(), element.getType().getSite(), element.getId()));
 				pushAndWalk(agent, scope);
 			}
 
@@ -250,7 +251,7 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 				for (Scope superScope : scopeStack){
 					if (!ReferenceNode.ReferenceScope.STATIC.equals(superScope.getScope())){
 						for (Declaration<Site> declaration : superScope.getDeclarations()){
-							scope.add(declaration.getName(), declaration.getType());
+							scope.add(new VariableData(declaration.getName(), declaration.getType(), null));
 						}
 					}
 				}
@@ -259,13 +260,15 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 
 				List<RunStatementNode.RunArgument> arguments = new ArrayList<>();
 				for (Declaration<Site> declaration : scope.getDeclarations()){
-
-					Scope originalScope = getScopeForReference(declaration.getName());
+					String name = declaration.getName();
+					Scope originalScope = getScopeForReference(name);
+					VariableData vd = originalScope.find(name);
 					arguments.add(new RunStatementNode.RunArgument(
-							declaration.getName(),
-							declaration.getType(),
+							name,
+							vd.type,
 							originalScope.getScope(),
-							originalScope.getClassName()
+							originalScope.getClassName(),
+							vd.id
 					));
 				}
 				statement.setArguments(arguments);
@@ -282,9 +285,9 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 
 			private Site getSiteForReference(String name){
 				for (Scope parentScope : scopeStack) {
-					Site site = parentScope.find(name);
-					if (site != null) {
-						return site;
+					VariableData vd = parentScope.find(name);
+					if (vd != null) {
+						return vd.type;
 					}
 				}
 				return null;
@@ -300,9 +303,12 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 			}
 
 			private void validate(VariableNode variable, Control control) {
-				DeclarationNode declarationNode = variable.getDeclaration();
-				scopeStack.peek().add(declarationNode.getName(), declarationNode.getType().getSite());
+				addToCurrentScope(variable.getDeclaration());
 				control.validateChildren();
+			}
+
+			private void addToCurrentScope(DeclarationNode declarationNode){
+				scopeStack.peek().add(new VariableData(declarationNode.getName(), declarationNode.getType().getSite(), declarationNode.getId()));
 			}
 
 			private void pushAndWalk(Control control, Scope scope) {
@@ -325,10 +331,12 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 						return failures;
 					}
 
+					VariableData vd = declarationScope.find(value.getName());
 					value.setFinal(declarationScope.getFinal());
-					value.setDeclaration( declarationScope.find(value.getName()));
+					value.setDeclaration(vd.type);
 					value.setHostClass(declarationScope.getClassName());
 					value.setScope(declarationScope.getScope());
+					value.setId(vd.id);
 
 				} else {
 					String name = value.getName();
@@ -380,7 +388,7 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 		private ReferenceNode.ReferenceScope scope;
 		private String className;
 		private Boolean isFinal;
-		private Map<String, Site> declarations = new HashMap<>();
+		private Map<String, VariableData> declarations = new HashMap<>();
 
 		public Scope(ReferenceNode.ReferenceScope scope, String className, Boolean isFinal) {
 			this.scope = scope;
@@ -400,21 +408,43 @@ public class ReferenceValidatorFactory implements ValidatorFactory {
 			return isFinal;
 		}
 
-		public void add(String name, Site type) {
-			declarations.put(name, type);
+		public void add(VariableData vd) {
+			declarations.put(vd.name, vd);
 		}
 
-		public Site find(String name) {
+		public VariableData find(String name) {
 			return declarations.get(name);
 		}
 
 		public List<Declaration<Site>> getDeclarations() {
 			List<Declaration<Site>> ret = new ArrayList<>();
-			for (Map.Entry<String, Site> entry : declarations.entrySet()){
-				ret.add(new Declaration<>(entry.getKey(), entry.getValue()));
+			for (Map.Entry<String, VariableData> entry : declarations.entrySet()){
+				ret.add(new Declaration<>(entry.getKey(), entry.getValue().type));
 			}
 			return ret;
 		}
+	}
+
+	private VariableData createData(DeclarationNode node){
+		return new VariableData(
+				node.getName(),
+				node.getType().getSite(),
+				node.getId()
+		);
+	}
+
+	private static class VariableData {
+
+		VariableData(String name, Site type, UUID id) {
+			this.name = name;
+			this.type = type;
+			this.id = id;
+		}
+
+		public final String name;
+		public final Site type;
+		public final UUID id;
+
 	}
 
 

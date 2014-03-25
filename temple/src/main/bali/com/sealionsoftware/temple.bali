@@ -16,9 +16,15 @@ import bali.net.SocketMonitor
 import bali.file.File
 import bali.file.Directory
 import bali.monitor.ConnectionMonitor
+import bali.loader.ModuleLoader
+import bali.loader.MavenModuleLoader
+
 import bali.server.HttpHandler
 import bali.server.HttpResponse
 import bali.server.HttpRequest
+import bali.server.WebApplication
+
+
 
 import com.sealionsoftware.storage.BeanStore
 import com.sealionsoftware.storage.FileBeanStore
@@ -97,6 +103,13 @@ object TempleServer implements Executable {
 	field BeanStore[ServerConfiguration] configurationStore
 	field ServerConfiguration configuration
 
+//	field ModuleLoader[Resource] resourceLoader = new MavenModuleLoader()
+	field ModuleLoader[WebApplication] applicationLoader
+
+//	field Map[String, Resource] resources = new HashMap()
+	field Map[String, WebApplication] webApplications = new HashMap()
+//	field Map[IPAddress, Map[Integer, String]] bindings = new HashMap()
+
 	method execute {
 
 		CONSOLE << "Starting Temple";
@@ -121,7 +134,7 @@ object TempleServer implements Executable {
 		} else {
 			File configFile = configDirectory.createFile(CONFIG_FILE_NAME);
 			configurationStore = new FileBeanStore(configFile, configurationSerializer);
-			configuration = new ServerConfiguration(new HashMap(),new HashMap(), new HashMap());
+			configuration = new ServerConfiguration(new HashMap(), new HashMap(), new HashMap());
 			configurationStore.save(configuration);
 		}
 
@@ -129,12 +142,23 @@ object TempleServer implements Executable {
 
     method setUpApplications {
 
-		for (Entry[String, ResourceConfiguration] resource : configuration.resources){
-			CONSOLE << "Loading resource " + resource.key;
+        applicationLoader = new MavenModuleLoader();
+
+		for (Entry[String, ResourceConfiguration] entry : configuration.resources){
+			CONSOLE << "Loading resource " + entry.key;
 		}
 
-		for (Entry[String, ResourceConfiguration] webApplication : configuration.webApplications){
-        	CONSOLE << "Loading application " + webApplication.key;
+		for (Entry[String, ResourceConfiguration] entry : configuration.webApplications){
+        	CONSOLE << "Loading application " + entry.key;
+
+        	ResourceConfiguration webAppConfig = entry.value;
+			WebApplication webApplication = applicationLoader.load(
+				coordinates: webAppConfig.groupId + ":" + webAppConfig.artifactId + ":bar:" + webAppConfig.versionId,
+				parameters: webAppConfig.parameters
+			);
+
+			webApplications.put(entry.key, webApplication);
+			webApplication.initialise();
         }
     }
 

@@ -17,7 +17,7 @@ public class StandardServerSocket implements ServerSocket {
 	public Socket getConnection() throws Exception {
 		java.net.Socket socket = delegate.accept();
 		StandardSocket ret =  new StandardSocket(socket);
-		ret.initalise();
+		ret.initialise();
 		return ret;
 	}
 

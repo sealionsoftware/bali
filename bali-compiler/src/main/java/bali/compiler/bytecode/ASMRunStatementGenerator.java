@@ -101,6 +101,7 @@ public class ASMRunStatementGenerator implements Generator<RunStatementNode, Gen
 		manager.execute(runStatementNode.getBody(), methodVisitor);
 		methodVisitor.visitInsn(RETURN);
 
+		int i = 1;
 		for (VariableInfo variable : manager.getDeclaredVariables()) {
 			methodVisitor.visitLocalVariable(
 					variable.getName(),
@@ -108,7 +109,7 @@ public class ASMRunStatementGenerator implements Generator<RunStatementNode, Gen
 					null,
 					variable.getStart(),
 					variable.getEnd(),
-					variable.getIndex()
+					i++
 			);
 		}
 
