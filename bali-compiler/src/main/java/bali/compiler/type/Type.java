@@ -28,6 +28,4 @@ public interface Type {
 
 	Class getTemplate();
 
-	Method getMethod(String name);
-
 }

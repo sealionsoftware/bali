@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> {
 
-	private ASMConverter converter = new ASMConverter();
+	private static final ASMConverter CONVERTER = new ASMConverter();
 
 	public GeneratedClass build(ObjectNode input) throws Exception {
 
@@ -36,28 +36,28 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 		String[] interfaceNames = new String[input.getImplementations().size()];
 		int i = 0;
 		for (SiteNode iface : input.getImplementations()) {
-			interfaceNames[i++] = converter.getInternalName(iface.getSite().getTemplate().getName());
+			interfaceNames[i++] = CONVERTER.getInternalName(iface.getSite().getTemplate().getName());
 		}
 
 		cw.visit(V1_7,
 				ACC_PUBLIC + ACC_SUPER + ACC_FINAL,
-				converter.getInternalName(input.getQualifiedClassName()),
+				CONVERTER.getInternalName(input.getQualifiedClassName()),
 				null, //TODO: signature
 				"java/lang/Object",
 				interfaceNames);
 
 		cw.visitSource(input.getSourceFile(), null);
 
-		AnnotationVisitor av = cw.visitAnnotation(converter.getTypeDescriptor(MetaType.class.getName()), false);
-		av.visitEnum("value", converter.getTypeDescriptor(Kind.class.getName()), Kind.OBJECT.name());
+		AnnotationVisitor av = cw.visitAnnotation(CONVERTER.getTypeDescriptor(MetaType.class.getName()), false);
+		av.visitEnum("value", CONVERTER.getTypeDescriptor(Kind.class.getName()), Kind.OBJECT.name());
 		av.visitEnd();
 
 		for (FieldNode field : input.getFields()) {
 			Site type = field.getType().getSite();
 			cw.visitField(ACC_PRIVATE,
 					field.getName(),
-					converter.getTypeDescriptor(type),
-					converter.getSignature(type),
+					CONVERTER.getTypeDescriptor(type),
+					CONVERTER.getSignature(type),
 					null
 			).visitEnd();
 		}
@@ -75,8 +75,8 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 			Site type = parameter.getType().getSite();
 			cw.visitField(ACC_PRIVATE + ACC_FINAL,
 					parameter.getName(),
-					converter.getTypeDescriptor(type),
-					converter.getSignature(type),
+					CONVERTER.getTypeDescriptor(type),
+					CONVERTER.getSignature(type),
 					null
 			).visitEnd();
 		}
@@ -94,7 +94,7 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 
 	private void buildConstructor(ObjectNode input, ClassWriter cw) {
 
-		ASMStackManager manager = new ASMStackManager(converter);
+		ASMStackManager manager = new ASMStackManager(CONVERTER);
 
 		List<Site> parameterSites = new ArrayList<>();
 		for (DeclarationNode declaration : input.getTypeParameters()) {
@@ -107,12 +107,12 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 
 		MethodVisitor initv = cw.visitMethod(ACC_PUBLIC,
 				"<init>",
-				converter.getMethodDescriptor(null, parameterSites),
-				converter.getMethodSignature(null, parameterSites),
+				CONVERTER.getMethodDescriptor(null, parameterSites),
+				CONVERTER.getMethodSignature(null, parameterSites),
 				null
 		);
 
-		initv.visitAnnotation(converter.getTypeDescriptor(Parameters.class.getName()), true).visitEnd();
+		initv.visitAnnotation(CONVERTER.getTypeDescriptor(Parameters.class.getName()), true).visitEnd();
 
 		initv.visitCode();
 		initv.visitVarInsn(ALOAD, 0);
@@ -120,7 +120,7 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 		initv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V");
 
 		int i = 1;
-		String qualifiedClassName = converter.getInternalName(input.getQualifiedClassName());
+		String qualifiedClassName = CONVERTER.getInternalName(input.getQualifiedClassName());
 		for (DeclarationNode declaration : input.getTypeParameters()) {
 			initv.visitInsn(DUP);
 			initv.visitVarInsn(ALOAD, i++);
@@ -135,7 +135,7 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 			initv.visitFieldInsn(PUTFIELD,
 					qualifiedClassName,
 					declaration.getName(),
-					converter.getTypeDescriptor(declaration.getType().getSite().getTemplate()));
+					CONVERTER.getTypeDescriptor(declaration.getType().getSite()));
 		}
 
 		for (FieldNode node : input.getFields()) {
@@ -144,9 +144,9 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 				initv.visitInsn(DUP);
 				manager.push(value, initv);
 				initv.visitFieldInsn(PUTFIELD,
-						converter.getInternalName(input.getQualifiedClassName()),
+						CONVERTER.getInternalName(input.getQualifiedClassName()),
 						node.getName(),
-						converter.getTypeDescriptor(node.getType().getSite().getTemplate()));
+						CONVERTER.getTypeDescriptor(node.getType().getSite()));
 			}
 		}
 
@@ -159,15 +159,15 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 
 	private void buildMethod(MethodDeclarationNode method, ClassWriter cw) {
 
-		ASMStackManager manager = new ASMStackManager(converter);
+		ASMStackManager manager = new ASMStackManager(CONVERTER);
 		int flags = method.getFinal() ? ACC_FINAL : 0;
 		Method declared = method.getDeclared();
 		String descriptor, signature;
 
 		if (declared != null){
 			flags += ACC_PUBLIC;
-			descriptor = converter.getMethodDescriptor(declared);
-			signature = converter.getMethodSignature(declared);
+			descriptor = CONVERTER.getMethodDescriptor(declared);
+			signature = CONVERTER.getMethodSignature(declared);
 		} else {
 			flags += ACC_PRIVATE;
 			List<Site> parameterSites = new ArrayList<>();
@@ -176,8 +176,8 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 				parameterSites.add(parameterSite);
 			}
 			Site returnSite = method.getType() != null ? method.getType().getSite() : null;
-			descriptor = converter.getMethodDescriptor(returnSite, parameterSites);
-			signature = converter.getMethodSignature(returnSite, parameterSites);
+			descriptor = CONVERTER.getMethodDescriptor(returnSite, parameterSites);
+			signature = CONVERTER.getMethodSignature(returnSite, parameterSites);
 		}
 
 		MethodVisitor methodVisitor = cw.visitMethod(flags,
@@ -194,8 +194,8 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 		for (VariableInfo variable : manager.getDeclaredVariables()) {
 			methodVisitor.visitLocalVariable(
 					variable.getName(),
-					converter.getTypeDescriptor(variable.getType()),
-					converter.getSignature(variable.getType()),
+					CONVERTER.getTypeDescriptor(variable.getType()),
+					CONVERTER.getSignature(variable.getType()),
 					variable.getStart(),
 					variable.getEnd(),
 					i++

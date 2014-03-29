@@ -17,14 +17,14 @@ import java.util.Map;
  */
 public class ASMPackageClassGenerator implements Generator<CompilationUnitNode, GeneratedClass> {
 
-	private ASMConverter converter = new ASMConverter();
+	private static final ASMConverter CONVERTER = new ASMConverter();
 
 	public GeneratedClass build(CompilationUnitNode input) throws Exception {
 
-		ASMStackManager manager = new ASMStackManager(converter);
+		ASMStackManager manager = new ASMStackManager(CONVERTER);
 
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
-		String qualified = converter.getInternalName(input.getName() + "." + PACKAGE_CLASS_NAME);
+		String qualified = CONVERTER.getInternalName(input.getName() + "." + PACKAGE_CLASS_NAME);
 
 		cw.visit(V1_7,
 				ACC_PUBLIC,
@@ -39,8 +39,8 @@ public class ASMPackageClassGenerator implements Generator<CompilationUnitNode, 
 			Site type = constant.getType().getSite();
 			cw.visitField(ACC_PUBLIC + ACC_FINAL + ACC_STATIC,
 					constant.getName(),
-					converter.getTypeDescriptor(type),
-					converter.getSignature(type),
+					CONVERTER.getTypeDescriptor(type),
+					CONVERTER.getSignature(type),
 					null
 			).visitEnd();
 			constantValues.put(constant, constant.getValue());
@@ -58,7 +58,7 @@ public class ASMPackageClassGenerator implements Generator<CompilationUnitNode, 
 			ConstantNode constant = constantValueEntry.getKey();
 			ExpressionNode value = constantValueEntry.getValue();
 			manager.push(value, clinitv);
-			clinitv.visitFieldInsn(PUTSTATIC, qualified, constant.getName(), converter.getTypeDescriptor(constant.getType().getSite().getTemplate()));
+			clinitv.visitFieldInsn(PUTSTATIC, qualified, constant.getName(), CONVERTER.getTypeDescriptor(constant.getType().getSite()));
 		}
 		clinitv.visitInsn(RETURN);
 		clinitv.visitMaxs(1, 1);

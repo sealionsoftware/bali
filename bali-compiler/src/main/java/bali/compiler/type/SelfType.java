@@ -54,10 +54,6 @@ public class SelfType implements Type {
 		return self.getTemplate();
 	}
 
-	public Method getMethod(String name) {
-		return self.getMethod(name);
-	}
-
 	public String toString(){
 		return self.toString();
 	}

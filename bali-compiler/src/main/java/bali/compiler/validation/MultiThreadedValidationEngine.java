@@ -101,7 +101,7 @@ public class MultiThreadedValidationEngine implements ValidationEngine {
 		}
 
 		if (exceptions.size() > 0){
-			throw new RuntimeException("Compiler programming errors occured whilst compiling", exceptions.get(0));
+			throw new RuntimeException("Compiler programming errors occured while attempting compilation", exceptions.get(0));
 		}
 
 		if (terminated.get() && ret.size() == 0){

@@ -7,6 +7,7 @@ import bali.annotation.Nullable;
 import bali.annotation.Parameters;
 import bali.annotation.SelfTyped;
 import bali.annotation.ThreadSafe;
+import bali.compiler.bytecode.ASMConverter;
 import bali.compiler.reference.Reference;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
@@ -61,12 +62,9 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 
 	private Map<String, Type> typeVariableBounds = new HashMap<>();
 
-	private Type nullBound;
-
 	public ClassPathTypeBuilderVisitor(ClassLibrary library) {
 		super(Opcodes.ASM4);
 		this.library = library;
-		nullBound = new ParameterisedType(library.getReference(Object.class.getName()));
 	}
 
 	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
@@ -81,7 +79,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 			typeParameters = visitor.getTypeParameters();
 			for (Declaration<Type> typeParameter : typeParameters){
 				Type bound = typeParameter.getType();
-				typeVariableBounds.put(typeParameter.getName(), bound != null ? bound : nullBound);
+				typeVariableBounds.put(typeParameter.getName(), bound);
 			}
 
 			if ((access & Opcodes.ACC_INTERFACE) > 0){
@@ -106,7 +104,12 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor {
 			} else {
 				this.interfaces = ifaces;
 				if (superName != null){
-					this.superTypes = Collections.<Type>singletonList(new ParameterisedType(library.getReference(superName.replaceAll("/", "."))));
+					superName = superName.replaceAll("/", ".");
+					if (Object.class.getName().equals(superName)){
+						this.superTypes = Collections.emptyList();
+					} else {
+						this.superTypes = Collections.<Type>singletonList(new ParameterisedType(library.getReference(superName)));
+					}
 				}
 			}
 		}

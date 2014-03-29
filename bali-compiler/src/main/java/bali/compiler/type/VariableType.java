@@ -98,13 +98,6 @@ public class VariableType implements Type {
 		return bound.getTemplate();
 	}
 
-	public Method getMethod(String name) {
-		if (bound == null){
-			return null;
-		}
-		return bound.getMethod(name);
-	}
-
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
 		if (bound != null){

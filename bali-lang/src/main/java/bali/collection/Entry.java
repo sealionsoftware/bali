@@ -15,15 +15,15 @@ import bali.type.Type;
 @MetaType(Kind.BEAN)
 public class Entry<K extends Value<K>, V> implements Value<Entry<K, V>> {
 
-	public final K key;
-	public final V value;
+	public K key;
+	public V value;
 
 	public Entry(K key, V value) {
 		this(null, null, key, value);
 	}
 
 	@Parameters
-	public Entry(Type K, Type V, K key, V value) {
+	public Entry(Type K, Type V, @Name("key") K key, @Name("value") V value) {
 		this.key = key;
 		this.value = value;
 	}

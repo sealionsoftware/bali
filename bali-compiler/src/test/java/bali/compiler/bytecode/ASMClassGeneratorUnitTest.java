@@ -185,7 +185,7 @@ public class ASMClassGeneratorUnitTest {
 		declaration.setName("aMethod");
 		declaration.addParameter(argument);
 		declaration.setBody(codeBlock);
-		declaration.setDeclared(ifaceSite.getMethod("aMethod"));
+		declaration.setDeclared(ifaceSite.getMethods().get(0));
 
 		SiteNode ifaceType = new SiteNode();
 		InterfaceNode iface = new InterfaceNode();

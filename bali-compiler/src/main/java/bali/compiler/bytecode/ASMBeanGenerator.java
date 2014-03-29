@@ -30,18 +30,18 @@ import java.util.List;
  */
 public class ASMBeanGenerator implements Generator<BeanNode, GeneratedClass> {
 
-	private ASMConverter converter = new ASMConverter();
-	private String nameAnnotationDescriptor = converter.getTypeDescriptor(Name.class.getName());
-	private String nullableAnnotationDescriptor = converter.getTypeDescriptor(Nullable.class.getName());
-	private String threadSafeAnnotationDescriptor = converter.getTypeDescriptor(ThreadSafe.class.getName());
-	private String selfTypedAnnotationDescriptor = converter.getTypeDescriptor(SelfTyped.class.getName());
+	private static final ASMConverter CONVERTER = new ASMConverter();
+	private String nameAnnotationDescriptor = CONVERTER.getTypeDescriptor(Name.class.getName());
+	private String nullableAnnotationDescriptor = CONVERTER.getTypeDescriptor(Nullable.class.getName());
+	private String threadSafeAnnotationDescriptor = CONVERTER.getTypeDescriptor(ThreadSafe.class.getName());
+	private String selfTypedAnnotationDescriptor = CONVERTER.getTypeDescriptor(SelfTyped.class.getName());
 
 	public GeneratedClass build(BeanNode input) throws Exception {
 
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 		Class superClass = input.getSuperType() != null ? input.getSuperType().getSite().getTemplate() : null;
-		String hostClassInternalName = converter.getInternalName(input.getQualifiedClassName());
-		String superClassInternalName = superClass != null ? converter.getInternalName(superClass) : "java/lang/Object";
+		String hostClassInternalName = CONVERTER.getInternalName(input.getQualifiedClassName());
+		String superClassInternalName = superClass != null ? CONVERTER.getInternalName(superClass) : "java/lang/Object";
 
 		cw.visit(V1_7,
 				ACC_PUBLIC + ACC_SUPER,
@@ -50,8 +50,8 @@ public class ASMBeanGenerator implements Generator<BeanNode, GeneratedClass> {
 				superClassInternalName,
 				null);
 
-		AnnotationVisitor av = cw.visitAnnotation(converter.getTypeDescriptor(MetaType.class.getName()), false);
-		av.visitEnum("value", converter.getTypeDescriptor(Kind.class.getName()), Kind.BEAN.name());
+		AnnotationVisitor av = cw.visitAnnotation(CONVERTER.getTypeDescriptor(MetaType.class.getName()), false);
+		av.visitEnum("value", CONVERTER.getTypeDescriptor(Kind.class.getName()), Kind.BEAN.name());
 		av.visitEnd();
 
 		buildConstructor(cw, superClassInternalName, hostClassInternalName, input);
@@ -84,12 +84,12 @@ public class ASMBeanGenerator implements Generator<BeanNode, GeneratedClass> {
 		}
 		MethodVisitor initv = cw.visitMethod(ACC_PUBLIC,
 				"<init>",
-				converter.getMethodDescriptor(null, allParamSites),
-				converter.getMethodSignature(null, allParamSites),
+				CONVERTER.getMethodDescriptor(null, allParamSites),
+				CONVERTER.getMethodSignature(null, allParamSites),
 				null
 		);
 
-		initv.visitAnnotation(converter.getTypeDescriptor(Parameters.class.getName()), true).visitEnd();
+		initv.visitAnnotation(CONVERTER.getTypeDescriptor(Parameters.class.getName()), true).visitEnd();
 
 		int i = 0;
 		for (Declaration<Site> param : allParams){
@@ -118,12 +118,12 @@ public class ASMBeanGenerator implements Generator<BeanNode, GeneratedClass> {
 		for (; j <= superParameters.size() ;){
 			initv.visitVarInsn(ALOAD, j++);
 		}
-		initv.visitMethodInsn(INVOKESPECIAL, superClassInternalName, "<init>", converter.getMethodDescriptor(null, superParamTypes));
+		initv.visitMethodInsn(INVOKESPECIAL, superClassInternalName, "<init>", CONVERTER.getMethodDescriptor(null, superParamTypes));
 
 		for (PropertyNode propertyNode : input.getProperties()){
 			initv.visitVarInsn(ALOAD, 0);
 			initv.visitVarInsn(ALOAD, j++);
-			initv.visitFieldInsn(PUTFIELD, hostClassInternalName, propertyNode.getName(), converter.getTypeDescriptor(propertyNode.getType().getSite()));
+			initv.visitFieldInsn(PUTFIELD, hostClassInternalName, propertyNode.getName(), CONVERTER.getTypeDescriptor(propertyNode.getType().getSite()));
 		}
 
 		initv.visitInsn(RETURN);
@@ -148,8 +148,8 @@ public class ASMBeanGenerator implements Generator<BeanNode, GeneratedClass> {
 
 		FieldVisitor visitor = cw.visitField(ACC_PUBLIC,
 				propertyName,
-				converter.getTypeDescriptor(property.getType().getSite()),
-				converter.getSignature(site),
+				CONVERTER.getTypeDescriptor(property.getType().getSite()),
+				CONVERTER.getSignature(site),
 				null
 		);
 

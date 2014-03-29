@@ -22,7 +22,6 @@ public class ClassLibrary {
 		declarationBuilder = new ClassDeclarationTypeBuilder();
 		classpathBuilder = new ClasspathTypeBuilder(this, dependencyLoader);
 		types = new HashMap<>();
-		types.put(Object.class.getName(), new SimpleReference<Class>(new MutableClassModel(Object.class.getName())));
 	}
 
 	public void notifyOfDeclaration(String qualifiedClassName) {
@@ -38,6 +37,10 @@ public class ClassLibrary {
 	}
 
 	public synchronized Reference<Class> getReference(String fullyQualifiedClassName) {
+
+		if (Object.class.getName().equals(fullyQualifiedClassName)){
+			return new SimpleReference<>(null);
+		}
 
 		Reference<Class> cached = types.get(fullyQualifiedClassName);
 		if (cached != null) {

@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class ASMRunStatementGenerator implements Generator<RunStatementNode, GeneratedClass> {
 
-	private ASMConverter converter = new ASMConverter();
+	private static final ASMConverter CONVERTER = new ASMConverter();
 
 	public GeneratedClass build(RunStatementNode input) throws Exception {
 
@@ -26,17 +26,17 @@ public class ASMRunStatementGenerator implements Generator<RunStatementNode, Gen
 
 		cw.visit(V1_7,
 				ACC_PUBLIC + ACC_SUPER + ACC_FINAL,
-				converter.getInternalName(runnableClassName),
+				CONVERTER.getInternalName(runnableClassName),
 				null,
 				"java/lang/Object",
-				new String[]{converter.getInternalName(Runnable.class.getName())});
+				new String[]{CONVERTER.getInternalName(Runnable.class.getName())});
 
 		cw.visitSource(input.getSourceFileName(), null);
 
 		for (RunStatementNode.RunArgument argument : input.getArguments()) {
 			cw.visitField(ACC_PRIVATE + ACC_FINAL,
 					argument.getName(),
-					converter.getTypeDescriptor(argument.getType().getTemplate()),
+					CONVERTER.getTypeDescriptor(argument.getType()),
 					null,
 					null
 			).visitEnd();
@@ -58,7 +58,7 @@ public class ASMRunStatementGenerator implements Generator<RunStatementNode, Gen
 
 		MethodVisitor initv = cw.visitMethod(ACC_PUBLIC,
 				"<init>",
-				converter.getMethodDescriptor(null, parameterTypes),
+				CONVERTER.getMethodDescriptor(null, parameterTypes),
 				null,
 				null
 		);
@@ -73,9 +73,9 @@ public class ASMRunStatementGenerator implements Generator<RunStatementNode, Gen
 			initv.visitInsn(DUP);
 			initv.visitVarInsn(ALOAD, i++);
 			initv.visitFieldInsn(PUTFIELD,
-					converter.getInternalName(input.getRunnableClassName()),
+					CONVERTER.getInternalName(input.getRunnableClassName()),
 					declaration.getName(),
-					converter.getTypeDescriptor(declaration.getType().getTemplate()));
+					CONVERTER.getTypeDescriptor(declaration.getType()));
 		}
 
 		initv.visitInsn(POP);
@@ -87,7 +87,7 @@ public class ASMRunStatementGenerator implements Generator<RunStatementNode, Gen
 
 	private void buildMethod( ClassWriter cw, RunStatementNode runStatementNode) {
 
-		ASMStackManager manager = new ASMStackManager(converter);
+		ASMStackManager manager = new ASMStackManager(CONVERTER);
 		int flags = ACC_PUBLIC + ACC_FINAL;
 
 		MethodVisitor methodVisitor = cw.visitMethod(flags,
@@ -105,7 +105,7 @@ public class ASMRunStatementGenerator implements Generator<RunStatementNode, Gen
 		for (VariableInfo variable : manager.getDeclaredVariables()) {
 			methodVisitor.visitLocalVariable(
 					variable.getName(),
-					converter.getTypeDescriptor(variable.getType().getTemplate()),
+					CONVERTER.getTypeDescriptor(variable.getType()),
 					null,
 					variable.getStart(),
 					variable.getEnd(),

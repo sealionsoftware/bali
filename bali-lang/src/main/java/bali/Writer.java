@@ -2,6 +2,7 @@ package bali;
 
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
+import bali.annotation.Name;
 import bali.annotation.Operator;
 
 /**
@@ -12,9 +13,9 @@ import bali.annotation.Operator;
 public interface Writer {
 
 	@Operator("<")
-	public void write(Character in);
+	public void write(@Name("in") Character in);
 
 	@Operator("<<")
-	public void writeLine(String in);
+	public void writeLine(@Name("in") String in);
 
 }

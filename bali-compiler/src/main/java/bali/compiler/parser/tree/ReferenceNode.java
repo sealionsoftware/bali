@@ -17,7 +17,7 @@ public class ReferenceNode extends ExpressionNode {
 
 	private BlockingReference<String> hostClass = new BlockingReference<>();
 	private BlockingReference<ReferenceScope> scope = new BlockingReference<>();
-	private BlockingReference<Site> declaration = new BlockingReference<>();
+	private BlockingReference<Site> type = new BlockingReference<>();
 	private BlockingReference<Boolean> isFinal = new BlockingReference<>();
 	private BlockingReference<UUID> id = new BlockingReference<>();
 
@@ -29,15 +29,11 @@ public class ReferenceNode extends ExpressionNode {
 	}
 
 	public Site getType() {
-		return declaration.get();
+		return type.get();
 	}
 
-	public void setDeclaration(Site declaration) {
-		this.declaration.set(declaration);
-	}
-
-	public Site getDeclaration() {
-		return declaration.get();
+	public void setType(Site type) {
+		this.type.set(type);
 	}
 
 	public void setName(String name) {

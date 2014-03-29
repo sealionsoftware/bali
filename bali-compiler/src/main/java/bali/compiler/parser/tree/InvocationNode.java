@@ -76,7 +76,7 @@ public class InvocationNode extends ParametrisedExpressionNode {
 			sb.append(i.next());
 		}
 		while (i.hasNext()){
-			sb.append(",").append(i.next());
+			sb.append(", ").append(i.next());
 		}
 		sb.append(")");
 		return sb.toString();

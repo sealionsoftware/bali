@@ -20,25 +20,25 @@ import java.util.List;
  */
 public class ASMInterfaceGenerator implements Generator<InterfaceNode, GeneratedClass> {
 
-	private ASMConverter converter = new ASMConverter();
+	private static final ASMConverter CONVERTER = new ASMConverter();
 
 	public GeneratedClass build(InterfaceNode input) throws Exception {
 
 		String[] extensions = new String[input.getImplementations().size()];
 		int i = 0;
 		for (SiteNode superInterface : input.getImplementations()) {
-			extensions[i++] = converter.getInternalName(superInterface.getSite().getTemplate().getName());
+			extensions[i++] = CONVERTER.getInternalName(superInterface.getSite().getTemplate().getName());
 		}
 
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 
-		AnnotationVisitor av = cw.visitAnnotation(converter.getTypeDescriptor(MetaType.class.getName()), false);
-		av.visitEnum("value", converter.getTypeDescriptor(Kind.class.getName()), Kind.INTERFACE.name());
+		AnnotationVisitor av = cw.visitAnnotation(CONVERTER.getTypeDescriptor(MetaType.class.getName()), false);
+		av.visitEnum("value", CONVERTER.getTypeDescriptor(Kind.class.getName()), Kind.INTERFACE.name());
 		av.visitEnd();
 
 		cw.visit(V1_7,
 				ACC_PUBLIC + ACC_ABSTRACT + ACC_INTERFACE,
-				converter.getInternalName(input.getQualifiedClassName()),
+				CONVERTER.getInternalName(input.getQualifiedClassName()),
 				null,
 				"java/lang/Object",
 				extensions);
@@ -58,8 +58,8 @@ public class ASMInterfaceGenerator implements Generator<InterfaceNode, Generated
 			//TODO Annotations
 			cw.visitMethod(ACC_PUBLIC + ACC_ABSTRACT,
 					methodName,
-					converter.getMethodDescriptor(returnSite, parameterSites),
-					converter.getMethodSignature(returnSite, parameterSites),
+					CONVERTER.getMethodDescriptor(returnSite, parameterSites),
+					CONVERTER.getMethodSignature(returnSite, parameterSites),
 					null
 			).visitEnd();
 		}

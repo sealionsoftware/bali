@@ -24,8 +24,6 @@ import bali.server.HttpResponse
 import bali.server.HttpRequest
 import bali.server.WebApplication
 
-
-
 import com.sealionsoftware.storage.BeanStore
 import com.sealionsoftware.storage.FileBeanStore
 

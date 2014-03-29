@@ -77,8 +77,6 @@ public class HashMap<K extends Value<K>, V> implements Map<K,V> {
 			public Entry<K, V> next() {
 				java.util.Map.Entry<K, V> delegateEntry = delegateIterator.next();
 				return new Entry<>(
-						null,
-						null,
 						delegateEntry.getKey(),
 						delegateEntry.getValue()
 				);

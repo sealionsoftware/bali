@@ -2,6 +2,7 @@ package bali.compiler.bytecode;
 
 import bali.compiler.type.Class;
 import bali.compiler.type.Declaration;
+import bali.compiler.type.ErasedSite;
 import bali.compiler.type.Method;
 import bali.compiler.type.MutableClassModel;
 import bali.compiler.type.Site;
@@ -18,7 +19,8 @@ import java.util.List;
  */
 public class ASMConverter {
 
-	private static Class VOID_TEMPLATE = new MutableClassModel(Object.class.getName());
+	private static String VOID_CLASSNAME = Object.class.getName();
+	private static Class VOID_TEMPLATE = new MutableClassModel(VOID_CLASSNAME);
 
 	public String getMethodDescriptor(Method method) {
 		List<Site> parameterTypes = new ArrayList<>();
@@ -28,45 +30,45 @@ public class ASMConverter {
 		return getMethodDescriptor(method.getType(), parameterTypes);
 	}
 
-	public String getMethodDescriptor(Site returnSite, List<Site> parameterSites) {
+	public String getMethodDescriptor(bali.compiler.type.Type returnSite, List<? extends bali.compiler.type.Type> parameterSites) {
 		List<Class> parameterClasses = new ArrayList<>();
-		for (Site parameterSite : parameterSites){
+		for (bali.compiler.type.Type parameterSite : parameterSites){
 			parameterClasses.add(getErasure(parameterSite));
 		}
-		return getMethodDescriptor(getErasure(returnSite), parameterClasses);
+		return getMethodDescriptorInternal(getErasure(returnSite), parameterClasses);
 	}
 
-	private String getMethodDescriptor(Class returnClass, List<Class> parameterClasses) {
+	private String getMethodDescriptorInternal(Class returnClass, List<Class> parameterClasses) {
 		Type[] parameterTypes = new Type[parameterClasses.size()];
 		int i = 0;
 		for (bali.compiler.type.Class argumentClass : parameterClasses) {
 			parameterTypes[i++] = Type.getType(getTypeDescriptor(argumentClass));
 		}
-		return Type.getMethodType(Type.getType(getTypeDescriptor(returnClass)), parameterTypes).getDescriptor();
+		Type returnType = returnClass == null ? Type.VOID_TYPE : Type.getType(getTypeDescriptor(returnClass));
+		return Type.getMethodType(returnType, parameterTypes).getDescriptor();
 	}
 
 	public String getTypeDescriptor(String className) {
-		return (className == null ? Type.VOID_TYPE : Type.getObjectType(getInternalName(className))).getDescriptor();
+		return Type.getObjectType(getInternalName(className)).getDescriptor();
 	}
 
-	public String getTypeDescriptor(Class aClass) {
+	private String getTypeDescriptor(Class aClass) {
 		return getTypeDescriptor(aClass != null ? aClass.getName() : null);
 	}
 
 	public String getTypeDescriptor(bali.compiler.type.Type site) {
 		if (site == null){
-			return getTypeDescriptor((String) null);
+			return getTypeDescriptor((Class) null);
 		}
-		Class template = site.getTemplate();
-		return getTypeDescriptor(template != null ? template : VOID_TEMPLATE);
+		return getTypeDescriptor(getErasure(site));
 	}
 
 	public String getInternalName(String className) {
-		return className.replaceAll("\\.", "/");
+		return (className != null ? className : VOID_CLASSNAME).replaceAll("\\.", "/");
 	}
 
 	public String getInternalName(Class aClass) {
-		return getInternalName(aClass != null ? aClass.getName() : VOID_TEMPLATE.getName());
+		return getInternalName(aClass != null ? aClass.getName() : null);
 	}
 
 	public String getSignature(Site site){
@@ -108,9 +110,16 @@ public class ASMConverter {
 		writer.visitEnd();
 	}
 
-	public Class getErasure(Site site){
+	private Class getErasure(bali.compiler.type.Type site){
 		if (site == null){
 			return null;
+		}
+		if (site instanceof ErasedSite){
+			ErasedSite erasedSite = (ErasedSite) site;
+			site = erasedSite.getErasure();
+			if (site == null){
+				return VOID_TEMPLATE;
+			}
 		}
 		Class template = site.getTemplate();
 		if (template == null){
