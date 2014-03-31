@@ -180,7 +180,7 @@ public class BaliCompiler {
 
 		try {
 
-			compiler.compile(packageDescriptions, os, Thread.currentThread().getContextClassLoader());
+			compiler.compile(packageDescriptions, os, Thread.currentThread().getContextClassLoader(), null);
 
 		} catch (ValidationException e) {
 			os.close();
@@ -213,7 +213,7 @@ public class BaliCompiler {
 		return dir;
 	}
 
-	public void compile(List<PackageDescription> packageDescriptions, OutputStream output, ClassLoader dependencies) throws Exception {
+	public void compile(List<PackageDescription> packageDescriptions, OutputStream output, ClassLoader dependencies, String mainClassName) throws Exception {
 
 		ClassLibrary library = new ClassLibrary(dependencies);
 		ConstantLibrary constantLibrary = new ConstantLibrary(library);
@@ -236,6 +236,6 @@ public class BaliCompiler {
 			packages.add(pkg);
 		}
 
-		moduleWriter.writeModule(packages, output);
+		moduleWriter.writeModule(packages, output, mainClassName);
 	}
 }

@@ -18,10 +18,14 @@ import java.util.jar.Manifest;
  */
 public class JarPackager implements ModuleWriter {
 
-	public void writeModule(List<GeneratedPackage> packages, OutputStream outputStream) throws Exception {
+	public void writeModule(List<GeneratedPackage> packages, OutputStream outputStream, String mainClassName) throws Exception {
 
 		Manifest manifest = new Manifest();
-		manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
+		Attributes mainAttributes = manifest.getMainAttributes();
+		mainAttributes.put(Attributes.Name.MANIFEST_VERSION, "1.0");
+		if (mainClassName != null){
+			mainAttributes.put(Attributes.Name.MAIN_CLASS, mainClassName);
+		}
 
 		JarOutputStream jos = new JarOutputStream(outputStream, manifest);
 

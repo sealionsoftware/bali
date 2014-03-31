@@ -140,7 +140,10 @@ object TempleServer implements Executable {
 
     method setUpApplications {
 
-        applicationLoader = new MavenModuleLoader();
+        MavenModuleLoader[WebApplication] moduleLoader = new MavenModuleLoader();
+        moduleLoader.initialise();
+
+        applicationLoader = moduleLoader;
 
 		for (Entry[String, ResourceConfiguration] entry : configuration.resources){
 			CONSOLE << "Loading resource " + entry.key;

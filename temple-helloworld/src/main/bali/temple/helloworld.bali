@@ -1,0 +1,24 @@
+import bali.server.WebApplication
+import bali.server.HttpRequest
+import bali.server.HttpResponse
+import bali.collection.HashMap
+
+object HelloWorldApplication implements WebApplication {
+
+	method initialise(){
+		CONSOLE << "HelloWorldApplication initialising";
+	}
+
+	method HttpResponse handle(HttpRequest request){
+		return new HttpResponse(
+			status: 200,
+			headers: new HashMap(),
+			body: "Hello World"
+		);
+	}
+
+	method close(){
+    	CONSOLE << "HelloWorldApplication closing";
+    }
+
+}

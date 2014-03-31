@@ -29,7 +29,8 @@ public class TypeInferUnitTest {
 		compiler.compile(
 				Collections.singletonList(new PackageDescription(PACKAGE_NAME, is, FILE_NAME)),
 				os,
-				CLASSLOADER
+				CLASSLOADER,
+				null
 		);
 		Assert.assertTrue("Non empty file", os.toByteArray().length > 0);
 	}

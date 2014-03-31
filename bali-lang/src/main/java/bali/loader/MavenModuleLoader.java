@@ -22,6 +22,11 @@ import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.transport.file.FileTransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.jar.Manifest;
 
 import static bali.Primitive.convert;
@@ -36,7 +41,7 @@ public class MavenModuleLoader<T> implements ModuleLoader<T>, Initialisable {
 	private Type T;
 
 	//TODO: wrap up the "repository" in a seperate dependency
-	private Map<String, ClassLoader> cachedLoaders = new HashMap<>();
+	private Map<String, RepositoryClassLoader> cachedLoaders = new HashMap<>();
 	private RepositorySystem system;
 	private DefaultRepositorySystemSession session;
 	private Class<T> tClass;
@@ -49,7 +54,7 @@ public class MavenModuleLoader<T> implements ModuleLoader<T>, Initialisable {
 	public void initialise() {
 
 		try {
-			tClass = (Class<T>) Class.forName(convert(T.getClassName()));
+			tClass = (Class<T>) Thread.currentThread().getContextClassLoader().loadClass(convert(T.getClassName()));
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
@@ -87,9 +92,8 @@ public class MavenModuleLoader<T> implements ModuleLoader<T>, Initialisable {
 		}
 
 		try {
-			Manifest manifest = new Manifest(loader.getResourceAsStream("META-INF/MANIFEST.MF"));
-			java.lang.String mainClassName = (java.lang.String) manifest.getMainAttributes().get("Main-Class");
-			Class<T> clazz = (Class<T>) loader.loadClass(mainClassName);
+
+			Class<T> clazz = (Class<T>) loader.loadClass(null);
 
 			if (!tClass.isAssignableFrom(clazz)){
 				throw new RuntimeException("The loaded class is not compatible with the ModuleLoaders return type");

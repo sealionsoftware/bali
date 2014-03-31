@@ -1,6 +1,7 @@
 package bali.compiler.validation.validator;
 
 import bali.compiler.parser.tree.Node;
+import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.type.Class;
 import bali.compiler.type.ClassLibrary;
@@ -18,7 +19,11 @@ import java.util.List;
 public class SiteValidatorFactory implements ValidatorFactory {
 
 	public Validator createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
+
 		return new Validator() {
+
+			public boolean allowNonInterfaceTypes = false;
+
 			public List<ValidationFailure> validate(Node node, Control control) {
 				List<ValidationFailure> failures = new ArrayList<>();
 				if (node instanceof SiteNode){
@@ -28,7 +33,7 @@ public class SiteValidatorFactory implements ValidatorFactory {
 					Class aClass = site.getTemplate();
 
 					if (aClass != null){
-						if (!aClass.getMetaType().isReference()){
+						if (!allowNonInterfaceTypes && !aClass.getMetaType().isReference()){
 							failures.add(new ValidationFailure(
 									siteNode,
 									"Declared site must be of interface type"
@@ -42,8 +47,15 @@ public class SiteValidatorFactory implements ValidatorFactory {
 							));
 						}
 					}
+					control.validateChildren();
+				} else if (node instanceof ObjectNode){
+					allowNonInterfaceTypes = true;
+					control.validateChildren();
+					allowNonInterfaceTypes = false;
+				} else {
+					control.validateChildren();
 				}
-				control.validateChildren();
+
 				return failures;
 			}
 		};

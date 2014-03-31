@@ -31,7 +31,8 @@ public class NullabilityUnitTest {
 		compiler.compile(
 				Collections.singletonList(new PackageDescription(PACKAGE_NAME, is, FILE_NAME)),
 				Mockito.mock(OutputStream.class),
-				classLoader
+				classLoader,
+				null
 		);
 	}
 
@@ -42,7 +43,8 @@ public class NullabilityUnitTest {
 		compiler.compile(
 				Collections.singletonList(new PackageDescription(PACKAGE_NAME, is, FILE_NAME)),
 				os,
-				classLoader
+				classLoader,
+				null
 		);
 		Assert.assertTrue(os.toByteArray().length > 1024);
 	}

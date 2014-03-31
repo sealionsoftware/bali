@@ -42,6 +42,8 @@ public class CompileBaliGoal implements Mojo {
 	private Artifact artifact;
 	@Parameter(property = "project.dependencyArtifacts")
 	private Set<Artifact> dependencyArtifacts;
+	@Parameter
+	private String mainClassName;
 
 	private BaliCompiler compiler = new BaliCompiler();
 	private Log log;
@@ -90,7 +92,7 @@ public class CompileBaliGoal implements Mojo {
 			targetDirectory.mkdirs();
 			File outputFile = new File(targetDirectory, moduleName + ".bar");
 			OutputStream os = new FileOutputStream(outputFile);
-			compiler.compile(packageDescriptions, os, classLoader);
+			compiler.compile(packageDescriptions, os, classLoader, mainClassName);
 			artifact.setFile(outputFile);
 			log.info("Compilation complete");
 

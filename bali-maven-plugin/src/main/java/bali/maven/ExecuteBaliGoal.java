@@ -12,6 +12,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collections;
 import java.util.Set;
 
 
@@ -26,8 +27,8 @@ public class ExecuteBaliGoal implements Mojo {
 	private String executableClassName;
 	@Parameter(property = "project.artifact")
 	private Artifact artifact;
-	@Parameter(property = "project.dependencyArtifacts")
-	private Set<Artifact> dependencyArtifacts;
+	@Parameter(property = "project.artifacts")
+	private Set<Artifact> artifacts;
 
 	private Log log;
 
@@ -45,11 +46,14 @@ public class ExecuteBaliGoal implements Mojo {
 		ClassLoader original = t.getContextClassLoader();
 		try {
 			int i = 0;
-			URL[] dependencies = new URL[dependencyArtifacts.size()];
-			for (Artifact resolvedArtifact : dependencyArtifacts){
+			URL[] dependencies = new URL[artifacts.size()];
+			for (Artifact resolvedArtifact : artifacts){
 				dependencies[i++] = resolvedArtifact.getFile().toURI().toURL();
 			}
-			ClassLoader classLoader = new URLClassLoader(new URL[]{artifact.getFile().toURI().toURL()}, new URLClassLoader(dependencies, Thread.currentThread().getContextClassLoader()));
+			ClassLoader classLoader =
+					new URLClassLoader(new URL[]{artifact.getFile().toURI().toURL()},
+						new URLClassLoader(dependencies,
+							new LinkClassLoader(Collections.<Class<?>>singleton(Executable.class))));
 			t.setContextClassLoader(classLoader);
 			Class executableClass = classLoader.loadClass(executableClassName);
 			Object executable =  executableClass.newInstance();

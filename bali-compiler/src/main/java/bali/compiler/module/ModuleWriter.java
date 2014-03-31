@@ -11,6 +11,6 @@ import java.util.List;
  */
 public interface ModuleWriter {
 
-	public void writeModule(List<GeneratedPackage> packages, OutputStream output) throws Exception;
+	public void writeModule(List<GeneratedPackage> packages, OutputStream output, String mainClassName) throws Exception;
 
 }
