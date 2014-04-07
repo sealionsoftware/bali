@@ -2,7 +2,7 @@ package bali.number;
 
 import bali.Boolean;
 import bali.Number;
-import bali.True;
+import bali.logic.True;
 import bali.annotation.Name;
 
 /**

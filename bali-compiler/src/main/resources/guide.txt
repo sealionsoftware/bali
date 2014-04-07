@@ -26,7 +26,7 @@ String aString = "Hello World";
 
 :: Array Literal
 
-List<Type> aList = [item1,item2,item3];
+List[Type] aList = [item1,item2,item3];
 
 :: Conditional
 

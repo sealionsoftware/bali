@@ -4,9 +4,9 @@ import bali.Boolean;
 import bali.Number;
 import bali.annotation.Name;
 
-import static bali.False.FALSE;
+import static bali.logic.False.FALSE;
 import static bali.Primitive.convert;
-import static bali.True.TRUE;
+import static bali.logic.True.TRUE;
 
 /**
  * User: Richard
@@ -17,7 +17,7 @@ public final class Byte implements bali.Integer {
 	static final byte MAX_VALUE = java.lang.Byte.MAX_VALUE;
 	static final byte MIN_VALUE = java.lang.Byte.MIN_VALUE;
 
-	final byte value;
+	public final byte value;
 
 	public Byte(byte value) {
 		this.value = value;

@@ -22,13 +22,13 @@ import org.objectweb.asm.MethodVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
+import static bali.compiler.bytecode._.CONVERTER;
+
 /**
  * User: Richard
  * Date: 13/05/13
  */
 public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> {
-
-	private static final ASMConverter CONVERTER = new ASMConverter();
 
 	public GeneratedClass build(ObjectNode input) throws Exception {
 
@@ -94,7 +94,7 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 
 	private void buildConstructor(ObjectNode input, ClassWriter cw) {
 
-		ASMStackManager manager = new ASMStackManager(CONVERTER);
+		ASMStackManager manager = new ASMStackManager();
 
 		List<Site> parameterSites = new ArrayList<>();
 		for (DeclarationNode declaration : input.getTypeParameters()) {
@@ -159,7 +159,7 @@ public class ASMClassGenerator implements Generator<ObjectNode, GeneratedClass> 
 
 	private void buildMethod(MethodDeclarationNode method, ClassWriter cw) {
 
-		ASMStackManager manager = new ASMStackManager(CONVERTER);
+		ASMStackManager manager = new ASMStackManager();
 		int flags = method.getFinal() ? ACC_FINAL : 0;
 		Method declared = method.getDeclared();
 		String descriptor, signature;

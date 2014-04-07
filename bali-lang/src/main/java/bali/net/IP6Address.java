@@ -7,7 +7,13 @@ import bali.annotation.Name;
  * User: Richard
  * Date: 06/02/14
  */
-public class StandardIPAddress implements IPAddress {
+public class IP6Address implements IPAddress {
+
+	byte[] bytes;
+
+	public IP6Address(byte[] bytes) {
+		this.bytes = bytes;
+	}
 
 	public bali.Boolean equalTo(@Name("operand") IPAddress operand) {
 		return null;

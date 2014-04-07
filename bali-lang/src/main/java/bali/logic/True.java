@@ -1,39 +1,40 @@
-package bali;
+package bali.logic;
 
+import bali.Boolean;
 import bali.annotation.Name;
 
 /**
  * User: Richard
  * Date: 02/05/13
  */
-public class False implements Boolean {
+public class True implements bali.Boolean {
 
-	static final Boolean VALUE = new False();
+	public static final Boolean VALUE = new True();
 
-	private False(){}
+	private True(){}
 
 	public Boolean not() {
-		return TRUE;
+		return FALSE;
 	}
 
 	// This is a stub - the bali compiler implements the real logic directly to avoid
 	// evaluation of the operand
 	public Boolean and(Boolean operand) {
-		return this;
+		return operand;
 	}
 
 	// This is a stub - the bali compiler implements the real logic directly to avoid
 	// evaluation of the operand
 	public Boolean or(Boolean operand) {
-		return operand;
+		return this;
 	}
 
 	public Boolean xor(Boolean that) {
-		return that;
+		return that.not();
 	}
 
 	public Boolean equalTo(Boolean operand) {
-		return this == operand ? TRUE : this;
+		return this == operand ? this : FALSE;
 	}
 
 	public Boolean notEqualTo(@Name("operand") Boolean operand) {
@@ -41,7 +42,7 @@ public class False implements Boolean {
 	}
 
 	public java.lang.String toString(){
-		return "FALSE";
+		return "TRUE";
 	}
 
 }

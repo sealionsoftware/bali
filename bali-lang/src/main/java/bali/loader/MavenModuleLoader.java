@@ -22,13 +22,6 @@ import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.transport.file.FileTransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.jar.Manifest;
-
 import static bali.Primitive.convert;
 
 /**

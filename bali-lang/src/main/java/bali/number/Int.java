@@ -15,7 +15,7 @@ public class Int implements bali.Integer {
 	static final int MAX_VALUE = Integer.MAX_VALUE;
 	static final int MIN_VALUE = Integer.MIN_VALUE;
 
-	final int value;
+	public final int value;
 
 	public Int(int value) {
 		this.value = value;

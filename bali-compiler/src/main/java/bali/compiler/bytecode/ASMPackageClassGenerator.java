@@ -11,17 +11,17 @@ import org.objectweb.asm.MethodVisitor;
 import java.util.HashMap;
 import java.util.Map;
 
+import static bali.compiler.bytecode._.CONVERTER;
+
 /**
  * User: Richard
  * Date: 13/05/13
  */
 public class ASMPackageClassGenerator implements Generator<CompilationUnitNode, GeneratedClass> {
 
-	private static final ASMConverter CONVERTER = new ASMConverter();
-
 	public GeneratedClass build(CompilationUnitNode input) throws Exception {
 
-		ASMStackManager manager = new ASMStackManager(CONVERTER);
+		ASMStackManager manager = new ASMStackManager();
 
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 		String qualified = CONVERTER.getInternalName(input.getName() + "." + PACKAGE_CLASS_NAME);

@@ -90,6 +90,9 @@ public class ReferenceNode extends ExpressionNode {
 	}
 
 	public String toString() {
-		return name;
+		if (target == null){
+			return name;
+		}
+		return target + "." + name;
 	}
 }

@@ -7,6 +7,7 @@ import bali.Value;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 import bali.annotation.Name;
+import bali.annotation.Nullable;
 import bali.annotation.Parameters;
 import bali.type.Type;
 
@@ -26,7 +27,14 @@ public class HashMap<K extends Value<K>, V> implements Map<K,V> {
 	}
 
 	@Parameters
-	public HashMap(@Name("K") Type K, @Name("V") Type V) {
+	public HashMap(@Name("K") Type K, @Name("V") Type V, @Name("entries") @Nullable Collection<Entry<K,V>> entries) {
+		if (entries != null){
+			Iterator<Entry<K,V>> entryIterator = entries.iterator();
+			while(convert(entryIterator.hasNext())){
+				Entry<K,V> entry = entryIterator.next();
+				delegate.put(entry.key, entry.value);
+			}
+		}
 	}
 
 	public V get(K key) {

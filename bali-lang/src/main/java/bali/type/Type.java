@@ -1,8 +1,10 @@
 package bali.type;
 
+import bali.Boolean;
 import bali.String;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
+import bali.annotation.Name;
 import bali.collection.Collection;
 
 /**
@@ -15,6 +17,7 @@ public interface Type {
 	public String getClassName();
 	public Collection<Type> getTypeArguments();
 	public Collection<Declaration> getParameters();
-//	public Object createObject(Collection<?> arguments);
+	public Object createObject(@Name("arguments") Collection<?> arguments);
+	public Boolean assignableTo(@Name("otherType") Type otherType);
 
 }

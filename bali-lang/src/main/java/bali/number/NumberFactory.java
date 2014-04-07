@@ -1,6 +1,5 @@
 package bali.number;
 
-
 import bali.CharArrayString;
 import bali.Integer;
 import bali.Number;
@@ -12,7 +11,7 @@ import bali.String;
  * User: Richard
  * Date: 11/06/13
  */
-public class NumberFactory implements Serializer<Number> {
+public class NumberFactory {
 
 	public static final NumberFactory NUMBER_FACTORY = new NumberFactory();
 
@@ -130,41 +129,7 @@ public class NumberFactory implements Serializer<Number> {
 		throw new RuntimeException("Cannot get int value of Number " + n);
 	}
 
-	public Number parse(String in) {
-		throw new RuntimeException("Cannot parse Number " + in);
-	}
 
-	public String format(Number in) {
-		if (in instanceof Byte) {
-			return format((Byte) in);
-		}
-		if (in instanceof Short) {
-			return format((Short) in);
-		}
-		if (in instanceof Int) {
-			return format((Int) in);
-		}
-		if (in instanceof Long) {
-			return format((Long) in);
-		}
-		throw new RuntimeException("Cannot format Number " + in);
-	}
-
-	public String format(Byte in) {
-		return new CharArrayString(java.lang.Byte.toString(in.value).toCharArray());
-	}
-
-	public String format(Short in) {
-		return new CharArrayString(java.lang.Short.toString(in.value).toCharArray());
-	}
-
-	public String format(Int in) {
-		return new CharArrayString(java.lang.Integer.toString(in.value).toCharArray());
-	}
-
-	public String format(Long in) {
-		return new CharArrayString(java.lang.Long.toString(in.value).toCharArray());
-	}
 
 
 }

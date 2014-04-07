@@ -1,5 +1,13 @@
 package bali.compiler.parser;
 
+import bali.compiler.parser.tree.CodeBlockNode;
+import bali.compiler.parser.tree.ExpressionNode;
+import bali.compiler.parser.tree.InvocationNode;
+import bali.compiler.parser.tree.OperationNode;
+import bali.compiler.parser.tree.ReferenceNode;
+import bali.compiler.parser.tree.StatementNode;
+import bali.compiler.parser.tree.StringLiteralExpressionNode;
+import bali.compiler.parser.tree.VariableNode;
 import junit.framework.Assert;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -10,6 +18,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 /**
  * User: Richard
@@ -105,6 +114,54 @@ public class BaliParserUnitTest {
 	@Test
 	public void testComplexVariable() throws Exception {
 		parseCodeBlock("complex.bali");
+	}
+
+	//TODO: this is in the wrong place
+	@Test
+	public void testStringTemplate() throws Exception {
+
+		BaliParser parser = parse("template.bali");
+		BaliParser.CodeBlockContext cbc = parser.codeBlock();
+		checkSucceeded(parser, cbc);
+		ANTLRParserManager pm = new ANTLRParserManager();
+		CodeBlockNode cbn = pm.build(cbc);
+		List<StatementNode> statementNodeList = cbn.getStatements();
+		Assert.assertNotNull(statementNodeList);
+		Assert.assertEquals(1, statementNodeList.size());
+		StatementNode statementNode = cbn.getStatements().get(0);
+		Assert.assertNotNull(statementNode);
+		Assert.assertTrue(statementNode instanceof OperationNode);
+		OperationNode op = (OperationNode) statementNode;
+		Assert.assertTrue(op.getTwo() instanceof StringLiteralExpressionNode);
+
+		StringLiteralExpressionNode tail = (StringLiteralExpressionNode) op.getTwo();
+		Assert.assertEquals("...", tail.getSerialization());
+		Assert.assertTrue(op.getOne() instanceof OperationNode);
+		op = (OperationNode) op.getOne();
+
+		Assert.assertTrue(op.getTwo() instanceof InvocationNode);
+		Assert.assertTrue(op.getOne() instanceof OperationNode);
+		op = (OperationNode) op.getOne();
+
+		tail = (StringLiteralExpressionNode) op.getTwo();
+		Assert.assertEquals(" also ", tail.getSerialization());
+		Assert.assertTrue(op.getOne() instanceof OperationNode);
+		op = (OperationNode) op.getOne();
+
+		Assert.assertTrue(op.getTwo() instanceof InvocationNode);
+		Assert.assertTrue(op.getOne() instanceof OperationNode);
+		op = (OperationNode) op.getOne();
+
+		tail = (StringLiteralExpressionNode) op.getTwo();
+		Assert.assertEquals(" and ", tail.getSerialization());
+		Assert.assertTrue(op.getOne() instanceof OperationNode);
+		op = (OperationNode) op.getOne();
+
+		Assert.assertTrue(op.getTwo() instanceof InvocationNode);
+		Assert.assertTrue(op.getOne() instanceof StringLiteralExpressionNode);
+
+		tail = (StringLiteralExpressionNode) op.getOne();
+		Assert.assertEquals("this is a string template ", tail.getSerialization());
 	}
 
 	private void parseCodeBlock(String filename) throws IOException {

@@ -40,7 +40,7 @@ public class SiteSignatureVisitor extends SignatureVisitor {
 
 		List<Site> typeArguments = new LinkedList<>();
 		for (SiteSignatureVisitor visitor : typeArgumentVisitors){
-			typeArguments.add(visitor.getSite());
+			typeArguments.add(visitor != null ? visitor.getSite() : null);
 		}
 
 		site = new ParameterisedSite(typeReference, typeArguments, data.nullable, data.threadSafe);
@@ -56,6 +56,7 @@ public class SiteSignatureVisitor extends SignatureVisitor {
 	}
 
 	public void visitTypeArgument() {
+		typeArgumentVisitors.add(null);
 		super.visitTypeArgument();
 	}
 

@@ -2,10 +2,10 @@ package bali.compiler.bytecode;
 
 import bali.Boolean;
 import bali.CharArrayString;
-import bali.False;
+import bali.logic.False;
 import bali.Number;
 import bali.String;
-import bali.True;
+import bali.logic.True;
 import bali.Value;
 import bali.annotation.Name;
 import bali.collection.Array;

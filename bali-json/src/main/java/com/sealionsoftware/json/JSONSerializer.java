@@ -10,14 +10,13 @@ import bali.annotation.Parameters;
 import bali.collection.Collection;
 import bali.compiler.parser.JsonLexer;
 import bali.compiler.parser.JsonParser;
-import bali.number.NumberFactory;
 import bali.type.Declaration;
 import bali.type.Type;
+import bali.type.TypeFactory;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.DefaultErrorStrategy;
 import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -44,6 +43,13 @@ import static bali.compiler.parser.JsonParser.MemberContext;
  */
 @MetaType(Kind.OBJECT)
 public class JSONSerializer<T> implements Serializer<T> {
+
+	private static final Type STRING_TYPE = TypeFactory.getType("bali.String");
+	private static final Type BOOLEAN_TYPE = TypeFactory.getType("bali.Boolean");
+	private static final Type NUMBER_TYPE = TypeFactory.getType("bali.Number");
+	private static final Type VALUE_TYPE = TypeFactory.getType("bali.Value");
+	private static final Type MAP_TYPE = TypeFactory.getType("bali.collection.Map");
+	private static final Type COLLECTION_TYPE = TypeFactory.getType("bali.collection.Collection");
 
 	public Type T;
 
@@ -101,11 +107,11 @@ public class JSONSerializer<T> implements Serializer<T> {
 	}
 
 	private void format(bali.Boolean in, StringBuilder sb) {
-		sb.append(convert(in) ? "true" : "false");
+		sb.append(bali.logic._.BOOLEAN_SERIALIZER.format(in));
 	}
 
 	private void format(bali.Integer in, StringBuilder sb) {
-		sb.append(convert(in));
+		sb.append(bali.number._.NUMBER_SERIALIZER.format(in));
 	}
 
 	private void formatBean(Object in, StringBuilder sb, int indent) {
@@ -196,7 +202,7 @@ public class JSONSerializer<T> implements Serializer<T> {
 
 			Map<String, JsonValueContext> hashedValues = new HashMap<>();
 			for (MemberContext member : context.member()){
-				hashedValues.put(trimString(member.STRING()), member.jsonValue());
+				hashedValues.put(trimString(member.STRING().getText()), member.jsonValue());
 			}
 
 			Constructor<C> constructor = getParametersConstructor(clazz);
@@ -225,8 +231,7 @@ public class JSONSerializer<T> implements Serializer<T> {
 		}
 	}
 
-	private String trimString(TerminalNode string){
-		String text = string.getText();
+	private String trimString(String text){
 		return text.substring(1, text.length() - 1);
 	}
 
@@ -241,31 +246,38 @@ public class JSONSerializer<T> implements Serializer<T> {
 	}
 
 	private Object create(Type type, JsonValueContext context){
-		//TODO: need "is assignable" method on Type
-		String className = convert(type.getClassName());
+
 		Collection<Type> typeArguments = type.getTypeArguments();
-		if ("bali.String".equals(className)){
+		if (convert(type.assignableTo(STRING_TYPE))){
 			JsonStringContext jsonStringContext = context.jsonString();
 			if (jsonStringContext == null){
 				throw new RuntimeException("Serialized property is of incorrect type");
 			}
-			return convert(trimString(jsonStringContext.STRING()));
+			return convert(trimString(jsonStringContext.getText()));
 		}
-		if ("bali.Boolean".equals(className)){
+		if (convert(type.assignableTo(BOOLEAN_TYPE))){
 			JsonBooleanContext jsonBooleanContext = context.jsonBoolean();
 			if (jsonBooleanContext == null){
 				throw new RuntimeException("Serialized property is of incorrect type");
 			}
-			return convert("true".equals(jsonBooleanContext.getText()));
+			return bali.logic._.BOOLEAN_SERIALIZER.parse(convert(jsonBooleanContext.getText()));
 		}
-		if ("bali.Number".equals(className) || "bali.Integer".equals(className)){
+		if (convert(type.assignableTo(NUMBER_TYPE))){
 			JsonNumberContext jsonNumberContext = context.jsonNumber();
 			if (jsonNumberContext == null){
 				throw new RuntimeException("Serialized property is of incorrect type");
 			}
-			return NumberFactory.NUMBER_FACTORY.forDecimalString(jsonNumberContext.NUMBER().getText().toCharArray());
+			return bali.number._.NUMBER_SERIALIZER.parse(convert(jsonNumberContext.getText()));
 		}
-		if ("bali.collection.Map".equals(className)){
+		Type rawType = TypeFactory.getType(convert(type.getClassName()));
+		if (convert(rawType.assignableTo(VALUE_TYPE))){
+			JsonStringContext jsonStringContext = context.jsonString();
+			if (jsonStringContext == null){
+				throw new RuntimeException("Serialized property is of incorrect type");
+			}
+			return convert(trimString(jsonStringContext.getText()));
+		}
+		if (convert(rawType.assignableTo(MAP_TYPE))){
 			JsonArrayContext jsonArrayContext = context.jsonArray();
 			if (jsonArrayContext == null){
 				throw new RuntimeException("Serialized property is of incorrect type");
@@ -278,7 +290,7 @@ public class JSONSerializer<T> implements Serializer<T> {
 				Value key = null;
 				Object value = null;
 				for (MemberContext memberContext : entry.member()){
-					String entryPropertyName = trimString(memberContext.STRING());
+					String entryPropertyName = trimString(memberContext.STRING().getText());
 					if ("key".equals(entryPropertyName)){
 						key = (Value) create(keyType, memberContext.jsonValue());
 					} else if ("value".equals(entryPropertyName)){
@@ -291,7 +303,7 @@ public class JSONSerializer<T> implements Serializer<T> {
 			}
 			return ret;
 		}
-		if ("bali.collection.Collection".equals(className)){
+		if (convert(rawType.assignableTo(COLLECTION_TYPE))){
 			JsonArrayContext jsonArrayContext = context.jsonArray();
 			if (jsonArrayContext == null){
 				throw new RuntimeException("Serialized property is of incorrect type");

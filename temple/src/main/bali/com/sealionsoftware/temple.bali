@@ -56,8 +56,9 @@ object HttpProtocolHandler(HttpHandler router) implements ProtocolHandler {
 		if (?requestLine){
 
 			Collection[String] requestLineElements = requestLine / " ";
-			if (requestLineElements.size() != 3){
-				throw new RuntimeException("The http request line was invalid as it had " + NUMBER_FACTORY.format(requestLineElements.size()) + " elements");
+			Integer requestLineElementsSize = requestLineElements.size();
+			if (requestLineElementsSize != 3){
+				throw new RuntimeException("The http request line was invalid as it had $requestLineElementsSize elements");
 			}
 
 			HttpRequest request = new HttpRequest(
@@ -78,8 +79,10 @@ object HttpProtocolHandler(HttpHandler router) implements ProtocolHandler {
                 request.headers.put(headerElements#1, headerElements#2);
 			}
 
+			//TODO: request body
+
 	        HttpResponse response = router.handle(request);
-	        connection << "HTTP/1.1 " + NUMBER_FACTORY.format(response.status) + " OK";
+	        connection << "HTTP/1.1 " + VALUE_FORMATTER.format(response.status) + " OK";
 
 	        for (Entry[String, String] entry : response.headers){
 	            connection << entry.key + ": " + entry.value;
@@ -106,7 +109,6 @@ object TempleServer implements Executable {
 
 //	field Map[String, Resource] resources = new HashMap()
 	field Map[String, WebApplication] webApplications = new HashMap()
-//	field Map[IPAddress, Map[Integer, String]] bindings = new HashMap()
 
 	method execute {
 
@@ -161,31 +163,41 @@ object TempleServer implements Executable {
 			webApplications.put(entry.key, webApplication);
 			webApplication.initialise();
         }
+
     }
 
     method startServer {
 
-    	ServerSocket port = NETWORK_MANAGER.openPort(8080);
-    	ConnectionMonitor[Socket]@ monitor = new SocketMonitor(port);
+        for(Entry[IPAddress, Map[Integer, String]] addressEntry : configuration.bindings){
+            String address = VALUE_FORMATTER.format(addressEntry.key);
+            for (Entry[Integer, String] portEntry : addressEntry.value){
+                String port = VALUE_FORMATTER.format(portEntry.key);
+                String applicationName = portEntry.value;
+                CONSOLE << "Binding $applicationName to $address:$port";
+            }
+        }
 
-    	while (true){
-
-    		monitor.waitForConnection();
-            run {
-
-    			Socket connection = monitor.getConnection();
-    			ProtocolHandler handler = new HttpProtocolHandler(new StubRouter());
-
-    			try {
-    				handler.handle(connection);
-    			} catch (Exception e){
-    				CONSOLE << "Error Processing Request: " + e.getMessage();
-    			}
-    			connection.close();
-    		}
-    	}
-
-    	port.close();
+//    	ServerSocket port = NETWORK_MANAGER.openPort(8080);
+//    	ConnectionMonitor[Socket]@ monitor = new SocketMonitor(port);
+//
+//    	while (true){
+//
+//    		monitor.waitForConnection();
+//            run {
+//
+//    			Socket connection = monitor.getConnection();
+//    			ProtocolHandler handler = new HttpProtocolHandler(new StubRouter());
+//
+//    			try {
+//    				handler.handle(connection);
+//    			} catch (Exception e){
+//    				CONSOLE << "Error Processing Request: " + e.getMessage();
+//    			}
+//    			connection.close();
+//    		}
+//    	}
+//
+//    	port.close();
     }
 
 	method Directory getConfigDirectory {
@@ -197,7 +209,7 @@ object TempleServer implements Executable {
 bean ServerConfiguration {
 
 	property Map[String, ResourceConfiguration] webApplications
-	property Map[IPAddress, Map[Integer, String]] bindings
+	property Map[String, Map[Integer, String]] bindings
 	property Map[String, ResourceConfiguration] resources
 
 }

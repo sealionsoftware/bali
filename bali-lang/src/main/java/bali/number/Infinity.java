@@ -1,7 +1,7 @@
 package bali.number;
 
 import bali.Boolean;
-import bali.False;
+import bali.logic.False;
 import bali.Number;
 import bali.annotation.Name;
 

@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import static bali.Primitive.convert;
-import static bali.True.TRUE;
+import static bali.logic.True.TRUE;
 
 /**
  * User: Richard

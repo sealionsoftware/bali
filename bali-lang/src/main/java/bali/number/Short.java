@@ -4,8 +4,8 @@ import bali.Boolean;
 import bali.Number;
 import bali.annotation.Name;
 
-import static bali.False.FALSE;
-import static bali.True.TRUE;
+import static bali.logic.False.FALSE;
+import static bali.logic.True.TRUE;
 import static bali.number.NumberFactory.NUMBER_FACTORY;
 
 /**
@@ -17,7 +17,7 @@ public class Short implements bali.Integer {
 	static final short MAX_VALUE = java.lang.Short.MAX_VALUE;
 	static final short MIN_VALUE = java.lang.Short.MIN_VALUE;
 
-	final short value;
+	public final short value;
 
 	public Short(short value) {
 		this.value = value;

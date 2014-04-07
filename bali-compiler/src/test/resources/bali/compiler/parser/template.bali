@@ -1,0 +1,3 @@
+{
+	"this is a string template $one and $two also $three...";
+}

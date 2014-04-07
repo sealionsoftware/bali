@@ -17,7 +17,7 @@ import static bali.Primitive.convert;
  */
 public final class CharArrayString implements String  {
 
-	final char[] characters;
+	public final char[] characters;
 	private static final String EMPTY_STRING = new CharArrayString(new char[0]);
 
 	public CharArrayString(char[] characters) {

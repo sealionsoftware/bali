@@ -13,10 +13,8 @@ import org.eclipse.aether.util.artifact.JavaScopes;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
 
 import java.io.IOException;
-import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -51,7 +49,6 @@ public class RepositoryClassLoader extends ClassLoader {
 
 		CollectRequest collectRequest = new CollectRequest();
 		collectRequest.setRoot( new Dependency( artifact, JavaScopes.RUNTIME ) );
-//		collectRequest.setRepositories( Booter.newRepositories( system, session ) );
 
 		DependencyRequest dependencyRequest = new DependencyRequest( collectRequest, classpathFlter );
 

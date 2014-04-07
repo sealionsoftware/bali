@@ -24,6 +24,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
+ * TODO: split up example.bali
+ *
  * User: Richard
  * Date: 08/05/13
  */
@@ -143,6 +145,4 @@ public class ANTLRParserManagerUnitTest {
 		Assert.assertEquals("If", 1, ((ConditionalStatementNode) ((WhileStatementNode) body.getStatements().get(3)).getBody().getChildren().get(1)).getConditional().getChildren().size());
 		Assert.assertEquals("Return Statement", "anArgument", ((ReferenceNode) ((ReturnStatementNode) body.getStatements().get(7)).getValue()).getName());
 	}
-
-
 }

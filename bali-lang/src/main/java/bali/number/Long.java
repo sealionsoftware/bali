@@ -11,14 +11,14 @@ import static bali.Primitive.convert;
  * User: Richard
  * Date: 11/06/13
  */
-class Long implements Integer {
+public class Long implements Integer {
 
 	static final long MAX_VALUE = java.lang.Long.MAX_VALUE;
 	static final long MIN_VALUE = java.lang.Long.MIN_VALUE;
 	static final BigInteger POSITIVE_HORIZON = new BigInteger(new byte[]{-128, -128, -128, -128, -128, -128, -128, -128, -128, -127});
 	static final BigInteger NEGATIVE_HORIZON = new BigInteger(new byte[]{-127, -128, -128, -128, -128, -128, -128, -128, -128, -127}, false);
 
-	final long value;
+	public final long value;
 
 	public Long(long value) {
 		this.value = value;

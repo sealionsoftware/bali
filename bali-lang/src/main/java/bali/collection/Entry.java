@@ -13,7 +13,7 @@ import bali.type.Type;
  * Date: 14/08/13
  */
 @MetaType(Kind.BEAN)
-public class Entry<K extends Value<K>, V> implements Value<Entry<K, V>> {
+public class Entry<K extends Value<K>, V> {
 
 	public K key;
 	public V value;
@@ -28,11 +28,4 @@ public class Entry<K extends Value<K>, V> implements Value<Entry<K, V>> {
 		this.value = value;
 	}
 
-	public Boolean equalTo(@Name("operand") Entry<K, V> operand) {
-		return key.equalTo(operand.key);
-	}
-
-	public Boolean notEqualTo(@Name("operand") Entry<K, V> operand) {
-		return key.notEqualTo(operand.key);
-	}
 }

@@ -1,7 +1,7 @@
 package bali.number;
 
 import bali.Number;
-import bali.True;
+import bali.logic.True;
 import junit.framework.Assert;
 import org.junit.Test;
 

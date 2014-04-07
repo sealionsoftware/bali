@@ -15,6 +15,9 @@ public class ArgumentNode extends Node {
 
 	private Reference<Site> resolvedType = new BlockingReference<>();
 
+	public ArgumentNode() {
+	}
+
 	public ArgumentNode(Integer line, Integer character) {
 		super(line, character);
 	}

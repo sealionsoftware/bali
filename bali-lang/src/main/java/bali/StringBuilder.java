@@ -6,7 +6,6 @@ import bali.annotation.Name;
 import bali.collection.Collection;
 import bali.collection.ValueCollection;
 
-import java.lang.*;
 import java.util.Arrays;
 import static bali.Primitive.convert;
 

@@ -10,4 +10,7 @@ import bali.annotation.MetaType;
  */
 @MetaType(Kind.INTERFACE)
 public interface IPAddress extends Value<IPAddress> {
+
+
+
 }

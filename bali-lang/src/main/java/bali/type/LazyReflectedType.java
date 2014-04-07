@@ -1,5 +1,6 @@
 package bali.type;
 
+import bali.Boolean;
 import bali.Iterator;
 import bali.annotation.Name;
 import bali.annotation.Nullable;
@@ -12,6 +13,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.TypeVariable;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -28,6 +30,8 @@ public class LazyReflectedType<T> implements Type {
 	private Map<String, Type> typeArgumentMap = new LinkedHashMap<>();
 
 	private Collection<Declaration> parameters;
+	private Collection<Type> interfaces;
+	private Collection<Type> superTypes;
 
 	private Class<T> template;
 
@@ -39,12 +43,14 @@ public class LazyReflectedType<T> implements Type {
 
 			template = (Class<T>) Thread.currentThread().getContextClassLoader().loadClass(convert(className));
 			TypeVariable[] typeParameters = template.getTypeParameters();
-			if (typeParameters.length != convert(typeArguments.size())){
-				throw new RuntimeException("Invalid type arguments");
-			}
-			Iterator<Type> i = typeArguments.iterator();
-			for (TypeVariable typeParameter : typeParameters){
-				typeArgumentMap.put(typeParameter.getName(), i.next());
+			if (!convert(typeArguments.isEmpty())){
+				if (typeParameters.length != convert(typeArguments.size())){
+					throw new RuntimeException("Invalid type arguments");
+				}
+				Iterator<Type> i = typeArguments.iterator();
+				for (TypeVariable typeParameter : typeParameters){
+					typeArgumentMap.put(typeParameter.getName(), i.next());
+				}
 			}
 
 		} catch (Exception e){
@@ -93,6 +99,34 @@ public class LazyReflectedType<T> implements Type {
 		}
 	}
 
+	private synchronized void createInterfaces(){
+		if (interfaces == null){
+			if (template.isInterface()){
+				interfaces = bali.collection._.EMPTY;
+			}
+			List<Type> interfaces = new LinkedList<>();
+			for(java.lang.reflect.Type reflectedType : template.getGenericInterfaces()) {
+				interfaces.add(TypeFactory.getType(getSignature(reflectedType)));
+			}
+			this.interfaces = interfaces;
+		}
+	}
+
+	private synchronized void createSuperTypes(){
+		if (superTypes == null){
+			List<Type> superTypes = new LinkedList<>();
+			if (template.isInterface()){
+				for(java.lang.reflect.Type reflectedType : template.getGenericInterfaces()) {
+					superTypes.add(TypeFactory.getType(getSignature(reflectedType)));
+				}
+			} else if (template.getSuperclass() != Object.class){
+				superTypes.add(TypeFactory.getType(getSignature(template.getGenericSuperclass())));
+			}
+
+			this.superTypes = superTypes;
+		}
+	}
+
 	private <A extends Annotation> A[] gatherAnnotations(Annotation[][] parameterListAnnotations, A[] ret){
 		int i = 0;
 		Class<A> componentType = (Class<A>) ret.getClass().getComponentType();
@@ -126,30 +160,39 @@ public class LazyReflectedType<T> implements Type {
 	}
 
 	private String getSignature(java.lang.reflect.Type in){
-		if (in instanceof TypeVariable){
-			// TODO: will this work if varaible name is translated?
-			return convert(typeArgumentMap.get(((TypeVariable) in).getName()).getClassName());
+		if (in instanceof Class){
+			return ((Class) in).getName();
 		}
 		if (in instanceof ParameterizedType){
 			ParameterizedType pt = (ParameterizedType) in;
 			Class base = (Class) pt.getRawType();
 
-			int i = 0;
 			java.lang.reflect.Type[] typeArguments = pt.getActualTypeArguments();
-			StringBuilder sb = new StringBuilder(base.getName())
-					.append("[")
-					.append(getSignature(typeArguments[i++]));
-			while (i < typeArguments.length){
-				sb.append(",")
-						.append(getSignature(typeArguments[i++]));
+			List<String> signatures = new LinkedList<>();
+			for (java.lang.reflect.Type typeArgument : typeArguments){
+				String signituare = getSignature(typeArgument);
+				if (signituare != null){
+					signatures.add(signituare);
+				}
 			}
-			sb.append("]");
-
+			StringBuilder sb = new StringBuilder(base.getName());
+			Iterator<String> i = signatures.iterator();
+			if(convert(i.hasNext())){
+				sb.append("[")
+						.append(i.next());
+				while (convert(i.hasNext())){
+					sb.append(",")
+							.append(i.next());
+				}
+				sb.append("]");
+			}
 			return sb.toString();
 		}
-		if (in instanceof Class){
-			return ((Class) in).getName();
+		if (in instanceof TypeVariable){
+			Type replaced = typeArgumentMap.get(((TypeVariable) in).getName());
+			return replaced != null ? convert(replaced.getClassName()) : null;
 		}
+
 		return in.toString();
 	}
 
@@ -159,5 +202,63 @@ public class LazyReflectedType<T> implements Type {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public Boolean assignableTo(Type otherType) {
+
+		if (className.equals(otherType.getClassName())){
+
+			Iterator<Type> thisIterator = typeArguments.iterator();
+			Iterator<Type> thatIterator = otherType.getTypeArguments().iterator();
+			while(convert(thisIterator.hasNext().and(thatIterator.hasNext()))){
+				if (!convert(thisIterator.next().assignableTo(thatIterator.next()))){
+					return Boolean.FALSE;
+				}
+			}
+			return Boolean.TRUE;
+
+		}
+
+		if (interfaces == null){
+			createInterfaces();
+		}
+
+		Iterator<Type> i = interfaces.iterator();
+		while (convert(i.hasNext())){
+			Type iface = i.next();
+			if (convert(iface.assignableTo(otherType))){
+				return Boolean.TRUE;
+			}
+		}
+
+		if (superTypes == null){
+			createSuperTypes();
+		}
+
+		i = superTypes.iterator();
+		while (convert(i.hasNext())){
+			Type supertType = i.next();
+			if (convert(supertType.assignableTo(otherType))){
+				return Boolean.TRUE;
+			}
+		}
+
+		return Boolean.FALSE;
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder(convert(className));
+		if (!convert(typeArguments.isEmpty())){
+			sb.append("[");
+			Iterator<Type> i = typeArguments.iterator();
+			if (convert(i.hasNext())){
+				sb.append(i.next().toString());
+			}
+			while (convert(i.hasNext())){
+				sb.append(",").append(i.next().toString());
+			}
+			sb.append("]");
+		}
+		return sb.toString();
 	}
 }

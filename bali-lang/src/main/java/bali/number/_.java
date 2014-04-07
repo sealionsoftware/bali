@@ -1,5 +1,9 @@
 package bali.number;
 
+import bali.Integer;
+import bali.Number;
+import bali.Serializer;
+
 import static bali.Primitive.convert;
 
 /**
@@ -8,9 +12,11 @@ import static bali.Primitive.convert;
  */
 public class _ {
 
-	public static final bali.Integer ZERO = convert(0);
-	public static final bali.Integer ONE = convert(1);
+	public static final Integer ZERO = convert(0);
+	public static final Integer ONE = convert(1);
 
 	//TODO: e, pi
+
+	public static final Serializer<Number> NUMBER_SERIALIZER = new NumberSerializer();
 
 }

@@ -4,7 +4,7 @@ import bali.Number;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static bali.True.TRUE;
+import static bali.logic.True.TRUE;
 import static bali.number.BigInteger.MAX;
 import static bali.number.BigInteger.MIN;
 

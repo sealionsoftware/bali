@@ -1,8 +1,13 @@
 import bali.CharArrayString;
 import bali.Console;
+import bali.DefaultSerializerRepository;
+import bali.Formatter;
 import bali.Number;
 import bali.ReaderWriter;
 import bali.Serializer;
+import bali.SerializerRepository;
+import bali.Value;
+import bali.ValueFormatter;
 import bali.annotation.ThreadSafe;
 import bali.file.FileManager;
 import bali.file.StandardFileManager;
@@ -26,7 +31,10 @@ public final class _ {
 	public static final ReaderWriter CONSOLE = new Console();
 
 	@ThreadSafe
-	public static final Serializer<Number> NUMBER_FACTORY = NumberFactory.NUMBER_FACTORY;
+	public static final SerializerRepository DEFAULT_SERIALIZERS = new DefaultSerializerRepository();
+
+	@ThreadSafe
+	public static final Formatter<Value<?>> VALUE_FORMATTER = new ValueFormatter();
 
 	@ThreadSafe
 	public static final TimeZone LOCAL_TIMEZONE = new StandardTimeZone(

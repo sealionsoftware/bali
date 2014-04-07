@@ -2,8 +2,8 @@ package bali.compiler.bytecode;
 
 import bali.Boolean;
 import bali.CharArrayString;
-import bali.False;
-import bali.True;
+import bali.logic.False;
+import bali.logic.True;
 import bali.annotation.Kind;
 import bali.collection.Array;
 import bali.compiler.parser.tree.ArrayLiteralExpressionNode;
@@ -56,6 +56,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+import static bali.Primitive.convert;
+import static bali.compiler.bytecode._.CONVERTER;
+
 /**
  * User: Richard
  * Date: 13/05/13
@@ -65,14 +68,9 @@ public class ASMStackManager implements Opcodes {
 	public static final Site TYPE_SITE = new ParameterisedSite(new SimpleReference<Class>(new MutableClassModel(bali.type.Type.class.getName())));
 	private static final int[] INTCODES = new int[]{ICONST_M1, ICONST_0, ICONST_1, ICONST_2, ICONST_3, ICONST_4, ICONST_5};
 
-	private ASMConverter CONVERTER;
 	private List<VariableInfo> declaredVariables = new ArrayList<>();
 	private Deque<Label> scopeHorizonStack = new ArrayDeque<>();
 	private Deque<LoopContext> loopContextStack = new ArrayDeque<>();
-
-	public ASMStackManager(ASMConverter CONVERTER) {
-		this.CONVERTER = CONVERTER;
-	}
 
 	public List<VariableInfo> getDeclaredVariables() {
 		return declaredVariables;
@@ -660,10 +658,10 @@ public class ASMStackManager implements Opcodes {
 	}
 
 	private void push(Boolean b, MethodVisitor v){
-		if (b == True.TRUE){
-			v.visitFieldInsn(GETSTATIC, "bali/True", "TRUE", "Lbali/Boolean;");
+		if (convert(b)){
+			v.visitFieldInsn(GETSTATIC, "bali/Boolean", "TRUE", "Lbali/Boolean;");
 		} else if (b == False.FALSE){
-			v.visitFieldInsn(GETSTATIC, "bali/False", "FALSE", "Lbali/Boolean;");
+			v.visitFieldInsn(GETSTATIC, "bali/Boolean", "FALSE", "Lbali/Boolean;");
 		} else {
 			throw new RuntimeException("Cannot push boolean value " + b);
 		}

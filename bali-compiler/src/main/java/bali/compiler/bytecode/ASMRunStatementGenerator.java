@@ -10,13 +10,13 @@ import org.objectweb.asm.MethodVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
+import static bali.compiler.bytecode._.CONVERTER;
+
 /**
  * User: Richard
  * Date: 13/05/13
  */
 public class ASMRunStatementGenerator implements Generator<RunStatementNode, GeneratedClass> {
-
-	private static final ASMConverter CONVERTER = new ASMConverter();
 
 	public GeneratedClass build(RunStatementNode input) throws Exception {
 
@@ -87,7 +87,7 @@ public class ASMRunStatementGenerator implements Generator<RunStatementNode, Gen
 
 	private void buildMethod( ClassWriter cw, RunStatementNode runStatementNode) {
 
-		ASMStackManager manager = new ASMStackManager(CONVERTER);
+		ASMStackManager manager = new ASMStackManager();
 		int flags = ACC_PUBLIC + ACC_FINAL;
 
 		MethodVisitor methodVisitor = cw.visitMethod(flags,
