@@ -30,11 +30,11 @@ public final class TypeFactory {
 		if (start < 0){
 			t =  new LazyReflectedType(convert(signature), (Collection<Type>) _.EMPTY);
 		} else {
-			int end = signature.indexOf(start, ']');
+			int end = signature.lastIndexOf(']');
 			if (end >= signature.length()){
 				throw new RuntimeException("Invalid signature: " + signature);
 			}
-			String[] argumentSignatures = splitArguments(signature.substring(start + 1, signature.length() -1));
+			String[] argumentSignatures = splitArguments(signature.substring(start + 1, end));
 			List<Type> arguments = new LinkedList<>(null, null);
 			for (String argumentSignature : argumentSignatures){
 				arguments.add(getType(argumentSignature)); // TODO - canonicalize self references

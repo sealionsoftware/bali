@@ -28,7 +28,7 @@ import static bali.Primitive.convert;
  * User: Richard
  * Date: 21 Mar
  */
-@MetaType(Kind.OBJECT)
+@MetaType(Kind.MONITOR)
 public class MavenModuleLoader<T> implements ModuleLoader<T>, Initialisable {
 
 	private Type T;
@@ -44,7 +44,7 @@ public class MavenModuleLoader<T> implements ModuleLoader<T>, Initialisable {
 		this.T = T;
 	}
 
-	public void initialise() {
+	public synchronized void initialise() {
 
 		try {
 			tClass = (Class<T>) Thread.currentThread().getContextClassLoader().loadClass(convert(T.getClassName()));
@@ -70,7 +70,7 @@ public class MavenModuleLoader<T> implements ModuleLoader<T>, Initialisable {
 
 	}
 
-	public T load(String coordinates, Map parameters) {
+	public synchronized T load(String coordinates, Map parameters) {
 
 		ClassLoader loader = cachedLoaders.get(coordinates);
 		if (loader == null){
@@ -102,7 +102,7 @@ public class MavenModuleLoader<T> implements ModuleLoader<T>, Initialisable {
 		}
 	}
 
-	public Collection<Declaration> getParameters(String coordinates) {
+	public synchronized Collection<Declaration> getParameters(String coordinates) {
 		throw new RuntimeException("Not implemented yet");
 	}
 }

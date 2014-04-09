@@ -42,31 +42,47 @@ public class ExecuteBaliGoal implements Mojo {
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
-		Thread t = Thread.currentThread();
-		ClassLoader original = t.getContextClassLoader();
+		log.info("Executing " + executableClassName);
+
 		try {
 			int i = 0;
-			URL[] dependencies = new URL[artifacts.size()];
+			URL[] dependencies = new URL[artifacts.size() + 1];
+			dependencies[i++] = artifact.getFile().toURI().toURL();
 			for (Artifact resolvedArtifact : artifacts){
 				dependencies[i++] = resolvedArtifact.getFile().toURI().toURL();
 			}
-			ClassLoader classLoader =
-					new URLClassLoader(new URL[]{artifact.getFile().toURI().toURL()},
-						new URLClassLoader(dependencies,
-							new LinkClassLoader(Collections.<Class<?>>singleton(Executable.class))));
-			t.setContextClassLoader(classLoader);
+			ClassLoader classLoader = new URLClassLoader(dependencies,
+							new LinkClassLoader(Collections.<Class<?>>singleton(Executable.class)));
 			Class executableClass = classLoader.loadClass(executableClassName);
-			Object executable =  executableClass.newInstance();
+			final Object executable =  executableClass.newInstance();
 			if (!(executable instanceof Executable)){
 				throw new MojoExecutionException("The specified class is not an instance of " + Executable.class);
 			}
-			((Executable) executable).execute();
+			ThreadGroup group = new ThreadGroup("Bali Threads");
+			Thread executeThread = new Thread(group, new Runnable() {
+				public void run() {
+					((Executable) executable).execute();
+				}
+			});
+			executeThread.setDaemon(true);
+			executeThread.setContextClassLoader(classLoader);
+			executeThread.start();
+			executeThread.join();
+			while(group.activeCount() > 0){
+				Thread[] threads = new Thread[group.activeCount()*2];
+				group.enumerate(threads);
+				for (Thread childThread : threads){
+					childThread.join();
+				}
+			}
+
+			log.info("Execution complete");
+
+
 		} catch (ClassNotFoundException e) {
 			throw new MojoExecutionException("The specified class could not be found", e);
 		} catch (Throwable e) {
 			throw new MojoFailureException("An error occured whilst running", e);
-		} finally {
-			t.setContextClassLoader(original);
 		}
 	}
 

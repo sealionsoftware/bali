@@ -696,12 +696,14 @@ public class ANTLRParserManager implements ParserManager {
 	}
 
 	private InvocationNode buildFormat(ExpressionNode toFormat){
-		InvocationNode invocationNode = new InvocationNode();
-		ReferenceNode target = new ReferenceNode();
+		int l = toFormat.getLine();
+		int c =  toFormat.getCharacter();
+		InvocationNode invocationNode = new InvocationNode(l, c);
+		ReferenceNode target = new ReferenceNode(l, c);
 		target.setName("VALUE_FORMATTER");
 		invocationNode.setTarget(target);
 		invocationNode.setMethodName("format");
-		ArgumentNode argumentNode = new ArgumentNode();
+		ArgumentNode argumentNode = new ArgumentNode(l, c);
 		argumentNode.setValue(toFormat);
 		invocationNode.addArgument(argumentNode);
 		return invocationNode;

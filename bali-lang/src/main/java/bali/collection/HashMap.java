@@ -14,14 +14,14 @@ import bali.type.Type;
 import static bali.Primitive.convert;
 
 /**
- * TODO - non delegated implementation that respects bali key equality
+ * TODO - non delegated implementation that respects bali key equality nativly
  * User: Richard
  * Date: 05/03/14
  */
 @MetaType(Kind.OBJECT)
 public class HashMap<K extends Value<K>, V> implements Map<K,V> {
 
-	private java.util.Map<K, V> delegate = new java.util.HashMap<>();
+	private java.util.Map<Key<K>, V> delegate = new java.util.HashMap<>();
 
 	public HashMap() {
 	}
@@ -32,21 +32,21 @@ public class HashMap<K extends Value<K>, V> implements Map<K,V> {
 			Iterator<Entry<K,V>> entryIterator = entries.iterator();
 			while(convert(entryIterator.hasNext())){
 				Entry<K,V> entry = entryIterator.next();
-				delegate.put(entry.key, entry.value);
+				delegate.put(new Key<>(entry.key), entry.value);
 			}
 		}
 	}
 
 	public V get(K key) {
-		return delegate.get(key);
+		return delegate.get(new Key<>(key));
 	}
 
 	public void put(K key, V value) {
-		delegate.put(key, value);
+		delegate.put(new Key<>(key), value);
 	}
 
 	public Boolean contains(K key) {
-		return convert(delegate.containsKey(key));
+		return convert(delegate.containsKey(new Key<>(key)));
 	}
 
 	public Integer size() {
@@ -75,7 +75,7 @@ public class HashMap<K extends Value<K>, V> implements Map<K,V> {
 
 	public Iterator<Entry<K, V>> iterator() {
 
-		final java.util.Iterator<java.util.Map.Entry<K, V>> delegateIterator = this.delegate.entrySet().iterator();
+		final java.util.Iterator<java.util.Map.Entry<Key<K>, V>> delegateIterator = this.delegate.entrySet().iterator();
 
 		return new Iterator<Entry<K, V>>() {
 			public Boolean hasNext() {
@@ -83,12 +83,33 @@ public class HashMap<K extends Value<K>, V> implements Map<K,V> {
 			}
 
 			public Entry<K, V> next() {
-				java.util.Map.Entry<K, V> delegateEntry = delegateIterator.next();
+				java.util.Map.Entry<Key<K>, V> delegateEntry = delegateIterator.next();
 				return new Entry<>(
-						delegateEntry.getKey(),
+						delegateEntry.getKey().delegate,
 						delegateEntry.getValue()
 				);
 			}
 		};
+	}
+
+	private static class Key<K extends Value> {
+
+		private K delegate;
+
+		private Key(K delegate) {
+			this.delegate = delegate;
+		}
+
+		public boolean equals(Object o) {
+			if (o instanceof Key){
+				return convert(delegate.equalTo(((Key<K>) o).delegate));
+			}
+			return false;
+		}
+
+		public int hashCode(){
+			return 1;
+		}
+
 	}
 }

@@ -1,7 +1,9 @@
 package com.sealionsoftware.json;
 
+import bali.DefaultSerializerRepository;
 import bali.Iterator;
 import bali.Serializer;
+import bali.SerializerRepository;
 import bali.Value;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
@@ -44,12 +46,14 @@ import static bali.compiler.parser.JsonParser.MemberContext;
 @MetaType(Kind.OBJECT)
 public class JSONSerializer<T> implements Serializer<T> {
 
-	private static final Type STRING_TYPE = TypeFactory.getType("bali.String");
-	private static final Type BOOLEAN_TYPE = TypeFactory.getType("bali.Boolean");
-	private static final Type NUMBER_TYPE = TypeFactory.getType("bali.Number");
-	private static final Type VALUE_TYPE = TypeFactory.getType("bali.Value");
-	private static final Type MAP_TYPE = TypeFactory.getType("bali.collection.Map");
-	private static final Type COLLECTION_TYPE = TypeFactory.getType("bali.collection.Collection");
+	private static final bali.String STRING_CLASS_NAME = convert(bali.String.class.getName());
+	private static final bali.String BOOLEAN_CLASS_NAME = convert(bali.Boolean.class.getName());
+	private static final bali.String NUMBER_CLASS_NAME = convert(bali.Number.class.getName());
+	private static final bali.String VALUE_CLASS_NAME = convert(bali.Value.class.getName());
+	private static final bali.String MAP_CLASS_NAME = convert(bali.collection.Map.class.getName());
+	private static final bali.String COLLECTION_CLASS_NAME = convert(bali.collection.Collection.class.getName());
+
+	private SerializerRepository serializers = new DefaultSerializerRepository();
 
 	public Type T;
 
@@ -248,36 +252,39 @@ public class JSONSerializer<T> implements Serializer<T> {
 	private Object create(Type type, JsonValueContext context){
 
 		Collection<Type> typeArguments = type.getTypeArguments();
-		if (convert(type.assignableTo(STRING_TYPE))){
+		if (convert(type.instanceOf(STRING_CLASS_NAME))){
 			JsonStringContext jsonStringContext = context.jsonString();
 			if (jsonStringContext == null){
 				throw new RuntimeException("Serialized property is of incorrect type");
 			}
 			return convert(trimString(jsonStringContext.getText()));
 		}
-		if (convert(type.assignableTo(BOOLEAN_TYPE))){
+		if (convert(type.instanceOf(BOOLEAN_CLASS_NAME))){
 			JsonBooleanContext jsonBooleanContext = context.jsonBoolean();
 			if (jsonBooleanContext == null){
 				throw new RuntimeException("Serialized property is of incorrect type");
 			}
 			return bali.logic._.BOOLEAN_SERIALIZER.parse(convert(jsonBooleanContext.getText()));
 		}
-		if (convert(type.assignableTo(NUMBER_TYPE))){
+		if (convert(type.instanceOf(NUMBER_CLASS_NAME))){
 			JsonNumberContext jsonNumberContext = context.jsonNumber();
 			if (jsonNumberContext == null){
 				throw new RuntimeException("Serialized property is of incorrect type");
 			}
 			return bali.number._.NUMBER_SERIALIZER.parse(convert(jsonNumberContext.getText()));
 		}
-		Type rawType = TypeFactory.getType(convert(type.getClassName()));
-		if (convert(rawType.assignableTo(VALUE_TYPE))){
+		if (convert(type.instanceOf(VALUE_CLASS_NAME))){
 			JsonStringContext jsonStringContext = context.jsonString();
 			if (jsonStringContext == null){
 				throw new RuntimeException("Serialized property is of incorrect type");
 			}
-			return convert(trimString(jsonStringContext.getText()));
+			Serializer<?> serializer = serializers.getSerializer(type);
+			if (serializer == null){
+				throw new RuntimeException("No Default Serializer registered for type " + type.getClassName());
+			}
+			return serializer.parse(convert(trimString(jsonStringContext.getText())));
 		}
-		if (convert(rawType.assignableTo(MAP_TYPE))){
+		if (convert(type.instanceOf(MAP_CLASS_NAME))){
 			JsonArrayContext jsonArrayContext = context.jsonArray();
 			if (jsonArrayContext == null){
 				throw new RuntimeException("Serialized property is of incorrect type");
@@ -303,7 +310,7 @@ public class JSONSerializer<T> implements Serializer<T> {
 			}
 			return ret;
 		}
-		if (convert(rawType.assignableTo(COLLECTION_TYPE))){
+		if (convert(type.instanceOf(COLLECTION_CLASS_NAME))){
 			JsonArrayContext jsonArrayContext = context.jsonArray();
 			if (jsonArrayContext == null){
 				throw new RuntimeException("Serialized property is of incorrect type");
@@ -320,4 +327,5 @@ public class JSONSerializer<T> implements Serializer<T> {
 		}
 		throw new RuntimeException("Could not create object");
 	}
+
 }

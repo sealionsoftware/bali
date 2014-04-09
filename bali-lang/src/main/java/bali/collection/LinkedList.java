@@ -79,7 +79,9 @@ public final class LinkedList<T> implements List<T> {
 			getLink(i - 1).next = null;
 		} else {
 			Link before = getLink(i - 1);
-			before.next = before.next.next;
+			if (before != null){
+				before.next = before.next.next;
+			}
 		}
 		size--;
 	}

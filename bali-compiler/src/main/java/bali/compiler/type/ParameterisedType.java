@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * User: Richard
@@ -253,6 +254,9 @@ public class ParameterisedType implements Type {
 		if (template.getName().equals(t.getTemplate().getName())) {
 			Iterator<Site> i = t.getTypeArguments().iterator();
 			for (Site argument : typeArguments.values()) {
+				if (!i.hasNext()){
+					return false;
+				}
 				Site parameter = i.next();
 				if (!argument.isAssignableTo(parameter)) {
 					return false;
@@ -326,12 +330,16 @@ public class ParameterisedType implements Type {
 		if (typeArguments_in.size() > 0){
 			sb.append("[");
 			Iterator<Site> i = typeArguments_in.iterator();
-			sb.append(i.next().toString());
+			sb.append(toString(i.next()));
 			while(i.hasNext()){
-				sb.append(",").append(i.next().toString());
+				sb.append(",").append(toString(i.next()));
 			}
 			sb.append("]");
 		}
 		return sb.toString();
+	}
+
+	public String toString(Site in){
+		return in == null ? "?" : in.toString();
 	}
 }

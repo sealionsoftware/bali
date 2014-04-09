@@ -27,6 +27,7 @@ import bali.compiler.validation.validator.BooleanLiteralValidatorFactory;
 import bali.compiler.validation.validator.BranchStatementValidatorFactory;
 import bali.compiler.validation.validator.ClassValidatorFactory;
 import bali.compiler.validation.validator.ConstantValidatorFactory;
+import bali.compiler.validation.validator.ForStatementValidatorFactory;
 import bali.compiler.validation.validator.ImplementationValidatorFactory;
 import bali.compiler.validation.validator.ImportsValidatorFactory;
 import bali.compiler.validation.validator.InterfaceValidatorFactory;
@@ -104,7 +105,8 @@ public class BaliCompiler {
 				new ThrowStatementValidatorFactory(),
 				new BranchStatementValidatorFactory(),
 				new RunStatementValidatorFactory(),
-				new SiteValidatorFactory()
+				new SiteValidatorFactory(),
+				new ForStatementValidatorFactory()
 		));
 
 		packageBuilder = new ConfigurablePackageGenerator(

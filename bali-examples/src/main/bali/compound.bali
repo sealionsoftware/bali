@@ -5,7 +5,6 @@ import bali.String
 import bali.Executable
 import bali.Count
 import bali.Counter
-import bali.RuntimeException
 
 object CompoundExecutable implements Executable {
 

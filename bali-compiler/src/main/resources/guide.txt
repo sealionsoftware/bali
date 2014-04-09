@@ -48,7 +48,7 @@ for (Type className : aCollection){
 
 :: Exceptions
 
-throw new RuntimeException();
+throw new Exception();
 
 try {
 	// Block containing throw statement

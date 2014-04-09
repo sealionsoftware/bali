@@ -64,7 +64,7 @@ public class RunStatementValidatorFactory implements ValidatorFactory {
 					if (runContextSize > 0){
 						ReferenceNode referenceNode = (ReferenceNode) node;
 
-						if (!ReferenceNode.ReferenceScope.VARIABLE.equals(referenceNode.getScope())){
+						if (!ReferenceNode.ReferenceScope.VARIABLE.equals(referenceNode.getScope()) && referenceNode.getTarget() == null){
 							Site type = referenceNode.getType();
 							if (!type.isThreadSafe()){
 								failures.add(new ValidationFailure(node, "References to objects outside a run block must be thread-safe"));

@@ -41,7 +41,7 @@ public class LazyReflectedType<T> implements Type {
 
 		try {
 
-			template = (Class<T>) Thread.currentThread().getContextClassLoader().loadClass(convert(className));
+			template = (Class<T>) Class.forName(convert(className));
 			TypeVariable[] typeParameters = template.getTypeParameters();
 			if (!convert(typeArguments.isEmpty())){
 				if (typeParameters.length != convert(typeArguments.size())){
@@ -243,6 +243,33 @@ public class LazyReflectedType<T> implements Type {
 			}
 		}
 
+		return Boolean.FALSE;
+	}
+
+	public Boolean instanceOf(@Name("className") bali.String className) {
+		if (convert(className.equalTo(this.className))){
+			return Boolean.TRUE;
+		}
+		if (superTypes == null){
+			createSuperTypes();
+		}
+		Iterator<Type> i = superTypes.iterator();
+		while (convert(i.hasNext())){
+			Type superType = i.next();
+			if (convert(className.equalTo(superType.getClassName()))){
+				return Boolean.TRUE;
+			}
+		}
+		if (interfaces == null){
+			createInterfaces();
+		}
+		i = interfaces.iterator();
+		while (convert(i.hasNext())){
+			Type iface = i.next();
+			if (convert(className.equalTo(iface.getClassName()))){
+				return Boolean.TRUE;
+			}
+		}
 		return Boolean.FALSE;
 	}
 

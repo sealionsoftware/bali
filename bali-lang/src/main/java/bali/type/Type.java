@@ -19,5 +19,6 @@ public interface Type {
 	public Collection<Declaration> getParameters();
 	public Object createObject(@Name("arguments") Collection<?> arguments);
 	public Boolean assignableTo(@Name("otherType") Type otherType);
+	public Boolean instanceOf(@Name("className") String className);
 
 }

@@ -23,7 +23,7 @@ public class TypeFactoryUnitTest {
 	}
 
 	@Test
-	public <P> void testParameterised(){
+	public void testParameterised(){
 		String typeName = "bali.type.B[bali.type.A]";
 		Type t = TypeFactory.getType(typeName);
 		Assert.assertNotNull(t);

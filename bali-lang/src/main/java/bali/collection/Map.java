@@ -5,6 +5,7 @@ import bali.Value;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 import bali.annotation.Name;
+import bali.annotation.Nullable;
 
 /**
  * User: Richard
@@ -13,6 +14,7 @@ import bali.annotation.Name;
 @MetaType(Kind.INTERFACE)
 public interface Map<K extends Value<K>, V> extends Collection<Entry<K, V>> {
 
+	@Nullable
 	public V get(@Name("key") K key);
 
 	public void put(@Name("key")K key, @Name("value") V value);

@@ -31,9 +31,6 @@ public final class _ {
 	public static final ReaderWriter CONSOLE = new Console();
 
 	@ThreadSafe
-	public static final SerializerRepository DEFAULT_SERIALIZERS = new DefaultSerializerRepository();
-
-	@ThreadSafe
 	public static final Formatter<Value<?>> VALUE_FORMATTER = new ValueFormatter();
 
 	@ThreadSafe

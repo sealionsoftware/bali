@@ -10,6 +10,6 @@ import bali.annotation.MetaType;
 @MetaType(Kind.INTERFACE)
 public interface Executable {
 
-	public void execute() throws Throwable;
+	public void execute();
 
 }

@@ -15,6 +15,6 @@ public class BaliThrowable extends Throwable {
 	}
 
 	public String getMessage() {
-		return Primitive.convert(thrown.getMessage());
+		return Primitive.convert(thrown.message);
 	}
 }
