@@ -11,8 +11,6 @@ import bali.compiler.parser.tree.MethodDeclarationNode;
 import bali.compiler.parser.tree.ObjectNode;
 import bali.compiler.parser.tree.ParameterNode;
 import bali.compiler.parser.tree.SiteNode;
-import bali.compiler.reference.SimpleReference;
-import bali.compiler.type.Class;
 import bali.compiler.type.Method;
 import bali.compiler.type.Site;
 import org.objectweb.asm.AnnotationVisitor;

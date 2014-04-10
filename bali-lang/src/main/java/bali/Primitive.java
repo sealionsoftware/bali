@@ -1,9 +1,6 @@
 package bali;
 
 import bali.collection.Collection;
-import bali.net.IP4Address;
-import bali.net.IP6Address;
-import bali.net.IPAddress;
 import bali.number.NumberFactory;
 
 import java.util.ArrayList;

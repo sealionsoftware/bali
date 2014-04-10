@@ -1,7 +1,7 @@
 package bali.net;
 
-import bali.annotation.Name;
 import bali.Boolean;
+import bali.annotation.Name;
 
 import java.util.Arrays;
 

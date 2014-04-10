@@ -2,7 +2,6 @@ package bali.compiler.bytecode;
 
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.RunStatementNode;
-import bali.compiler.type.Class;
 import bali.compiler.type.Site;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;

@@ -6,7 +6,6 @@ import bali.compiler.parser.tree.Node;
 import bali.compiler.type.ClassLibrary;
 import bali.compiler.type.ConstantLibrary;
 import bali.compiler.type.Site;
-import bali.compiler.type.Class;
 import bali.compiler.type.Type;
 import bali.compiler.validation.ValidationFailure;
 

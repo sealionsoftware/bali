@@ -3,7 +3,6 @@ package bali.net;
 import bali.Serializer;
 import bali.String;
 
-import java.lang.RuntimeException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

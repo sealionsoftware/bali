@@ -1,9 +1,9 @@
 package bali.number;
 
 import bali.Boolean;
-import bali.logic.False;
 import bali.Number;
 import bali.annotation.Name;
+import bali.logic.False;
 
 import static bali.Primitive.convert;
 

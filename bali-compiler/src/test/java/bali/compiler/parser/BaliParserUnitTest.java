@@ -1,13 +1,10 @@
 package bali.compiler.parser;
 
 import bali.compiler.parser.tree.CodeBlockNode;
-import bali.compiler.parser.tree.ExpressionNode;
 import bali.compiler.parser.tree.InvocationNode;
 import bali.compiler.parser.tree.OperationNode;
-import bali.compiler.parser.tree.ReferenceNode;
 import bali.compiler.parser.tree.StatementNode;
 import bali.compiler.parser.tree.StringLiteralExpressionNode;
-import bali.compiler.parser.tree.VariableNode;
 import junit.framework.Assert;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;

@@ -8,12 +8,10 @@ import bali.collection._;
 import bali.type.LazyReflectedType;
 import org.junit.Test;
 
-import java.lang.RuntimeException;
-
 import static bali.Primitive.convert;
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * User: Richard

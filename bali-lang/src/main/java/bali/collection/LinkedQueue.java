@@ -1,8 +1,8 @@
 package bali.collection;
 
-import bali.Iterator;
 import bali.Boolean;
 import bali.Integer;
+import bali.Iterator;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 import bali.annotation.Name;

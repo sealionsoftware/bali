@@ -1,7 +1,7 @@
 package bali.logic;
 
-import bali.Serializer;
 import bali.Boolean;
+import bali.Serializer;
 import bali.String;
 import bali.annotation.Name;
 

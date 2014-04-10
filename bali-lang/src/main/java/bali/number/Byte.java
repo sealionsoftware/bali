@@ -4,8 +4,8 @@ import bali.Boolean;
 import bali.Number;
 import bali.annotation.Name;
 
-import static bali.logic.False.FALSE;
 import static bali.Primitive.convert;
+import static bali.logic.False.FALSE;
 import static bali.logic.True.TRUE;
 
 /**

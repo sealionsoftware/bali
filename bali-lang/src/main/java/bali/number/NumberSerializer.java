@@ -4,10 +4,6 @@ import bali.CharArrayString;
 import bali.Number;
 import bali.Serializer;
 import bali.String;
-import bali.number.Byte;
-import bali.number.Int;
-import bali.number.NumberFactory;
-import bali.number.Short;
 
 import static bali.Primitive.convert;
 

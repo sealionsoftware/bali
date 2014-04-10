@@ -3,7 +3,6 @@ package bali.compiler.parser.tree;
 import bali.compiler.reference.BlockingReference;
 import bali.compiler.type.Site;
 
-import java.lang.Integer;
 import java.util.UUID;
 
 /**

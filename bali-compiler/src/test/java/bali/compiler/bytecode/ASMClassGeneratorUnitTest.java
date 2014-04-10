@@ -1,7 +1,6 @@
 package bali.compiler.bytecode;
 
 import bali.Number;
-import bali.logic.True;
 import bali.compiler.GeneratedClass;
 import bali.compiler.parser.tree.CodeBlockNode;
 import bali.compiler.parser.tree.FieldNode;
@@ -13,6 +12,7 @@ import bali.compiler.parser.tree.ParameterNode;
 import bali.compiler.parser.tree.ReturnStatementNode;
 import bali.compiler.parser.tree.SiteNode;
 import bali.compiler.type.Site;
+import bali.logic.True;
 import bali.number.Byte;
 import junit.framework.Assert;
 import org.junit.Before;

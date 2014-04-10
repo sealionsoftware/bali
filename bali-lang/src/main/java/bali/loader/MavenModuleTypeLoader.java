@@ -1,13 +1,11 @@
 package bali.loader;
 
-import bali.Initialisable;
 import bali.String;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 import bali.collection.Collection;
 import bali.collection.HashMap;
 import bali.collection.Map;
-import bali.type.Declaration;
 import bali.type.LazyReflectedType;
 import bali.type.Type;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;

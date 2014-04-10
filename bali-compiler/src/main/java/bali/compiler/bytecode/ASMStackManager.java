@@ -2,8 +2,6 @@ package bali.compiler.bytecode;
 
 import bali.Boolean;
 import bali.CharArrayString;
-import bali.logic.False;
-import bali.logic.True;
 import bali.annotation.Kind;
 import bali.collection.Array;
 import bali.compiler.parser.tree.ArrayLiteralExpressionNode;
@@ -44,6 +42,8 @@ import bali.compiler.type.MutableClassModel;
 import bali.compiler.type.ParameterisedSite;
 import bali.compiler.type.Site;
 import bali.compiler.type.Type;
+import bali.logic.False;
+import bali.logic.True;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;

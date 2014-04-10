@@ -1,11 +1,7 @@
 import bali.CharArrayString;
 import bali.Console;
-import bali.DefaultSerializerRepository;
 import bali.Formatter;
-import bali.Number;
 import bali.ReaderWriter;
-import bali.Serializer;
-import bali.SerializerRepository;
 import bali.Value;
 import bali.ValueFormatter;
 import bali.annotation.ThreadSafe;

@@ -1,6 +1,5 @@
 package bali.monitor;
 
-import bali.Initialisable;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 import bali.annotation.Name;

@@ -1,9 +1,7 @@
 package com.sealionsoftware.json;
 
-import bali.Boolean;
 import bali.String;
 import bali.annotation.Name;
-import bali.annotation.Nullable;
 import bali.annotation.Parameters;
 
 /**

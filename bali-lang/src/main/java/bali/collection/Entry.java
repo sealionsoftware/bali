@@ -1,6 +1,5 @@
 package bali.collection;
 
-import bali.Boolean;
 import bali.Value;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;

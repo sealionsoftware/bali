@@ -3,7 +3,6 @@ package bali.compiler.bytecode;
 import bali.Boolean;
 import bali.Number;
 import bali.String;
-import bali.compiler.type.Class;
 import bali.compiler.type.Site;
 import junit.framework.Assert;
 import org.junit.Test;

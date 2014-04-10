@@ -2,6 +2,7 @@ package bali.monitor;
 
 import bali.Boolean;
 import bali.Integer;
+import bali.Iterator;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 import bali.annotation.Name;
@@ -10,7 +11,6 @@ import bali.annotation.Parameters;
 import bali.collection.Collection;
 import bali.collection.LinkedQueue;
 import bali.collection.Queue;
-import bali.Iterator;
 import bali.type.Type;
 
 import static bali.Primitive.convert;
