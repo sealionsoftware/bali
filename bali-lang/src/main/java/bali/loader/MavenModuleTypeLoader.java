@@ -4,12 +4,11 @@ import bali.Initialisable;
 import bali.String;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
-import bali.annotation.Name;
-import bali.annotation.Parameters;
 import bali.collection.Collection;
 import bali.collection.HashMap;
 import bali.collection.Map;
 import bali.type.Declaration;
+import bali.type.LazyReflectedType;
 import bali.type.Type;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
@@ -28,29 +27,15 @@ import static bali.Primitive.convert;
  * User: Richard
  * Date: 21 Mar
  */
-@MetaType(Kind.MONITOR)
-public class MavenModuleLoader<T> implements ModuleLoader<T>, Initialisable {
-
-	private Type T;
+@MetaType(Kind.OBJECT)
+public class MavenModuleTypeLoader implements ModuleTypeLoader {
 
 	//TODO: wrap up the "repository" in a seperate dependency
 	private Map<String, RepositoryClassLoader> cachedLoaders = new HashMap<>();
 	private RepositorySystem system;
 	private DefaultRepositorySystemSession session;
-	private Class<T> tClass;
 
-	@Parameters
-	public MavenModuleLoader(@Name("T") Type T) {
-		this.T = T;
-	}
-
-	public synchronized void initialise() {
-
-		try {
-			tClass = (Class<T>) Thread.currentThread().getContextClassLoader().loadClass(convert(T.getClassName()));
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(e);
-		}
+	public void initialise() {
 
 		DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
 		locator.addService( RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class );
@@ -70,7 +55,7 @@ public class MavenModuleLoader<T> implements ModuleLoader<T>, Initialisable {
 
 	}
 
-	public synchronized T load(String coordinates, Map parameters) {
+	public Type load(String coordinates) {
 
 		ClassLoader loader = cachedLoaders.get(coordinates);
 		if (loader == null){
@@ -86,23 +71,15 @@ public class MavenModuleLoader<T> implements ModuleLoader<T>, Initialisable {
 
 		try {
 
-			Class<T> clazz = (Class<T>) loader.loadClass(null);
-
-			if (!tClass.isAssignableFrom(clazz)){
-				throw new RuntimeException("The loaded class is not compatible with the ModuleLoaders return type");
-			}
+			Class<?> clazz = (Class) loader.loadClass(null);
 
 			//TODO: parameters
-			return clazz.newInstance();
+			return new LazyReflectedType<>(clazz, (Collection<Type>) bali.collection._.EMPTY);
 
 		} catch (ClassNotFoundException cnfe){
 			return null;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	public synchronized Collection<Declaration> getParameters(String coordinates) {
-		throw new RuntimeException("Not implemented yet");
 	}
 }

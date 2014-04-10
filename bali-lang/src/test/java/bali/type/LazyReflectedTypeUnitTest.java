@@ -39,7 +39,7 @@ public class LazyReflectedTypeUnitTest {
 	}
 
 	@Test
-	public void testParameterised(){
+	public void testParameterised() throws Exception {
 		List<Type> arguments = new LinkedList<>(null, null);
 		arguments.add(new LazyReflectedType<>(convert("bali.type.A"), _.EMPTY));
 		Type t = new LazyReflectedType<>(convert("bali.type.B"), arguments);

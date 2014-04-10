@@ -19,7 +19,7 @@ public final class TypeFactory {
 
 	private static final Map<String, Type> TYPES = new HashMap<>();
 
-	public static synchronized Type getType(String signature){
+	public static synchronized Type getType(String signature) {
 
 		Type t = TYPES.get(signature);
 		if (t != null){

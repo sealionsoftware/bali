@@ -4,6 +4,7 @@ import bali.String
 import bali.Exception
 import bali.Integer
 import bali.Serializer
+import bali.type.Type
 import bali.collection.Map
 import bali.collection.Entry
 import bali.collection.Queue
@@ -17,8 +18,10 @@ import bali.net.SocketMonitor
 import bali.file.File
 import bali.file.Directory
 import bali.monitor.ConnectionMonitor
-import bali.loader.ModuleLoader
-import bali.loader.MavenModuleLoader
+import bali.monitor.ResourcePool
+import bali.monitor.DisposableResourcePool
+import bali.loader.ModuleTypeLoader
+import bali.loader.MavenModuleTypeLoader
 
 import bali.server.HttpHandler
 import bali.server.HttpResponse
@@ -96,10 +99,10 @@ object TempleServer implements Executable {
 	field ServerConfiguration configuration
 
 //	field ModuleLoader[Resource] resourceLoader = new MavenModuleLoader()
-	field ModuleLoader[WebApplication]@ applicationLoader
+	field ModuleTypeLoader typeLoader
 
 //	field Map[String, Resource] resources = new HashMap()
-	field Map[String, Queue[WebApplication]@] webApplications = new HashMap()
+	field Map[String, ResourcePool[WebApplication]@] webApplications = new HashMap()
 
 	method execute {
 
@@ -134,10 +137,8 @@ object TempleServer implements Executable {
 
     method setUpApplications {
 
-        MavenModuleLoader[WebApplication]@ moduleLoader = new MavenModuleLoader();
-        moduleLoader.initialise();
-
-        applicationLoader = moduleLoader;
+        typeLoader = new MavenModuleTypeLoader();
+        typeLoader.initialise();
 
 		for (Entry[String, ResourceConfiguration] entry : configuration.resources){
 			CONSOLE << "Loading resource " + entry.key;
@@ -147,18 +148,16 @@ object TempleServer implements Executable {
         	CONSOLE << "Loading application " + entry.key;
 
         	ResourceConfiguration webAppConfig = entry.value;
-        	Queue[WebApplication]@ instances = new BlockingQueue(10);
-        	webApplications.put(entry.key, instances);
-
         	String@ coordinates = webAppConfig.groupId + ":" + webAppConfig.artifactId + ":bar:" + webAppConfig.versionId;
-
-        	run while (true){
-        	    WebApplication webApplication = applicationLoader.load(coordinates, new HashMap());
-                webApplication.initialise();
-                instances.push(webApplication);
+        	Type@? moduleType = typeLoader.load(coordinates);
+        	if(?moduleType){
+        	    ResourcePool[WebApplication]@ pool = new DisposableResourcePool(moduleType);
+        	    pool.initialise();
+                webApplications.put(entry.key, pool);
+        	} else {
+        	    throw new Exception("Could not load module $coordinates");
         	}
         }
-
     }
 
     method startServer {
@@ -170,9 +169,9 @@ object TempleServer implements Executable {
                 Integer@ portNumber = portEntry.key;
                 String@ applicationName = portEntry.value;
 
-                Queue[WebApplication]@? instances = webApplications.get(applicationName);
+                ResourcePool[WebApplication]@? pool = webApplications.get(applicationName);
 
-                if (?instances) run {
+                if (?pool) run {
 
                     CONSOLE << "Binding $applicationName to $address:$portNumber";
 
@@ -186,7 +185,7 @@ object TempleServer implements Executable {
 
                         run {
 
-                            WebApplication? application = instances.pop();
+                            WebApplication? application = pool.getResource();
                             if(?application){
                                 Socket connection = monitor.getConnection();
                                 ProtocolHandler handler = new HttpProtocolHandler(application);

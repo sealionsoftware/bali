@@ -13,7 +13,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.TypeVariable;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -35,28 +34,32 @@ public class LazyReflectedType<T> implements Type {
 
 	private Class<T> template;
 
-	public LazyReflectedType(bali.String className, Collection<Type> typeArguments) {
-		this.className = className;
+	public LazyReflectedType(Class<T> template, Collection<Type> typeArguments) {
+		this.template = template;
+		this.className = convert(template.getName());
 		this.typeArguments = typeArguments;
-
-		try {
-
-			template = (Class<T>) Class.forName(convert(className));
-			TypeVariable[] typeParameters = template.getTypeParameters();
-			if (!convert(typeArguments.isEmpty())){
-				if (typeParameters.length != convert(typeArguments.size())){
-					throw new RuntimeException("Invalid type arguments");
-				}
-				Iterator<Type> i = typeArguments.iterator();
-				for (TypeVariable typeParameter : typeParameters){
-					typeArgumentMap.put(typeParameter.getName(), i.next());
-				}
+		TypeVariable[] typeParameters = template.getTypeParameters();
+		if (!convert(typeArguments.isEmpty())){
+			if (typeParameters.length != convert(typeArguments.size())){
+				throw new RuntimeException("Invalid type arguments");
 			}
+			Iterator<Type> i = typeArguments.iterator();
+			for (TypeVariable typeParameter : typeParameters){
+				typeArgumentMap.put(typeParameter.getName(), i.next());
+			}
+		}
+	}
 
-		} catch (Exception e){
+	public LazyReflectedType(bali.String className, Collection<Type> typeArguments) {
+		this((Class<T>) forName(convert(className)), typeArguments);
+	}
+
+	private static Class<?> forName(String name){
+		try {
+			return Class.forName(name);
+		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
-
 	}
 
 	public bali.String getClassName() {

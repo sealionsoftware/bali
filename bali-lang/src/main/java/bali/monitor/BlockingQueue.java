@@ -17,7 +17,8 @@ import static bali.Primitive.convert;
 
 /**
  * TODO: this is a potential source of non-thread safety - unsafe objects passed in
- * might still be accessible on their originating thread, need a better design
+ * might still be accessible on their originating thread, need a way of restricting
+ * the input to threadsafe types, and a better design for "connection pools"
  *
  * User: Richard
  * Date: 09 Apr
