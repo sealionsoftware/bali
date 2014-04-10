@@ -46,7 +46,7 @@ public class Primitive {
 		if (in instanceof StringBuilder){
 			return new java.lang.String(((StringBuilder) in).getChars());
 		}
-		throw new java.lang.RuntimeException("Cannot convert String of type " + in.getClass());
+		throw new BaliThrowable("Cannot convert String of type " + in.getClass());
 	}
 
 	public static Character convert(char in) {

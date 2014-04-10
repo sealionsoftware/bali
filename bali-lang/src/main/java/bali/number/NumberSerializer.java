@@ -1,5 +1,6 @@
 package bali.number;
 
+import bali.BaliThrowable;
 import bali.CharArrayString;
 import bali.Number;
 import bali.Serializer;
@@ -30,7 +31,7 @@ public class NumberSerializer implements Serializer<Number> {
 		if (in instanceof bali.number.Long) {
 			return format((bali.number.Long) in);
 		}
-		throw new RuntimeException("Cannot format Number " + in);
+		throw new BaliThrowable("Cannot format Number " + in);
 	}
 
 	public String format(Byte in) {

@@ -58,7 +58,7 @@ public final class CharArrayString implements String  {
 			return new Array<>(Arrays.copyOf(ret, wordCount + 1));
 		}
 
-		throw new java.lang.RuntimeException("Not supported yet");
+		throw new BaliThrowable("Not supported yet");
 	}
 
 	public String head(Integer index) {

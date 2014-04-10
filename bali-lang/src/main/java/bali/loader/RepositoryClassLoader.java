@@ -1,5 +1,6 @@
 package bali.loader;
 
+import bali.BaliThrowable;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
@@ -71,7 +72,7 @@ public class RepositoryClassLoader extends ClassLoader {
 	public Class<?> loadClass(String name) throws ClassNotFoundException {
 		if(name == null){
 			if (mainClassName == null){
-				throw new RuntimeException("This module does not have a main class");
+				throw new BaliThrowable("This module does not have a main class");
 			}
 			name = mainClassName;
 		}

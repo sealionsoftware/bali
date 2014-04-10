@@ -1,5 +1,6 @@
 package bali.loader;
 
+import bali.BaliThrowable;
 import bali.String;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
@@ -61,7 +62,7 @@ public class MavenModuleTypeLoader implements ModuleTypeLoader {
 			try {
 				repositoryClassLoader.initialise();
 			} catch (Exception e) {
-				throw new RuntimeException(e);
+				throw new BaliThrowable(e.getMessage());
 			}
 			loader = repositoryClassLoader;
 			cachedLoaders.put(coordinates, repositoryClassLoader);
@@ -77,7 +78,7 @@ public class MavenModuleTypeLoader implements ModuleTypeLoader {
 		} catch (ClassNotFoundException cnfe){
 			return null;
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new BaliThrowable(e.getMessage());
 		}
 	}
 }

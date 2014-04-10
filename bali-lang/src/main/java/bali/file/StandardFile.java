@@ -1,5 +1,6 @@
 package bali.file;
 
+import bali.BaliThrowable;
 import bali.Boolean;
 import bali.Character;
 import bali.Iterator;
@@ -36,7 +37,7 @@ public class StandardFile implements File {
 				delegate.createNewFile();
 			}
 		} catch (Exception e){
-			throw new RuntimeException("Could not clear the file");
+			throw new BaliThrowable("Could not clear the file");
 		}
 	}
 
@@ -51,7 +52,7 @@ public class StandardFile implements File {
 				input = null;
 			}
 		} catch (Exception e){
-			throw new RuntimeException("Could not close file");
+			throw new BaliThrowable("Could not close file");
 		}
 	}
 
@@ -81,7 +82,7 @@ public class StandardFile implements File {
 
 	public void delete() {
 		if (!delegate.delete()){
-			throw new RuntimeException("It was not possible to delete the file");
+			throw new BaliThrowable("It was not possible to delete the file");
 		}
 	}
 
@@ -109,7 +110,7 @@ public class StandardFile implements File {
 			java.lang.String in = getInputStream().readLine();
 			return in != null ? convert(in) : null;
 		} catch (IOException ioe){
-			throw new RuntimeException(ioe);
+			throw new BaliThrowable(ioe.getMessage());
 		}
 	}
 
@@ -120,7 +121,7 @@ public class StandardFile implements File {
 			output.write("\r\n");
 			output.flush();
 		} catch (IOException ioe){
-			throw new RuntimeException(ioe);
+			throw new BaliThrowable(ioe.getMessage());
 		}
 	}
 
@@ -129,7 +130,7 @@ public class StandardFile implements File {
 			char in = (char) getInputStream().read();
 			return in > -1 ? convert(in) : null;
 		} catch (IOException ioe){
-			throw new RuntimeException(ioe);
+			throw new BaliThrowable(ioe.getMessage());
 		}
 	}
 
@@ -139,7 +140,7 @@ public class StandardFile implements File {
 			output.write(convert(in));
 			output.flush();
 		} catch (IOException ioe){
-			throw new RuntimeException(ioe);
+			throw new BaliThrowable(ioe.getMessage());
 		}
 	}
 
@@ -148,7 +149,7 @@ public class StandardFile implements File {
 			try{
 				output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(delegate)));
 			} catch (Exception e){
-				throw new RuntimeException("Could not open file for writing");
+				throw new BaliThrowable("Could not open file for writing");
 			}
 		}
 		return output;
@@ -159,7 +160,7 @@ public class StandardFile implements File {
 			try{
 				input = new BufferedReader(new InputStreamReader(new FileInputStream(delegate)));
 			} catch (Exception e){
-				throw new RuntimeException("Could not open file for reading");
+				throw new BaliThrowable("Could not open file for reading");
 			}
 		}
 		return input;

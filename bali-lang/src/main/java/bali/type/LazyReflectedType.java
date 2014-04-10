@@ -1,5 +1,6 @@
 package bali.type;
 
+import bali.BaliThrowable;
 import bali.Boolean;
 import bali.Iterator;
 import bali.annotation.Name;
@@ -41,7 +42,7 @@ public class LazyReflectedType<T> implements Type {
 		TypeVariable[] typeParameters = template.getTypeParameters();
 		if (!convert(typeArguments.isEmpty())){
 			if (typeParameters.length != convert(typeArguments.size())){
-				throw new RuntimeException("Invalid type arguments");
+				throw new BaliThrowable("Invalid type arguments");
 			}
 			Iterator<Type> i = typeArguments.iterator();
 			for (TypeVariable typeParameter : typeParameters){
@@ -58,7 +59,7 @@ public class LazyReflectedType<T> implements Type {
 		try {
 			return Class.forName(name);
 		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(e);
+			throw new BaliThrowable(e.getMessage());
 		}
 	}
 
@@ -89,7 +90,7 @@ public class LazyReflectedType<T> implements Type {
 				Name name = names[i];
 				Nullable nullable = nullables[i];
 				if (name == null){
-					throw new RuntimeException("Parameter " + i + " of class " + template + " is not named properly");
+					throw new BaliThrowable("Parameter " + i + " of class " + template + " is not named properly");
 				}
 				parameters.add(new Declaration(
 						convert(names[i].value()),
@@ -152,7 +153,7 @@ public class LazyReflectedType<T> implements Type {
 				return constructor;
 			}
 		}
-		throw new RuntimeException("Class " + clazz + " has no @Parameters constructor and is not a valid bali type");
+		throw new BaliThrowable("Class " + clazz + " has no @Parameters constructor and is not a valid bali type");
 	}
 
 	private Type getTypeFor(java.lang.reflect.Type in){
@@ -203,7 +204,7 @@ public class LazyReflectedType<T> implements Type {
 		try {
 			return (T) template.getConstructors()[0].newInstance(convert(arguments).toArray());
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new BaliThrowable(e.getMessage());
 		}
 	}
 

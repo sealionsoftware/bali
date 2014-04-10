@@ -23,15 +23,15 @@ public class StringBuilder implements String {
 	private char[] characters = new char[SCALE];
 
 	public String uppercase() {
-		throw new java.lang.RuntimeException("Not implemented yet");
+		throw new BaliThrowable("Not implemented yet");
 	}
 
 	public ValueCollection<String> split(@Name("separator") String seperator) {
-		throw new java.lang.RuntimeException("Not implemented yet");
+		throw new BaliThrowable("Not implemented yet");
 	}
 
 	public Boolean contains(@Name("value") Character value) {
-		throw new java.lang.RuntimeException("Not implemented yet");
+		throw new BaliThrowable("Not implemented yet");
 	}
 
 	public Integer size() {
@@ -59,7 +59,7 @@ public class StringBuilder implements String {
 			StringBuilder sb = (StringBuilder) operand;
 			add(sb.getChars());
 		} else {
-			throw new java.lang.RuntimeException("Not implemented yet");
+			throw new BaliThrowable("Not implemented yet");
 		}
 		return this;
 	}
@@ -86,7 +86,7 @@ public class StringBuilder implements String {
 	}
 
 	public Collection<Character> head(Integer index) {
-		throw new java.lang.RuntimeException("Not implemented yet");
+		throw new BaliThrowable("Not implemented yet");
 	}
 
 	public Collection<Character> tail(Integer index) {
@@ -94,15 +94,15 @@ public class StringBuilder implements String {
 	}
 
 	public Iterator<Character> iterator() {
-		throw new java.lang.RuntimeException("Not implemented yet");
+		throw new BaliThrowable("Not implemented yet");
 	}
 
 	public Boolean equalTo(@Name("operand") String operand) {
-		throw new java.lang.RuntimeException("Not implemented yet");
+		throw new BaliThrowable("Not implemented yet");
 	}
 
 	public Boolean notEqualTo(@Name("operand") String operand) {
-		throw new java.lang.RuntimeException("Not implemented yet");
+		throw new BaliThrowable("Not implemented yet");
 	}
 
 	char[] getChars(){

@@ -20,17 +20,23 @@ public class SocketMonitor implements ConnectionMonitor<Socket> {
 		this.serverSocket = serverSocket;
 	}
 
-	public void waitForConnection() throws java.lang.Exception {
-		Socket connection = serverSocket.getConnection();
-		synchronized (this){
-			if (this.connection != null){
-				wait();
+	public void waitForConnection() {
+		try {
+			Socket connection = serverSocket.getConnection();
+			synchronized (this){
+				if (this.connection != null){
+					wait();
+				}
+				this.connection = connection;
 			}
-			this.connection = connection;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
+
+
 	}
 
-	public synchronized Socket getConnection() throws java.lang.Exception {
+	public synchronized Socket getConnection() {
 		Socket connection = this.connection;
 		this.connection = null;
 		notify();

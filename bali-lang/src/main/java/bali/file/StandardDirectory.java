@@ -1,5 +1,6 @@
 package bali.file;
 
+import bali.BaliThrowable;
 import bali.Boolean;
 import bali.Iterator;
 import bali.String;
@@ -59,7 +60,7 @@ public class StandardDirectory implements Directory {
 			}
 			return new StandardFile(newFile);
 		} catch (IOException e) {
-			throw new RuntimeException("Could not create file", e);
+			throw new BaliThrowable(e.getMessage());
 		}
 	}
 
@@ -113,7 +114,7 @@ public class StandardDirectory implements Directory {
 
 	public void delete() {
 		if (!delegate.delete()){
-			throw new RuntimeException("Could not delete directory");
+			throw new BaliThrowable("Could not delete directory");
 		}
 	}
 

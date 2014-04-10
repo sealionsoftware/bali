@@ -1,5 +1,7 @@
 package bali.net;
 
+import bali.BaliThrowable;
+
 import java.io.IOException;
 
 /**
@@ -16,7 +18,8 @@ public class StandardServerSocket implements ServerSocket {
 
 	public Socket getConnection() throws Exception {
 		java.net.Socket socket = delegate.accept();
-		StandardSocket ret =  new StandardSocket(socket);
+		socket.setSoTimeout(5000);
+		StandardSocket ret = new StandardSocket(socket);
 		ret.initialise();
 		return ret;
 	}
@@ -25,7 +28,7 @@ public class StandardServerSocket implements ServerSocket {
 		try {
 			delegate.close();
 		} catch (IOException e) {
-			throw new RuntimeException("Error closing socket", e);
+			throw new BaliThrowable(e.getMessage());
 		}
 	}
 }

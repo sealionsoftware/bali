@@ -1,5 +1,7 @@
 package bali.net;
 
+import bali.BaliThrowable;
+
 /**
  * User: Richard
  * Date: 31 Mar
@@ -12,7 +14,7 @@ public class Primitive {
 		} else if (in instanceof IP6Address) {
 			return ((IP6Address) in).bytes;
 		}
-		throw new java.lang.RuntimeException("Cannot convert IPAddress of type " + in.getClass());
+		throw new BaliThrowable("Cannot convert IPAddress of type " + in.getClass());
 	}
 
 }

@@ -1,5 +1,6 @@
 package bali.logic;
 
+import bali.BaliThrowable;
 import bali.Boolean;
 import bali.Serializer;
 import bali.String;
@@ -27,6 +28,6 @@ public class BooleanSerializer implements Serializer<Boolean> {
 		if (convert(FALSE.equalTo(serialization))){
 			return Boolean.FALSE;
 		}
-		throw new RuntimeException("Invalid Boolean serialization: " + convert(serialization));
+		throw new BaliThrowable("Invalid Boolean serialization: " + convert(serialization));
 	}
 }

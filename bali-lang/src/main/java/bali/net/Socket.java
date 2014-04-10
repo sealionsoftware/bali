@@ -1,6 +1,7 @@
 package bali.net;
 
 import bali.Closable;
+import bali.Boolean;
 import bali.Iterable;
 import bali.ReaderWriter;
 import bali.String;
@@ -13,5 +14,7 @@ import bali.annotation.MetaType;
  */
 @MetaType(Kind.INTERFACE)
 public interface Socket extends ReaderWriter, Iterable<String>, Closable {
+
+	public Boolean isConnected();
 
 }

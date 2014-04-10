@@ -1,6 +1,7 @@
 package bali.net;
 
 
+import bali.BaliThrowable;
 import bali.Boolean;
 import bali.Character;
 import bali.Initialisable;
@@ -12,6 +13,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.SocketTimeoutException;
 
 import static bali.Primitive.convert;
 
@@ -34,15 +36,19 @@ public class StandardSocket implements Socket, Initialisable {
 			input = new BufferedReader(new InputStreamReader(delegate.getInputStream()));
 			output = new BufferedWriter(new OutputStreamWriter(delegate.getOutputStream()));
 		} catch (IOException e){
-			throw new RuntimeException("Error initialising socket", e);
+			throw new BaliThrowable(e.getMessage());
 		}
+	}
+
+	public Boolean isConnected() {
+		return convert(delegate.isConnected());
 	}
 
 	public void close() {
 		try {
 			delegate.close();
 		} catch (IOException e) {
-			throw new RuntimeException("Error closing socket", e);
+			throw new BaliThrowable(e.getMessage());
 		}
 	}
 
@@ -51,8 +57,10 @@ public class StandardSocket implements Socket, Initialisable {
 		try {
 			java.lang.String in = input.readLine();
 			return in != null ? convert(in) : null;
+		} catch (SocketTimeoutException ioe){
+			return null;
 		} catch (IOException ioe){
-			throw new RuntimeException(ioe);
+			throw new BaliThrowable(ioe.getMessage());
 		}
 	}
 
@@ -80,7 +88,7 @@ public class StandardSocket implements Socket, Initialisable {
 			output.write("\r\n");
 			output.flush();
 		} catch (IOException ioe){
-			throw new RuntimeException(ioe);
+			throw new BaliThrowable(ioe.getMessage());
 		}
 	}
 
@@ -88,8 +96,10 @@ public class StandardSocket implements Socket, Initialisable {
 		try {
 			char in = (char) input.read();
 			return in > -1 ? convert(in) : null;
+		} catch (SocketTimeoutException ioe){
+			return null;
 		} catch (IOException ioe){
-			throw new RuntimeException(ioe);
+			throw new BaliThrowable(ioe.getMessage());
 		}
 	}
 
@@ -98,7 +108,7 @@ public class StandardSocket implements Socket, Initialisable {
 			output.write(convert(in));
 			output.flush();
 		} catch (IOException ioe){
-			throw new RuntimeException(ioe);
+			throw new BaliThrowable(ioe.getMessage());
 		}
 	}
 }

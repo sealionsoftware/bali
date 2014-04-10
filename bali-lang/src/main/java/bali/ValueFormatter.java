@@ -20,7 +20,7 @@ public class ValueFormatter implements Formatter<Value<?>> {
 
 		Formatter<? super Value<?>> formatter = serializers.getSerializer(TypeFactory.getType(in.getClass().getName()));
 		if (formatter == null){
-			throw new java.lang.RuntimeException("Cannot format Value of type " + in.getClass().getName());
+			throw new BaliThrowable("Cannot format Value of type " + in.getClass().getName());
 		}
 
 		return formatter.format(in);

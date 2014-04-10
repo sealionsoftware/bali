@@ -1,5 +1,6 @@
 package bali.number;
 
+import bali.BaliThrowable;
 import bali.Boolean;
 import bali.Number;
 import bali.annotation.Name;
@@ -79,7 +80,7 @@ public final class BigInteger implements bali.Integer {
 		if (number instanceof Byte) {
 			return equalTo((Byte) number);
 		}
-		throw new RuntimeException(INVALID_NUMBER_TYPE);
+		throw new BaliThrowable(INVALID_NUMBER_TYPE);
 	}
 
 	public Boolean equalTo(BigInteger o) {
@@ -132,7 +133,7 @@ public final class BigInteger implements bali.Integer {
 		if (number instanceof Byte) {
 			return greaterThan((Byte) number);
 		}
-		throw new RuntimeException(INVALID_NUMBER_TYPE);
+		throw new BaliThrowable(INVALID_NUMBER_TYPE);
 	}
 
 	public Boolean greaterThan(BigInteger o) {
@@ -203,7 +204,7 @@ public final class BigInteger implements bali.Integer {
 		if (number instanceof Byte) {
 			return lessThan((Byte) number);
 		}
-		throw new RuntimeException(INVALID_NUMBER_TYPE);
+		throw new BaliThrowable(INVALID_NUMBER_TYPE);
 	}
 
 	public Boolean lessThan(BigInteger o) {
@@ -274,7 +275,7 @@ public final class BigInteger implements bali.Integer {
 		if (o instanceof Byte) {
 			return add((Byte) o);
 		}
-		throw new RuntimeException(INVALID_NUMBER_TYPE);
+		throw new BaliThrowable(INVALID_NUMBER_TYPE);
 	}
 
 	public Number add(BigInteger o) {
@@ -378,7 +379,7 @@ public final class BigInteger implements bali.Integer {
 		if (o instanceof Byte) {
 			return subtract((Byte) o);
 		}
-		throw new RuntimeException(INVALID_NUMBER_TYPE);
+		throw new BaliThrowable(INVALID_NUMBER_TYPE);
 	}
 
 	public Number subtract(BigInteger o) {
@@ -485,7 +486,7 @@ public final class BigInteger implements bali.Integer {
 		if (o instanceof BigInteger) {
 			return multiply((BigInteger) o);
 		}
-		throw new RuntimeException("Cannot add Number of type " + o.getClass());
+		throw new BaliThrowable("Cannot add Number of type " + o.getClass());
 	}
 
 	public Number multiply(BigInteger o) {

@@ -1,5 +1,6 @@
 package bali.monitor;
 
+import bali.BaliThrowable;
 import bali.annotation.Kind;
 import bali.annotation.MetaType;
 import bali.annotation.Name;
@@ -13,7 +14,7 @@ import static bali.Primitive.convert;
 
 /**
  * A Disposable Resource Pool pre instanciates a pool of resources on an internal thread
- * and forgets them once theyve been requested.
+ * and forgets them once they've been requested.
  *
  * TODO: A version with ThreadLocal caching?
  *
@@ -39,7 +40,7 @@ public class DisposableResourcePool<T> implements ResourcePool<T> {
 
 	public T getResource() {
 		if (!initialised){
-			throw new RuntimeException("The pool has not been initialised");
+			throw new BaliThrowable("The pool has not been initialised");
 		}
 		return queue.pop();
 	}
@@ -47,7 +48,7 @@ public class DisposableResourcePool<T> implements ResourcePool<T> {
 	public void initialise() {
 
 		if (!convert(implementationType.getParameters().isEmpty())){
-			throw new RuntimeException("Cannot create pools of resources with dependencies yet");
+			throw new BaliThrowable("Cannot create pools of resources with dependencies yet");
 		}
 
 		executorService.submit(new Runnable() {

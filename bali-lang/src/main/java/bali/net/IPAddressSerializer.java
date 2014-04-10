@@ -1,5 +1,6 @@
 package bali.net;
 
+import bali.BaliThrowable;
 import bali.Serializer;
 import bali.String;
 
@@ -24,13 +25,13 @@ public class IPAddressSerializer implements Serializer<IPAddress> {
 			for (int i = 0; i < bytes.length ; i++){
 				int number = Byte.MIN_VALUE + (Integer.parseInt(ipV4Matcher.group(i + 1)));
 				if (number > Byte.MAX_VALUE){
-					throw new RuntimeException("Invalid IP Address");
+					throw new BaliThrowable("Invalid IP Address");
 				}
 				bytes[i] = (byte) number;
 			}
 			return new IP4Address(bytes);
 		}
-		throw new java.lang.RuntimeException("Cannot parse IPAddress " + in);
+		throw new BaliThrowable("Cannot parse IPAddress " + in);
 	}
 
 	public String format(IPAddress in) {
@@ -45,6 +46,6 @@ public class IPAddressSerializer implements Serializer<IPAddress> {
 			}
 			return convert(sb.toString());
 		}
-		throw new RuntimeException("Cannot format IPAddress " + in);
+		throw new BaliThrowable("Cannot format IPAddress " + in);
 	}
 }

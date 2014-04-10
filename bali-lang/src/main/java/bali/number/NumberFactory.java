@@ -1,5 +1,6 @@
 package bali.number;
 
+import bali.BaliThrowable;
 import bali.Integer;
 import bali.Number;
 
@@ -61,7 +62,7 @@ public class NumberFactory {
 		int i = 0;
 		for (char character : characters) {
 			if (!Character.isDigit(character)) {
-				throw new RuntimeException("Invalid digit character " + character);
+				throw new BaliThrowable("Invalid digit character " + character);
 			}
 			value += (java.lang.Integer.parseInt(Character.toString(character), 10) * Math.pow(10, characters.length - ++i));
 		}
@@ -123,7 +124,7 @@ public class NumberFactory {
 		if (n instanceof Int) {
 			return ((Int) n).value;
 		}
-		throw new RuntimeException("Cannot get int value of Number " + n);
+		throw new BaliThrowable("Cannot get int value of Number " + n);
 	}
 
 

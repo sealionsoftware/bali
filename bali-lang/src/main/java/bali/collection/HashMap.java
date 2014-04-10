@@ -1,5 +1,6 @@
 package bali.collection;
 
+import bali.BaliThrowable;
 import bali.Boolean;
 import bali.Integer;
 import bali.Iterator;
@@ -58,19 +59,19 @@ public class HashMap<K extends Value<K>, V> implements Map<K,V> {
 	}
 
 	public Entry<K, V> get(Integer index) {
-		throw new RuntimeException("Not Implemented Yet");
+		throw new BaliThrowable("Not Implemented Yet");
 	}
 
 	public Collection<Entry<K, V>> join(Collection<Entry<K, V>> operand) {
-		throw new RuntimeException("Not Implemented Yet");
+		throw new BaliThrowable("Not Implemented Yet");
 	}
 
 	public Collection<Entry<K, V>> head(Integer index) {
-		throw new RuntimeException("Not Implemented Yet");
+		throw new BaliThrowable("Not Implemented Yet");
 	}
 
 	public Collection<Entry<K, V>> tail(Integer index) {
-		throw new RuntimeException("Not Implemented Yet");
+		throw new BaliThrowable("Not Implemented Yet");
 	}
 
 	public Iterator<Entry<K, V>> iterator() {

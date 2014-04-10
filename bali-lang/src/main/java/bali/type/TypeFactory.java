@@ -1,5 +1,6 @@
 package bali.type;
 
+import bali.BaliThrowable;
 import bali.collection.Collection;
 import bali.collection.LinkedList;
 import bali.collection.List;
@@ -32,7 +33,7 @@ public final class TypeFactory {
 		} else {
 			int end = signature.lastIndexOf(']');
 			if (end >= signature.length()){
-				throw new RuntimeException("Invalid signature: " + signature);
+				throw new BaliThrowable("Invalid signature: " + signature);
 			}
 			String[] argumentSignatures = splitArguments(signature.substring(start + 1, end));
 			List<Type> arguments = new LinkedList<>(null, null);

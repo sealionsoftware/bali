@@ -26,7 +26,7 @@ public final class Console implements ReaderWriter {
 		try {
 			return convert(in.readLine());
 		} catch (IOException e) {
-			throw new java.lang.RuntimeException("IOException whilst reading from standard in");
+			throw new BaliThrowable("IOException whilst reading from standard in");
 		}
 	}
 
@@ -35,7 +35,7 @@ public final class Console implements ReaderWriter {
 			char read = (char) in.read();
 			return read > 0 ? convert(read) : null;
 		} catch (IOException e) {
-			throw new java.lang.RuntimeException("IOException whilst reading from standard in");
+			throw new BaliThrowable("IOException whilst reading from standard in");
 		}
 	}
 

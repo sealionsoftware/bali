@@ -1,5 +1,6 @@
 package bali.collection;
 
+import bali.BaliThrowable;
 import bali.Boolean;
 import bali.Integer;
 import bali.Iterator;
@@ -25,7 +26,7 @@ public class LinkedQueue<T> implements Queue<T> {
 
 	public T pop() {
 		if (convert(list.isEmpty())){
-			throw new RuntimeException("The queue is empty");
+			throw new BaliThrowable("The queue is empty");
 		}
 		T ret = list.get(ONE);
 		list.remove(ONE);

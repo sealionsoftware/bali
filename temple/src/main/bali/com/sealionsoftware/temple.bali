@@ -62,7 +62,7 @@ object HttpProtocolHandler(HttpHandler router) implements ProtocolHandler {
 			CONSOLE << "Receiving Request for $path";
 
 			for (String header : connection){
-				if (header.size() > 0){
+				if (header.isEmpty()){
 					break;
 				}
                 Collection[String] headerElements = header / ": ";
@@ -76,8 +76,12 @@ object HttpProtocolHandler(HttpHandler router) implements ProtocolHandler {
 			//TODO: request body
 
 	        HttpResponse response = router.handle(request);
-	        connection << "HTTP/1.1 " + VALUE_FORMATTER.format(response.status) + " OK";
+	        String? body = response.body;
+	        if (?body){
+	            response.headers.put("Content-Length", VALUE_FORMATTER.format(body.size()));
+	        }
 
+	        connection << "HTTP/1.1 " + VALUE_FORMATTER.format(response.status) + " OK";
 	        for (Entry[String, String] entry : response.headers){
 	            connection << entry.key + ": " + entry.value;
 	        }
@@ -87,8 +91,6 @@ object HttpProtocolHandler(HttpHandler router) implements ProtocolHandler {
 	        if (?body){
 	            connection << body;
 	        }
-
-	        CONSOLE << "Response Completed";
         }
 	}
 }
@@ -98,10 +100,8 @@ object TempleServer implements Executable {
 	field BeanStore[ServerConfiguration] configurationStore
 	field ServerConfiguration configuration
 
-//	field ModuleLoader[Resource] resourceLoader = new MavenModuleLoader()
 	field ModuleTypeLoader typeLoader
 
-//	field Map[String, Resource] resources = new HashMap()
 	field Map[String, ResourcePool[WebApplication]@] webApplications = new HashMap()
 
 	method execute {
@@ -189,8 +189,8 @@ object TempleServer implements Executable {
                             if(?application){
                                 Socket connection = monitor.getConnection();
                                 ProtocolHandler handler = new HttpProtocolHandler(application);
-                                try {
-                                    handler.handle(connection);
+                                try while (connection.isConnected()){
+                                     handler.handle(connection);
                                 } catch (Exception e){
                                     CONSOLE << "Error Processing Request: " + e.message;
                                 }
