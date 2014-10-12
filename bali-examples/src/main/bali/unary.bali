@@ -10,7 +10,7 @@ object UnaryExecutable implements Executable {
  	    n = -n; // Now -1
  	    n = |n; // Now 1
 
- 	    CONSOLE << "Calc: " + NUMBER_FACTORY.format(n);
+ 	    CONSOLE << "Calc: " + VALUE_FORMATTER.format(n);
 
  	}
 

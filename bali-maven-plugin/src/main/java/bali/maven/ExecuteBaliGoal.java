@@ -69,7 +69,7 @@ public class ExecuteBaliGoal implements Mojo {
 			executeThread.start();
 			executeThread.join();
 			while(group.activeCount() > 0){
-				Thread[] threads = new Thread[group.activeCount()*2];
+				Thread[] threads = new Thread[group.activeCount()];
 				group.enumerate(threads);
 				for (Thread childThread : threads){
 					childThread.join();
@@ -82,7 +82,7 @@ public class ExecuteBaliGoal implements Mojo {
 		} catch (ClassNotFoundException e) {
 			throw new MojoExecutionException("The specified class could not be found", e);
 		} catch (Throwable e) {
-			throw new MojoFailureException("An error occured whilst running", e);
+			throw new MojoFailureException("An error occurred whilst running", e);
 		}
 	}
 

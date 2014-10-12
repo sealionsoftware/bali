@@ -14,8 +14,10 @@ object CompoundExecutable implements Executable {
 
 	    i = new Counter();
 
-		while (++i < 10) if ([3,5,7,8].contains(#i)) {
-			CONSOLE << ("Hi" + NUMBER_FACTORY.format(#i + 1));
-		}
+//      TODO: get this working again
+
+//		while (++i < 10) if ([3,5,7,8].contains(#i)) {
+//			CONSOLE << ("Hi" + VALUE_FORMATTER.format(#i + 1));
+//		}
  	}
 }

@@ -24,7 +24,7 @@ object BeanExecutable() implements Executable {
 	    );
 
 	    CONSOLE << aBean.aString;
-	    CONSOLE << NUMBER_FACTORY.format(aBean.aSubBean.aNumber);
+	    CONSOLE << VALUE_FORMATTER.format(aBean.aSubBean.aNumber);
  	}
 
 }

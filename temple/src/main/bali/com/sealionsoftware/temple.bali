@@ -228,7 +228,4 @@ bean ResourceConfiguration {
 	property String@ artifactId
 	property String@ versionId
 
-	property Map[String@, String@] parameters
-	property Map[String@, String@] resources
-
 }

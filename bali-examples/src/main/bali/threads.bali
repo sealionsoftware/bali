@@ -15,7 +15,7 @@ object ThreadedExecutable() implements Executable {
 		while (++i < 5) {
 			Integer@ imm = #i;
 			run {
-				CONSOLE << (GREETING + ": " + NUMBER_FACTORY.format(imm));
+				CONSOLE << (GREETING + ": " + VALUE_FORMATTER.format(imm));
 			}
 		}
 
