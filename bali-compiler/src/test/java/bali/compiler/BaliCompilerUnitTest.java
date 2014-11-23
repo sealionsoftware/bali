@@ -6,6 +6,9 @@ import org.junit.Test;
 import java.io.File;
 import java.net.URL;
 
+import static java.lang.Thread.currentThread;
+import static junit.framework.Assert.assertNotNull;
+
 /**
  * User: Richard
  * Date: 14/04/13
@@ -18,8 +21,8 @@ public class BaliCompilerUnitTest {
 	@Test
 	public void testCompileExample() throws Exception{
 
-		URL fileUrl = Thread.currentThread().getContextClassLoader().getResource(TEST_TARGET_NAME);
-		Assert.assertNotNull(fileUrl);
+		URL fileUrl = currentThread().getContextClassLoader().getResource(TEST_TARGET_NAME);
+		assertNotNull(fileUrl);
 		File inputs = new File(fileUrl.toURI()).getParentFile();
 		File outputs = new File(inputs, TEST_OUTPUT_NAME);
 
@@ -28,7 +31,7 @@ public class BaliCompilerUnitTest {
 
 		BaliCompiler.main(new String[]{inputs.toString(), outputs.toString()});
 		File[] outputFiles = outputs.listFiles();
-		Assert.assertNotNull(outputFiles);
+		assertNotNull(outputFiles);
 		Assert.assertEquals(1, outputFiles.length);
 		Assert.assertEquals("compiler.bar", outputFiles[0].getName());
 

@@ -18,8 +18,8 @@ import java.util.List;
  */
 public class BeanValidatorFactory implements ValidatorFactory {
 
-	public Validator createValidator(final ClassLibrary library, final ConstantLibrary constantLibraryv) {
-		return new Validator() {
+	public Visitor createValidator(final ClassLibrary library, final ConstantLibrary constantLibraryv) {
+		return new Visitor() {
 			public List<ValidationFailure> validate(Node node, Control control) {
 
 				if (node instanceof BeanNode){

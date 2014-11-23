@@ -1,6 +1,6 @@
 package bali.compiler.validation;
 
-import bali.compiler.parser.Reaper;
+import bali.compiler.Reaper;
 import bali.compiler.parser.tree.ClassNode;
 import bali.compiler.parser.tree.CompilationUnitNode;
 import bali.compiler.parser.tree.TerminatedException;
@@ -8,7 +8,7 @@ import bali.compiler.reference.BlockDeclaringThread;
 import bali.compiler.reference.SimpleReference;
 import bali.compiler.type.ClassLibrary;
 import bali.compiler.type.ConstantLibrary;
-import bali.compiler.validation.validator.Validator;
+import bali.compiler.validation.validator.Visitor;
 import bali.compiler.validation.validator.ValidatorFactory;
 
 import java.util.ArrayList;
@@ -57,12 +57,12 @@ public class MultiThreadedValidationEngine implements ValidationEngine {
 			for (final CompilationUnitNode unit : units){
 				List<ValidationFailure> existingFailures = validationFailures.get(unit.getName());
 				final List<ValidationFailure> unitFailures = existingFailures != null ? existingFailures : Collections.synchronizedList(new ArrayList<ValidationFailure>());
-				final Validator validator = validatorFactory.createValidator(classLibrary, constantLibrary);
+				final Visitor visitor = validatorFactory.createValidator(classLibrary, constantLibrary);
 				BlockDeclaringThread t = new BlockDeclaringThread(new Runnable() {
 					public void run() {
 						try {
 							unitFailures.addAll(
-									unit.accept(validator)
+									unit.accept(visitor)
 							);
 						} catch (TerminatedException e){
 							unitFailures.addAll(e.getFailures());
@@ -72,7 +72,7 @@ public class MultiThreadedValidationEngine implements ValidationEngine {
 							terminated.set(true);
 						}
 					}
-				}, validator.getClass().getName() + ": " + unit.getName(), lock);
+				}, visitor.getClass().getName() + ": " + unit.getName(), lock);
 				t.start();
 				threads.add(t);
 				validationFailures.put(unit.getName(), unitFailures);

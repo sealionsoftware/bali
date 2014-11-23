@@ -28,9 +28,9 @@ import java.util.Map;
  */
 public class ArgumentValidatorFactory implements ValidatorFactory {
 
-	public Validator createValidator(ClassLibrary library, ConstantLibrary constantLibrary) {
+	public Visitor createValidator(ClassLibrary library, ConstantLibrary constantLibrary) {
 
-		return new Validator() {
+		return new Visitor() {
 
 
 			public List<ValidationFailure> validate(Node node, Control control) {
@@ -75,7 +75,7 @@ public class ArgumentValidatorFactory implements ValidatorFactory {
 					}
 				}
 				if (hasNull && hasNamed){
-					failures.add(new ValidationFailure(node, "A argument list cannot mix named and unnamed arguments"));
+					failures.add(new ValidationFailure(node, "An argument list cannot mix named and unnamed arguments"));
 					return failures;
 				}
 				if (hasNull){

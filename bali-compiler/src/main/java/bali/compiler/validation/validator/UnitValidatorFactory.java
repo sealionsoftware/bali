@@ -19,8 +19,8 @@ import java.util.Set;
  */
 public class UnitValidatorFactory implements ValidatorFactory {
 
-	public Validator createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
-		return new Validator(){
+	public Visitor createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
+		return new Visitor(){
 
 			private Set<String> memberNames;
 

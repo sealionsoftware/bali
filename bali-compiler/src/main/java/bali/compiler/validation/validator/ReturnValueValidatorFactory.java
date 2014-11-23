@@ -21,9 +21,9 @@ import java.util.List;
  */
 public class ReturnValueValidatorFactory implements ValidatorFactory {
 
-	public Validator createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
+	public Visitor createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
 
-		return new Validator() {
+		return new Visitor() {
 
 			private Site type;
 

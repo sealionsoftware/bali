@@ -12,6 +12,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collections;
 
+import static java.lang.Thread.*;
+
 /**
  * User: Richard
  * Date: 21/11/13
@@ -21,7 +23,7 @@ public class ThreadSafetyUnitTest {
 	private static final String TEST_TARGETS_NAME = "bali/compiler/validator/";
 	private static final String PACKAGE_NAME = "threadsafe";
 	private static final String FILE_NAME = PACKAGE_NAME + BaliCompiler.BALI_SOURCE_FILE_EXTENSION;
-	private static final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+	private static final ClassLoader classLoader = currentThread().getContextClassLoader();
 
 	private BaliCompiler compiler = new BaliCompiler();
 

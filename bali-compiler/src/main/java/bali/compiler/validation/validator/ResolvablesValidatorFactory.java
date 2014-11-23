@@ -27,9 +27,9 @@ import java.util.Map;
  */
 public class ResolvablesValidatorFactory implements ValidatorFactory {
 
-	public Validator createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
+	public Visitor createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
 
-		return new Validator() {
+		return new Visitor() {
 
 			private Map<String, Reference<bali.compiler.type.Class>> resolvables = new HashMap<>();
 

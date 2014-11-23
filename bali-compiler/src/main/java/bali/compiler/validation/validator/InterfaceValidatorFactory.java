@@ -17,8 +17,8 @@ import java.util.List;
  */
 public class InterfaceValidatorFactory implements ValidatorFactory {
 
-	public Validator createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
-		return new Validator() {
+	public Visitor createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
+		return new Visitor() {
 			public List<ValidationFailure> validate(Node node, Control control) {
 
 				if (node instanceof InterfaceNode){

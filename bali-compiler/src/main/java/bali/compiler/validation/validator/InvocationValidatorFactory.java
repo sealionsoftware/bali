@@ -27,9 +27,9 @@ import java.util.List;
  */
 public class InvocationValidatorFactory implements ValidatorFactory {
 
-	public Validator createValidator(ClassLibrary library, ConstantLibrary constantLibrary) {
+	public Visitor createValidator(ClassLibrary library, ConstantLibrary constantLibrary) {
 
-		return new Validator() {
+		return new Visitor() {
 
 			private Site thisSite;
 

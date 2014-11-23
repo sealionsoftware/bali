@@ -18,14 +18,14 @@ import java.util.List;
  */
 public class StringLiteralValidatorFactory implements ValidatorFactory {
 
-	public Validator createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
-		return new Validator() {
+	public Visitor createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
+		return new Visitor() {
 			private Site site = new ParameterisedSite(library.getReference(String.class.getName()), false, true);
 
 			public List<ValidationFailure> validate(Node node, Control control) {
 				if (node instanceof StringLiteralExpressionNode){
 					StringLiteralExpressionNode literal = (StringLiteralExpressionNode) node;
-					//TODO: validate string literals
+					//TODO: visit string literals
 					literal.setType(site);
 				} else {
 					control.validateChildren();

@@ -20,9 +20,9 @@ public class ForStatementValidatorFactory implements ValidatorFactory {
 
 	private static final String ITERABLE_CLASS_NAME = bali.Iterable.class.getName();
 
-	public Validator createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
+	public Visitor createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
 
-		return new Validator() {
+		return new Visitor() {
 
 			public List<ValidationFailure> validate(Node node, Control control) {
 				List<ValidationFailure> failures = new ArrayList<>();

@@ -13,7 +13,7 @@ object HelloWorldApplication implements WebApplication {
 		return new HttpResponse(
 			status: 200,
 			headers: new HashMap(),
-			body: "<html><body>Hello World<br/><img src='img.gif'/><img src='img2.gif'/><img src='img3.gif'/><img src='img4.gif'/><img src='img5.gif'/></body></html>"
+			body: "<html><body>Hello World</body></html>"
 		);
 	}
 

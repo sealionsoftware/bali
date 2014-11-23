@@ -14,17 +14,20 @@ import org.mockito.Mockito;
 
 import java.util.Collections;
 
+import static junit.framework.Assert.*;
+import static org.mockito.Mockito.*;
+
 /**
  * User: Richard
  * Date: 08/05/13
  */
 public class ConfigurablePackageGeneratorUnitTest {
 
-	private static Generator<CompilationUnitNode, GeneratedClass> packageClassGenerator = Mockito.mock(Generator.class);
-	private static Generator<BeanNode, GeneratedClass> beanGenerator = Mockito.mock(Generator.class);
-	private static Generator<InterfaceNode, GeneratedClass> interfaceGenerator = Mockito.mock(Generator.class);
-	private static Generator<ObjectNode, GeneratedClass> classGenerator = Mockito.mock(Generator.class);
-	private static Generator<RunStatementNode, GeneratedClass> runStatementGenerator = Mockito.mock(Generator.class);
+	private static Generator<CompilationUnitNode, GeneratedClass> packageClassGenerator = mock(Generator.class);
+	private static Generator<BeanNode, GeneratedClass> beanGenerator = mock(Generator.class);
+	private static Generator<InterfaceNode, GeneratedClass> interfaceGenerator = mock(Generator.class);
+	private static Generator<ObjectNode, GeneratedClass> classGenerator = mock(Generator.class);
+	private static Generator<RunStatementNode, GeneratedClass> runStatementGenerator = mock(Generator.class);
 
 	private static ConfigurablePackageGenerator generator = new ConfigurablePackageGenerator(
 			packageClassGenerator,
@@ -48,13 +51,13 @@ public class ConfigurablePackageGeneratorUnitTest {
 	public void testGeneratePackageWithConstants() throws Exception{
 
 		GeneratedClass packageClass = new GeneratedClass("testPackageClass", new byte[0]);
-		Mockito.stub(packageClassGenerator.build(unit)).toReturn(packageClass);
+		stub(packageClassGenerator.build(unit)).toReturn(packageClass);
 
 		GeneratedPackage generated = generator.build(unit);
 
-		Assert.assertEquals("Package Name", unit.getName(), generated.getName());
-		Assert.assertEquals("# Classes", 1, generated.getClasses().size());
-		Assert.assertEquals("Package Class Name", "testPackageClass", generated.getClasses().get(0).getName());
+		assertEquals("Package Name", unit.getName(), generated.getName());
+		assertEquals("# Classes", 1, generated.getClasses().size());
+		assertEquals("Package Class Name", "testPackageClass", generated.getClasses().get(0).getName());
 	}
 
 	@Test
@@ -64,12 +67,12 @@ public class ConfigurablePackageGeneratorUnitTest {
 		unit.addInterface(iface);
 
 		GeneratedClass generatedInterface = new GeneratedClass("testInterface", new byte[0]);
-		Mockito.stub(interfaceGenerator.build(iface)).toReturn(generatedInterface);
+		stub(interfaceGenerator.build(iface)).toReturn(generatedInterface);
 
 		GeneratedPackage generated = generator.build(unit);
 
-		Assert.assertEquals("# Classes", 2, generated.getClasses().size());
-		Assert.assertEquals("Interface Class Name", "testInterface", generated.getClasses().get(1).getName());
+		assertEquals("# Classes", 2, generated.getClasses().size());
+		assertEquals("Interface Class Name", "testInterface", generated.getClasses().get(1).getName());
 	}
 
 	@Test
@@ -79,12 +82,12 @@ public class ConfigurablePackageGeneratorUnitTest {
 		unit.addClass(clazz);
 
 		GeneratedClass generatedClass = new GeneratedClass("testClass", new byte[0]);
-		Mockito.stub(classGenerator.build(clazz)).toReturn(generatedClass);
+		stub(classGenerator.build(clazz)).toReturn(generatedClass);
 
 		GeneratedPackage generated = generator.build(unit);
 
-		Assert.assertEquals("# Classes", 2, generated.getClasses().size());
-		Assert.assertEquals("Class Name", "testClass", generated.getClasses().get(1).getName());
+		assertEquals("# Classes", 2, generated.getClasses().size());
+		assertEquals("Class Name", "testClass", generated.getClasses().get(1).getName());
 	}
 
 }

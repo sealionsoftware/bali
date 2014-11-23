@@ -9,6 +9,6 @@ import bali.compiler.type.ConstantLibrary;
  */
 public interface ValidatorFactory {
 
-	public Validator createValidator(ClassLibrary classLib, ConstantLibrary constLib);
+	public Visitor createValidator(ClassLibrary classLib, ConstantLibrary constLib);
 
 }

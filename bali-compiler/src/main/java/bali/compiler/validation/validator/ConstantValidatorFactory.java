@@ -19,8 +19,8 @@ import java.util.List;
  */
 public class ConstantValidatorFactory implements ValidatorFactory {
 
-	public Validator createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
-		return new Validator() {
+	public Visitor createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
+		return new Visitor() {
 
 			private List<Declaration<Site>> declarations = new ArrayList<>();
 

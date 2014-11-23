@@ -28,9 +28,9 @@ import java.util.List;
  */
 public class UnaryOperationValidatorFactory implements ValidatorFactory {
 
-	public Validator createValidator(final ClassLibrary library, ConstantLibrary constantLibrary) {
+	public Visitor createValidator(final ClassLibrary library, ConstantLibrary constantLibrary) {
 
-		return new Validator() {
+		return new Visitor() {
 
 			private Reference<bali.compiler.type.Class> nullCheckClass = library.getReference(bali.Boolean.class.getName());
 

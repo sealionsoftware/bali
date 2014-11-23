@@ -18,16 +18,16 @@ import java.util.List;
  */
 public class BooleanLiteralValidatorFactory implements ValidatorFactory {
 
-	public Validator createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
+	public Visitor createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
 
-		return new Validator() {
+		return new Visitor() {
 
 			private Site site = new ParameterisedSite(library.getReference(Boolean.class.getName()), false, true);
 
 			public List<ValidationFailure> validate(Node node, Control control) {
 				if (node instanceof BooleanLiteralExpressionNode) {
 					BooleanLiteralExpressionNode literal = (BooleanLiteralExpressionNode) node;
-					//TODO: validate boolean literals
+					//TODO: visit boolean literals
 					literal.setType(site);
 				} else {
 					control.validateChildren();

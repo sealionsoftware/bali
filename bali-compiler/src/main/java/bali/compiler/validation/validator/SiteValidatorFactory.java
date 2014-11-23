@@ -18,9 +18,9 @@ import java.util.List;
  */
 public class SiteValidatorFactory implements ValidatorFactory {
 
-	public Validator createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
+	public Visitor createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
 
-		return new Validator() {
+		return new Visitor() {
 
 			public boolean allowNonInterfaceTypes = false;
 

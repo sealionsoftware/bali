@@ -19,9 +19,9 @@ import java.util.List;
  */
 public class RunStatementValidatorFactory implements ValidatorFactory {
 
-	public Validator createValidator(ClassLibrary classLibrary, ConstantLibrary constantLibrary) {
+	public Visitor createValidator(ClassLibrary classLibrary, ConstantLibrary constantLibrary) {
 
-		return new Validator(){
+		return new Visitor(){
 
 			private String unitName;
 			private String sourceName;

@@ -41,8 +41,8 @@ import java.util.UUID;
  */
 public class ReferenceValidatorFactory implements ValidatorFactory {
 
-	public Validator createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
-		return new Validator() {
+	public Visitor createValidator(final ClassLibrary library, final ConstantLibrary constantLibrary) {
+		return new Visitor() {
 
 			private Site thisSite;
 			private Deque<Scope> scopeStack = new ArrayDeque<>();
