@@ -82,7 +82,7 @@ breakStatement:             'break' ;
 
 continueStatement:          'continue' ;
 
-type:                       IDENTIFIER ('<'  typeList '>')? '?'? ;
+type:                       IDENTIFIER ( '<'  typeList '>' )? '?'? ;
 
 typeList:                   type (',' type)* ;
 
@@ -97,13 +97,16 @@ argumentList:               '(' ( argument ( ',' argument)*)? ')' ;
 expression:                 '(' expression ')'
 							 | literal
 							 | construction
-							 | IDENTIFIER argumentList
-							 | expression '.' IDENTIFIER argumentList
-							 | IDENTIFIER
-							 | expression '.' IDENTIFIER
-							 | expression operator expression
+							 | invocation
+							 | reference
 							 | operator expression
+							 | expression operator expression
+							 | expression '.' ( invocation | reference )
 							;
+
+invocation:					IDENTIFIER argumentList ;
+
+reference:					IDENTIFIER ;
 
 literal:                    STRING_LITERAL | NUMBER_LITERAL | booleanLiteral | arrayLiteral ;
 
@@ -111,4 +114,4 @@ arrayLiteral:               '[' (expression (',' expression)*)? ']' ;
 
 booleanLiteral:             'true' | 'false' ;
 
-operator:                   ( '+' | '-' | '$' | '%' | '^' | '&' | '*' | '#' | '~' | '?' | '\\' | '|' | '=' | '<' | '>' | '¬' | '¦' | '`' | '!' | '@' ) +;
+operator:                   ( '+' | '-' | '$' | '%' | '^' | '&' | '*' | '#' | '~' | '?' | '\\' | '|' | '=' | '<' | '>' | '¬' | '¦' | '`' | '!' | '@' )+ ;
