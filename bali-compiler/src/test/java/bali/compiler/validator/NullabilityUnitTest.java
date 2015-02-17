@@ -2,7 +2,7 @@ package bali.compiler.validator;
 
 import bali.compiler.BaliCompiler;
 import bali.compiler.PackageDescription;
-import bali.compiler.validation.ValidationException;
+import bali.compiler.processors.ValidationException;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;

@@ -8,8 +8,6 @@ public interface Site extends Type {
 
 	Boolean isNullable();
 
-	Boolean isThreadSafe();
-
 	boolean isAssignableTo(Site s);
 
 }

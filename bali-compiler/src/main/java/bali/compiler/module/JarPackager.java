@@ -3,6 +3,7 @@ package bali.compiler.module;
 import bali.compiler.GeneratedClass;
 import bali.compiler.GeneratedPackage;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.List;
@@ -18,7 +19,9 @@ import java.util.jar.Manifest;
  */
 public class JarPackager implements ModuleWriter {
 
-	public void writeModule(List<GeneratedPackage> packages, OutputStream outputStream, String mainClassName) throws Exception {
+	public void writeModule(List<GeneratedPackage> packages, OutputStream outputStream, String mainClassName)  {
+
+		long time = System.currentTimeMillis();
 
 		Manifest manifest = new Manifest();
 		Attributes mainAttributes = manifest.getMainAttributes();
@@ -27,9 +30,7 @@ public class JarPackager implements ModuleWriter {
 			mainAttributes.put(Attributes.Name.MAIN_CLASS, mainClassName);
 		}
 
-		JarOutputStream jos = new JarOutputStream(outputStream, manifest);
-
-		try {
+		try (JarOutputStream jos = new JarOutputStream(outputStream, manifest)) {
 
 			Set<String> createdDirectories = new HashSet<>();
 
@@ -41,7 +42,7 @@ public class JarPackager implements ModuleWriter {
 					if (!createdDirectories.contains(currentPath)) {
 						createdDirectories.add(currentPath);
 						JarEntry entry = new JarEntry(currentPath);
-						entry.setTime(System.currentTimeMillis());
+						entry.setTime(time);
 						jos.putNextEntry(entry);
 						jos.closeEntry();
 					}
@@ -49,15 +50,15 @@ public class JarPackager implements ModuleWriter {
 				for (GeneratedClass clazz : generatedPackage.getClasses()) {
 					byte[] code = clazz.getCode();
 					JarEntry entry = new JarEntry(completePath.toString() + clazz.getName() + ".class");
-					entry.setTime(System.currentTimeMillis());
+					entry.setTime(time);
 					jos.putNextEntry(entry);
 					jos.write(code);
 					jos.closeEntry();
 				}
 			}
 
-		} finally {
-			jos.close();
+		} catch (IOException e) {
+			throw new RuntimeException("Could not write module file", e);
 		}
 	}
 }

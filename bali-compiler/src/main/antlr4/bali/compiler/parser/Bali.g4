@@ -2,10 +2,20 @@
 
 grammar Bali;
 
+@members {
+ 	public static class ParserRuleContext extends org.antlr.v4.runtime.ParserRuleContext {
+ 	    ParserRuleContext(ParserRuleContext parent, int invokingState) {
+    			super(parent, invokingState);
+    	}
+
+ 	    int count = 0;
+ 	}
+}
+
 // Token Definition
 
-WHITESPACE:                 [ \t\r\n]+ -> skip ;
-LINE_COMMENT:               '//' ~[\r\n]* ('\r'? '\n' | EOF) -> skip ;
+WHITESPACE:                 [ \t\r\n]+ -> channel(HIDDEN) ;
+LINE_COMMENT:               '//' ~[\r\n]* ('\r'? '\n' | EOF) -> channel(HIDDEN) ;
 
 IDENTIFIER:                 [a-zA-Z_]+ ;
 
@@ -21,12 +31,12 @@ packageDeclaration:
 		constantDeclaration |
 		beanDeclaration |
 		interfaceDeclaration |
-		objectDeclaration
+		objectDeclaration+
 	)*
 	EOF
 ;
 
-importDeclaration:          'import' (IDENTIFIER '.')* IDENTIFIER ( 'as' IDENTIFIER )? ;
+importDeclaration:          'import' qualifiedName ( 'as' IDENTIFIER )? ;
 
 constantDeclaration:        'constant' type? IDENTIFIER '=' expression ;
 
@@ -50,11 +60,9 @@ statement:                  lineStatement | controlStatement ;
 
 lineStatement:              variableDeclaration | returnStatement | throwStatement | breakStatement | continueStatement | expression ;
 
-controlStatement:           codeBlock | conditionalStatement | tryStatement | whileStatement | forStatement | switchStatement | runStatement ;
+controlStatement:           ( codeBlock | conditionalStatement | whileStatement | forStatement | switchStatement | runStatement ) catchBlock+ ;
 
 conditionalStatement:       'if' '(' expression ')' controlStatement ('else' controlStatement)? ;
-
-tryStatement:               'try' controlStatement catchBlock+ ;
 
 catchBlock:                 'catch' '(' parameter ')' controlStatement ;
 
@@ -115,3 +123,5 @@ arrayLiteral:               '[' (expression (',' expression)*)? ']' ;
 booleanLiteral:             'true' | 'false' ;
 
 operator:                   ( '+' | '-' | '$' | '%' | '^' | '&' | '*' | '#' | '~' | '?' | '\\' | '|' | '=' | '<' | '>' | '¬' | '¦' | '`' | '!' | '@' )+ ;
+
+qualifiedName:              (IDENTIFIER '.')* IDENTIFIER;
