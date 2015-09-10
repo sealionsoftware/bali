@@ -16,12 +16,14 @@ Comparison with Java:
 - Enums
 - Protected/Default
 - Reflection
-- Manual Casting
+- Manual casting
 
 (in)
 - Constants
-- Nullable Types
-- Monitor Types
-- Run Statements
+- Nullable types
+- Monitor types
+- Run statements
 - Named parameters
 - Record types
+- Runtime type parameters
+- Flow typing
