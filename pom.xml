@@ -15,8 +15,6 @@
 	<modules>
 		<module>bali-lang</module>
 		<module>bali-compiler</module>
-		<module>bali-maven-plugin</module>
-		<module>bali-json</module>
 	</modules>
 
 	<build>

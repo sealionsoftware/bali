@@ -1,5 +1,0 @@
-{
-	#hashme;
-	value = ~a;
-	value = -a.invoke();
-}

@@ -1,6 +1,0 @@
-{
-	for (Type t : iterable) {
-		// Do something
-    }
-
-}

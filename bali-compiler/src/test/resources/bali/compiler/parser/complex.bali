@@ -1,3 +1,0 @@
-{
-	ConnectionMonitor[Socket]? monitor = new SocketMonitor(port);
-}

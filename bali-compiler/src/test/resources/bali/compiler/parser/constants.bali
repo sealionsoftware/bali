@@ -1,7 +1,0 @@
-// Constant Declaration
-
-constant Number A_NUMBER = 1
-constant String A_STRING = "Hello World"
-constant Boolean A_BOOLEAN = true
-constant Iterable[Number] A_LIST = [1,2,3]
-constant Logger LOGGER = new Logger("loggerName")

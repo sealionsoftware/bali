@@ -14,46 +14,7 @@
 
 	<description>Bali Language API</description>
 
-	<properties>
-		<aether.version>0.9.0.M4</aether.version>
-	</properties>
-
 	<dependencies>
-		<dependency>
-			<groupId>org.eclipse.aether</groupId>
-			<artifactId>aether-api</artifactId>
-			<version>${aether.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.aether</groupId>
-			<artifactId>aether-util</artifactId>
-			<version>${aether.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.aether</groupId>
-			<artifactId>aether-impl</artifactId>
-			<version>${aether.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.aether</groupId>
-			<artifactId>aether-connector-basic</artifactId>
-			<version>${aether.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.aether</groupId>
-			<artifactId>aether-transport-file</artifactId>
-			<version>${aether.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.aether</groupId>
-			<artifactId>aether-transport-http</artifactId>
-			<version>${aether.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-aether-provider</artifactId>
-			<version>3.1.1</version>
-		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
