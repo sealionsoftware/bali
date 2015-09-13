@@ -4,6 +4,8 @@ import java.util.Map;
 
 public interface Interpreter {
 
-    Map<String, Object> interpret(String fragment);
+    String FRAGMENT_CLASS_NAME = "InterpretedFragment";
+
+    Map<String, Object> run(String fragment);
 
 }

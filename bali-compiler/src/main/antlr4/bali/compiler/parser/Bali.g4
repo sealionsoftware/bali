@@ -15,6 +15,8 @@ NUMBER_LITERAL:             [0-9]+ ('.' [0-9]+)? ;
 
 // Grammar Definition
 
+script:                     statement* ;
+
 codeBlock:                  '{' statement* '}' ;
 
 statement:                  lineStatement  ;
