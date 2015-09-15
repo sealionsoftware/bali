@@ -8,10 +8,10 @@ import org.junit.Test;
 
 import java.util.Map;
 
+import static com.sealionsoftware.bali.Matchers.isEmpty;
 import static com.sealionsoftware.bali.compiler.Interpreter.FRAGMENT_CLASS_NAME;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -36,7 +36,7 @@ public class ReflectiveExecutorTest {
         Map<String, Object> ret = subject.execute(generatedPackage);
 
         assertThat(ret, notNullValue());
-        assertThat(ret.size(), equalTo(0));
+        assertThat(ret, isEmpty());
     }
 
 
