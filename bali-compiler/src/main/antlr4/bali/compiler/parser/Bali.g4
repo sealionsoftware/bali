@@ -21,16 +21,12 @@ codeBlock:                  '{' statement* '}' ;
 
 statement:                  lineStatement  ;
 
-lineStatement:              variableDeclaration ;
-
-variableDeclaration:        'var' type? IDENTIFIER ('=' expression)? ;
-
-type:                       IDENTIFIER ( '<'  typeList '>' )? '?'? ;
-
-typeList:                   type (',' type)* ;
+lineStatement:              expression;
 
 expression:                 '(' expression ')'
 							 | literal
 							;
 
-literal:                    STRING_LITERAL ;
+literal:                    booleanLiteral;
+
+booleanLiteral:             'true' | 'false' ;
