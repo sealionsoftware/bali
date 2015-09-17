@@ -5,6 +5,7 @@ import com.sealionsoftware.bali.compiler.GeneratedClass;
 import com.sealionsoftware.bali.compiler.GeneratedPackage;
 import com.sealionsoftware.bali.compiler.Interpreter;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
+import com.sealionsoftware.bali.compiler.tree.Visitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -24,7 +25,7 @@ public class ASMBytecodeEngine implements BytecodeEngine, Opcodes {
                 new String[]{"com/sealionsoftware/bali/compiler/Fragment"});
 
         buildConstructor(cw);
-        buildMethod(cw);
+        buildMethod(cw, fragment);
 
         cw.visitEnd();
 
@@ -50,13 +51,15 @@ public class ASMBytecodeEngine implements BytecodeEngine, Opcodes {
         methodVisitor.visitEnd();
     }
 
-    private void buildMethod(ClassWriter cw) {
+    private void buildMethod(ClassWriter cw, CodeBlockNode fragment) {
 
         MethodVisitor methodVisitor = cw.visitMethod(ACC_PUBLIC, "execute", "()Ljava/util/Map;", "()Ljava/util/Map<Ljava/lang/String;Ljava/lang/Object;>;", null);
         methodVisitor.visitCode();
         Label l0 = new Label();
         methodVisitor.visitLabel(l0);
-        methodVisitor.visitLineNumber(6, l0);
+
+        fragment.accept(new ASMStackVisitor(methodVisitor));
+
         methodVisitor.visitTypeInsn(NEW, "java/util/HashMap");
         methodVisitor.visitInsn(DUP);
         methodVisitor.visitMethodInsn(INVOKESPECIAL, "java/util/HashMap", "<init>", "()V", false);
