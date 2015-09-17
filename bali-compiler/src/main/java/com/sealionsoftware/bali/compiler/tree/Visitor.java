@@ -5,4 +5,6 @@ public interface Visitor {
 
     void visit(BooleanLiteralNode node);
 
+    void visit(VariableNode node);
+
 }

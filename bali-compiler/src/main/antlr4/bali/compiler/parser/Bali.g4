@@ -21,11 +21,13 @@ codeBlock:                  '{' statement* '}' ;
 
 statement:                  lineStatement  ;
 
-lineStatement:              expression;
+lineStatement:              expression
+							 | variableDeclaration;
+
+variableDeclaration:        'var' IDENTIFIER '=' expression ;
 
 expression:                 '(' expression ')'
-							 | literal
-							;
+							 | literal;
 
 literal:                    booleanLiteral;
 
