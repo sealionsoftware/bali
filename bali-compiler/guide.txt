@@ -1,1 +1,8 @@
 :: Keywords
+
+true false var
+
+:: Variables
+
+var aVariable = true
+
