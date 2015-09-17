@@ -20,4 +20,13 @@ public class ANTLRParseEngineTest {
         assertThat(ret, notNullValue());
         assertThat(ret.getStatements().size(), equalTo(0));
     }
+
+    @Test(expected = RuntimeException.class)
+    public void testParseInvalid() throws Exception {
+
+        CodeBlockNode ret = subject.parse("gobbledegook");
+
+        assertThat(ret, notNullValue());
+        assertThat(ret.getStatements().size(), equalTo(0));
+    }
 }

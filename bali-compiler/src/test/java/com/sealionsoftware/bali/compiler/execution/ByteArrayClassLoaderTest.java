@@ -35,4 +35,13 @@ public class ByteArrayClassLoaderTest {
         assertThat(clazz.getName(), equalTo(FRAGMENT_CLASS_NAME));
     }
 
+    @Test
+    public void testDefineFromDelegate() throws Exception {
+
+        Class clazz = subject.loadClass(Object.class.getName());
+
+        assertThat(clazz, notNullValue());
+        assertThat(clazz.getName(), equalTo(Object.class.getName()));
+    }
+
 }

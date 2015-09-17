@@ -11,9 +11,6 @@ public class CodeBlockNode extends StatementNode {
 
 	private List<StatementNode> statements = new ArrayList<>();
 
-	public CodeBlockNode() {
-	}
-
 	public CodeBlockNode(Integer line, Integer character) {
 		super(line, character);
 	}

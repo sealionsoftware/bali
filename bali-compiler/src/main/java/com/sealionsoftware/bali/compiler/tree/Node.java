@@ -14,8 +14,6 @@ public abstract class Node {
 
 	protected List<Node> children = new ArrayList<>();
 
-	protected Node(){}
-
 	protected Node(Integer line, Integer character) {
 		this.line = line;
 		this.character = character;

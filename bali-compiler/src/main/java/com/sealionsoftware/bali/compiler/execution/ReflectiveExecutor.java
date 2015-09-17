@@ -26,20 +26,14 @@ public class ReflectiveExecutor implements Executor {
 
         ClassLoader classLoader = new ByteArrayClassLoader(Thread.currentThread().getContextClassLoader(), code);
 
-        Object instance;
+        Fragment instance;
         try {
             Class<?> fragmentClass = classLoader.loadClass(Interpreter.FRAGMENT_CLASS_NAME);
-            instance  = fragmentClass.newInstance();
+            instance  = (Fragment) fragmentClass.newInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
-        if (!(instance instanceof Fragment)){
-            throw new RuntimeException("Loaded object is not a Fragment");
-        }
-
-        Fragment fragment = (Fragment) instance;
-
-        return fragment.execute();
+        return instance.execute();
     }
 }

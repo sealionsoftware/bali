@@ -12,7 +12,7 @@ public class ASTBuilderVisitor extends BaliBaseVisitor<Node> {
     private CodeBlockNode container;
 
     public CodeBlockNode visitScript(BaliParser.ScriptContext ctx) {
-        CodeBlockNode node = new CodeBlockNode();
+        CodeBlockNode node = new CodeBlockNode(0, 0);
         CodeBlockNode originalContainer = container;
         container = node;
         visitChildren(ctx);

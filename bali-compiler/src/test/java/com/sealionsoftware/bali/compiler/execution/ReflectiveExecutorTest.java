@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import java.util.Map;
 
-import static com.sealionsoftware.bali.Matchers.isEmpty;
+import static com.sealionsoftware.bali.Matchers.isEmptyMap;
 import static com.sealionsoftware.bali.compiler.Interpreter.FRAGMENT_CLASS_NAME;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -36,7 +36,20 @@ public class ReflectiveExecutorTest {
         Map<String, Object> ret = subject.execute(generatedPackage);
 
         assertThat(ret, notNullValue());
-        assertThat(ret, isEmpty());
+        assertThat(ret, isEmptyMap());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testExecuteClassNotFound() throws Exception {
+
+        GeneratedClass generatedClass = mock(GeneratedClass.class);
+        GeneratedPackage generatedPackage = mock(GeneratedPackage.class);
+        when(generatedPackage.getName()).thenReturn("com.sealionsoftware");
+        when(generatedPackage.getClasses()).thenReturn(singletonList(generatedClass));
+        when(generatedClass.getName()).thenReturn(FRAGMENT_CLASS_NAME);
+        when(generatedClass.getCode()).thenReturn(new byte[0]);
+
+        subject.execute(generatedPackage);
     }
 
 
