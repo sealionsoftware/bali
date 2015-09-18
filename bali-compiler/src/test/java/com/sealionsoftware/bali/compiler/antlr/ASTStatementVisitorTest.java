@@ -1,7 +1,6 @@
 package com.sealionsoftware.bali.compiler.antlr;
 
 import bali.compiler.parser.BaliParser;
-import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.antlr.v4.runtime.Token;
@@ -28,19 +27,19 @@ public class ASTStatementVisitorTest {
         assertThat(node, notNullValue());
     }
 
-    @Test
-    public void testVisitBooleanLiteral() throws Exception {
-
-        Token token = mock(Token.class);
-        BaliParser.BooleanLiteralContext context = mock(BaliParser.BooleanLiteralContext.class);
-        when(context.getText()).thenReturn("true");
-        context.start = token;
-
-        BooleanLiteralNode node = subject.visitBooleanLiteral(context);
-
-        assertThat(node, notNullValue());
-        assertThat(node.isTrue(), equalTo(true));
-    }
+//    @Test
+//    public void testVisitBooleanLiteral() throws Exception {
+//
+//        Token token = mock(Token.class);
+//        BaliParser.BooleanLiteralContext context = mock(BaliParser.BooleanLiteralContext.class);
+//        when(context.getText()).thenReturn("true");
+//        context.start = token;
+//
+//        BooleanLiteralNode node = subject.visitBooleanLiteral(context);
+//
+//        assertThat(node, notNullValue());
+//        assertThat(node.isTrue(), equalTo(true));
+//    }
 
     @Test
     public void testVisitVariableNode() throws Exception {
