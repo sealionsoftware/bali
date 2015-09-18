@@ -10,7 +10,7 @@ import java.util.Map;
 
 import static com.sealionsoftware.Constant.immutableMap;
 import static com.sealionsoftware.Constant.put;
-import static com.sealionsoftware.bali.Matchers.isEmptyMap;
+import static com.sealionsoftware.Matchers.isEmptyMap;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;

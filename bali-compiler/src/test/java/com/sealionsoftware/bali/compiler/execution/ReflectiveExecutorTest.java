@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import java.util.Map;
 
-import static com.sealionsoftware.bali.Matchers.isEmptyMap;
+import static com.sealionsoftware.Matchers.isEmptyMap;
 import static com.sealionsoftware.bali.compiler.Interpreter.FRAGMENT_CLASS_NAME;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.notNullValue;

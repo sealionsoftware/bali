@@ -1,4 +1,4 @@
-package com.sealionsoftware.bali;
+package com.sealionsoftware;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
