@@ -20,7 +20,7 @@ public class ANTLRParseEngine implements ParseEngine {
         try {
 
             ANTLRInputStream input = new ANTLRInputStream(new StringReader(fragment));
-            ASTBuilderVisitor astBuilder = new ASTBuilderVisitor();
+            ASTStatementVisitor astBuilder = new ASTStatementVisitor();
 
             Lexer lexer = new BaliLexer(input);
             CommonTokenStream tokens = new CommonTokenStream(lexer);

@@ -24,7 +24,8 @@ public class CodeBlockNode extends StatementNode {
 		children.add(statement);
 	}
 
-	@Override
 	public void accept(Visitor visitor) {
+        visitor.visit(this);
+        super.accept(visitor);
 	}
 }

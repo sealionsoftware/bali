@@ -3,26 +3,20 @@ package com.sealionsoftware.bali.compiler.antlr;
 import bali.compiler.parser.BaliParser;
 import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
-import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
-import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.TokenSource;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.antlr.v4.runtime.tree.TerminalNodeImpl;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ASTBuilderVisitorTest {
+public class ASTStatementVisitorTest {
 
-    private ASTBuilderVisitor subject = new ASTBuilderVisitor();
+    private ASTStatementVisitor subject = new ASTStatementVisitor();
 
     @Test
     public void testVisitScript() throws Exception {

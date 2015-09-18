@@ -7,4 +7,6 @@ public interface Visitor {
 
     void visit(VariableNode node);
 
+    void visit(Node node);
+
 }

@@ -26,6 +26,7 @@ public class VariableNode extends StatementNode {
     }
 
     public void accept(Visitor visitor) {
-
+        visitor.visit(this);
+        super.accept(visitor);
     }
 }

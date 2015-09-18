@@ -4,11 +4,11 @@ import bali.compiler.parser.BaliBaseVisitor;
 import bali.compiler.parser.BaliParser;
 import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
-import com.sealionsoftware.bali.compiler.tree.Node;
+import com.sealionsoftware.bali.compiler.tree.StatementNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.antlr.v4.runtime.Token;
 
-public class ASTBuilderVisitor extends BaliBaseVisitor<Node> {
+public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
 
     private CodeBlockNode container;
 
@@ -35,12 +35,14 @@ public class ASTBuilderVisitor extends BaliBaseVisitor<Node> {
     public VariableNode visitVariableDeclaration(BaliParser.VariableDeclarationContext ctx) {
         Token start = ctx.start;
         VariableNode node = new VariableNode(start.getLine(), start.getCharPositionInLine());
+        node.setName(ctx.IDENTIFIER().getText());
         if (container != null){
             container.addStatement(node);
         }
-        node.setName(ctx.IDENTIFIER().getText());
-        visitChildren(ctx);
+        ASTExpressionVisitor expressionVisitor = new ASTExpressionVisitor();
+        node.setValue(ctx.expression().accept(expressionVisitor));
         return node;
     }
+
 
 }

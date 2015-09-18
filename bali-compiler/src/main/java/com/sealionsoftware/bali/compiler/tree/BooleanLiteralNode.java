@@ -1,6 +1,6 @@
 package com.sealionsoftware.bali.compiler.tree;
 
-public class BooleanLiteralNode extends StatementNode {
+public class BooleanLiteralNode extends ExpressionNode {
 
     private Boolean value;
 
@@ -15,6 +15,7 @@ public class BooleanLiteralNode extends StatementNode {
     @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
+        super.accept(visitor);
     }
 
     public boolean isTrue() {
