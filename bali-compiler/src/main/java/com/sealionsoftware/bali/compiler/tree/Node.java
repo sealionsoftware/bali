@@ -32,7 +32,6 @@ public abstract class Node {
 	}
 
 	public void accept(Visitor visitor){
-        visitor.visit(this);
         for (Node child : children){
             child.accept(visitor);
         }

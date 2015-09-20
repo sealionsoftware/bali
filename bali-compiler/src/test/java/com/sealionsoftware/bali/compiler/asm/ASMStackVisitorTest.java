@@ -1,6 +1,7 @@
 package com.sealionsoftware.bali.compiler.asm;
 
 import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
+import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.junit.Test;
@@ -63,5 +64,13 @@ public class ASMStackVisitorTest implements Opcodes {
         assertThat(variables.size(), equalTo(1));
         VariableInfo variableInfo = variables.get(0);
         assertThat(variableInfo.getName(), equalTo("aVariable"));
+    }
+
+    @Test
+    public void testVisitCodeBlock() throws Exception {
+
+        CodeBlockNode codeBlockNode = mock(CodeBlockNode.class);
+        subject.visit(codeBlockNode);
+
     }
 }

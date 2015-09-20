@@ -10,24 +10,18 @@ import org.antlr.v4.runtime.Token;
 
 public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
 
-    private CodeBlockNode container;
+    private CodeBlockNode container = new CodeBlockNode(0, 0);
 
     public CodeBlockNode visitScript(BaliParser.ScriptContext ctx) {
-        CodeBlockNode node = new CodeBlockNode(0, 0);
-        CodeBlockNode originalContainer = container;
-        container = node;
         visitChildren(ctx);
-        container = originalContainer;
-        return node;
+        return container;
     }
 
     public VariableNode visitVariableDeclaration(BaliParser.VariableDeclarationContext ctx) {
         Token start = ctx.start;
         VariableNode node = new VariableNode(start.getLine(), start.getCharPositionInLine());
         node.setName(ctx.IDENTIFIER().getText());
-        if (container != null){
-            container.addStatement(node);
-        }
+        container.addStatement(node);
         ASTExpressionVisitor expressionVisitor = new ASTExpressionVisitor();
         node.setValue(ctx.expression().accept(expressionVisitor));
         return node;
@@ -36,9 +30,7 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
     public ExpressionNode visitExpression(BaliParser.ExpressionContext ctx) {
         ASTExpressionVisitor expressionVisitor = new ASTExpressionVisitor();
         ExpressionNode node = expressionVisitor.visitExpression(ctx);
-        if (container != null){
-            container.addStatement(node);
-        }
+        container.addStatement(node);
         return node;
     }
 

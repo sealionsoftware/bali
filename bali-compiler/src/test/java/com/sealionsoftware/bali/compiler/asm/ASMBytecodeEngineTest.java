@@ -4,7 +4,9 @@ import com.sealionsoftware.bali.compiler.BytecodeEngine;
 import com.sealionsoftware.bali.compiler.GeneratedClass;
 import com.sealionsoftware.bali.compiler.GeneratedPackage;
 import com.sealionsoftware.bali.compiler.Interpreter;
+import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
+import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.junit.Test;
 
 import java.util.List;
@@ -13,7 +15,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 
 public class ASMBytecodeEngineTest {
 
@@ -22,7 +23,13 @@ public class ASMBytecodeEngineTest {
     @Test
     public void testGenerate() throws Exception {
 
-        CodeBlockNode node = mock(CodeBlockNode.class);
+        VariableNode variableNode = new VariableNode(0, 0);
+        variableNode.setName("aVariable");
+        BooleanLiteralNode valueNode = new BooleanLiteralNode(0,0);
+        variableNode.setValue(valueNode);
+        CodeBlockNode node = new CodeBlockNode(0, 0);
+        node.addStatement(variableNode);
+
         GeneratedPackage ret = subject.generate(node);
 
         assertThat(ret, notNullValue());

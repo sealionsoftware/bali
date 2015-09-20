@@ -1,15 +1,19 @@
 package com.sealionsoftware.bali.compiler.antlr;
 
 import bali.compiler.parser.BaliParser;
+import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
+import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -27,20 +31,6 @@ public class ASTStatementVisitorTest {
         assertThat(node, notNullValue());
     }
 
-//    @Test
-//    public void testVisitBooleanLiteral() throws Exception {
-//
-//        Token token = mock(Token.class);
-//        BaliParser.BooleanLiteralContext context = mock(BaliParser.BooleanLiteralContext.class);
-//        when(context.getText()).thenReturn("true");
-//        context.start = token;
-//
-//        BooleanLiteralNode node = subject.visitBooleanLiteral(context);
-//
-//        assertThat(node, notNullValue());
-//        assertThat(node.isTrue(), equalTo(true));
-//    }
-
     @Test
     public void testVisitVariableNode() throws Exception {
 
@@ -57,4 +47,20 @@ public class ASTStatementVisitorTest {
         assertThat(node, notNullValue());
         assertThat(node.getName(), equalTo("aVariable"));
     }
+
+    @Test
+    public void testVisitExpressionNode() throws Exception {
+        BaliParser.ExpressionContext context = mock(BaliParser.ExpressionContext.class);
+
+        BaliParser.BooleanLiteralContext literalContext = mock(BaliParser.BooleanLiteralContext.class);
+        when(context.getChildCount()).thenReturn(1);
+        when(context.getChild(0)).thenReturn(literalContext);
+        when(literalContext.accept(any(ASTExpressionVisitor.class))).thenReturn(mock(BooleanLiteralNode.class));
+
+        ExpressionNode node = subject.visitExpression(context);
+        assertThat(node, notNullValue());
+        assertThat(node, instanceOf(BooleanLiteralNode.class));
+    }
+
+
 }

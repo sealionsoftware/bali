@@ -1,7 +1,7 @@
 package com.sealionsoftware.bali.compiler.asm;
 
 import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
-import com.sealionsoftware.bali.compiler.tree.Node;
+import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import com.sealionsoftware.bali.compiler.tree.Visitor;
 import org.objectweb.asm.Label;
@@ -39,7 +39,8 @@ public class ASMStackVisitor implements Visitor, Opcodes {
         methodVisitor.visitVarInsn(ASTORE, variables.size());
     }
 
-    public void visit(Node node) {
+    public void visit(CodeBlockNode node) {
+
     }
 
     public List<VariableInfo> getVariables(){

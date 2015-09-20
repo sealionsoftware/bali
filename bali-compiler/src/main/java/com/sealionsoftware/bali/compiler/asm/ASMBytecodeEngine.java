@@ -39,15 +39,14 @@ public class ASMBytecodeEngine implements BytecodeEngine, Opcodes {
 
         MethodVisitor methodVisitor = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
         methodVisitor.visitCode();
-        Label l0 = new Label();
-        methodVisitor.visitLabel(l0);
-        methodVisitor.visitLineNumber(4, l0);
+        Label constructorStart = new Label();
+        methodVisitor.visitLabel(constructorStart);
         methodVisitor.visitVarInsn(ALOAD, 0);
         methodVisitor.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
         methodVisitor.visitInsn(RETURN);
-        Label l1 = new Label();
-        methodVisitor.visitLabel(l1);
-        methodVisitor.visitLocalVariable("this", "LFragment;", null, l0, l1, 0);
+        Label constructorEnd = new Label();
+        methodVisitor.visitLabel(constructorEnd);
+        methodVisitor.visitLocalVariable("this", "LFragment;", null, constructorStart, constructorEnd, 0);
         methodVisitor.visitMaxs(1, 1);
         methodVisitor.visitEnd();
     }
