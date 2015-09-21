@@ -1,0 +1,15 @@
+.root {
+    display: block;
+}
+.code {
+    -fx-font-family: monospace;
+    -fx-font-size: 18;
+    width: 100%;
+}
+.execute {
+    width: 100px;
+}
+
+.output {
+    color: red;
+}
