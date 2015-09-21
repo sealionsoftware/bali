@@ -7,7 +7,7 @@ import bali.Boolean;
  * User: Richard
  * Date: 02/05/13
  */
-public class False implements Boolean {
+public final class False implements Boolean {
 
 	public static final Boolean VALUE = new False();
 
