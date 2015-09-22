@@ -10,6 +10,11 @@ import static org.junit.Assert.assertThat;
 public class PrimitiveTest {
 
     @Test
+    public void testConstructor() throws Exception {
+        new Primitive();
+    }
+
+    @Test
     public void testConvertToPrimitive() throws Exception {
         assertThat(convert(Boolean.TRUE), equalTo(true));
     }

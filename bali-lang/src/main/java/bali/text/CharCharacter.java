@@ -6,12 +6,7 @@ import bali.Character;
 import static bali.Boolean.FALSE;
 import static bali.logic.Primitive.convert;
 
-/**
- * TODO: extend this to work with full unicode
- *
- * User: Richard
- * Date: 01/03/14
- */
+// TODO: extend this to work with full unicode
 public final class CharCharacter implements Character {
 
 	final char value;
@@ -44,5 +39,10 @@ public final class CharCharacter implements Character {
 
 	public Boolean notEqualTo(Character operand) {
 		return equalTo(operand).not();
+	}
+
+	@Override
+	public String toString() {
+		return java.lang.Character.toString(value);
 	}
 }

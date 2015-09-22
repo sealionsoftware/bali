@@ -1,12 +1,19 @@
 package bali.text;
 
+import bali.Text;
 import org.junit.Test;
 
 import static bali.text.Primitive.convert;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 public class PrimitiveTest {
+
+    @Test
+    public void testConstructor() throws Exception {
+        new Primitive();
+    }
 
     @Test
     public void testConvertToCharacterObject() throws Exception {
@@ -26,5 +33,10 @@ public class PrimitiveTest {
     @Test
     public void testConvertToString() throws Exception {
         assertThat(convert(new CharArrayString("Hello World".toCharArray())), equalTo("Hello World"));
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testConvertNonStringArrayToString() throws Exception {
+        convert(mock(Text.class));
     }
 }
