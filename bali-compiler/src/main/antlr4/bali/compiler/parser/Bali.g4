@@ -9,7 +9,7 @@ LINE_COMMENT:               '//' ~[\r\n]* ('\r'? '\n' | EOF) -> channel(HIDDEN) 
 
 IDENTIFIER:                 [a-zA-Z_]+ ;
 
-STRING_LITERAL:             '"' ~[^"]* '"' ;
+TEXT_LITERAL:               '"' ~[^"]* '"' ;
 
 NUMBER_LITERAL:             [0-9]+ ('.' [0-9]+)? ;
 
@@ -29,6 +29,8 @@ variableDeclaration:        'var' IDENTIFIER '=' expression ;
 expression:                 '(' expression ')'
 							 | literal;
 
-literal:                    booleanLiteral;
+literal:                    booleanLiteral | textLiteral;
 
 booleanLiteral:             'true' | 'false' ;
+
+textLiteral:                TEXT_LITERAL;

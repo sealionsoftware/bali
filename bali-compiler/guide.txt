@@ -2,6 +2,14 @@
 
 true false var
 
+:: Boolean Literals
+
+true false
+
+:: Text Literals
+
+"A String"
+
 :: Variables
 
 var aVariable = true

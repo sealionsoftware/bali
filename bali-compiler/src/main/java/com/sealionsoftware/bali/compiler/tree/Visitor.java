@@ -5,6 +5,8 @@ public interface Visitor {
 
     void visit(BooleanLiteralNode node);
 
+    void visit(TextLiteralNode node);
+
     void visit(VariableNode node);
 
     void visit(CodeBlockNode node);

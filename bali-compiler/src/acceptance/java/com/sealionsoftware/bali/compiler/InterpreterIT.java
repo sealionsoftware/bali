@@ -43,6 +43,15 @@ public class InterpreterIT {
     }
 
     @Test
+    public void testScriptContainingText() throws Exception {
+
+        Map<String, Object> output = interpreter.run("\"A String\"");
+
+        assertThat(output, notNullValue());
+        assertThat(output, isEmptyMap());
+    }
+
+    @Test
     public void testScriptContainingVariable() throws Exception {
 
         Map<String, Object> output = interpreter.run("var aVariable = true");
