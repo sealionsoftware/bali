@@ -1,38 +1,32 @@
 package com.sealionsoftware.bali.compiler.tree;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import static com.sealionsoftware.Matchers.isEmpty;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class VariableNodeTest {
+public class TextLiteralNodeTest {
 
-    private VariableNode subject = new VariableNode(2, 3);
-
-    @Test
-    public void testGetName() throws Exception {
-        subject.setName("aVariable");
-        assertThat(subject.getName(), equalTo("aVariable"));
-    }
+    private TextLiteralNode subject = new TextLiteralNode(2, 3);
 
     @Test
-    public void testGetValue() throws Exception {
-        ExpressionNode value = mock(ExpressionNode.class);
-        subject.setValue(value);
-        assertThat(subject.getValue(), equalTo(value));
+    public void testSetValue() throws Exception {
+        subject.setValue("Hello World");
+        assertThat(subject.getValue(), equalTo("Hello World"));
     }
 
     @Test
     public void testGetLine() throws Exception {
-        assertThat(subject.getLine(), equalTo(2));
+        assertThat(subject.getLine(), CoreMatchers.equalTo(2));
     }
 
     @Test
     public void testGetCharacter() throws Exception {
-        assertThat(subject.getCharacter(), equalTo(3));
+        assertThat(subject.getCharacter(), CoreMatchers.equalTo(3));
     }
 
     @Test

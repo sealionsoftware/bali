@@ -15,8 +15,6 @@ import java.util.List;
 
 public class ASMStackVisitor implements Visitor, Opcodes {
 
-    private static final String BOOLEAN_NAME = internalise(bali.Boolean.class);
-
     private MethodVisitor methodVisitor;
     private Deque<Label> scopeHorizonStack = new LinkedList<>();
     private List<VariableInfo> variables = new LinkedList<>();
@@ -27,7 +25,7 @@ public class ASMStackVisitor implements Visitor, Opcodes {
     }
 
     public void visit(BooleanLiteralNode node) {
-        methodVisitor.visitFieldInsn(GETSTATIC, BOOLEAN_NAME, node.isTrue() ? "TRUE" : "FALSE", "Lbali/Boolean;");
+        methodVisitor.visitFieldInsn(GETSTATIC, "bali/Boolean", node.isTrue() ? "TRUE" : "FALSE", "Lbali/Boolean;");
     }
 
     public void visit(TextLiteralNode node) {
@@ -55,10 +53,4 @@ public class ASMStackVisitor implements Visitor, Opcodes {
         return variables;
     }
 
-    private static String internalise(Class clazz){
-        if (clazz == null){
-            clazz = Object.class;
-        }
-        return clazz.getName().replaceAll("\\.", "/");
-    }
 }

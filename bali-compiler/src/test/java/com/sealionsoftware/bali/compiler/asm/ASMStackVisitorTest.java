@@ -3,6 +3,7 @@ package com.sealionsoftware.bali.compiler.asm;
 import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
+import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.junit.Test;
 import org.objectweb.asm.Label;
@@ -46,6 +47,15 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
+    public void testVisitTextLiteral() throws Exception {
+        TextLiteralNode node = mock(TextLiteralNode.class);
+        subject.visit(node);
+        verify(visitor).visitLdcInsn(node.getValue());
+        verify(visitor).visitMethodInsn(INVOKESTATIC, "bali/text/Primitive", "convert", "(Ljava/lang/String;)Lbali/Text;", false);
+
+    }
+
+    @Test
     public void testVisitVariableDeclaration() throws Exception {
 
         ExpressionNode expressionNode = mock(ExpressionNode.class);
@@ -68,9 +78,7 @@ public class ASMStackVisitorTest implements Opcodes {
 
     @Test
     public void testVisitCodeBlock() throws Exception {
-
         CodeBlockNode codeBlockNode = mock(CodeBlockNode.class);
         subject.visit(codeBlockNode);
-
     }
 }

@@ -2,6 +2,7 @@ package com.sealionsoftware.bali.compiler.antlr;
 
 import bali.compiler.parser.BaliParser;
 import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
+import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
 import org.antlr.v4.runtime.Token;
 import org.junit.Test;
 
@@ -27,5 +28,19 @@ public class ASTExpressionVisitorTest {
 
         assertThat(node, notNullValue());
         assertThat(node.isTrue(), equalTo(true));
+    }
+
+    @Test
+    public void testVisitTextLiteral() throws Exception {
+
+        Token token = mock(Token.class);
+        BaliParser.TextLiteralContext context = mock(BaliParser.TextLiteralContext.class);
+        when(context.getText()).thenReturn("Hello World");
+        context.start = token;
+
+        TextLiteralNode node = subject.visitTextLiteral(context);
+
+        assertThat(node, notNullValue());
+        assertThat(node.getValue(), equalTo("Hello World"));
     }
 }

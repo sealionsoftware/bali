@@ -42,7 +42,7 @@ public final class CharArrayString implements Text {
 	}
 
 	public Integer size() {
-		return null;
+		return convert(characters.length);
 	}
 
 	public Boolean isEmpty() {
@@ -75,19 +75,7 @@ public final class CharArrayString implements Text {
 			return convert(Arrays.equals(characters, cas.characters));
 		}
 
-		if (!convert(operand.size().equalTo(size()))){
-			return FALSE;
-		}
-
-		int i = 0;
-		Iterator<Character> iterator = operand.iterator();
-		while(convert(iterator.hasNext())){
-			if (convert(iterator.next().equalTo(convert(characters[i])))){
-				return FALSE;
-			}
-		}
-
-		return TRUE;
+		return FALSE;
 	}
 
 	public Boolean notEqualTo(Text operand) {
@@ -96,20 +84,7 @@ public final class CharArrayString implements Text {
 			CharArrayString cas = (CharArrayString) operand;
 			return convert(!Arrays.equals(characters, cas.characters));
 		}
-
-		if (convert(operand.size().notEqualTo(size()))){
-			return TRUE;
-		}
-
-		int i = 0;
-		Iterator<Character> iterator = operand.iterator();
-		while(convert(iterator.hasNext())){
-			if (convert(iterator.next().notEqualTo(convert(characters[i])))){
-				return TRUE;
-			}
-		}
-
-		return FALSE;
+		return TRUE;
 	}
 
 	public java.lang.String toString() {

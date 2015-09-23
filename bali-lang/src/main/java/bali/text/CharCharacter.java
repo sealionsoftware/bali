@@ -45,4 +45,15 @@ public final class CharCharacter implements Character {
 	public String toString() {
 		return java.lang.Character.toString(value);
 	}
+
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CharCharacter that = (CharCharacter) o;
+        return value == that.value;
+    }
+
+    public int hashCode() {
+        return (int) value;
+    }
 }

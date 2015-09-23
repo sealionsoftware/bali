@@ -4,13 +4,14 @@ import bali.Iterator;
 import bali.Text;
 import org.junit.Test;
 
-import static bali.text.Primitive.convert;
-import static bali.number.Primitive.convert;
 import static bali.logic.Primitive.convert;
+import static bali.number.Primitive.convert;
+import static bali.text.Primitive.convert;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 public class CharArrayStringTest {
 
@@ -24,6 +25,11 @@ public class CharArrayStringTest {
     @Test
     public void testContains() throws Exception {
         assertThat(subject.contains(convert('W')), equalTo(convert(true)));
+    }
+
+    @Test
+    public void testContainsNegative() throws Exception {
+        assertThat(subject.contains(convert('u')), equalTo(convert(false)));
     }
 
     @Test
@@ -54,6 +60,16 @@ public class CharArrayStringTest {
     @Test
     public void testEqualTo() throws Exception {
         assertThat(subject.equalTo(convert("Hello World")), equalTo(convert(true)));
+    }
+
+    @Test
+    public void testEqualToOtherImplementation() throws Exception {
+        assertThat(subject.equalTo(mock(Text.class)), equalTo(convert(false)));
+    }
+
+    @Test
+    public void testNotEqualToOtherImplementation() throws Exception {
+        assertThat(subject.notEqualTo(mock(Text.class)), equalTo(convert(true)));
     }
 
     @Test
