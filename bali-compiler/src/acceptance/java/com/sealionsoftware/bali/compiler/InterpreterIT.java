@@ -8,12 +8,14 @@ import org.junit.Test;
 
 import java.util.Map;
 
+import static com.sealionsoftware.Constant.immutableList;
 import static com.sealionsoftware.Constant.immutableMap;
 import static com.sealionsoftware.Constant.put;
 import static com.sealionsoftware.Matchers.isEmptyMap;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 public class InterpreterIT {
 
@@ -25,7 +27,7 @@ public class InterpreterIT {
     );
 
     @Test
-    public void testRunEmptyScript() throws Exception {
+    public void testRunEmptyScript() {
 
         Map<String, Object> output = interpreter.run("");
 
@@ -34,7 +36,7 @@ public class InterpreterIT {
     }
 
     @Test
-    public void testScriptContainingBoolean() throws Exception {
+    public void testScriptContainingBoolean() {
 
         Map<String, Object> output = interpreter.run("true");
 
@@ -43,7 +45,7 @@ public class InterpreterIT {
     }
 
     @Test
-    public void testScriptContainingText() throws Exception {
+    public void testScriptContainingText() {
 
         Map<String, Object> output = interpreter.run("\"A String\"");
 
@@ -52,7 +54,7 @@ public class InterpreterIT {
     }
 
     @Test
-    public void testScriptContainingVariable() throws Exception {
+    public void testScriptContainingVariable() {
 
         Map<String, Object> output = interpreter.run("var aVariable = true");
 
@@ -60,6 +62,31 @@ public class InterpreterIT {
         assertThat(output, equalTo(immutableMap(
                 put("aVariable", bali.Boolean.TRUE)
         )));
+    }
+
+    @Test
+    public void testScriptContainingTypedVariable() {
+
+        Map<String, Object> output = interpreter.run("var Boolean aVariable = true");
+
+        assertThat(output, notNullValue());
+        assertThat(output, equalTo(immutableMap(
+                put("aVariable", bali.Boolean.TRUE)
+        )));
+    }
+
+    @Test
+    public void testScriptContainingIncorrectlyTypedVariable() {
+
+        try {
+            interpreter.run("var Text aVariable = true");
+        } catch (CompilationException e) {
+            assertThat(e.errorList, equalTo(immutableList(
+                    new CompileError(ErrorCode.INVALID_TYPE, 0, 4, 4)
+            )));
+            return;
+        }
+        fail();
     }
 
 }
