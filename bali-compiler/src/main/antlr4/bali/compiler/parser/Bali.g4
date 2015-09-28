@@ -24,10 +24,14 @@ statement:                  lineStatement  ;
 lineStatement:              expression
 							 | variableDeclaration;
 
-variableDeclaration:        'var' IDENTIFIER '=' expression ;
+variableDeclaration:        'var' type? IDENTIFIER '=' expression ;
 
 expression:                 '(' expression ')'
 							 | literal;
+
+type:                       IDENTIFIER ( '<'  typeList '>' )? ;
+
+typeList:                   type (',' type)* ;
 
 literal:                    booleanLiteral | textLiteral;
 

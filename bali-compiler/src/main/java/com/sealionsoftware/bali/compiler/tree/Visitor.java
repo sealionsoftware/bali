@@ -9,6 +9,8 @@ public interface Visitor {
 
     void visit(VariableNode node);
 
+    void visit(TypeNode node);
+
     void visit(CodeBlockNode node);
 
 }

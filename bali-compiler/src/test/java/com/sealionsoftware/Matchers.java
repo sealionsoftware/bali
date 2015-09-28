@@ -3,6 +3,7 @@ package com.sealionsoftware;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeDiagnosingMatcher;
 
 import java.util.Collection;
 import java.util.Map;
@@ -41,6 +42,25 @@ public class Matchers {
 
             public void describeTo(Description description) {
                 description.appendText("empty map");
+            }
+        };
+    }
+
+    public static <T> Matcher<Collection<T>> containsOneValue(Matcher<T> matcher) {
+        return new TypeSafeDiagnosingMatcher<Collection<T>>() {
+
+            public void describeTo(Description description) {
+                description.appendText("one value ");
+                matcher.describeTo(description);
+            }
+
+            protected boolean matchesSafely(Collection<T> ts, Description description) {
+                if (ts.size() != 1){
+                    description.appendText("was a collection with " + ts.size() + " elements");
+                    return false;
+                }
+                matcher.describeMismatch(ts, description);
+                return  matcher.matches(ts.iterator().next());
             }
         };
     }

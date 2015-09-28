@@ -3,6 +3,7 @@ package com.sealionsoftware.bali.compiler.asm;
 import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
+import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import com.sealionsoftware.bali.compiler.tree.Visitor;
 import org.objectweb.asm.Label;
@@ -31,6 +32,9 @@ public class ASMStackVisitor implements Visitor, Opcodes {
     public void visit(TextLiteralNode node) {
         methodVisitor.visitLdcInsn(node.getValue());
         methodVisitor.visitMethodInsn(INVOKESTATIC, "bali/text/Primitive", "convert", "(Ljava/lang/String;)Lbali/Text;", false);
+    }
+
+    public void visit(TypeNode node) {
     }
 
     public void visit(VariableNode node) {

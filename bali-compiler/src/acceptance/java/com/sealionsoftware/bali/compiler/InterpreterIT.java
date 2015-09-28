@@ -4,6 +4,7 @@ import com.sealionsoftware.bali.compiler.antlr.ANTLRParseEngine;
 import com.sealionsoftware.bali.compiler.asm.ASMBytecodeEngine;
 import com.sealionsoftware.bali.compiler.assembly.MultithreadedAssemblyEngine;
 import com.sealionsoftware.bali.compiler.execution.ReflectiveExecutor;
+import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.junit.Test;
 
 import java.util.Map;
@@ -82,11 +83,11 @@ public class InterpreterIT {
             interpreter.run("var Text aVariable = true");
         } catch (CompilationException e) {
             assertThat(e.errorList, equalTo(immutableList(
-                    new CompileError(ErrorCode.INVALID_TYPE, 0, 4, 4)
+                    new CompileError(ErrorCode.INVALID_TYPE, new VariableNode(0, 0))
             )));
             return;
         }
-        fail();
+        fail("The required compilation exception was not thrown");
     }
 
 }
