@@ -126,6 +126,16 @@ public class ClasspathClassFactoryTest {
         assertThat(constructed.getTypeParameters(), containsOneValue(hasToString(B.class.getName() + " T")));
     }
 
+    @Test(expected = RuntimeException.class)
+    public void testAddUnsupportedTypeToLibrary(){
+
+        class B<V> {}
+        class A<T extends B<?>> {}
+        java.lang.Class<A> a = A.class;
+
+        subject.addToLibrary(a);
+    }
+
     interface IA {}
     interface IB extends IBA {}
     interface IBA {}

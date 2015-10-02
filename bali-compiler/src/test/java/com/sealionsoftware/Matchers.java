@@ -46,12 +46,18 @@ public class Matchers {
         };
     }
 
+    public static <T> Matcher<Collection<T>> containsOneValue() {
+        return containsOneValue(null);
+    }
+
     public static <T> Matcher<Collection<T>> containsOneValue(Matcher<T> matcher) {
         return new TypeSafeDiagnosingMatcher<Collection<T>>() {
 
             public void describeTo(Description description) {
                 description.appendText("one value ");
-                matcher.describeTo(description);
+                if (matcher != null){
+                    matcher.describeTo(description);
+                }
             }
 
             protected boolean matchesSafely(Collection<T> ts, Description description) {
@@ -59,8 +65,11 @@ public class Matchers {
                     description.appendText("was a collection with " + ts.size() + " elements");
                     return false;
                 }
-                matcher.describeMismatch(ts, description);
-                return  matcher.matches(ts.iterator().next());
+                if (matcher != null){
+                    matcher.describeMismatch(ts, description);
+                    return  matcher.matches(ts.iterator().next());
+                }
+                return true;
             }
         };
     }

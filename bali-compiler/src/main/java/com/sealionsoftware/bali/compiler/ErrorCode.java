@@ -2,6 +2,7 @@ package com.sealionsoftware.bali.compiler;
 
 public enum ErrorCode {
 
-    INVALID_TYPE
+    INVALID_TYPE,
+    UNKNOWN
 
 }

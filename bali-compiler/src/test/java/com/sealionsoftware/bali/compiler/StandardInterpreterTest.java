@@ -26,6 +26,11 @@ public class StandardInterpreterTest {
     );
 
     @Test
+    public void testStandardSetup() throws Exception {
+        subject = new StandardInterpreter();
+    }
+
+    @Test
     public void testRun() throws Exception {
 
         String fragment = "Hello World";

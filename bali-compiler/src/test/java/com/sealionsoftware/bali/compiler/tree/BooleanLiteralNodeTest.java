@@ -1,11 +1,13 @@
 package com.sealionsoftware.bali.compiler.tree;
 
+import com.sealionsoftware.bali.compiler.Type;
 import org.junit.Test;
 
 import java.util.List;
 
 import static com.sealionsoftware.Matchers.isEmpty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -43,4 +45,10 @@ public class BooleanLiteralNodeTest {
         assertThat(children, isEmpty());
     }
 
+    @Test
+    public void testGetType() throws Exception {
+        Type type = mock(Type.class);
+        subject.setType(type);
+        assertThat(subject.getType(), is(type));
+    }
 }
