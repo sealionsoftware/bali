@@ -1,10 +1,12 @@
 package com.sealionsoftware.bali.compiler.tree;
 
+import com.sealionsoftware.bali.compiler.Type;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import static com.sealionsoftware.Matchers.isEmpty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -39,5 +41,12 @@ public class TextLiteralNodeTest {
         Visitor visitor = mock(Visitor.class);
         subject.accept(visitor);
         verify(visitor).visit(subject);
+    }
+
+    @Test
+    public void testGetType() throws Exception {
+        Type type = mock(Type.class);
+        subject.setType(type);
+        assertThat(subject.getType(), is(type));
     }
 }

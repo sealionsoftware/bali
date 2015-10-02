@@ -1,9 +1,5 @@
 package com.sealionsoftware.bali.compiler;
 
-import com.sealionsoftware.bali.compiler.antlr.ANTLRParseEngine;
-import com.sealionsoftware.bali.compiler.asm.ASMBytecodeEngine;
-import com.sealionsoftware.bali.compiler.assembly.MultithreadedAssemblyEngine;
-import com.sealionsoftware.bali.compiler.execution.ReflectiveExecutor;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.junit.Test;
 
@@ -20,12 +16,7 @@ import static org.junit.Assert.fail;
 
 public class InterpreterIT {
 
-    private Interpreter interpreter = new StandardInterpreter(
-            new ANTLRParseEngine(),
-            new MultithreadedAssemblyEngine(),
-            new ASMBytecodeEngine(),
-            new ReflectiveExecutor()
-    );
+    private Interpreter interpreter = new StandardInterpreter();
 
     @Test
     public void testRunEmptyScript() {

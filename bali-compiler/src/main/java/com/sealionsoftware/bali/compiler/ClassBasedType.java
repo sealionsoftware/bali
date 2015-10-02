@@ -69,11 +69,11 @@ public class ClassBasedType implements Type {
 
     public Boolean isAssignableTo(Type other) {
 
-        if (other == null) {
+        if (other == null || other == this) {
             return true;
         }
 
-        if (template.getClassName().equals(other.getTemplate().getClassName())) {
+        if (template.getClassName().equals(other.getClassName())) {
             for (Parameter argument : other.getTypeArguments()){
                 Type typeArgument = typeArgumentMap.get(argument.name);
                 if (!typeArgument.isAssignableTo(argument.type)) {

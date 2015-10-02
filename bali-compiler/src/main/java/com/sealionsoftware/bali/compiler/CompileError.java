@@ -19,4 +19,7 @@ public class CompileError {
         return code == that.code;
     }
 
+    public String toString() {
+        return code.name();
+    }
 }

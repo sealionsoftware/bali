@@ -4,6 +4,7 @@ import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
+import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.junit.Test;
 import org.objectweb.asm.Label;
@@ -77,8 +78,14 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
-    public void testVisitCodeBlock() throws Exception {
+     public void testVisitCodeBlock() throws Exception {
         CodeBlockNode codeBlockNode = mock(CodeBlockNode.class);
         subject.visit(codeBlockNode);
+    }
+
+    @Test
+    public void testVisitTypeNode() throws Exception {
+        TypeNode typeNode = mock(TypeNode.class);
+        subject.visit(typeNode);
     }
 }
