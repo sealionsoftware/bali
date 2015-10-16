@@ -3,6 +3,7 @@ package com.sealionsoftware.bali.compiler.asm;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
+import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.Control;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
@@ -68,6 +69,10 @@ public class ASMStackVisitor implements Visitor, Opcodes {
     }
 
     public void visit(ReferenceNode node, Control control){
+
+    }
+
+    public void visit(ConditionalStatementNode node) {
 
     }
 

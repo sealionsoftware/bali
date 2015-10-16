@@ -19,11 +19,17 @@ script:                     statement* ;
 
 codeBlock:                  '{' statement* '}' ;
 
-statement:                  lineStatement ;
+statement:                  lineStatement | controlStatement ;
+
+controlExpression:          codeBlock | controlStatement ;
+
+conditionalStatement:       'if' '(' expression ')' controlExpression ;
 
 lineStatement:              expression
 							 | variableDeclaration
 							 | assignment ;
+
+controlStatement:           conditionalStatement ;
 
 variableDeclaration:        'var' type? IDENTIFIER '=' expression ;
 
