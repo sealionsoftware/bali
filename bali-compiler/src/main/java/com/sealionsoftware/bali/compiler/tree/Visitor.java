@@ -17,6 +17,6 @@ public interface Visitor {
 
     void visit(ReferenceNode node, Control control);
 
-    void visit(ConditionalStatementNode node);
+    void visit(ConditionalStatementNode node, Control control);
 
 }

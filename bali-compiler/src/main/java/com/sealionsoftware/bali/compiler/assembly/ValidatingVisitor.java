@@ -4,9 +4,9 @@ import com.sealionsoftware.bali.compiler.CompileError;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
+import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.Control;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
-import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
@@ -47,7 +47,7 @@ public abstract class ValidatingVisitor implements Visitor {
         control.visitChildren();
     }
 
-    public void visit(ConditionalStatementNode node) {
+    public void visit(ConditionalStatementNode node, Control control) {
     }
 
     public List<CompileError> getFailures() {

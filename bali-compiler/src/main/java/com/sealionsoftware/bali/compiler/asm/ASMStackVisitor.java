@@ -72,7 +72,7 @@ public class ASMStackVisitor implements Visitor, Opcodes {
 
     }
 
-    public void visit(ConditionalStatementNode node) {
+    public void visit(ConditionalStatementNode node, Control control) {
 
     }
 

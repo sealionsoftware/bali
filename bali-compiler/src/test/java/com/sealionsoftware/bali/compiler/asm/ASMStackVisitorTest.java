@@ -6,6 +6,7 @@ import com.sealionsoftware.bali.compiler.assembly.VariableData;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
+import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.Control;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
@@ -135,6 +136,13 @@ public class ASMStackVisitorTest implements Opcodes {
     @Test
     public void testVisitReferecenceNode() throws Exception {
         ReferenceNode mockNode = mock(ReferenceNode.class);
+        subject.visit(mockNode, mock(Control.class));
+        verifyZeroInteractions(mockNode);
+    }
+
+    @Test
+    public void testVisitConditionalNode() throws Exception {
+        ConditionalStatementNode mockNode = mock(ConditionalStatementNode.class);
         subject.visit(mockNode, mock(Control.class));
         verifyZeroInteractions(mockNode);
     }

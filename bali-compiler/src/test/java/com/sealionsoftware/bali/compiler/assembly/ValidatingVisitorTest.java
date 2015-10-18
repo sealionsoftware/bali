@@ -56,7 +56,7 @@ public class ValidatingVisitorTest {
 
     @Test
     public void testVisitConditionalStatementNode() throws Exception {
-        subject.visit(mock(ConditionalStatementNode.class));
+        subject.visit(mock(ConditionalStatementNode.class), mock(Control.class));
     }
 
     @Test

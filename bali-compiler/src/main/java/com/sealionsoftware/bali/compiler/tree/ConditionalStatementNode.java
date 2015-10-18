@@ -31,4 +31,8 @@ public class ConditionalStatementNode extends StatementNode {
 		this.conditional = conditional;
 	}
 
+    public void accept(Visitor visitor) {
+        visitor.visit(this, new ListControl(children, visitor));
+    }
+
 }

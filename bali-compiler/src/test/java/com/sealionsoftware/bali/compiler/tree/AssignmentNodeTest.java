@@ -1,6 +1,5 @@
 package com.sealionsoftware.bali.compiler.tree;
 
-import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import org.junit.Test;
 
 import static com.sealionsoftware.Matchers.isEmpty;
@@ -14,7 +13,6 @@ import static org.mockito.Mockito.verify;
 
 public class AssignmentNodeTest {
 
-    private CompilationThreadManager monitor = mock(CompilationThreadManager.class);
     private AssignmentNode subject = new AssignmentNode(2, 3);
 
     @Test
