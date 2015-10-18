@@ -42,7 +42,7 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
         return node;
     }
 
-    public TypeNode buildType(BaliParser.TypeContext ctx) {
+    private TypeNode buildType(BaliParser.TypeContext ctx) {
         Token start = ctx.start;
         TypeNode node = new TypeNode(start.getLine(), start.getCharPositionInLine());
         node.setName(ctx.IDENTIFIER().getText());
