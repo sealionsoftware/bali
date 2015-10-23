@@ -28,7 +28,10 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
         container.addStatement(node);
         ASTExpressionVisitor expressionVisitor = new ASTExpressionVisitor();
         node.setValue(ctx.expression().accept(expressionVisitor));
-        node.setType(buildType(ctx.type()));
+        BaliParser.TypeContext typeContext = ctx.type();
+        if (typeContext != null){
+            node.setType(buildType(typeContext));
+        }
         return node;
     }
 
@@ -39,7 +42,7 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
         return node;
     }
 
-    public TypeNode buildType(BaliParser.TypeContext ctx) {
+    private TypeNode buildType(BaliParser.TypeContext ctx) {
         Token start = ctx.start;
         TypeNode node = new TypeNode(start.getLine(), start.getCharPositionInLine());
         node.setName(ctx.IDENTIFIER().getText());
