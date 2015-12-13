@@ -1,6 +1,7 @@
 package com.sealionsoftware.bali.compiler.tree;
 
 import com.sealionsoftware.bali.compiler.Type;
+import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import org.junit.Test;
 
 import java.util.List;
@@ -9,12 +10,14 @@ import static com.sealionsoftware.Matchers.isEmpty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class BooleanLiteralNodeTest {
 
-    private BooleanLiteralNode subject = new BooleanLiteralNode(2, 3);
+    private BooleanLiteralNode subject = new BooleanLiteralNode(2, 3, mock(CompilationThreadManager.class));
 
     @Test
     public void testSetValue() throws Exception {
@@ -26,7 +29,7 @@ public class BooleanLiteralNodeTest {
     public void testAccept() throws Exception {
         Visitor visitor = mock(Visitor.class);
         subject.accept(visitor);
-        verify(visitor).visit(subject);
+        verify(visitor).visit(same(subject), isA(Control.class));
     }
 
     @Test

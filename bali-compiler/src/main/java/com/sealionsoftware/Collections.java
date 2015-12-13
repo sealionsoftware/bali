@@ -1,5 +1,7 @@
 package com.sealionsoftware;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
 public class Collections {
@@ -37,5 +39,11 @@ public class Collections {
             this.i = i;
             this.j = j;
         }
+    }
+
+    public static <V> Collection<V> flatten(Collection<? extends Collection<V>> collection) {
+        ArrayList<V> ret = new ArrayList<>();
+        collection.forEach(ret::addAll);
+        return ret;
     }
 }

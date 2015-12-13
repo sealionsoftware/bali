@@ -2,6 +2,7 @@ package com.sealionsoftware.bali.compiler;
 
 import com.sealionsoftware.bali.compiler.antlr.ANTLRParseEngine;
 import com.sealionsoftware.bali.compiler.asm.ASMBytecodeEngine;
+import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.assembly.InterpreterAssemblySetFactory;
 import com.sealionsoftware.bali.compiler.assembly.MultithreadedAssemblyEngine;
 import com.sealionsoftware.bali.compiler.execution.ReflectiveExecutor;
@@ -17,14 +18,14 @@ public class StandardInterpreter implements Interpreter {
     private Executor executor;
 
     public StandardInterpreter() {
-        this(
-                new ANTLRParseEngine(),
-                new MultithreadedAssemblyEngine(
-                        new InterpreterAssemblySetFactory()
-                ),
-                new ASMBytecodeEngine(),
-                new ReflectiveExecutor()
+        CompilationThreadManager monitor = new CompilationThreadManager();
+        this.parseEngine = new ANTLRParseEngine(monitor);
+        this.assemblyEngine = new MultithreadedAssemblyEngine(
+                monitor,
+                new InterpreterAssemblySetFactory()
         );
+        this.bytecodeEngine = new ASMBytecodeEngine();
+        this.executor =  new ReflectiveExecutor();
     }
 
     public StandardInterpreter(ParseEngine parseEngine, AssemblyEngine assemblyEngine, BytecodeEngine bytecodeEngine, Executor executor) {

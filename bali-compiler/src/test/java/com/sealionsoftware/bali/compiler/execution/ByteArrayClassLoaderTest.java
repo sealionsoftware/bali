@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import java.net.URL;
 
-import static com.sealionsoftware.Constant.immutableMap;
+import static com.sealionsoftware.Constant.map;
 import static com.sealionsoftware.Constant.put;
 import static com.sealionsoftware.bali.compiler.Interpreter.FRAGMENT_CLASS_NAME;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -21,7 +21,7 @@ public class ByteArrayClassLoaderTest {
     @Before
     public void setUp() throws Exception {
         URL file = getClass().getResource(FRAGMENT_CLASS_NAME + ".class");
-        subject = new ByteArrayClassLoader(ByteArrayClassLoaderTest.class.getClassLoader(), immutableMap(
+        subject = new ByteArrayClassLoader(ByteArrayClassLoaderTest.class.getClassLoader(), map(
                 put(FRAGMENT_CLASS_NAME, loader.resourceAsBytes(file))
         ));
     }

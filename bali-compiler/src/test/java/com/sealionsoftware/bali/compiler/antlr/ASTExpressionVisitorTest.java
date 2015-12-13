@@ -1,6 +1,7 @@
 package com.sealionsoftware.bali.compiler.antlr;
 
 import bali.compiler.parser.BaliParser;
+import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
 import org.antlr.v4.runtime.Token;
@@ -14,7 +15,7 @@ import static org.mockito.Mockito.when;
 
 public class ASTExpressionVisitorTest {
 
-    private ASTExpressionVisitor subject = new ASTExpressionVisitor();
+    private ASTExpressionVisitor subject = new ASTExpressionVisitor(mock(CompilationThreadManager.class));
 
     @Test
     public void testVisitBooleanLiteral() throws Exception {

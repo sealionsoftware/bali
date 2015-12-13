@@ -4,6 +4,7 @@ import com.sealionsoftware.bali.compiler.BytecodeEngine;
 import com.sealionsoftware.bali.compiler.GeneratedClass;
 import com.sealionsoftware.bali.compiler.GeneratedPackage;
 import com.sealionsoftware.bali.compiler.Interpreter;
+import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
@@ -15,9 +16,11 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 public class ASMBytecodeEngineTest {
 
+    private CompilationThreadManager monitor = mock(com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager.class);
     private BytecodeEngine subject = new ASMBytecodeEngine();
 
     @Test
@@ -25,7 +28,7 @@ public class ASMBytecodeEngineTest {
 
         VariableNode variableNode = new VariableNode(0, 0);
         variableNode.setName("aVariable");
-        BooleanLiteralNode valueNode = new BooleanLiteralNode(0,0);
+        BooleanLiteralNode valueNode = new BooleanLiteralNode(0, 0, monitor);
         variableNode.setValue(valueNode);
         CodeBlockNode node = new CodeBlockNode(0, 0);
         node.addStatement(variableNode);

@@ -6,14 +6,19 @@ import com.sealionsoftware.bali.compiler.CompileError;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import org.junit.Test;
 
+import java.util.Collection;
+
 import static java.util.Arrays.asList;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class MultithreadedAssemblyEngineTest {
 
+    private CompilationThreadManager monitor = mock(CompilationThreadManager.class);
     private AssemblerSetFactory assemblerSetFactory = mock(AssemblerSetFactory.class);
-    private AssemblyEngine subject = new MultithreadedAssemblyEngine(assemblerSetFactory);
+    private AssemblyEngine subject = new MultithreadedAssemblyEngine(monitor, assemblerSetFactory);
 
     @Test
     public void testAssemble() throws Exception {
@@ -26,16 +31,37 @@ public class MultithreadedAssemblyEngineTest {
 
     }
 
+    @Test(expected = RuntimeException.class)
+    public void testAssembleWithUnexplainedBlockages() throws Exception {
+
+        BlockageDescription blockage = mock(BlockageDescription.class);
+
+        when(monitor.getBlockages()).thenReturn(asList(blockage));
+
+        CodeBlockNode node = mock(CodeBlockNode.class);
+        subject.assemble(node);
+    }
+
     @Test(expected = CompilationException.class)
-    public void testAssembleAndThrow() throws Exception {
+    public void testAssembleAndThrowCompileException() throws Exception {
 
         CompileError error = mock(CompileError.class);
         ValidatingVisitor visitor = mock(ValidatingVisitor.class);
         when(assemblerSetFactory.assemblers()).thenReturn(asList(visitor));
         when(visitor.getFailures()).thenReturn(asList(error));
 
-        CodeBlockNode node = mock(CodeBlockNode.class);
+        doAnswer(invocation -> {
+            @SuppressWarnings("unchecked")
+            Collection<Runnable> arguments = (Collection<Runnable>) invocation.getArguments()[0];
+            for (Runnable runnable : arguments){
+                runnable.run();
+            }
+            return null;
+        }).when(monitor).run(any());
 
+
+        CodeBlockNode node = mock(CodeBlockNode.class);
         subject.assemble(node);
+
     }
 }

@@ -19,12 +19,15 @@ script:                     statement* ;
 
 codeBlock:                  '{' statement* '}' ;
 
-statement:                  lineStatement  ;
+statement:                  lineStatement ;
 
 lineStatement:              expression
-							 | variableDeclaration;
+							 | variableDeclaration
+							 | assignment ;
 
 variableDeclaration:        'var' type? IDENTIFIER '=' expression ;
+
+assignment:                 reference '=' expression ;
 
 expression:                 '(' expression ')'
 							 | literal;
@@ -38,3 +41,5 @@ literal:                    booleanLiteral | textLiteral;
 booleanLiteral:             'true' | 'false' ;
 
 textLiteral:                TEXT_LITERAL;
+
+reference:                  IDENTIFIER ;

@@ -1,11 +1,14 @@
 package com.sealionsoftware.bali.compiler.tree;
 
 
+import java.util.UUID;
+
 public class VariableNode extends StatementNode {
 
     private String name;
     private TypeNode type;
     private ExpressionNode value;
+    private UUID id = UUID.randomUUID();
 
     public VariableNode(Integer line, Integer character) {
         super(line, character);
@@ -37,8 +40,11 @@ public class VariableNode extends StatementNode {
         this.type = type;
     }
 
+    public UUID getId() {
+        return id;
+    }
+
     public void accept(Visitor visitor) {
-        visitor.visit(this);
-        super.accept(visitor);
+        visitor.visit(this, new ListControl(children, visitor));
     }
 }

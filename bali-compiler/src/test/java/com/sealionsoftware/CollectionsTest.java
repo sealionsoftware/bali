@@ -3,9 +3,12 @@ package com.sealionsoftware;
 import com.sealionsoftware.Collections.Each;
 import org.junit.Test;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 import static com.sealionsoftware.Collections.both;
+import static com.sealionsoftware.Collections.flatten;
+import static com.sealionsoftware.Matchers.containsValuesMatching;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
@@ -68,5 +71,11 @@ public class CollectionsTest {
         assertThat(next.j, equalTo("5"));
 
         assertThat(subject.hasNext(), is(false));
+    }
+
+    @Test
+    public void testFlatten(){
+        Collection<String> flat = flatten(asList(asList("one", "two"), asList("three")));
+        assertThat(flat, containsValuesMatching(equalTo("one"), equalTo("two"), equalTo("three")));
     }
 }

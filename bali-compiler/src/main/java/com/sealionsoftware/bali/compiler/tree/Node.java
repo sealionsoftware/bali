@@ -31,9 +31,5 @@ public abstract class Node {
 		return children;
 	}
 
-	public void accept(Visitor visitor){
-        for (Node child : children){
-            child.accept(visitor);
-        }
-    }
+	public abstract void accept(Visitor visitor);
 }

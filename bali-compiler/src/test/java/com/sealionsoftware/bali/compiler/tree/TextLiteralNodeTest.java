@@ -1,19 +1,21 @@
 package com.sealionsoftware.bali.compiler.tree;
 
 import com.sealionsoftware.bali.compiler.Type;
-import org.hamcrest.CoreMatchers;
+import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import org.junit.Test;
 
 import static com.sealionsoftware.Matchers.isEmpty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class TextLiteralNodeTest {
 
-    private TextLiteralNode subject = new TextLiteralNode(2, 3);
+    private TextLiteralNode subject = new TextLiteralNode(2, 3, mock(CompilationThreadManager.class));
 
     @Test
     public void testSetValue() throws Exception {
@@ -23,12 +25,12 @@ public class TextLiteralNodeTest {
 
     @Test
     public void testGetLine() throws Exception {
-        assertThat(subject.getLine(), CoreMatchers.equalTo(2));
+        assertThat(subject.getLine(), equalTo(2));
     }
 
     @Test
     public void testGetCharacter() throws Exception {
-        assertThat(subject.getCharacter(), CoreMatchers.equalTo(3));
+        assertThat(subject.getCharacter(), equalTo(3));
     }
 
     @Test
@@ -40,7 +42,7 @@ public class TextLiteralNodeTest {
     public void testAccept() throws Exception {
         Visitor visitor = mock(Visitor.class);
         subject.accept(visitor);
-        verify(visitor).visit(subject);
+        verify(visitor).visit(same(subject), isA(Control.class));
     }
 
     @Test

@@ -19,7 +19,8 @@ public class InterpreterAssemblySetFactory implements AssemblerSetFactory {
 
         return Arrays.<ValidatingVisitor>asList(
                 new TypeAssigningVisitor(library),
-                new TypeCheckVisitor()
+                new TypeCheckVisitor(),
+                new ReferenceMatchingVisitor()
         );
     }
 }

@@ -15,21 +15,21 @@ import static java.util.Collections.unmodifiableSet;
 public class Constant {
 
     @SafeVarargs
-    public static <T> List<T> immutableList(T... arguments) {
+    public static <T> List<T> list(T... arguments) {
         List<T> list = new ArrayList<>(arguments.length);
         addAll(list, arguments);
         return unmodifiableList(list);
     }
 
     @SafeVarargs
-    public static <T> Set<T> immutableSet(T... arguments) {
+    public static <T> Set<T> set(T... arguments) {
         Set<T> set = new HashSet<>(arguments.length);
         addAll(set, arguments);
         return unmodifiableSet(set);
     }
 
     @SafeVarargs
-    public static <K, V> Map<K, V> immutableMap(Mapping<K, V>... arguments) {
+    public static <K, V> Map<K, V> map(Mapping<K, V>... arguments) {
         Map<K, V> map = new HashMap<>(arguments.length);
         for (Mapping<K, V> put : arguments){
             map.put(put.key, put.value);

@@ -5,8 +5,8 @@ import org.junit.Test;
 
 import java.util.Map;
 
-import static com.sealionsoftware.Constant.immutableList;
-import static com.sealionsoftware.Constant.immutableMap;
+import static com.sealionsoftware.Constant.list;
+import static com.sealionsoftware.Constant.map;
 import static com.sealionsoftware.Constant.put;
 import static com.sealionsoftware.Matchers.isEmptyMap;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -51,7 +51,7 @@ public class InterpreterIT {
         Map<String, Object> output = interpreter.run("var aVariable = true");
 
         assertThat(output, notNullValue());
-        assertThat(output, equalTo(immutableMap(
+        assertThat(output, equalTo(map(
                 put("aVariable", bali.Boolean.TRUE)
         )));
     }
@@ -62,7 +62,7 @@ public class InterpreterIT {
         Map<String, Object> output = interpreter.run("var Boolean aVariable = true");
 
         assertThat(output, notNullValue());
-        assertThat(output, equalTo(immutableMap(
+        assertThat(output, equalTo(map(
                 put("aVariable", bali.Boolean.TRUE)
         )));
     }
@@ -73,7 +73,7 @@ public class InterpreterIT {
         try {
             interpreter.run("var Text aVariable = true");
         } catch (CompilationException e) {
-            assertThat(e.errorList, equalTo(immutableList(
+            assertThat(e.errorList, equalTo(list(
                     new CompileError(ErrorCode.INVALID_TYPE, new VariableNode(0, 0))
             )));
             return;

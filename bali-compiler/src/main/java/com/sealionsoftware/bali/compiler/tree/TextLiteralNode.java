@@ -1,14 +1,17 @@
 package com.sealionsoftware.bali.compiler.tree;
 
 import com.sealionsoftware.bali.compiler.Type;
+import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
+import com.sealionsoftware.bali.compiler.reference.MonitoredProperty;
 
 public class TextLiteralNode extends ExpressionNode {
 
     private String value;
-    private Type type;
+    private final MonitoredProperty<Type> type;
 
-    public TextLiteralNode(Integer line, Integer character) {
+    public TextLiteralNode(Integer line, Integer character, CompilationThreadManager monitor) {
         super(line, character);
+        this.type = new MonitoredProperty<>(this, "type", monitor);
     }
 
     public void setValue(String value) {
@@ -16,17 +19,15 @@ public class TextLiteralNode extends ExpressionNode {
     }
 
     public void setType(Type type) {
-        this.type = type;
+        this.type.set(type);
     }
 
     public Type getType() {
-        return type;
+        return type.get();
     }
 
-    @Override
     public void accept(Visitor visitor) {
-        visitor.visit(this);
-        super.accept(visitor);
+        visitor.visit(this, new ListControl(children, visitor));
     }
 
     public String getValue() {

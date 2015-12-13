@@ -75,7 +75,7 @@ public class ASMBytecodeEngine implements BytecodeEngine, Opcodes {
         int i = 1;
         for (VariableInfo variable : variables){
             methodVisitor.visitVarInsn(ALOAD, retIndex);
-            methodVisitor.visitLdcInsn(variable.getName());
+            methodVisitor.visitLdcInsn(variable.node.getName());
             methodVisitor.visitVarInsn(ALOAD, i++);
             methodVisitor.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true);
             methodVisitor.visitInsn(POP);
@@ -88,11 +88,11 @@ public class ASMBytecodeEngine implements BytecodeEngine, Opcodes {
         i = 0;
         methodVisitor.visitLocalVariable("this", "LFragment;", null, startLabel, endLabel, i++);
         for (VariableInfo variable: variables){
-            Label to = variable.getEnd();
+            Label to = variable.end;
             if (to == null){
                 to = endLabel;
             }
-            methodVisitor.visitLocalVariable(variable.getName(), "Ljava/lang/Object;", null, variable.getStart(), to, i++);
+            methodVisitor.visitLocalVariable(variable.node.getName(), "Ljava/lang/Object;", null, variable.start, to, i++);
         }
         methodVisitor.visitLocalVariable("ret", "Ljava/util/Map;", "Ljava/util/Map<Ljava/lang/String;Ljava/lang/Object;>;", retStart, endLabel, retIndex);
 

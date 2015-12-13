@@ -15,7 +15,8 @@ public class InterpreterAssemblySetFactoryTest {
     public void testAssemblers() throws Exception {
         assertThat(subject.assemblers(), contains(
                 instanceOf(TypeAssigningVisitor.class),
-                instanceOf(TypeCheckVisitor.class)
+                instanceOf(TypeCheckVisitor.class),
+                instanceOf(ReferenceMatchingVisitor.class)
         ));
     }
 }

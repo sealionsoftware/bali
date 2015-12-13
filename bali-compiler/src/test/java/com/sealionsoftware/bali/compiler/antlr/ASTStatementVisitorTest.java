@@ -1,6 +1,8 @@
 package com.sealionsoftware.bali.compiler.antlr;
 
 import bali.compiler.parser.BaliParser;
+import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
+import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
@@ -21,7 +23,8 @@ import static org.mockito.Mockito.when;
 
 public class ASTStatementVisitorTest {
 
-    private ASTStatementVisitor subject = new ASTStatementVisitor();
+    private CompilationThreadManager monitor = mock(CompilationThreadManager.class);
+    private ASTStatementVisitor subject = new ASTStatementVisitor(monitor);
 
     @Test
     public void testVisitScript() throws Exception {
@@ -59,6 +62,26 @@ public class ASTStatementVisitorTest {
         assertThat(node, notNullValue());
         assertThat(node.getName(), equalTo("aVariable"));
         assertThat(node.getType(), notNullValue());
+    }
+
+    @Test
+    public void testVisitAssignmentNode() throws Exception {
+
+        TerminalNode nameTerminal = mockTerminal("aVariable");
+
+        BaliParser.ReferenceContext referenceContext = mockContext(BaliParser.ReferenceContext.class);
+        when(referenceContext.IDENTIFIER()).thenReturn(nameTerminal);
+        BaliParser.ExpressionContext expressionContext = mockContext(BaliParser.ExpressionContext.class);
+        BaliParser.AssignmentContext context = mockContext(BaliParser.AssignmentContext.class);
+
+        when(context.reference()).thenReturn(referenceContext);
+        when(context.expression()).thenReturn(expressionContext);
+
+        AssignmentNode node = subject.visitAssignment(context);
+
+        assertThat(node, notNullValue());
+        assertThat(node.getTarget(), notNullValue());
+        assertThat(node.getTarget().getName(), equalTo("aVariable"));
     }
 
     @Test

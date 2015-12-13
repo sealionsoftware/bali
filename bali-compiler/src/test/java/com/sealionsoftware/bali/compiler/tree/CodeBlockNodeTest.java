@@ -9,6 +9,8 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -31,7 +33,7 @@ public class CodeBlockNodeTest {
     public void testAccept() throws Exception {
         Visitor visitor = mock(Visitor.class);
         subject.accept(visitor);
-        verify(visitor).visit(subject);
+        verify(visitor).visit(same(subject), isA(Control.class));
     }
 
     @Test
