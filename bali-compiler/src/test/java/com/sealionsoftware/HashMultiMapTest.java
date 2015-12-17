@@ -3,14 +3,13 @@ package com.sealionsoftware;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import static com.sealionsoftware.Constant.list;
 import static com.sealionsoftware.Constant.map;
 import static com.sealionsoftware.Constant.put;
-import static com.sealionsoftware.Matchers.containsOneEntry;
 import static com.sealionsoftware.Matchers.containsOneValue;
 import static com.sealionsoftware.Matchers.isEmpty;
-import static com.sealionsoftware.Matchers.isEmptyMap;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -22,20 +21,20 @@ public class HashMultiMapTest {
 
     @Test
     public void testSize() throws Exception {
-        subject.put("key", asList("value"));
+        subject.put("key", "value");
         assertThat(subject.size(), equalTo(1));
     }
 
     @Test
     public void testIsEmpty() throws Exception {
         assertThat(subject.isEmpty(), is(true));
-        subject.put("key", asList("value"));
+        subject.put("key", "value");
         assertThat(subject.isEmpty(), is(false));
     }
 
     @Test
     public void testGet() throws Exception {
-        subject.put("key", asList("value"));
+        subject.put("key", "value");
         assertThat(subject.get("key"), containsOneValue("value"));
     }
 
@@ -46,22 +45,21 @@ public class HashMultiMapTest {
 
     @Test
     public void testContainsKey() throws Exception {
-        subject.put("key", asList("value"));
-        assertThat(subject.containsKey("key"), is(true));
+        subject.put("key", "value");
+        assertThat(subject.contains("key"), is(true));
     }
-
 
     @Test
     public void testPutOne() throws Exception {
-        subject.putOne("key", "value");
-        assertThat(subject, containsOneEntry("key", asList("value")));
+        subject.put("key", "value");
+        assertThat(subject, containsOneValue(new Entry<>("key", asList("value"))));
     }
 
     @Test
     public void testPutOneIntoExistingValue() throws Exception {
-        subject.putOne("key", "value");
-        subject.putOne("key", "anotherValue");
-        assertThat(subject, containsOneEntry("key", asList("value", "anotherValue")));
+        subject.put("key", "value");
+        subject.put("key", "anotherValue");
+        assertThat(subject, containsOneValue(new Entry<>("key", asList("value", "anotherValue"))));
     }
 
     @Test
@@ -72,40 +70,39 @@ public class HashMultiMapTest {
 
     @Test
     public void testRemove() throws Exception {
-        subject.put("key", asList("value"));
+        subject.put("key", "value");
         subject.remove("key");
-        assertThat(subject, isEmptyMap());
+        assertThat(subject, isEmpty());
     }
 
     @Test
     public void testClear() throws Exception {
-        subject.put("key", asList("value"));
+        subject.put("key", "value");
         subject.clear();
-        assertThat(subject, isEmptyMap());
+        assertThat(subject, isEmpty());
     }
 
-    @Test
-    public void testContainsValue() throws Exception {
-        subject.put("key", asList("value"));
-        assertThat(subject.containsValue(asList("value")), is(true));
-    }
+    private static class Entry<K, V> implements Map.Entry<K, V>{
+        private final K key;
+        private V value;
 
-    @Test
-    public void testKeySet() throws Exception {
-        subject.put("key", asList("value"));
-        assertThat(subject.keySet(), containsOneValue("key"));
+        public Entry(K key, V value) {
+            this.key = key;
+            this.value = value;
+        }
 
-    }
+        public K getKey() {
+            return key;
+        }
 
-    @Test
-    public void testValues() throws Exception {
-        subject.put("key", asList("value"));
-        assertThat(subject.values(), containsOneValue(containsOneValue("value")));
-    }
+        public V getValue() {
+            return value;
+        }
 
-    @Test
-    public void testEntrySet() throws Exception {
-        subject.put("key", asList("value"));
-        assertThat(subject.entrySet(), containsOneValue());
+        public V setValue(V value) {
+            V ret = this.value;
+            this.value = value;
+            return ret;
+        }
     }
 }

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import static com.sealionsoftware.Matchers.containsOneEntry;
 import static com.sealionsoftware.Matchers.containsOneValue;
+import static com.sealionsoftware.Matchers.isEmptyMap;
 import static com.sealionsoftware.bali.compiler.Matchers.withCode;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
@@ -20,7 +21,7 @@ public class ConditionalStatementIT {
 
         Map<String, Object> output = interpreter.run("if (true) {}");
 
-        assertThat(output, containsOneEntry("ret", Boolean.TRUE));
+        assertThat(output, isEmptyMap());
     }
 
     @Test

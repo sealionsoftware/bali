@@ -5,6 +5,7 @@ import bali.compiler.parser.BaliParser;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
+import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.StatementNode;
@@ -27,6 +28,20 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
     public CodeBlockNode visitScript(BaliParser.ScriptContext ctx) {
         visitChildren(ctx);
         return container;
+    }
+
+    public CodeBlockNode visitCodeBlock(BaliParser.CodeBlockContext ctx) {
+        CodeBlockNode parent = container;
+        Token start = ctx.start;
+        CodeBlockNode child = new CodeBlockNode(start.getLine(), start.getCharPositionInLine());
+        parent.addStatement(child);
+        try {
+            container = child;
+            visitChildren(ctx);
+        } finally {
+            container = parent;
+        }
+        return child;
     }
 
     public VariableNode visitVariableDeclaration(BaliParser.VariableDeclarationContext ctx) {
@@ -66,6 +81,18 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
         ExpressionNode node = expressionVisitor.visitExpression(ctx);
         container.addStatement(node);
         return node;
+    }
+
+    public ConditionalStatementNode visitConditionalStatement(BaliParser.ConditionalStatementContext ctx){
+        Token start = ctx.start;
+        ASTExpressionVisitor expressionVisitor = new ASTExpressionVisitor(monitor);
+        ConditionalStatementNode conditionalStatementNode = new ConditionalStatementNode(start.getLine(), start.getCharPositionInLine());
+
+        conditionalStatementNode.setCondition(ctx.expression().accept(expressionVisitor));
+        conditionalStatementNode.setConditional(ctx.controlExpression().accept(this));
+        container.addStatement(conditionalStatementNode);
+
+        return conditionalStatementNode;
     }
 
     private TypeNode buildType(BaliParser.TypeContext ctx) {

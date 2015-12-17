@@ -2,8 +2,10 @@ package com.sealionsoftware;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
+
+import static com.sealionsoftware.Collections.flatten;
 
 public class HashMultiMap<K, V> implements MultiMap<K, V> {
 
@@ -22,20 +24,38 @@ public class HashMultiMap<K, V> implements MultiMap<K, V> {
         return delegate.isEmpty();
     }
 
-    public Collection<V> get(Object key) {
+    public boolean contains(Object o) {
+        return delegate.containsKey(o);
+    }
+
+    public Iterator<Map.Entry<K, Collection<V>>> iterator() {
+        return delegate.entrySet().iterator();
+    }
+
+    public Map.Entry<K, Collection<V>>[] toArray() {
+        @SuppressWarnings("unchecked")
+        Map.Entry<K, Collection<V>>[]  ret = delegate.entrySet().toArray(new Map.Entry[size()]);
+        return ret;
+    }
+
+    public <T> T[] toArray(T[] a) {
+        return a;
+    }
+
+    public boolean add(Map.Entry<K, Collection<V>> entry) {
+        return get(entry.getKey()).addAll(entry.getValue());
+    }
+
+    public Collection<V> get(K key) {
         Collection<V> collection = delegate.get(key);
-        return collection == null ? constructor.produce() : collection;
+        if (collection == null){
+            collection = constructor.produce();
+
+        }
+        return collection;
     }
 
-    public boolean containsKey(Object key) {
-        return delegate.containsKey(key);
-    }
-
-    public Collection<V> put(K key, Collection<V> value) {
-        return delegate.put(key, value);
-    }
-
-    public void putOne(K key, V value) {
+    public void put(K key, V value) {
 
         Collection<V> collection = delegate.get(key);
         if (collection == null){
@@ -49,28 +69,32 @@ public class HashMultiMap<K, V> implements MultiMap<K, V> {
         delegate.putAll(m);
     }
 
-    public Collection<V> remove(Object key) {
-        return delegate.remove(key);
+    public boolean remove(Object key) {
+        return delegate.remove(key) == null;
+    }
+
+    public boolean containsAll(Collection<?> c) {
+        for (Object o : c) if (!contains(o)) return false;
+        return true;
+    }
+
+    public boolean addAll(Collection<? extends Map.Entry<K, Collection<V>>> c) {
+        return false;
+    }
+
+    public boolean removeAll(Collection<?> c) {
+        return false;
+    }
+
+    public boolean retainAll(Collection<?> c) {
+        return false;
     }
 
     public void clear() {
         delegate.clear();
     }
 
-    public boolean containsValue(Object value) {
-        return delegate.containsValue(value);
+    public Collection<V> values() {
+        return flatten(delegate.values());
     }
-
-    public Set<K> keySet() {
-        return delegate.keySet();
-    }
-
-    public Collection<Collection<V>> values() {
-        return delegate.values();
-    }
-
-    public Set<Entry<K, Collection<V>>> entrySet() {
-        return delegate.entrySet();
-    }
-
 }

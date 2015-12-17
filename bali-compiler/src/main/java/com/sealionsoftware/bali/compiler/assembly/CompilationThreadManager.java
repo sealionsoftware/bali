@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.sealionsoftware.Collections.flatten;
 import static com.sealionsoftware.bali.compiler.assembly.Interruptable.wrapException;
 import static java.util.Collections.synchronizedSet;
 
@@ -25,14 +24,15 @@ public class CompilationThreadManager {
         ExceptionGatherer gatherer = new ExceptionGatherer();
         running = true;
 
-        for (Runnable runnable : runnables){
-            Thread t = new Thread(runnable);
-            monitoredThreads.add(t);
-            t.setUncaughtExceptionHandler(gatherer);
-        }
-
-        for (Thread t : monitoredThreads){
-            t.start();
+        synchronized (this) {
+            for (Runnable runnable : runnables) {
+                Thread t = new Thread(runnable);
+                monitoredThreads.add(t);
+                t.setUncaughtExceptionHandler(gatherer);
+            }
+            for (Thread t : monitoredThreads) {
+                t.start();
+            }
         }
 
         try {
@@ -57,7 +57,7 @@ public class CompilationThreadManager {
 
 	public synchronized void registerBlockage(final MonitoredProperty property) {
 		assert onMonitoredThread();
-        blockages.putOne(property, new BlockageDescription(Thread.currentThread().getName(), property.getNode(), property.getProperty()));
+        blockages.put(property, new BlockageDescription(Thread.currentThread().getName(), property.getNode(), property.getProperty()));
 		checkContinue();
 	}
 
@@ -88,9 +88,7 @@ public class CompilationThreadManager {
 	}
 
 	public synchronized Collection<BlockageDescription> getBlockages() {
-        return flatten(blockages.values());
+        return blockages.values();
 	}
-
-
 
 }

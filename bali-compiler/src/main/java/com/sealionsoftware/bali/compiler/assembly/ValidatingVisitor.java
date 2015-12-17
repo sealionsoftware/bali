@@ -48,6 +48,7 @@ public abstract class ValidatingVisitor implements Visitor {
     }
 
     public void visit(ConditionalStatementNode node, Control control) {
+        control.visitChildren();
     }
 
     public List<CompileError> getFailures() {
