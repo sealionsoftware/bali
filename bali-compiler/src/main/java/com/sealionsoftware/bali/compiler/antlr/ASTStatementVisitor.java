@@ -34,7 +34,6 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
         CodeBlockNode parent = container;
         Token start = ctx.start;
         CodeBlockNode child = new CodeBlockNode(start.getLine(), start.getCharPositionInLine());
-        parent.addStatement(child);
         try {
             container = child;
             visitChildren(ctx);

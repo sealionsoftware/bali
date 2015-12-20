@@ -142,8 +142,11 @@ public class ASMStackVisitorTest implements Opcodes {
 
     @Test
     public void testVisitConditionalNode() throws Exception {
+        Control mockControl = mock(Control.class);
         ConditionalStatementNode mockNode = mock(ConditionalStatementNode.class);
-        subject.visit(mockNode, mock(Control.class));
-        verifyZeroInteractions(mockNode);
+        when(mockNode.getCondition()).thenReturn(mock(ExpressionNode.class));
+        when(mockNode.getConditional()).thenReturn(mock(ExpressionNode.class));
+        subject.visit(mockNode, mockControl);
+        verifyZeroInteractions(mockControl);
     }
 }

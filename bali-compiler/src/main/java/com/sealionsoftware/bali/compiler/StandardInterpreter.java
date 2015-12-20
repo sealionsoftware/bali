@@ -36,7 +36,6 @@ public class StandardInterpreter implements Interpreter {
     }
 
     public Map<String, Object> run(String fragment) {
-
         CodeBlockNode codeBlockNode = parseEngine.parse(fragment);
         assemblyEngine.assemble(codeBlockNode);
         GeneratedPackage generatedPackage = bytecodeEngine.generate(codeBlockNode);

@@ -32,14 +32,13 @@ public class HashMultiMap<K, V> implements MultiMap<K, V> {
         return delegate.entrySet().iterator();
     }
 
+    @SuppressWarnings("unchecked")
     public Map.Entry<K, Collection<V>>[] toArray() {
-        @SuppressWarnings("unchecked")
-        Map.Entry<K, Collection<V>>[]  ret = delegate.entrySet().toArray(new Map.Entry[size()]);
-        return ret;
+        return delegate.entrySet().toArray(new Map.Entry[size()]);
     }
 
     public <T> T[] toArray(T[] a) {
-        return a;
+        return delegate.entrySet().toArray(a);
     }
 
     public boolean add(Map.Entry<K, Collection<V>> entry) {
@@ -66,7 +65,9 @@ public class HashMultiMap<K, V> implements MultiMap<K, V> {
     }
 
     public void putAll(Map<? extends K, ? extends Collection<V>> m) {
-        delegate.putAll(m);
+        for (Map.Entry<? extends K, ? extends Collection<V>> entry : m.entrySet()){
+            get(entry.getKey()).addAll(entry.getValue());
+        }
     }
 
     public boolean remove(Object key) {
@@ -79,15 +80,25 @@ public class HashMultiMap<K, V> implements MultiMap<K, V> {
     }
 
     public boolean addAll(Collection<? extends Map.Entry<K, Collection<V>>> c) {
-        return false;
+        boolean ret = false;
+        for (Map.Entry<K, Collection<V>> entry : c) ret |= add(entry);
+        return ret;
     }
 
     public boolean removeAll(Collection<?> c) {
-        return false;
+        boolean ret = false;
+        for (Object entry : c) ret |= remove(entry);
+        return ret;
     }
 
     public boolean retainAll(Collection<?> c) {
-        return false;
+        boolean ret = false;
+        Iterator<K> keys = delegate.keySet().iterator();
+        while (keys.hasNext()) if (!c.contains(keys.next())){
+            keys.remove();
+            ret = true;
+        }
+        return ret;
     }
 
     public void clear() {
@@ -96,5 +107,9 @@ public class HashMultiMap<K, V> implements MultiMap<K, V> {
 
     public Collection<V> values() {
         return flatten(delegate.values());
+    }
+
+    public String toString() {
+        return delegate.toString();
     }
 }

@@ -44,9 +44,7 @@ public class CompilationThreadManager {
                 thread.interrupt();
             }
             for (Thread thread : monitoredThreads) {
-                try {
-                    thread.join();
-                } catch (InterruptedException ignored) {}
+                wrapException(thread::join, "Interrupted while waiting for registered threads to complete");
             }
         }
 

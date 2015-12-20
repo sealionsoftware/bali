@@ -111,11 +111,17 @@ public class ASTStatementVisitorTest {
         when(context.controlExpression()).thenReturn(bodyContext);
         when(bodyContext.accept(any(ParseTreeVisitor.class))).thenReturn(mock(StatementNode.class));
 
-        StatementNode node = subject.visitConditionalStatement(context);
-        assertThat(node, instanceOf(ConditionalStatementNode.class));
-        ConditionalStatementNode conditionalStatementNode = (ConditionalStatementNode) node;
-        assertThat(conditionalStatementNode.getCondition(), notNullValue());
-        assertThat(conditionalStatementNode.getConditional(), notNullValue());
+        ConditionalStatementNode node = subject.visitConditionalStatement(context);
+        assertThat(node, notNullValue());
+        assertThat(node.getCondition(), notNullValue());
+        assertThat(node.getConditional(), notNullValue());
+    }
+
+    @Test
+    public void testVisitCodeBlockNode() throws Exception {
+        BaliParser.CodeBlockContext context = mockContext(BaliParser.CodeBlockContext.class);
+        CodeBlockNode node = subject.visitCodeBlock(context);
+        assertThat(node, notNullValue());
     }
 
     private static TerminalNode mockTerminal(String value){

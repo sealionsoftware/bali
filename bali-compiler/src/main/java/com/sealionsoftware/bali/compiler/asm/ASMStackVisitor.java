@@ -64,7 +64,7 @@ public class ASMStackVisitor implements Visitor, Opcodes {
     }
 
     public void visit(AssignmentNode node, Control control) {
-        control.visitChildren();
+        node.getValue().accept(this);
         methodVisitor.visitVarInsn(ASTORE, variablesIndex.get(node.getTarget().getVariableData().id));
     }
 
@@ -73,7 +73,12 @@ public class ASMStackVisitor implements Visitor, Opcodes {
     }
 
     public void visit(ConditionalStatementNode node, Control control) {
-
+        Label end = new Label();
+        methodVisitor.visitFieldInsn(GETSTATIC, "bali/Boolean", "TRUE", "Lbali/Boolean;");
+        node.getCondition().accept(this);
+        methodVisitor.visitJumpInsn(IF_ACMPNE, end);
+        node.getConditional().accept(this);
+        methodVisitor.visitLabel(end);
     }
 
     public List<VariableInfo> getVariables(){

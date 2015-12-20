@@ -194,4 +194,16 @@ public class Matchers {
         };
     }
 
+    public static Matcher<? super Map.Entry<String,Collection<String>>[]> hasLength(int i) {
+        return new TypeSafeDiagnosingMatcher<Map.Entry<String, Collection<String>>[]>() {
+            protected boolean matchesSafely(Map.Entry<String, Collection<String>>[] entries, Description description) {
+                return entries.length == i;
+            }
+
+            public void describeTo(Description description) {
+                description.appendText("an array with length " + i);
+            }
+        };
+    }
+
 }

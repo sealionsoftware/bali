@@ -19,7 +19,9 @@ public class ConditionalStatementIT {
     @Test
     public void testConditional() {
 
-        Map<String, Object> output = interpreter.run("if (true) {}");
+        Map<String, Object> output = interpreter.run(
+                "if (true) {}"
+        );
 
         assertThat(output, isEmptyMap());
     }
@@ -27,7 +29,10 @@ public class ConditionalStatementIT {
     @Test
     public void testConditionalBodyWhenMet() {
 
-        Map<String, Object> output = interpreter.run("var ret = false if (true) {ret = true}");
+        Map<String, Object> output = interpreter.run(
+                "var ret = false " +
+                "if (true) {ret = true}"
+        );
 
         assertThat(output, containsOneEntry("ret", Boolean.TRUE));
     }
@@ -35,7 +40,10 @@ public class ConditionalStatementIT {
     @Test
     public void testConditionalBodyWhenNotMet() {
 
-        Map<String, Object> output = interpreter.run("var ret = false if (false) {ret = true}");
+        Map<String, Object> output = interpreter.run(
+                "var ret = false " +
+                "if (false) {ret = true}"
+        );
 
         assertThat(output, containsOneEntry("ret", Boolean.FALSE));
     }
