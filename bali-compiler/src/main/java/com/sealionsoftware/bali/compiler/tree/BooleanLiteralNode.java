@@ -20,7 +20,7 @@ public class BooleanLiteralNode extends ExpressionNode {
 
     @Override
     public void accept(Visitor visitor) {
-        visitor.visit(this, new ListControl(children, visitor));
+        visitor.visit(this);
     }
 
     public boolean isTrue() {

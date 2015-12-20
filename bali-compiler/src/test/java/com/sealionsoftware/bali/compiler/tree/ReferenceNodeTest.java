@@ -11,7 +11,6 @@ import static com.sealionsoftware.Matchers.isEmpty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.isA;
 import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -56,6 +55,6 @@ public class ReferenceNodeTest {
 	public void testAccept() throws Exception {
 		Visitor visitor = mock(Visitor.class);
 		subject.accept(visitor);
-		verify(visitor).visit(same(subject), isA(Control.class));
+		verify(visitor).visit(same(subject));
 	}
 }

@@ -3,7 +3,6 @@ package com.sealionsoftware.bali.compiler.assembly;
 import com.sealionsoftware.bali.compiler.ErrorCode;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
-import com.sealionsoftware.bali.compiler.tree.Control;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
@@ -13,7 +12,6 @@ import static com.sealionsoftware.bali.compiler.Matchers.containsNoFailures;
 import static com.sealionsoftware.bali.compiler.Matchers.containsOneFailure;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 public class ReferenceMatchingVisitorTest {
 
@@ -24,10 +22,8 @@ public class ReferenceMatchingVisitorTest {
 
         CodeBlockNode node = new CodeBlockNode(2, 3);
 
-        Control mockControl = mock(Control.class);
-        subject.visit(node, mockControl);
+        subject.visit(node);
 
-        verify(mockControl).visitChildren();
         assertThat(subject, containsNoFailures());
     }
 
@@ -36,10 +32,8 @@ public class ReferenceMatchingVisitorTest {
 
         VariableNode node = new VariableNode(2, 3);
 
-        Control mockControl = mock(Control.class);
-        subject.visit(node, mockControl);
+        subject.visit(node);
 
-        verify(mockControl).visitChildren();
         assertThat(subject, containsNoFailures());
     }
 
@@ -56,9 +50,8 @@ public class ReferenceMatchingVisitorTest {
         ReferenceNode node = new ReferenceNode(mockMonitor, 4, 5);
         node.setName("aVariable");
 
-        Control mockControl = mock(Control.class);
-        subject.visit(variableNode, mockControl);
-        subject.visit(node, mockControl);
+        subject.visit(variableNode);
+        subject.visit(node);
 
         assertThat(subject, containsNoFailures());
     }
@@ -70,8 +63,7 @@ public class ReferenceMatchingVisitorTest {
         ReferenceNode node = new ReferenceNode(mockMonitor, 2, 3);
         node.setName("aVariable");
 
-        Control mockControl = mock(Control.class);
-        subject.visit(node, mockControl);
+        subject.visit(node);
 
         assertThat(subject, containsOneFailure(ErrorCode.CANNOT_RESOLVE_REFERENCE));
     }

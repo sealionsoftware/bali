@@ -32,7 +32,7 @@ public class ConditionalStatementNode extends StatementNode {
 	}
 
     public void accept(Visitor visitor) {
-        visitor.visit(this, new ListControl(children, visitor));
+        visitor.visit(this);
     }
 
 }

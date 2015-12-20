@@ -5,7 +5,6 @@ import com.sealionsoftware.bali.compiler.ErrorCode;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
-import com.sealionsoftware.bali.compiler.tree.Control;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
@@ -22,7 +21,6 @@ import static com.sealionsoftware.bali.compiler.Matchers.containsOneFailure;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class TypeCheckVisitorTest {
@@ -42,8 +40,7 @@ public class TypeCheckVisitorTest {
         node.setName("aName");
         node.setValue(expressionNode);
 
-        Control mockControl = mock(Control.class);
-        subject.visit(node, mockControl);
+        subject.visit(node);
 
         assertThat(subject, containsNoFailures());
     }
@@ -65,10 +62,8 @@ public class TypeCheckVisitorTest {
         node.setValue(expressionNode);
         node.setType(typeNode);
 
-        Control mockControl = mock(Control.class);
-        subject.visit(node, mockControl);
+        subject.visit(node);
 
-        verify(mockControl).visitChildren();
         assertThat(subject, containsNoFailures());
     }
 
@@ -88,10 +83,8 @@ public class TypeCheckVisitorTest {
         node.setValue(expressionNode);
         node.setType(typeNode);
 
-        Control mockControl = mock(Control.class);
-        subject.visit(node, mockControl);
+        subject.visit(node);
 
-        verify(mockControl).visitChildren();
         assertThat(subject, containsOneFailure(ErrorCode.INVALID_TYPE));
     }
 
@@ -108,10 +101,8 @@ public class TypeCheckVisitorTest {
         node.setTarget(referenceNode);
         node.setValue(expressionNode);
 
-        Control mockControl = mock(Control.class);
-        subject.visit(node, mockControl);
+        subject.visit(node);
 
-        verify(mockControl).visitChildren();
         assertThat(subject, containsNoFailures());
     }
 
@@ -133,10 +124,8 @@ public class TypeCheckVisitorTest {
         node.setTarget(referenceNode);
         node.setValue(expressionNode);
 
-        Control mockControl = mock(Control.class);
-        subject.visit(node, mockControl);
+        subject.visit(node);
 
-        verify(mockControl).visitChildren();
         assertThat(subject, containsNoFailures());
     }
 
@@ -157,10 +146,8 @@ public class TypeCheckVisitorTest {
         node.setTarget(referenceNode);
         node.setValue(expressionNode);
 
-        Control mockControl = mock(Control.class);
-        subject.visit(node, mockControl);
+        subject.visit(node);
 
-        verify(mockControl).visitChildren();
         assertThat(subject, containsOneFailure(ErrorCode.INVALID_TYPE));
     }
 
@@ -175,10 +162,8 @@ public class TypeCheckVisitorTest {
         ConditionalStatementNode node = new ConditionalStatementNode(2, 3);
         node.setCondition(expressionNode);
 
-        Control mockControl = mock(Control.class);
-        subject.visit(node, mockControl);
+        subject.visit(node);
 
-        verify(mockControl).visitChildren();
         assertThat(subject, containsOneFailure(ErrorCode.INVALID_TYPE));
     }
 
@@ -193,10 +178,8 @@ public class TypeCheckVisitorTest {
         ConditionalStatementNode node = new ConditionalStatementNode(2, 3);
         node.setCondition(expressionNode);
 
-        Control mockControl = mock(Control.class);
-        subject.visit(node, mockControl);
+        subject.visit(node);
 
-        verify(mockControl).visitChildren();
         assertThat(subject, containsNoFailures());
     }
 

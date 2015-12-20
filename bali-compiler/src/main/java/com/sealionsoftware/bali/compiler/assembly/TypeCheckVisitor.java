@@ -7,7 +7,6 @@ import com.sealionsoftware.bali.compiler.ErrorCode;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
-import com.sealionsoftware.bali.compiler.tree.Control;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 
@@ -21,7 +20,7 @@ public class TypeCheckVisitor extends ValidatingVisitor {
         this.library = library;
     }
 
-    public void visit(VariableNode node, Control control) {
+    public void visit(VariableNode node) {
         TypeNode variableType = node.getType();
         Type valueType = node.getValue().getType();
         if (variableType != null && (valueType == null || !valueType.isAssignableTo(variableType.getResolvedType()))){
@@ -30,10 +29,10 @@ public class TypeCheckVisitor extends ValidatingVisitor {
                     node
             ));
         }
-        control.visitChildren();
+        visitChildren(node);
     }
 
-    public void visit(AssignmentNode node, Control control) {
+    public void visit(AssignmentNode node) {
         Type targetType = node.getTarget().getVariableData().type;
         Type valueType =  node.getValue().getType();
         if (targetType != null && (valueType == null || !valueType.isAssignableTo(targetType))){
@@ -42,10 +41,10 @@ public class TypeCheckVisitor extends ValidatingVisitor {
                     node
             ));
         }
-        control.visitChildren();
+        visitChildren(node);
     }
 
-    public void visit(ConditionalStatementNode node, Control control) {
+    public void visit(ConditionalStatementNode node) {
         Type targetType = new ClassBasedType(library.get(bali.Boolean.class.getName()));
         Type valueType =  node.getCondition().getType();
         if (valueType == null || !valueType.isAssignableTo(targetType)){
@@ -54,6 +53,6 @@ public class TypeCheckVisitor extends ValidatingVisitor {
                     node
             ));
         }
-        control.visitChildren();
+        visitChildren(node);
     }
 }
