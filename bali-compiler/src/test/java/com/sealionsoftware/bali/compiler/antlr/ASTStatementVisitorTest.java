@@ -5,10 +5,13 @@ import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
+import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
+import com.sealionsoftware.bali.compiler.tree.StatementNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.junit.Test;
 
@@ -86,16 +89,39 @@ public class ASTStatementVisitorTest {
 
     @Test
     public void testVisitExpressionNode() throws Exception {
-        BaliParser.ExpressionContext context = mock(BaliParser.ExpressionContext.class);
+        BaliParser.ExpressionContext context = mockContext(BaliParser.ExpressionContext.class);
 
-        BaliParser.BooleanLiteralContext literalContext = mock(BaliParser.BooleanLiteralContext.class);
+        BaliParser.BooleanLiteralContext literalContext = mockContext(BaliParser.BooleanLiteralContext.class);
         when(context.getChildCount()).thenReturn(1);
         when(context.getChild(0)).thenReturn(literalContext);
         when(literalContext.accept(any(ASTExpressionVisitor.class))).thenReturn(mock(BooleanLiteralNode.class));
 
         ExpressionNode node = subject.visitExpression(context);
-        assertThat(node, notNullValue());
         assertThat(node, instanceOf(BooleanLiteralNode.class));
+    }
+
+    @Test
+    public void testVisitConditionalNode() throws Exception {
+        BaliParser.ConditionalStatementContext context = mockContext(BaliParser.ConditionalStatementContext.class);
+        BaliParser.ExpressionContext predicateContext = mockContext(BaliParser.ExpressionContext.class);
+        BaliParser.ControlExpressionContext bodyContext = mockContext(BaliParser.ControlExpressionContext.class);
+
+        when(context.expression()).thenReturn(predicateContext);
+        when(predicateContext.accept(any(ParseTreeVisitor.class))).thenReturn(mock(ExpressionNode.class));
+        when(context.controlExpression()).thenReturn(bodyContext);
+        when(bodyContext.accept(any(ParseTreeVisitor.class))).thenReturn(mock(StatementNode.class));
+
+        ConditionalStatementNode node = subject.visitConditionalStatement(context);
+        assertThat(node, notNullValue());
+        assertThat(node.getCondition(), notNullValue());
+        assertThat(node.getConditional(), notNullValue());
+    }
+
+    @Test
+    public void testVisitCodeBlockNode() throws Exception {
+        BaliParser.CodeBlockContext context = mockContext(BaliParser.CodeBlockContext.class);
+        CodeBlockNode node = subject.visitCodeBlock(context);
+        assertThat(node, notNullValue());
     }
 
     private static TerminalNode mockTerminal(String value){

@@ -1,8 +1,10 @@
 package com.sealionsoftware.bali.compiler.assembly;
 
+import com.sealionsoftware.bali.compiler.Class;
 import com.sealionsoftware.bali.compiler.ErrorCode;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
+import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.Control;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
@@ -10,18 +12,26 @@ import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.junit.Test;
 
+import java.util.Map;
 import java.util.UUID;
 
+import static com.sealionsoftware.Constant.map;
+import static com.sealionsoftware.Constant.put;
 import static com.sealionsoftware.bali.compiler.Matchers.containsNoFailures;
 import static com.sealionsoftware.bali.compiler.Matchers.containsOneFailure;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class TypeCheckVisitorTest {
 
-    private TypeCheckVisitor subject = new TypeCheckVisitor();
+    private Class booleanMock = mock(Class.class);
+    private Map<String, Class> library = map(
+            put("bali.Boolean", booleanMock)
+    );
+    private TypeCheckVisitor subject = new TypeCheckVisitor(library);
 
     @Test
     public void testVisitVariableWithNoType(){
@@ -152,6 +162,42 @@ public class TypeCheckVisitorTest {
 
         verify(mockControl).visitChildren();
         assertThat(subject, containsOneFailure(ErrorCode.INVALID_TYPE));
+    }
+
+    @Test
+    public void testVisitConditionalWithNonBooleanType(){
+
+        Type expressionType = mock(Type.class);
+        ExpressionNode expressionNode = mock(ExpressionNode.class);
+        when(expressionNode.getType()).thenReturn(expressionType);
+        when(expressionType.isAssignableTo(any(Type.class))).thenReturn(false);
+
+        ConditionalStatementNode node = new ConditionalStatementNode(2, 3);
+        node.setCondition(expressionNode);
+
+        Control mockControl = mock(Control.class);
+        subject.visit(node, mockControl);
+
+        verify(mockControl).visitChildren();
+        assertThat(subject, containsOneFailure(ErrorCode.INVALID_TYPE));
+    }
+
+    @Test
+    public void testVisitConditionalWithBooleanType(){
+
+        Type expressionType = mock(Type.class);
+        ExpressionNode expressionNode = mock(ExpressionNode.class);
+        when(expressionNode.getType()).thenReturn(expressionType);
+        when(expressionType.isAssignableTo(any(Type.class))).thenReturn(true);
+
+        ConditionalStatementNode node = new ConditionalStatementNode(2, 3);
+        node.setCondition(expressionNode);
+
+        Control mockControl = mock(Control.class);
+        subject.visit(node, mockControl);
+
+        verify(mockControl).visitChildren();
+        assertThat(subject, containsNoFailures());
     }
 
 }
