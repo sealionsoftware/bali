@@ -19,9 +19,9 @@ public class LoopStatementIT {
     public void testLoopBodyWhenMet() {
 
         Map<String, Object> output = interpreter.run(
-                "var loop = true" +
-                "while (loop) {" +
-                    "loop = false" +
+                "var Boolean loop = true " +
+                "while (loop) { " +
+                    "loop = false " +
                 "}"
         );
 
@@ -32,9 +32,9 @@ public class LoopStatementIT {
     public void testLoopBodyWhenNotMet() {
 
         Map<String, Object> output = interpreter.run(
-                "var loop = false" +
-                "while (loop) {" +
-                    "loop = true" +
+                "var Boolean loop = false " +
+                "while (loop) { " +
+                    "loop = true " +
                 "}"
         );
 
