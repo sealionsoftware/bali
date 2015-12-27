@@ -19,4 +19,6 @@ public interface Visitor {
 
     void visit(ConditionalStatementNode node);
 
+    void visit(ConditionalLoopNode node);
+
 }

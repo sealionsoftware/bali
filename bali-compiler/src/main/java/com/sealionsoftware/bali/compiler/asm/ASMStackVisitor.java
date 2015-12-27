@@ -4,6 +4,7 @@ import com.sealionsoftware.bali.compiler.assembly.DescendingVisitor;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
+import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
@@ -68,7 +69,7 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
     }
 
     public void visit(ReferenceNode node){
-
+        methodVisitor.visitVarInsn(ALOAD, variablesIndex.get(node.getVariableData().id));
     }
 
     public void visit(ConditionalStatementNode node) {
@@ -77,6 +78,18 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
         node.getCondition().accept(this);
         methodVisitor.visitJumpInsn(IF_ACMPNE, end);
         node.getConditional().accept(this);
+        methodVisitor.visitLabel(end);
+    }
+
+    public void visit(ConditionalLoopNode node) {
+        Label start = new Label();
+        Label end = new Label();
+        methodVisitor.visitLabel(start);
+        methodVisitor.visitFieldInsn(GETSTATIC, "bali/Boolean", "TRUE", "Lbali/Boolean;");
+        node.getCondition().accept(this);
+        methodVisitor.visitJumpInsn(IF_ACMPNE, end);
+        node.getConditional().accept(this);
+        methodVisitor.visitJumpInsn(GOTO, start);
         methodVisitor.visitLabel(end);
     }
 

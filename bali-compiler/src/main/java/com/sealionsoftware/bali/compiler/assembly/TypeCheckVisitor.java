@@ -6,6 +6,8 @@ import com.sealionsoftware.bali.compiler.CompileError;
 import com.sealionsoftware.bali.compiler.ErrorCode;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
+import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
+import com.sealionsoftware.bali.compiler.tree.ConditionalNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
@@ -45,6 +47,14 @@ public class TypeCheckVisitor extends ValidatingVisitor {
     }
 
     public void visit(ConditionalStatementNode node) {
+        visitConditional(node);
+    }
+
+    public void visit(ConditionalLoopNode node) {
+        visitConditional(node);
+    }
+
+    public void visitConditional(ConditionalNode node) {
         Type targetType = new ClassBasedType(library.get(bali.Boolean.class.getName()));
         Type valueType =  node.getCondition().getType();
         if (valueType == null || !valueType.isAssignableTo(targetType)){

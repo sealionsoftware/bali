@@ -5,6 +5,7 @@ import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
+import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.StatementNode;
@@ -112,6 +113,23 @@ public class ASTStatementVisitorTest {
         when(bodyContext.accept(any(ParseTreeVisitor.class))).thenReturn(mock(StatementNode.class));
 
         ConditionalStatementNode node = subject.visitConditionalStatement(context);
+        assertThat(node, notNullValue());
+        assertThat(node.getCondition(), notNullValue());
+        assertThat(node.getConditional(), notNullValue());
+    }
+
+    @Test
+    public void testVisitLoopNode() throws Exception {
+        BaliParser.LoopStatementContext context = mockContext(BaliParser.LoopStatementContext.class);
+        BaliParser.ExpressionContext predicateContext = mockContext(BaliParser.ExpressionContext.class);
+        BaliParser.ControlExpressionContext bodyContext = mockContext(BaliParser.ControlExpressionContext.class);
+
+        when(context.expression()).thenReturn(predicateContext);
+        when(predicateContext.accept(any(ParseTreeVisitor.class))).thenReturn(mock(ExpressionNode.class));
+        when(context.controlExpression()).thenReturn(bodyContext);
+        when(bodyContext.accept(any(ParseTreeVisitor.class))).thenReturn(mock(StatementNode.class));
+
+        ConditionalLoopNode node = subject.visitLoopStatement(context);
         assertThat(node, notNullValue());
         assertThat(node.getCondition(), notNullValue());
         assertThat(node.getConditional(), notNullValue());

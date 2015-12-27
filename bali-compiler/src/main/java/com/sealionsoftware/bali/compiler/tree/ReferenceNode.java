@@ -1,17 +1,17 @@
 package com.sealionsoftware.bali.compiler.tree;
 
 
+import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.assembly.VariableData;
 import com.sealionsoftware.bali.compiler.reference.MonitoredProperty;
 
-public class ReferenceNode extends Node {
+public class ReferenceNode extends ExpressionNode {
 
     private String name;
-
     private MonitoredProperty<VariableData> variableData;
 
-    public ReferenceNode(CompilationThreadManager monitor, Integer line, Integer character) {
+    public ReferenceNode(Integer line, Integer character, CompilationThreadManager monitor) {
         super(line, character);
         variableData = new MonitoredProperty<>(this, "variableData", monitor);
     }
@@ -34,5 +34,9 @@ public class ReferenceNode extends Node {
 
     public void accept(Visitor visitor) {
         visitor.visit(this);
+    }
+
+    public Type getType() {
+        return variableData.get().type;
     }
 }

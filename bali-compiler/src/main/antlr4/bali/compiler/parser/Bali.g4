@@ -25,18 +25,21 @@ controlExpression:          codeBlock | controlStatement ;
 
 conditionalStatement:       'if' '(' expression ')' controlExpression ;
 
+loopStatement:              'while' '(' expression ')' controlExpression ;
+
 lineStatement:              expression
 							 | variableDeclaration
 							 | assignment ;
 
-controlStatement:           conditionalStatement ;
+controlStatement:           conditionalStatement | loopStatement;
 
 variableDeclaration:        'var' type? IDENTIFIER '=' expression ;
 
 assignment:                 reference '=' expression ;
 
 expression:                 '(' expression ')'
-							 | literal;
+							 | literal
+							 | reference ;
 
 type:                       IDENTIFIER ( '<'  typeList '>' )? ;
 

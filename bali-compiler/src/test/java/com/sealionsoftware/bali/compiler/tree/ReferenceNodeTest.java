@@ -18,7 +18,7 @@ import static org.mockito.Mockito.verify;
 public class ReferenceNodeTest {
 
 	private CompilationThreadManager mockMonitor = mock(CompilationThreadManager.class);
-	private ReferenceNode subject = new ReferenceNode(mockMonitor, 2, 3);
+	private ReferenceNode subject = new ReferenceNode(2, 3, mockMonitor);
 	
 	@Test
 	public void testGetName() throws Exception {

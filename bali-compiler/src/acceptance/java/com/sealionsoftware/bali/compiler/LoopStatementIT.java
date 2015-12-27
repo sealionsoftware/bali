@@ -38,7 +38,7 @@ public class LoopStatementIT {
                 "}"
         );
 
-        assertThat(output, containsOneEntry("ret", Boolean.FALSE));
+        assertThat(output, containsOneEntry("loop", Boolean.FALSE));
     }
 
     @Test

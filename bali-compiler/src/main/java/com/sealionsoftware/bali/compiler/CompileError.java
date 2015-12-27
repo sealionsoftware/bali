@@ -20,6 +20,6 @@ public class CompileError {
     }
 
     public String toString() {
-        return code.name();
+        return code.name() + "(" + node.getLine() + ":" + node.getCharacter() + ")";
     }
 }

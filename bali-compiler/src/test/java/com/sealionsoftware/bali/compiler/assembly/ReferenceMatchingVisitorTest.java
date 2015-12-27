@@ -47,7 +47,7 @@ public class ReferenceMatchingVisitorTest {
         VariableNode variableNode = new VariableNode(2, 3);
         variableNode.setName("aVariable");
         variableNode.setType(typeNode);
-        ReferenceNode node = new ReferenceNode(mockMonitor, 4, 5);
+        ReferenceNode node = new ReferenceNode(4, 5, mockMonitor);
         node.setName("aVariable");
 
         subject.visit(variableNode);
@@ -60,7 +60,7 @@ public class ReferenceMatchingVisitorTest {
     public void testVisitUnresolvedReferenceNode() throws Exception {
 
         CompilationThreadManager mockMonitor = mock(CompilationThreadManager.class);
-        ReferenceNode node = new ReferenceNode(mockMonitor, 2, 3);
+        ReferenceNode node = new ReferenceNode(2, 3, mockMonitor);
         node.setName("aVariable");
 
         subject.visit(node);
