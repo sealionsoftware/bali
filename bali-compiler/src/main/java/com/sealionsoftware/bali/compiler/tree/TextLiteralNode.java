@@ -27,7 +27,7 @@ public class TextLiteralNode extends ExpressionNode {
     }
 
     public void accept(Visitor visitor) {
-        visitor.visit(this, new ListControl(children, visitor));
+        visitor.visit(this);
     }
 
     public String getValue() {

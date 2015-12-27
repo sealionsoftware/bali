@@ -3,7 +3,7 @@ package com.sealionsoftware.bali.compiler.assembly;
 import com.sealionsoftware.bali.compiler.CompileError;
 import com.sealionsoftware.bali.compiler.ErrorCode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
-import com.sealionsoftware.bali.compiler.tree.Control;
+import com.sealionsoftware.bali.compiler.tree.Node;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
@@ -19,22 +19,22 @@ public class ReferenceMatchingVisitor extends ValidatingVisitor {
 
     private Deque<Scope> scopeStack = new ArrayDeque<>(asList(new Scope()));
 
-    public void visit(CodeBlockNode codeBlock, Control agent) {
-        pushAndWalk(agent, new Scope());
+    public void visit(CodeBlockNode codeBlock) {
+        pushAndWalk(codeBlock, new Scope());
     }
 
-    public void visit(VariableNode variable, Control control) {
+    public void visit(VariableNode variable) {
         scopeStack.peek().add(createData(variable));
-        control.visitChildren();
+        visitChildren(variable);
     }
 
-    private void pushAndWalk(Control control, Scope scope) {
+    private void pushAndWalk(Node node, Scope scope) {
         scopeStack.push(scope);
-        control.visitChildren();
+        visitChildren(node);
         scopeStack.pop();
     }
 
-    public void visit(ReferenceNode value, Control control) {
+    public void visit(ReferenceNode value) {
 
         String name = value.getName();
         Scope declarationScope = getScopeForReference(name);

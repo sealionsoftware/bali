@@ -3,7 +3,6 @@ package com.sealionsoftware.bali.compiler.assembly;
 import com.sealionsoftware.bali.compiler.Class;
 import com.sealionsoftware.bali.compiler.ClassBasedType;
 import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
-import com.sealionsoftware.bali.compiler.tree.Control;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import org.junit.Test;
@@ -30,14 +29,14 @@ public class TypeAssigningVisitorTest {
     @Test
     public void testVisitBooleanNode() throws Exception {
         BooleanLiteralNode node = mock(BooleanLiteralNode.class);
-        subject.visit(node, mock(Control.class));
+        subject.visit(node);
         verify(node).setType(any(ClassBasedType.class));
     }
 
     @Test
     public void testVisitTextNode() throws Exception {
         TextLiteralNode node = mock(TextLiteralNode.class);
-        subject.visit(node, mock(Control.class));
+        subject.visit(node);
         verify(node).setType(any(ClassBasedType.class));
     }
 
@@ -45,7 +44,7 @@ public class TypeAssigningVisitorTest {
     public void testVisitTypeNode() throws Exception {
         TypeNode node = mock(TypeNode.class);
         when(node.getName()).thenReturn("Boolean");
-        subject.visit(node, mock(Control.class));
+        subject.visit(node);
         verify(node).setResolvedType(any(ClassBasedType.class));
     }
 }

@@ -7,7 +7,6 @@ import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
-import com.sealionsoftware.bali.compiler.tree.Control;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
@@ -42,7 +41,7 @@ public class ASMStackVisitorTest implements Opcodes {
         BooleanLiteralNode node = new BooleanLiteralNode(0, 0, monitor);
         node.setValue(true);
 
-        subject.visit(node, mock(Control.class));
+        subject.visit(node);
 
         verify(visitor).visitFieldInsn(GETSTATIC, "bali/Boolean", "TRUE", "Lbali/Boolean;");
     }
@@ -53,7 +52,7 @@ public class ASMStackVisitorTest implements Opcodes {
         BooleanLiteralNode node = new BooleanLiteralNode(0, 0, monitor);
         node.setValue(false);
 
-        subject.visit(node, mock(Control.class));
+        subject.visit(node);
 
         verify(visitor).visitFieldInsn(GETSTATIC, "bali/Boolean", "FALSE", "Lbali/Boolean;");
     }
@@ -61,7 +60,7 @@ public class ASMStackVisitorTest implements Opcodes {
     @Test
     public void testVisitTextLiteral() throws Exception {
         TextLiteralNode node = mock(TextLiteralNode.class);
-        subject.visit(node, mock(Control.class));
+        subject.visit(node);
         verify(visitor).visitLdcInsn(node.getValue());
         verify(visitor).visitMethodInsn(INVOKESTATIC, "bali/text/Primitive", "convert", "(Ljava/lang/String;)Lbali/Text;", false);
 
@@ -76,7 +75,7 @@ public class ASMStackVisitorTest implements Opcodes {
         node.setName("aVariable");
         node.setValue(expressionNode);
 
-        subject.visit(node, mock(Control.class));
+        subject.visit(node);
 
         verify(visitor).visitLabel(any(Label.class));
         verify(visitor).visitVarInsn(ASTORE, 1);
@@ -98,7 +97,7 @@ public class ASMStackVisitorTest implements Opcodes {
         setupNode.setName("aVariable");
         setupNode.setValue(mock(ExpressionNode.class));
 
-        subject.visit(setupNode, mock(Control.class));
+        subject.visit(setupNode);
 
         VariableNode variableNode = mock(VariableNode.class);
         when(variableNode.getId()).thenReturn(setupNode.getId());
@@ -112,41 +111,35 @@ public class ASMStackVisitorTest implements Opcodes {
         node.setValue(expressionNode);
         node.setTarget(referenceNode);
 
-        subject.visit(node, mock(Control.class));
+        subject.visit(node);
 
         verify(visitor, times(2)).visitVarInsn(ASTORE, 1);
     }
 
     @Test
      public void testVisitCodeBlock() throws Exception {
-        Control mockControl = mock(Control.class);
         CodeBlockNode mockNode = mock(CodeBlockNode.class);
-        subject.visit(mockNode, mockControl);
-        verify(mockControl).visitChildren();
+        subject.visit(mockNode);
     }
 
     @Test
     public void testVisitTypeNode() throws Exception {
-        Control mockControl = mock(Control.class);
         TypeNode mockNode = mock(TypeNode.class);
-        subject.visit(mockNode, mockControl);
-        verify(mockControl).visitChildren();
+        subject.visit(mockNode);
     }
 
     @Test
     public void testVisitReferecenceNode() throws Exception {
         ReferenceNode mockNode = mock(ReferenceNode.class);
-        subject.visit(mockNode, mock(Control.class));
+        subject.visit(mockNode);
         verifyZeroInteractions(mockNode);
     }
 
     @Test
     public void testVisitConditionalNode() throws Exception {
-        Control mockControl = mock(Control.class);
         ConditionalStatementNode mockNode = mock(ConditionalStatementNode.class);
         when(mockNode.getCondition()).thenReturn(mock(ExpressionNode.class));
         when(mockNode.getConditional()).thenReturn(mock(ExpressionNode.class));
-        subject.visit(mockNode, mockControl);
-        verifyZeroInteractions(mockControl);
+        subject.visit(mockNode);
     }
 }
