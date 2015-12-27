@@ -18,7 +18,7 @@ import static org.mockito.Mockito.verify;
 public class ReferenceNodeTest {
 
 	private CompilationThreadManager mockMonitor = mock(CompilationThreadManager.class);
-	private ReferenceNode subject = new ReferenceNode(mockMonitor, 2, 3);
+	private ReferenceNode subject = new ReferenceNode(2, 3, mockMonitor);
 	
 	@Test
 	public void testGetName() throws Exception {
@@ -50,6 +50,16 @@ public class ReferenceNodeTest {
 	public void testGetChildren() throws Exception {
 		assertThat(subject.getChildren(), isEmpty());
 	}
+
+    @Test
+    public void testGetType() throws Exception {
+        Type mockType = mock(Type.class);
+        VariableData variableData = new VariableData(
+                "aVariable", mockType, UUID.randomUUID()
+        );
+        subject.setVariableData(variableData);
+        assertThat(subject.getType(), is(mockType));
+    }
 
 	@Test
 	public void testAccept() throws Exception {

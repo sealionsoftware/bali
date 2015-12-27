@@ -5,6 +5,7 @@ import bali.compiler.parser.BaliParser;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
+import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
@@ -70,7 +71,7 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
 
     private ReferenceNode visitAssignmentReference(BaliParser.ReferenceContext ctx) {
         Token start = ctx.start;
-        ReferenceNode node = new ReferenceNode(monitor, start.getLine(), start.getCharPositionInLine());
+        ReferenceNode node = new ReferenceNode(start.getLine(), start.getCharPositionInLine(), monitor);
         node.setName(ctx.IDENTIFIER().getText());
         return node;
     }
@@ -92,6 +93,18 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
         container.addStatement(conditionalStatementNode);
 
         return conditionalStatementNode;
+    }
+
+    public ConditionalLoopNode visitLoopStatement(BaliParser.LoopStatementContext ctx){
+        Token start = ctx.start;
+        ASTExpressionVisitor expressionVisitor = new ASTExpressionVisitor(monitor);
+        ConditionalLoopNode loopNode = new ConditionalLoopNode(start.getLine(), start.getCharPositionInLine());
+
+        loopNode.setCondition(ctx.expression().accept(expressionVisitor));
+        loopNode.setConditional(ctx.controlExpression().accept(this));
+        container.addStatement(loopNode);
+
+        return loopNode;
     }
 
     private TypeNode buildType(BaliParser.TypeContext ctx) {

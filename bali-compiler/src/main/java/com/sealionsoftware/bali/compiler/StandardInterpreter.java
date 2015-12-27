@@ -39,6 +39,12 @@ public class StandardInterpreter implements Interpreter {
         CodeBlockNode codeBlockNode = parseEngine.parse(fragment);
         assemblyEngine.assemble(codeBlockNode);
         GeneratedPackage generatedPackage = bytecodeEngine.generate(codeBlockNode);
+//        for (GeneratedClass clazz : generatedPackage.getClasses()){
+//            try (FileOutputStream fos = new FileOutputStream(new File(clazz.getName() + ".class"))) {
+//                fos.write(clazz.getCode());
+//            } catch (IOException e) {
+//            }
+//        }
         return executor.execute(generatedPackage);
     }
 }
