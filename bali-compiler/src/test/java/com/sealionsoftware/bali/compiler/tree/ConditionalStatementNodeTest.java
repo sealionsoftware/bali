@@ -30,7 +30,6 @@ public class ConditionalStatementNodeTest {
         assertThat(subject.getCharacter(), equalTo(3));
     }
 
-
     @Test
     public void testGetCondition() throws Exception {
         ExpressionNode expressionNode = mock(ExpressionNode.class);
@@ -38,12 +37,18 @@ public class ConditionalStatementNodeTest {
         assertThat(subject.getCondition(), is(expressionNode));
     }
 
-
     @Test
     public void testGetConditional() throws Exception {
         StatementNode statementNode = mock(StatementNode.class);
         subject.setConditional(statementNode);
         assertThat(subject.getConditional(), is(statementNode));
+    }
+
+    @Test
+    public void testGetContraConditional() throws Exception {
+        StatementNode statementNode = mock(StatementNode.class);
+        subject.setContraConditional(statementNode);
+        assertThat(subject.getContraConditional(), is(statementNode));
     }
 
 }

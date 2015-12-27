@@ -109,13 +109,30 @@ public class ASTStatementVisitorTest {
 
         when(context.expression()).thenReturn(predicateContext);
         when(predicateContext.accept(any(ParseTreeVisitor.class))).thenReturn(mock(ExpressionNode.class));
-        when(context.controlExpression()).thenReturn(bodyContext);
+        when(context.controlExpression()).thenReturn(asList(bodyContext));
         when(bodyContext.accept(any(ParseTreeVisitor.class))).thenReturn(mock(StatementNode.class));
 
         ConditionalStatementNode node = subject.visitConditionalStatement(context);
         assertThat(node, notNullValue());
         assertThat(node.getCondition(), notNullValue());
         assertThat(node.getConditional(), notNullValue());
+    }
+
+    @Test
+    public void testVisitConditionalNodeWithContraryBranch() throws Exception {
+        BaliParser.ConditionalStatementContext context = mockContext(BaliParser.ConditionalStatementContext.class);
+        BaliParser.ExpressionContext predicateContext = mockContext(BaliParser.ExpressionContext.class);
+        BaliParser.ControlExpressionContext bodyContext = mockContext(BaliParser.ControlExpressionContext.class);
+        BaliParser.ControlExpressionContext contraContext = mockContext(BaliParser.ControlExpressionContext.class);
+
+        when(context.expression()).thenReturn(predicateContext);
+        when(predicateContext.accept(any(ParseTreeVisitor.class))).thenReturn(mock(ExpressionNode.class));
+        when(context.controlExpression()).thenReturn(asList(bodyContext, contraContext));
+        when(contraContext.accept(any(ParseTreeVisitor.class))).thenReturn(mock(StatementNode.class));
+
+        ConditionalStatementNode node = subject.visitConditionalStatement(context);
+        assertThat(node, notNullValue());
+        assertThat(node.getContraConditional(), notNullValue());
     }
 
     @Test
