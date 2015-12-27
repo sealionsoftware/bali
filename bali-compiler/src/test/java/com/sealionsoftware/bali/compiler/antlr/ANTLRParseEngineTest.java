@@ -27,6 +27,6 @@ public class ANTLRParseEngineTest {
     @Test(expected = RuntimeException.class)
     public void testParseInvalid() throws Exception {
 
-        subject.parse("gobbledegook");
+        subject.parse("if try gobbledegook");
     }
 }

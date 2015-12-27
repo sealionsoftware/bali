@@ -3,6 +3,7 @@ package com.sealionsoftware.bali.compiler.antlr;
 import bali.compiler.parser.BaliParser;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
+import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
 import org.antlr.v4.runtime.Token;
 import org.junit.Test;
@@ -43,5 +44,19 @@ public class ASTExpressionVisitorTest {
 
         assertThat(node, notNullValue());
         assertThat(node.getValue(), equalTo("Hello World"));
+    }
+
+    @Test
+    public void testVisitReference() throws Exception {
+
+        Token token = mock(Token.class);
+        BaliParser.ReferenceContext context = mock(BaliParser.ReferenceContext.class);
+        when(context.getText()).thenReturn("aVariable");
+        context.start = token;
+
+        ReferenceNode node = subject.visitReference(context);
+
+        assertThat(node, notNullValue());
+        assertThat(node.getName(), equalTo("aVariable"));
     }
 }

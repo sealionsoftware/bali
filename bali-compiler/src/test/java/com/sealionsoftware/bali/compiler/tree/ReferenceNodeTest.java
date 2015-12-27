@@ -51,6 +51,16 @@ public class ReferenceNodeTest {
 		assertThat(subject.getChildren(), isEmpty());
 	}
 
+    @Test
+    public void testGetType() throws Exception {
+        Type mockType = mock(Type.class);
+        VariableData variableData = new VariableData(
+                "aVariable", mockType, UUID.randomUUID()
+        );
+        subject.setVariableData(variableData);
+        assertThat(subject.getType(), is(mockType));
+    }
+
 	@Test
 	public void testAccept() throws Exception {
 		Visitor visitor = mock(Visitor.class);

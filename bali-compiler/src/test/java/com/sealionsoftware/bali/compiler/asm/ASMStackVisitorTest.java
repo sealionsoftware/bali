@@ -6,6 +6,7 @@ import com.sealionsoftware.bali.compiler.assembly.VariableData;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
+import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
@@ -18,6 +19,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -26,7 +28,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 public class ASMStackVisitorTest implements Opcodes {
@@ -129,15 +130,31 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
-    public void testVisitReferecenceNode() throws Exception {
+    public void testVisitReferenceNode() throws Exception {
+        UUID id = UUID.randomUUID();
+        VariableNode mockTarget = mock(VariableNode.class);
+        when(mockTarget.getId()).thenReturn(id);
+        subject.visit(mockTarget);
+
+        VariableData variableData = new VariableData("name", null, id);
         ReferenceNode mockNode = mock(ReferenceNode.class);
+        when(mockNode.getVariableData()).thenReturn(variableData);
+
         subject.visit(mockNode);
-        verifyZeroInteractions(mockNode);
+        verify(visitor).visitVarInsn(ALOAD, 1);
     }
 
     @Test
     public void testVisitConditionalNode() throws Exception {
         ConditionalStatementNode mockNode = mock(ConditionalStatementNode.class);
+        when(mockNode.getCondition()).thenReturn(mock(ExpressionNode.class));
+        when(mockNode.getConditional()).thenReturn(mock(ExpressionNode.class));
+        subject.visit(mockNode);
+    }
+
+    @Test
+    public void testVisitConditionalLoop() throws Exception {
+        ConditionalLoopNode mockNode = mock(ConditionalLoopNode.class);
         when(mockNode.getCondition()).thenReturn(mock(ExpressionNode.class));
         when(mockNode.getConditional()).thenReturn(mock(ExpressionNode.class));
         subject.visit(mockNode);

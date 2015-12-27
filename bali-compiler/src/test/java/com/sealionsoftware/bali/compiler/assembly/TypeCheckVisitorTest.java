@@ -4,6 +4,7 @@ import com.sealionsoftware.bali.compiler.Class;
 import com.sealionsoftware.bali.compiler.ErrorCode;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
+import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
@@ -176,6 +177,38 @@ public class TypeCheckVisitorTest {
         when(expressionType.isAssignableTo(any(Type.class))).thenReturn(true);
 
         ConditionalStatementNode node = new ConditionalStatementNode(2, 3);
+        node.setCondition(expressionNode);
+
+        subject.visit(node);
+
+        assertThat(subject, containsNoFailures());
+    }
+
+    @Test
+    public void testVisitLoopWithNonBooleanType(){
+
+        Type expressionType = mock(Type.class);
+        ExpressionNode expressionNode = mock(ExpressionNode.class);
+        when(expressionNode.getType()).thenReturn(expressionType);
+        when(expressionType.isAssignableTo(any(Type.class))).thenReturn(false);
+
+        ConditionalLoopNode node = new ConditionalLoopNode(2, 3);
+        node.setCondition(expressionNode);
+
+        subject.visit(node);
+
+        assertThat(subject, containsOneFailure(ErrorCode.INVALID_TYPE));
+    }
+
+    @Test
+    public void testVisitLoopWithBooleanType(){
+
+        Type expressionType = mock(Type.class);
+        ExpressionNode expressionNode = mock(ExpressionNode.class);
+        when(expressionNode.getType()).thenReturn(expressionType);
+        when(expressionType.isAssignableTo(any(Type.class))).thenReturn(true);
+
+        ConditionalLoopNode node = new ConditionalLoopNode(2, 3);
         node.setCondition(expressionNode);
 
         subject.visit(node);
