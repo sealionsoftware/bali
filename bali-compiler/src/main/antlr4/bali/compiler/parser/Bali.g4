@@ -23,7 +23,7 @@ statement:                  lineStatement | controlStatement ;
 
 controlExpression:          codeBlock | controlStatement ;
 
-conditionalStatement:       'if' '(' expression ')' controlExpression ;
+conditionalStatement:       'if' '(' expression ')' controlExpression ('else' controlExpression )? ;
 
 loopStatement:              'while' '(' expression ')' controlExpression ;
 

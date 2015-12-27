@@ -60,4 +60,27 @@ public class ConditionalStatementIT {
         fail("The required compilation exception was not thrown");
     }
 
+    @Test
+    public void testContraConditionalBodyWhenMet() {
+
+        Map<String, Object> output = interpreter.run(
+                "var ret = true " +
+                "if (true) {} else {ret = false}"
+        );
+
+        assertThat(output, containsOneEntry("ret", Boolean.TRUE));
+    }
+
+    @Test
+    public void testContraConditionalBodyWhenNotMet() {
+
+        Map<String, Object> output = interpreter.run(
+                "var ret = true " +
+                "if (false) {} else {ret = false} "
+        );
+
+        assertThat(output, containsOneEntry("ret", Boolean.FALSE));
+    }
+
+
 }

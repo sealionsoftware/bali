@@ -153,6 +153,15 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
+    public void testVisitConditionalNodeWithContraBlock() throws Exception {
+        ConditionalStatementNode mockNode = mock(ConditionalStatementNode.class);
+        when(mockNode.getCondition()).thenReturn(mock(ExpressionNode.class));
+        when(mockNode.getConditional()).thenReturn(mock(ExpressionNode.class));
+        when(mockNode.getContraConditional()).thenReturn(mock(ExpressionNode.class));
+        subject.visit(mockNode);
+    }
+
+    @Test
     public void testVisitConditionalLoop() throws Exception {
         ConditionalLoopNode mockNode = mock(ConditionalLoopNode.class);
         when(mockNode.getCondition()).thenReturn(mock(ExpressionNode.class));

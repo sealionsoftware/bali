@@ -7,6 +7,7 @@ import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
+import com.sealionsoftware.bali.compiler.tree.StatementNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
@@ -73,12 +74,28 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
     }
 
     public void visit(ConditionalStatementNode node) {
-        Label end = new Label();
-        methodVisitor.visitFieldInsn(GETSTATIC, "bali/Boolean", "TRUE", "Lbali/Boolean;");
-        node.getCondition().accept(this);
-        methodVisitor.visitJumpInsn(IF_ACMPNE, end);
-        node.getConditional().accept(this);
-        methodVisitor.visitLabel(end);
+        StatementNode contraStatementNode = node.getContraConditional();
+
+        if (contraStatementNode == null ){
+            Label end = new Label();
+            methodVisitor.visitFieldInsn(GETSTATIC, "bali/Boolean", "TRUE", "Lbali/Boolean;");
+            node.getCondition().accept(this);
+            methodVisitor.visitJumpInsn(IF_ACMPNE, end);
+            node.getConditional().accept(this);
+            methodVisitor.visitLabel(end);
+        } else {
+            Label end = new Label();
+            Label contra = new Label();
+
+            methodVisitor.visitFieldInsn(GETSTATIC, "bali/Boolean", "TRUE", "Lbali/Boolean;");
+            node.getCondition().accept(this);
+            methodVisitor.visitJumpInsn(IF_ACMPNE, contra);
+            node.getConditional().accept(this);
+            methodVisitor.visitJumpInsn(GOTO, end);
+            methodVisitor.visitLabel(contra);
+            node.getContraConditional().accept(this);
+            methodVisitor.visitLabel(end);
+        }
     }
 
     public void visit(ConditionalLoopNode node) {

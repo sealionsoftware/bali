@@ -15,6 +15,7 @@ import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.antlr.v4.runtime.Token;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
@@ -88,8 +89,14 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
         ASTExpressionVisitor expressionVisitor = new ASTExpressionVisitor(monitor);
         ConditionalStatementNode conditionalStatementNode = new ConditionalStatementNode(start.getLine(), start.getCharPositionInLine());
 
+        Iterator<BaliParser.ControlExpressionContext> controlExpressions = ctx.controlExpression().iterator();
+
         conditionalStatementNode.setCondition(ctx.expression().accept(expressionVisitor));
-        conditionalStatementNode.setConditional(ctx.controlExpression().accept(this));
+        conditionalStatementNode.setConditional(controlExpressions.next().accept(this));
+        if (controlExpressions.hasNext()){
+            conditionalStatementNode.setContraConditional(controlExpressions.next().accept(this));
+        }
+
         container.addStatement(conditionalStatementNode);
 
         return conditionalStatementNode;
