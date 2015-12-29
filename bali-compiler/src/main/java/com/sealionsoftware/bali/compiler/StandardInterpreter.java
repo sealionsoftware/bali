@@ -42,7 +42,7 @@ public class StandardInterpreter implements Interpreter {
 //        for (GeneratedClass clazz : generatedPackage.getClasses()){
 //            try (FileOutputStream fos = new FileOutputStream(new File(clazz.getName() + ".class"))) {
 //                fos.write(clazz.getCode());
-//            } catch (IOException e) {
+//            } catch (IOException ignore) {
 //            }
 //        }
         return executor.execute(generatedPackage);

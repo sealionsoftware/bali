@@ -17,12 +17,7 @@ public class PrimitiveTest {
     }
 
     @Test
-    public void testConvertLong() throws Exception {
-        convert(3l);
-    }
-
-    @Test
     public void testConvertToPrimitive() throws Exception {
-        convert(null);
+        convert(new Int(5));
     }
 }

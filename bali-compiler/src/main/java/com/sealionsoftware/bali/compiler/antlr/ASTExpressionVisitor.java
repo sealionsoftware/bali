@@ -5,9 +5,12 @@ import bali.compiler.parser.BaliParser;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
+import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
 import org.antlr.v4.runtime.Token;
+
+import static bali.number.Primitive.parse;
 
 public class ASTExpressionVisitor extends BaliBaseVisitor<ExpressionNode> {
 
@@ -28,6 +31,13 @@ public class ASTExpressionVisitor extends BaliBaseVisitor<ExpressionNode> {
         Token start = ctx.start;
         TextLiteralNode node = new TextLiteralNode(start.getLine(), start.getCharPositionInLine(), monitor);
         node.setValue(ctx.getText());
+        return node;
+    }
+
+    public IntegerLiteralNode visitIntegerLiteral(BaliParser.IntegerLiteralContext ctx) {
+        Token start = ctx.start;
+        IntegerLiteralNode node = new IntegerLiteralNode(start.getLine(), start.getCharPositionInLine(), monitor);
+        node.setValue(parse(ctx.getText()));
         return node;
     }
 

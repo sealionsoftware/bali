@@ -10,14 +10,14 @@ public interface Number extends Quantified<Number> {
 
 	Number magnitude();
 
-	Number negative();
+	Number negate();
 
-	Number add(Number o);
+	Number add(Number operand);
 
-	Number subtract(Number o);
+	Number subtract(Number operand);
 
-	Number multiply(Number o);
+	Number multiply(Number operand);
 
-	Number divide(Number o);
+	Number divide(Number operand);
 
 }
