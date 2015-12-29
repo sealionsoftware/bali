@@ -27,4 +27,12 @@ public class LiteralValuesIT {
         assertThat(output, isEmptyMap());
     }
 
+    @Test
+    public void testScriptContainingInteger() {
+
+        Map<String, Object> output = interpreter.run("123");
+
+        assertThat(output, isEmptyMap());
+    }
+
 }
