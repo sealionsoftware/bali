@@ -44,7 +44,7 @@ public class CharArrayStringTest {
 
     @Test
     public void testGet() throws Exception {
-        assertThat(subject.get(convert(7)), equalTo(convert('H')));
+        assertThat(subject.get(convert(6)), equalTo(convert('W')));
     }
 
     @Test

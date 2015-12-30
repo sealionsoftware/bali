@@ -6,6 +6,7 @@ import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
+import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.StatementNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
@@ -21,6 +22,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import static bali.number.Primitive.convert;
 
 public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
 
@@ -41,6 +44,11 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
     public void visit(TextLiteralNode node) {
         methodVisitor.visitLdcInsn(node.getValue());
         methodVisitor.visitMethodInsn(INVOKESTATIC, "bali/text/Primitive", "convert", "(Ljava/lang/String;)Lbali/Text;", false);
+    }
+
+    public void visit(IntegerLiteralNode node) {
+        methodVisitor.visitLdcInsn(convert(node.getValue()));
+        methodVisitor.visitMethodInsn(INVOKESTATIC, "bali/number/Primitive", "convert", "(I)Lbali/Integer;", false);
     }
 
     public void visit(TypeNode node) {

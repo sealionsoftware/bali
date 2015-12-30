@@ -7,6 +7,8 @@ public interface Visitor {
 
     void visit(TextLiteralNode node);
 
+    void visit(IntegerLiteralNode node);
+
     void visit(VariableNode node);
 
     void visit(AssignmentNode node);

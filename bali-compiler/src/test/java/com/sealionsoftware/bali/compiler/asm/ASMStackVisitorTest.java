@@ -9,6 +9,7 @@ import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
+import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
@@ -21,6 +22,7 @@ import org.objectweb.asm.Opcodes;
 import java.util.List;
 import java.util.UUID;
 
+import static bali.number.Primitive.convert;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -64,7 +66,15 @@ public class ASMStackVisitorTest implements Opcodes {
         subject.visit(node);
         verify(visitor).visitLdcInsn(node.getValue());
         verify(visitor).visitMethodInsn(INVOKESTATIC, "bali/text/Primitive", "convert", "(Ljava/lang/String;)Lbali/Text;", false);
+    }
 
+    @Test
+    public void testVisitIntegerLiteral() throws Exception {
+        IntegerLiteralNode node = mock(IntegerLiteralNode.class);
+        when(node.getValue()).thenReturn(convert(5));
+        subject.visit(node);
+        verify(visitor).visitLdcInsn(5);
+        verify(visitor).visitMethodInsn(INVOKESTATIC, "bali/number/Primitive", "convert", "(I)Lbali/Integer;", false);
     }
 
     @Test

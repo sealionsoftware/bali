@@ -11,7 +11,7 @@ IDENTIFIER:                 [a-zA-Z_]+ ;
 
 TEXT_LITERAL:               '"' ~[^"]* '"' ;
 
-NUMBER_LITERAL:             [0-9]+ ('.' [0-9]+)? ;
+INTEGER_LITERAL:            [1-9][0-9]* ;
 
 // Grammar Definition
 
@@ -45,10 +45,12 @@ type:                       IDENTIFIER ( '<'  typeList '>' )? ;
 
 typeList:                   type (',' type)* ;
 
-literal:                    booleanLiteral | textLiteral;
+literal:                    booleanLiteral | textLiteral | integerLiteral;
 
 booleanLiteral:             'true' | 'false' ;
 
 textLiteral:                TEXT_LITERAL;
+
+integerLiteral:              INTEGER_LITERAL;
 
 reference:                  IDENTIFIER ;

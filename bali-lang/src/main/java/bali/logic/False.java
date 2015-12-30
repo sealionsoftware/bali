@@ -2,11 +2,6 @@ package bali.logic;
 
 import bali.Boolean;
 
-
-/**
- * User: Richard
- * Date: 02/05/13
- */
 public final class False implements Boolean {
 
 	public static final Boolean VALUE = new False();
