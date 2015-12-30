@@ -12,7 +12,7 @@ import static java.lang.Math.multiplyExact;
 import static java.lang.Math.negateExact;
 import static java.lang.Math.subtractExact;
 
-public class Int implements Integer {
+public final class Int implements Integer {
 
     final int value;
 
@@ -70,28 +70,28 @@ public class Int implements Integer {
 
     public Boolean greaterThan(Number operand) {
         if (operand instanceof Int){
-            return convert(((Int) operand).value > value);
+            return convert(value > ((Int) operand).value);
         }
         throw new NotImplementedException();
     }
 
     public Boolean lessThan(Number operand) {
         if (operand instanceof Int){
-            return convert(((Int) operand).value < value);
+            return convert(value < ((Int) operand).value);
         }
         throw new NotImplementedException();
     }
 
     public Boolean equalTo(Number operand) {
         if (operand instanceof Int){
-            return convert(((Int) operand).value == value);
+            return convert(value == ((Int) operand).value);
         }
         throw new NotImplementedException();
     }
 
     public Boolean notEqualTo(Number operand) {
         if (operand instanceof Int){
-            return convert(((Int) operand).value != value);
+            return convert(value != ((Int) operand).value);
         }
         throw new NotImplementedException();
     }
@@ -111,10 +111,13 @@ public class Int implements Integer {
         Int anInt = (Int) o;
 
         return value == anInt.value;
-
     }
 
     public int hashCode() {
         return value;
+    }
+
+    public String toString() {
+        return java.lang.Integer.toString(value);
     }
 }
