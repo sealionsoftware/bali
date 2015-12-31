@@ -4,10 +4,10 @@ import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import org.junit.Test;
 
-import static com.sealionsoftware.Matchers.containsOneValue;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.same;
@@ -39,7 +39,7 @@ public class TypeNodeTest {
     public void testGetArguments() throws Exception {
         TypeNode argumentNode = mock(TypeNode.class);
         subject.setArguments(asList(argumentNode));
-        assertThat(subject.getArguments(), containsOneValue(is(argumentNode)));
+        assertThat(subject.getArguments(), hasItem(is(argumentNode)));
     }
 
     @Test
@@ -61,7 +61,7 @@ public class TypeNodeTest {
     public void testGetChildren() throws Exception {
         TypeNode argumentNode = mock(TypeNode.class);
         subject.setArguments(asList(argumentNode));
-        assertThat(subject.getChildren(), containsOneValue(is(argumentNode)));
+        assertThat(subject.getChildren(), hasItem(is(argumentNode)));
     }
 
     @Test

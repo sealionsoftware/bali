@@ -5,8 +5,8 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.sealionsoftware.Matchers.containsOneValue;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.hasToString;
 import static org.hamcrest.Matchers.notNullValue;
@@ -80,7 +80,7 @@ public class ClasspathClassFactoryTest {
         Class constructed = library.get(a.getName());
 
         assertThat(constructed, notNullValue());
-        assertThat(constructed.getInterfaces(), containsOneValue(hasToString(IA.class.getName())));
+        assertThat(constructed.getInterfaces(), hasItem(hasToString(IA.class.getName())));
     }
 
     @Test
@@ -94,7 +94,7 @@ public class ClasspathClassFactoryTest {
         Class constructed = library.get(a.getName());
 
         assertThat(constructed, notNullValue());
-        assertThat(constructed.getInterfaces(), containsOneValue(hasToString(IB.class.getName())));
+        assertThat(constructed.getInterfaces(), hasItem(hasToString(IB.class.getName())));
     }
 
     @Test
@@ -108,7 +108,7 @@ public class ClasspathClassFactoryTest {
         Class constructed = library.get(a.getName());
 
         assertThat(constructed, notNullValue());
-        assertThat(constructed.getInterfaces(), containsOneValue(hasToString(IC.class.getName() + "<" + B.class.getName() + ">")));
+        assertThat(constructed.getInterfaces(), hasItem(hasToString(IC.class.getName() + "<" + B.class.getName() + ">")));
     }
 
     @Test
@@ -123,7 +123,7 @@ public class ClasspathClassFactoryTest {
         Class constructed = library.get(a.getName());
 
         assertThat(constructed, notNullValue());
-        assertThat(constructed.getTypeParameters(), containsOneValue(hasToString(B.class.getName() + " T")));
+        assertThat(constructed.getTypeParameters(), hasItem(hasToString(B.class.getName() + " T")));
     }
 
     @Test(expected = RuntimeException.class)

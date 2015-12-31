@@ -5,11 +5,11 @@ import org.junit.Test;
 
 import java.util.Map;
 
-import static com.sealionsoftware.Matchers.containsOneEntry;
-import static com.sealionsoftware.Matchers.containsOneValue;
+import static com.sealionsoftware.Matchers.containingError;
+import static com.sealionsoftware.Matchers.throwsException;
 import static com.sealionsoftware.bali.compiler.Matchers.withCode;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.hamcrest.Matchers.hasEntry;
 
 public class LoopStatementIT {
 
@@ -25,7 +25,7 @@ public class LoopStatementIT {
                 "}"
         );
 
-        assertThat(output, containsOneEntry("loop", Boolean.FALSE));
+        assertThat(output, hasEntry("loop", Boolean.FALSE));
     }
 
     @Test
@@ -38,19 +38,14 @@ public class LoopStatementIT {
                 "}"
         );
 
-        assertThat(output, containsOneEntry("loop", Boolean.FALSE));
+        assertThat(output, hasEntry("loop", Boolean.FALSE));
     }
 
     @Test
     public void testLoopWithNonBooleanCondition() {
 
-        try {
-            interpreter.run("while (\"true\") {}");
-        } catch (CompilationException e) {
-            assertThat(e.errorList, containsOneValue(withCode(ErrorCode.INVALID_TYPE)));
-            return;
-        }
-        fail("The required compilation exception was not thrown");
+        Runnable invocation = () -> interpreter.run("while (\"true\") {}");
+        assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
     }
 
 }

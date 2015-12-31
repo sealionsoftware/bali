@@ -2,11 +2,11 @@ package com.sealionsoftware.bali.compiler;
 
 import org.junit.Test;
 
-import static com.sealionsoftware.Matchers.containsOneValue;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -24,7 +24,7 @@ public class ClassTest {
     public void testGetTypeParameters() throws Exception {
         Parameter typeParameter = mock(Parameter.class);
         subject.initialise(asList(typeParameter), null, emptyList());
-        assertThat(subject.getTypeParameters(), containsOneValue(is(typeParameter)));
+        assertThat(subject.getTypeParameters(), hasItem(is(typeParameter)));
     }
 
     @Test(expected = RuntimeException.class)
@@ -48,7 +48,7 @@ public class ClassTest {
     public void testGetInterfaces() throws Exception {
         Type iface = mock(Type.class);
         subject.initialise(emptyList(), null, asList(iface));
-        assertThat(subject.getInterfaces(), containsOneValue(is(iface)));
+        assertThat(subject.getInterfaces(), hasItem(is(iface)));
     }
 
     @Test

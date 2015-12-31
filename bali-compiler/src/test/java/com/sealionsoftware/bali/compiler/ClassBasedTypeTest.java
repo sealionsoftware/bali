@@ -5,8 +5,8 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.sealionsoftware.Matchers.containsOneValue;
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasToString;
@@ -74,7 +74,7 @@ public class ClassBasedTypeTest {
 
         Type superType = subject.getSuperType();
         assertThat(superType, notNullValue());
-        assertThat(superType.getTypeArguments(), containsOneValue(hasToString("C T")));
+        assertThat(superType.getTypeArguments(), hasItem(hasToString("C T")));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class ClassBasedTypeTest {
 
         List<Type> interfaces = subject.getInterfaces();
 
-        assertThat(interfaces, containsOneValue(notNullValue(Type.class)));
+        assertThat(interfaces, hasItem(notNullValue(Type.class)));
         assertThat(interfaces.get(0).getClassName(), equalTo("com.sealionsoftware.Interface"));
     }
 
@@ -106,8 +106,8 @@ public class ClassBasedTypeTest {
         when(argumentType.toString()).thenReturn("C");
 
         List<Type> interfaces = subject.getInterfaces();
-        assertThat(interfaces, containsOneValue(notNullValue(Type.class)));
-        assertThat(interfaces.get(0).getTypeArguments(), containsOneValue(hasToString("C T")));
+        assertThat(interfaces, hasItem(notNullValue(Type.class)));
+        assertThat(interfaces.get(0).getTypeArguments(), hasItem(hasToString("C T")));
     }
 
     @Test

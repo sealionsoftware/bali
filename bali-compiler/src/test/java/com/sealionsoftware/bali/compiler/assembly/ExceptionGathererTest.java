@@ -4,8 +4,8 @@ import org.junit.Test;
 
 import java.util.Map;
 
-import static com.sealionsoftware.Matchers.containsOneEntry;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -24,7 +24,7 @@ public class ExceptionGathererTest {
         subject.uncaughtException(mockThread, mockException);
 
         Map<String, Throwable> gathered = subject.getGatheredExceptions();
-        assertThat(gathered, containsOneEntry(equalTo("Test Thread"), is(mockException)));
+        assertThat(gathered, hasEntry(equalTo("Test Thread"), is(mockException)));
     }
 
 }

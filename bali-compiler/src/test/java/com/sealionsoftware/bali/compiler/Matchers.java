@@ -10,11 +10,9 @@ import org.hamcrest.TypeSafeDiagnosingMatcher;
 import java.util.Collection;
 import java.util.Map;
 
-import static com.sealionsoftware.Matchers.containsOneEntry;
-import static com.sealionsoftware.Matchers.containsOneValue;
 import static com.sealionsoftware.Matchers.isEmpty;
 import static com.sealionsoftware.Matchers.isEmptyMap;
-import static org.hamcrest.Matchers.isA;
+import static org.hamcrest.Matchers.hasItem;
 
 public class Matchers {
 
@@ -36,14 +34,14 @@ public class Matchers {
     public static Matcher<ValidatingVisitor> containsOneFailure(ErrorCode error){
         return new TypeSafeDiagnosingMatcher<ValidatingVisitor>(){
 
-            private Matcher<Collection<CompileError>> failureMatcher = containsOneValue(withCode(error));
+//            private Matcher<Collection<CompileError>> failureMatcher = ;
 
             protected boolean matchesSafely(ValidatingVisitor visitor, Description description) {
-                return failureMatcher.matches(visitor.getFailures()) || description.appendText("had failures " + visitor.getFailures()) == null;
+                return hasItem(withCode(error)).matches(visitor.getFailures()) || description.appendText("had failures " + visitor.getFailures()) == null;
             }
 
             public void describeTo(Description description) {
-                description.appendText("Validator with one failure of code " + error);
+                description.appendText("validator with one failure of code " + error);
             }
         };
     }
@@ -56,7 +54,7 @@ public class Matchers {
             }
 
             public void describeTo(Description description) {
-                description.appendText("Compile error with code " + code.name());
+                description.appendText("compile error with code " + code.name());
             }
         };
     }
@@ -67,7 +65,7 @@ public class Matchers {
             private Matcher<Map<?, ?>> mapMatcher = isEmptyMap();
 
             public void describeTo(Description description) {
-                description.appendText("Exception gatherer with no exceptions");
+                description.appendText("exception gatherer with no exceptions");
             }
 
             protected boolean matchesSafely(ExceptionGatherer gatherer, Description description) {
@@ -77,21 +75,6 @@ public class Matchers {
         };
     }
 
-    public static Matcher<ExceptionGatherer> hasOneException(Matcher<Exception> exceptionMatcher) {
-        return new TypeSafeDiagnosingMatcher<ExceptionGatherer>() {
-
-            private Matcher<Map<String, Exception>> mapMatcher = containsOneEntry(isA(String.class), exceptionMatcher);
-
-            public void describeTo(Description description) {
-                description.appendText("Exception gatherer with no exceptions");
-            }
-
-            protected boolean matchesSafely(ExceptionGatherer gatherer, Description description) {
-                Map<String, Throwable> gathered = gatherer.getGatheredExceptions();
-                return mapMatcher.matches(gathered) || description.appendText("had exceptions: " + gathered) == null;
-            }
-        };
-    }
 
     public static Matcher<BlockageDescription> blockageOnProperty(String propertyName) {
         return new TypeSafeDiagnosingMatcher<BlockageDescription>() {
