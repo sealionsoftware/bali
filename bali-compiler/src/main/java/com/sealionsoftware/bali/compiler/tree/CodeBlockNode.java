@@ -3,10 +3,6 @@ package com.sealionsoftware.bali.compiler.tree;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * User: Richard
- * Date: 29/04/13
- */
 public class CodeBlockNode extends StatementNode {
 
 	private List<StatementNode> statements = new ArrayList<>();
