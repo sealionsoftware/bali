@@ -24,15 +24,21 @@ public class MultithreadedAssemblyEngine implements AssemblyEngine {
     public void assemble(CodeBlockNode fragment) {
 
         final List<CompileError> validationFailures = synchronizedList(new ArrayList<>());
-        List<Runnable> validationTasks = new ArrayList<>();
+        List<NamedRunnable> validationTasks = new ArrayList<>();
 
         for (final ValidatingVisitor assembler : factory.assemblers()){
-            validationTasks.add(() -> {
-                try {
-                    fragment.accept(assembler);
-                } finally {
-                    validationFailures.addAll(assembler.getFailures());
-                    monitor.deregisterThread();
+            validationTasks.add(new NamedRunnable() {
+                public String getName() {
+                    return assembler.getClass().getSimpleName();
+                }
+
+                public void run() {
+                    try {
+                        fragment.accept(assembler);
+                    } finally {
+                        validationFailures.addAll(assembler.getFailures());
+                        monitor.deregisterThread();
+                    }
                 }
             });
         }

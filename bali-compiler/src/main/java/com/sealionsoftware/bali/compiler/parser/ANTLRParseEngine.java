@@ -1,4 +1,4 @@
-package com.sealionsoftware.bali.compiler.antlr;
+package com.sealionsoftware.bali.compiler.parser;
 
 import bali.compiler.parser.BaliLexer;
 import bali.compiler.parser.BaliParser;

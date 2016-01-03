@@ -6,5 +6,4 @@ public interface Quantified<T extends Value> extends Value<T> {
 
 	Boolean lessThan(T operand);
 
-
 }

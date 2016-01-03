@@ -1,5 +1,7 @@
 package com.sealionsoftware.bali.compiler;
 
+import com.sealionsoftware.bali.compiler.type.Class;
+import com.sealionsoftware.bali.compiler.type.ClassBasedType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,7 +23,7 @@ public class ClassBasedTypeTest {
     private Type argumentType = mock(Type.class);
     private Parameter argument = new Parameter("T", argumentType);
     private Class template = mock(Class.class);
-    private ClassBasedType subject = new ClassBasedType(template, asList(argument));
+    private ClassBasedType subject = new ClassBasedType(template, asList(argumentType));
 
     @Before
     public void setUp(){
@@ -198,7 +200,7 @@ public class ClassBasedTypeTest {
 
     @Test
     public void testMultiArgumentToString() throws Exception {
-        subject = new ClassBasedType(template, asList(argument, argument));
+        subject = new ClassBasedType(template, asList(argumentType, argumentType));
         subject.toString();
     }
 

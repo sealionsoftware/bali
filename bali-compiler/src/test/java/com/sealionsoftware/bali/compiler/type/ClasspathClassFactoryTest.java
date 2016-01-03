@@ -1,5 +1,6 @@
-package com.sealionsoftware.bali.compiler;
+package com.sealionsoftware.bali.compiler.type;
 
+import com.sealionsoftware.bali.compiler.Type;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -66,7 +67,7 @@ public class ClasspathClassFactoryTest {
         assertThat(constructed, notNullValue());
 
         Type superType = constructed.getSuperType();
-        assertThat(superType.toString(), hasToString(B.class.getName() + "<" + C.class.getName() + ">"));
+        assertThat(superType, hasToString(B.class.getName() + "<" + C.class.getName() + ">"));
     }
 
     @Test

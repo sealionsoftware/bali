@@ -19,14 +19,14 @@ public class CompilationThreadManager {
 	private final Object launchMonitor = new Object();
 	private volatile boolean running = false;
 
-	public void run(Collection<Runnable> runnables) {
+	public void run(Collection<NamedRunnable> runnables) {
 
         ExceptionGatherer gatherer = new ExceptionGatherer();
         running = true;
 
         synchronized (this) {
-            for (Runnable runnable : runnables) {
-                Thread t = new Thread(runnable);
+            for (NamedRunnable runnable : runnables) {
+                Thread t = new Thread(runnable, runnable.getName());
                 monitoredThreads.add(t);
                 t.setUncaughtExceptionHandler(gatherer);
             }

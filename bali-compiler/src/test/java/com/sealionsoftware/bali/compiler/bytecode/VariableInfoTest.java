@@ -1,4 +1,4 @@
-package com.sealionsoftware.bali.compiler.asm;
+package com.sealionsoftware.bali.compiler.bytecode;
 
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.junit.Test;

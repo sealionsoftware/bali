@@ -1,4 +1,4 @@
-package com.sealionsoftware.bali.compiler.asm;
+package com.sealionsoftware.bali.compiler.bytecode;
 
 import com.sealionsoftware.bali.compiler.BytecodeEngine;
 import com.sealionsoftware.bali.compiler.GeneratedClass;

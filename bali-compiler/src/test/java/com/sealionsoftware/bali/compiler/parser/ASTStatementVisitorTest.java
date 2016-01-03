@@ -1,4 +1,4 @@
-package com.sealionsoftware.bali.compiler.antlr;
+package com.sealionsoftware.bali.compiler.parser;
 
 import bali.compiler.parser.BaliParser;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
@@ -8,6 +8,7 @@ import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
+import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
 import com.sealionsoftware.bali.compiler.tree.StatementNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -97,8 +98,8 @@ public class ASTStatementVisitorTest {
         when(context.getChild(0)).thenReturn(literalContext);
         when(literalContext.accept(any(ASTExpressionVisitor.class))).thenReturn(mock(BooleanLiteralNode.class));
 
-        ExpressionNode node = subject.visitExpression(context);
-        assertThat(node, instanceOf(BooleanLiteralNode.class));
+        ExpressionStatementNode node = subject.visitExpression(context);
+        assertThat(node.getExpressionNode(), instanceOf(BooleanLiteralNode.class));
     }
 
     @Test

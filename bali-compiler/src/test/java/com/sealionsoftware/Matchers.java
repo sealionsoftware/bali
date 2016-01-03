@@ -110,9 +110,8 @@ public class Matchers {
                     if (exceptionMatcher.matches(e)) return true;
                     exceptionMatcher.describeMismatch(e, description);
                     return false;
-                } finally {
-                    description.appendText("the exception was not thrown");
                 }
+                description.appendText("the exception was not thrown");
                 return false;
             }
 

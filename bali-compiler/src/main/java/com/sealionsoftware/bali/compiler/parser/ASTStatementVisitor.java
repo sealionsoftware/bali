@@ -1,4 +1,4 @@
-package com.sealionsoftware.bali.compiler.antlr;
+package com.sealionsoftware.bali.compiler.parser;
 
 import bali.compiler.parser.BaliBaseVisitor;
 import bali.compiler.parser.BaliParser;
@@ -7,7 +7,7 @@ import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
-import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
+import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.StatementNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
@@ -77,9 +77,10 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
         return node;
     }
 
-    public ExpressionNode visitExpression(BaliParser.ExpressionContext ctx) {
+    public ExpressionStatementNode visitExpression(BaliParser.ExpressionContext ctx) {
         ASTExpressionVisitor expressionVisitor = new ASTExpressionVisitor(monitor);
-        ExpressionNode node = expressionVisitor.visitExpression(ctx);
+        Token start = ctx.start;
+        ExpressionStatementNode node = new ExpressionStatementNode(start.getLine(), start.getCharPositionInLine(), expressionVisitor.visitExpression(ctx));
         container.addStatement(node);
         return node;
     }

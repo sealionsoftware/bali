@@ -1,6 +1,5 @@
 package com.sealionsoftware.bali.compiler.assembly;
 
-import com.sealionsoftware.bali.compiler.Class;
 import com.sealionsoftware.bali.compiler.ErrorCode;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
@@ -10,6 +9,7 @@ import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
+import com.sealionsoftware.bali.compiler.type.Class;
 import org.junit.Test;
 
 import java.util.Map;
