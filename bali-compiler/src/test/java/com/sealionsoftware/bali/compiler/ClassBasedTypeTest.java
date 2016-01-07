@@ -2,6 +2,7 @@ package com.sealionsoftware.bali.compiler;
 
 import com.sealionsoftware.bali.compiler.type.Class;
 import com.sealionsoftware.bali.compiler.type.ClassBasedType;
+import com.sealionsoftware.bali.compiler.type.TypeVariable;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,14 +21,25 @@ import static org.mockito.Mockito.when;
 
 public class ClassBasedTypeTest {
 
-    private Type argumentType = mock(Type.class);
-    private Parameter argument = new Parameter("T", argumentType);
     private Class template = mock(Class.class);
+    private Type templateParameterType = mock(Type.class);
+    private Parameter templateParameter = new Parameter("T", templateParameterType);
+
+    private Type templateSuperType = mock(Type.class);
+    private Type templateInterfaceType = mock(Type.class);
+
+    private Type argumentType = mock(Type.class);
     private ClassBasedType subject = new ClassBasedType(template, asList(argumentType));
 
     @Before
     public void setUp(){
+        when(template.getSuperType()).thenReturn(templateSuperType);
+        when(template.getTypeParameters()).thenReturn(asList(templateParameter));
         when(template.getClassName()).thenReturn("com.sealionsoftware.Test");
+        when(template.getInterfaces()).thenReturn(asList(templateInterfaceType));
+
+        when(templateSuperType.getClassName()).thenReturn("com.sealionsoftware.Super");
+        when(templateInterfaceType.getClassName()).thenReturn("com.sealionsoftware.Interface");
     }
 
     @Test
@@ -48,12 +60,6 @@ public class ClassBasedTypeTest {
 
     @Test
     public void testGetSuperType() throws Exception {
-
-        Type classSuperType = mock(Type.class);
-
-        when(template.getSuperType()).thenReturn(classSuperType);
-        when(classSuperType.getClassName()).thenReturn("com.sealionsoftware.Super");
-
         Type superType = subject.getSuperType();
         assertThat(superType, notNullValue());
         assertThat(superType.getClassName(), equalTo("com.sealionsoftware.Super"));
@@ -62,30 +68,20 @@ public class ClassBasedTypeTest {
     @Test
     public void testGetParameterisedSuperType() throws Exception {
 
-        Type classTypeParameterType = mock(Type.class);
-        Parameter classTypeParameter = new Parameter("T", classTypeParameterType);
+        Type templateSuperTypeTypeArgument = new TypeVariable("T", null);
+        when(templateSuperType.getTypeArguments()).thenReturn(asList(new Parameter("X", templateSuperTypeTypeArgument)));
 
-        Type classSuperType = mock(Type.class);
-        Type classSuperTypeTypeArgumentType = mock(Type.class);
-        Parameter classSuperTypeTypeArgument = new Parameter("T", classSuperTypeTypeArgumentType);
-
-        when(template.getSuperType()).thenReturn(classSuperType);
-        when(classSuperType.getTypeArguments()).thenReturn(asList(classSuperTypeTypeArgument));
-        when(template.getTypeParameters()).thenReturn(asList(classTypeParameter));
-        when(argumentType.toString()).thenReturn("C");
+        Class templateSuperTypeTemplate = mock(Class.class);
+        when(templateSuperType.getTemplate()).thenReturn(templateSuperTypeTemplate);
+        when(templateSuperTypeTemplate.getTypeParameters()).thenReturn(asList(new Parameter("X", null)));
 
         Type superType = subject.getSuperType();
         assertThat(superType, notNullValue());
-        assertThat(superType.getTypeArguments(), hasItem(hasToString("C T")));
+        assertThat(superType.getTypeArguments(), hasItem(hasToString("T X")));
     }
 
     @Test
     public void testGetInterface() throws Exception {
-
-        Type classInterfaceType = mock(Type.class);
-
-        when(template.getInterfaces()).thenReturn(asList(classInterfaceType));
-        when(classInterfaceType.getClassName()).thenReturn("com.sealionsoftware.Interface");
 
         List<Type> interfaces = subject.getInterfaces();
 
@@ -95,21 +91,17 @@ public class ClassBasedTypeTest {
 
     @Test
     public void testGetParameterisedInterfaces() throws Exception {
-        Type classTypeParameterType = mock(Type.class);
-        Parameter classTypeParameter = new Parameter("T", classTypeParameterType);
 
-        Type classInterfaceType = mock(Type.class);
-        Type classInterfaceTypeArgumentType = mock(Type.class);
-        Parameter classInterfaceTypeArgument = new Parameter("T", classInterfaceTypeArgumentType);
+        Type templateInterfaceTypeTypeArgument = new TypeVariable("T", null);
+        when(templateInterfaceType.getTypeArguments()).thenReturn(asList(new Parameter("X", templateInterfaceTypeTypeArgument)));
 
-        when(template.getInterfaces()).thenReturn(asList(classInterfaceType));
-        when(classInterfaceType.getTypeArguments()).thenReturn(asList(classInterfaceTypeArgument));
-        when(template.getTypeParameters()).thenReturn(asList(classTypeParameter));
-        when(argumentType.toString()).thenReturn("C");
+        Class templateInterfaceTypeTemplate = mock(Class.class);
+        when(templateInterfaceType.getTemplate()).thenReturn(templateInterfaceTypeTemplate);
+        when(templateInterfaceTypeTemplate.getTypeParameters()).thenReturn(asList(new Parameter("X", null)));
 
         List<Type> interfaces = subject.getInterfaces();
         assertThat(interfaces, hasItem(notNullValue(Type.class)));
-        assertThat(interfaces.get(0).getTypeArguments(), hasItem(hasToString("C T")));
+        assertThat(interfaces.get(0).getTypeArguments(), hasItem(hasToString("T X")));
     }
 
     @Test
@@ -126,9 +118,11 @@ public class ClassBasedTypeTest {
     public void testIsAssignableToSameType() throws Exception {
 
         Type other = mock(Type.class);
+        Type otherArgumentType = mock(Type.class);
+
         when(other.getClassName()).thenReturn("com.sealionsoftware.Test");
-        when(other.getTypeArguments()).thenReturn(asList(argument));
-        when(argumentType.isAssignableTo(argumentType)).thenReturn(true);
+        when(other.getTypeArguments()).thenReturn(asList(new Parameter("T", otherArgumentType)));
+        when(argumentType.isAssignableTo(otherArgumentType)).thenReturn(true);
 
         assertThat(subject.isAssignableTo(other), is(true));
     }
@@ -149,18 +143,10 @@ public class ClassBasedTypeTest {
     @Test
     public void testIsAssignableToSuperType() throws Exception {
 
-        Class superClass = mock(Class.class);
-        when(superClass.getClassName()).thenReturn("com.sealionsoftware.Super");
-
-        Type superType = mock(Type.class);
-        when(superType.getTypeArguments()).thenReturn(asList(argument));
-        when(argumentType.isAssignableTo(argumentType)).thenReturn(true);
-        when(template.getSuperType()).thenReturn(superType);
-        when(superType.getTemplate()).thenReturn(superClass);
-
         Type other = mock(Type.class);
+
         when(other.getClassName()).thenReturn("com.sealionsoftware.Super");
-        when(other.getTypeArguments()).thenReturn(asList(argument));
+        when(templateInterfaceType.isAssignableTo(other)).thenReturn(true);
 
         assertThat(subject.isAssignableTo(other), is(true));
     }
@@ -168,18 +154,10 @@ public class ClassBasedTypeTest {
     @Test
     public void testIsAssignableToInterface() throws Exception {
 
-        Class interfaceClass = mock(Class.class);
-        when(interfaceClass.getClassName()).thenReturn("com.sealionsoftware.Interface");
-
-        Type interfaceType = mock(Type.class);
-        when(interfaceType.getTypeArguments()).thenReturn(asList(argument));
-        when(argumentType.isAssignableTo(argumentType)).thenReturn(true);
-        when(template.getInterfaces()).thenReturn(asList(interfaceType));
-        when(interfaceType.getTemplate()).thenReturn(interfaceClass);
-
         Type other = mock(Type.class);
+
         when(other.getClassName()).thenReturn("com.sealionsoftware.Interface");
-        when(other.getTypeArguments()).thenReturn(asList(argument));
+        when(templateInterfaceType.isAssignableTo(other)).thenReturn(true);
 
         assertThat(subject.isAssignableTo(other), is(true));
     }

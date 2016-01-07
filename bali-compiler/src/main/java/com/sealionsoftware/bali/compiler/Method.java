@@ -45,7 +45,7 @@ public class Method {
 			Iterator<Parameter> i = parameters.iterator();
 			sb.append(i.next());
 			while (i.hasNext()){
-				sb.append(",").append(i.next());
+				sb.append(", ").append(i.next());
 			}
 			sb.append(")");
 		}

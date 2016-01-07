@@ -65,7 +65,7 @@ public class ASTExpressionVisitor extends BaliBaseVisitor<ExpressionNode> {
                 ctx.argumentList()
                         .argument()
                         .stream()
-                        .map((item) -> visitExpression(item.expression()))
+                        .map((item) -> item.expression().accept(this))
                         .collect(Collectors.toList())
         );
         return node;
@@ -73,9 +73,10 @@ public class ASTExpressionVisitor extends BaliBaseVisitor<ExpressionNode> {
 
     public ExpressionNode visitExpression(BaliParser.ExpressionContext ctx){
         BaliParser.ExpressionContext targetContext = ctx.expression();
-        if (targetContext != null){
+        BaliParser.InvocationContext invocationContext = ctx.invocation();
+        if (targetContext != null && invocationContext != null){
             targets.push(targetContext.accept(this));
-            ExpressionNode ret = visitChildren(ctx);
+            ExpressionNode ret = invocationContext.accept(this);
             targets.pop();
             return ret;
         }

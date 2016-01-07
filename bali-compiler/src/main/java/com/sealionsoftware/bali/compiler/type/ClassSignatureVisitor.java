@@ -67,14 +67,4 @@ public class ClassSignatureVisitor extends SignatureVisitor implements Opcodes {
         return superClassVisitor != null ? superClassVisitor.getType() : null;
     }
 
-    private class TypeContext {
-
-        private TypeContext(String name) {
-            this.name = name;
-        }
-
-        private String name;
-        private TypeSignatureVisitor typeVisitor;
-
-    }
 }

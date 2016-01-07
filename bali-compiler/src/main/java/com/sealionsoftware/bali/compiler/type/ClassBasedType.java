@@ -198,7 +198,7 @@ public class ClassBasedType implements Type {
     public String toString() {
 
         StringBuilder builder = new StringBuilder(template.getClassName());
-        if (!typeArguments.isEmpty()){
+        if (typeArguments != null && !typeArguments.isEmpty()){
             builder.append("<");
             Iterator<Type> i = typeArguments.iterator();
             builder.append(i.next());

@@ -8,6 +8,7 @@ import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.synchronizedList;
 
@@ -24,26 +25,21 @@ public class MultithreadedAssemblyEngine implements AssemblyEngine {
     public void assemble(CodeBlockNode fragment) {
 
         final List<CompileError> validationFailures = synchronizedList(new ArrayList<>());
-        List<NamedRunnable> validationTasks = new ArrayList<>();
 
-        for (final ValidatingVisitor assembler : factory.assemblers()){
-            validationTasks.add(new NamedRunnable() {
-                public String getName() {
-                    return assembler.getClass().getSimpleName();
+        monitor.run(factory.assemblers().stream().map((assembler) -> new NamedRunnable() {
+            public String getName() {
+                return assembler.getClass().getSimpleName();
+            }
+
+            public void run() {
+                try {
+                    fragment.accept(assembler);
+                } finally {
+                    validationFailures.addAll(assembler.getFailures());
+                    monitor.deregisterThread();
                 }
-
-                public void run() {
-                    try {
-                        fragment.accept(assembler);
-                    } finally {
-                        validationFailures.addAll(assembler.getFailures());
-                        monitor.deregisterThread();
-                    }
-                }
-            });
-        }
-
-        monitor.run(validationTasks);
+            }
+        }).collect(Collectors.toList()));
 
         if (!validationFailures.isEmpty()){
             throw new CompilationException(validationFailures);

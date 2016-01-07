@@ -1,5 +1,7 @@
 package com.sealionsoftware.bali.compiler.bytecode;
 
+import com.sealionsoftware.bali.compiler.Method;
+import com.sealionsoftware.bali.compiler.Parameter;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.assembly.VariableData;
@@ -9,7 +11,9 @@ import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
+import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
 import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
+import com.sealionsoftware.bali.compiler.tree.InvocationNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.StatementNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
@@ -24,6 +28,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static bali.number.Primitive.convert;
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -178,5 +183,54 @@ public class ASMStackVisitorTest implements Opcodes {
         when(mockNode.getCondition()).thenReturn(mock(ExpressionNode.class));
         when(mockNode.getConditional()).thenReturn(mock(StatementNode.class));
         subject.visit(mockNode);
+    }
+
+    @Test
+    public void testVisitExpressionStatement() throws Exception {
+        ExpressionStatementNode mockNode = mock(ExpressionStatementNode.class);
+        ExpressionNode mockExpressionNode = mock(ExpressionNode.class);
+        Type returnType = mock(Type.class);
+
+        when(mockNode.getExpressionNode()).thenReturn(mockExpressionNode);
+        when(mockExpressionNode.getType()).thenReturn(returnType);
+
+        subject.visit(mockNode);
+
+        verify(visitor).visitInsn(POP);
+    }
+
+    @Test
+    public void testVisitInvocation() throws Exception {
+
+        InvocationNode node = mock(InvocationNode.class);
+        ExpressionNode target = mock(ExpressionNode.class);
+        ExpressionNode argumentOne = mock(ExpressionNode.class);
+        ExpressionNode argumentTwo = mock(ExpressionNode.class);
+        Method resolvedMethod = mock(Method.class);
+        Type targetType = mock(Type.class);
+        Type argumentType = mock(Type.class);
+        Type returnType = mock(Type.class);
+
+        when(targetType.getClassName()).thenReturn("com.sealionsoftware.Target");
+        when(node.getResolvedMethod()).thenReturn(resolvedMethod);
+        when(resolvedMethod.getTemplateMethod()).thenReturn(resolvedMethod);
+        when(node.getMethodName()).thenReturn("aMethod");
+        when(node.getTarget()).thenReturn(target);
+        when(node.getArguments()).thenReturn(asList(argumentOne, argumentTwo));
+        when(target.getType()).thenReturn(targetType);
+        when(resolvedMethod.getParameters()).thenReturn(asList(
+                new Parameter("aParameter", argumentType),
+                new Parameter("aNullParameter", null))
+        );
+        when(argumentType.getClassName()).thenReturn("com.sealionsoftware.Argument");
+        when(resolvedMethod.getReturnType()).thenReturn(returnType);
+        when(returnType.getClassName()).thenReturn("com.sealionsoftware.Return");
+
+        subject.visit(node);
+
+        verify(target).accept(subject);
+        verify(argumentOne).accept(subject);
+        verify(argumentTwo).accept(subject);
+        verify(visitor).visitMethodInsn(INVOKEINTERFACE, "com/sealionsoftware/Target", "aMethod", "(Lcom/sealionsoftware/Argument;,Ljava/lang/Object;)Lcom/sealionsoftware/Return;", true);
     }
 }

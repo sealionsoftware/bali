@@ -1,5 +1,6 @@
 package com.sealionsoftware.bali.compiler.bytecode;
 
+import com.sealionsoftware.bali.compiler.Method;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.assembly.DescendingVisitor;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
@@ -133,21 +134,18 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
     public void visit(InvocationNode node) {
 
         ExpressionNode target = node.getTarget();
-
-        if (target != null){
-            target.accept(this);
-        } else {
-            methodVisitor.visitVarInsn(ALOAD, 0);
-        }
+        target.accept(this);
 
         for (ExpressionNode argument : node.getArguments()){
             argument.accept(this);
         }
 
+        Method signatureMethod = node.getResolvedMethod().getTemplateMethod();
+
         methodVisitor.visitMethodInsn(INVOKEINTERFACE,
-                toLocalName(node.getTarget().getType().getClassName()),
+                toLocalName(target.getType()),
                 node.getMethodName(),
-                toSignature(node.getType(), node.getResolvedMethod().getTemplateMethod().getParameters().stream().map((item) -> item.type).collect(Collectors.toList())),
+                toSignature(signatureMethod.getReturnType(), signatureMethod.getParameters().stream().map((item) -> item.type).collect(Collectors.toList())),
                 true);
     }
 
@@ -155,19 +153,16 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
         return variables;
     }
 
-    private static String toLocalName(String className){
-        if (className == null){
-            className = Object.class.getName();
-        }
-        return className.replaceAll("\\.", "/");
+    private static String toLocalName(Type type){
+        return (type == null || type.getClassName() == null ? Object.class.getName() : type.getClassName()).replaceAll("\\.", "/");
     }
 
-    private static String toSignature(String className){
-        return "L" + toLocalName(className) + ";";
+    private static String toSignature(Type type){
+        return "L" + toLocalName(type) + ";";
     }
 
     private static String toSignature(Type returnType, List<Type> parameterTypes){
-        return "(" + parameterTypes.stream().map((type) -> toSignature(type.getClassName())).collect(Collectors.joining(","))+ ")" + (returnType == null ? "V" : toSignature(returnType.getClassName()));
+        return "(" + parameterTypes.stream().map(ASMStackVisitor::toSignature).collect(Collectors.joining(","))+ ")" + (returnType == null ? "V" : toSignature(returnType));
     }
 
 }
