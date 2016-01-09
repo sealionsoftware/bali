@@ -1,17 +1,14 @@
 package com.sealionsoftware.bali.compiler;
 
 import com.sealionsoftware.bali.compiler.assembly.BlockageDescription;
-import com.sealionsoftware.bali.compiler.assembly.ExceptionGatherer;
 import com.sealionsoftware.bali.compiler.assembly.ValidatingVisitor;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
 import java.util.Collection;
-import java.util.Map;
 
 import static com.sealionsoftware.Matchers.isEmpty;
-import static com.sealionsoftware.Matchers.isEmptyMap;
 import static org.hamcrest.Matchers.hasItem;
 
 public class Matchers {
@@ -33,8 +30,6 @@ public class Matchers {
 
     public static Matcher<ValidatingVisitor> containsOneFailure(ErrorCode error){
         return new TypeSafeDiagnosingMatcher<ValidatingVisitor>(){
-
-//            private Matcher<Collection<CompileError>> failureMatcher = ;
 
             protected boolean matchesSafely(ValidatingVisitor visitor, Description description) {
                 return hasItem(withCode(error)).matches(visitor.getFailures()) || description.appendText("had failures " + visitor.getFailures()) == null;
@@ -58,23 +53,6 @@ public class Matchers {
             }
         };
     }
-
-    public static Matcher<ExceptionGatherer> hasNoExceptions() {
-        return new TypeSafeDiagnosingMatcher<ExceptionGatherer>() {
-
-            private Matcher<Map<?, ?>> mapMatcher = isEmptyMap();
-
-            public void describeTo(Description description) {
-                description.appendText("exception gatherer with no exceptions");
-            }
-
-            protected boolean matchesSafely(ExceptionGatherer gatherer, Description description) {
-                Map<String, Throwable> gathered = gatherer.getGatheredExceptions();
-                return mapMatcher.matches(gathered) || description.appendText("had exceptions: " + gathered) == null;
-            }
-        };
-    }
-
 
     public static Matcher<BlockageDescription> blockageOnProperty(String propertyName) {
         return new TypeSafeDiagnosingMatcher<BlockageDescription>() {

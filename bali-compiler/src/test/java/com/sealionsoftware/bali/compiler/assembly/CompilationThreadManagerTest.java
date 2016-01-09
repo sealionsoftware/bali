@@ -26,11 +26,11 @@ public class CompilationThreadManagerTest {
         MonitoredProperty<String> setByWorker1 = new MonitoredProperty<>(mockNode, "setByWorker1", subject);
         MonitoredProperty<Integer> setByWorker2 = new MonitoredProperty<>(mockNode, "setByWorker2", subject);
 
-        NamedRunnable task1 = runWithMonitor(() -> {
+        AssemblyTask task1 = new AssemblyTask("", () -> {
             setByWorker2.get();
             setByWorker1.set("aValue");
         });
-        NamedRunnable task2 = runWithMonitor(() -> {
+        AssemblyTask task2 = new AssemblyTask("", () -> {
             setByWorker2.set(1);
             setByWorker1.get();
         });
@@ -46,11 +46,11 @@ public class CompilationThreadManagerTest {
         MonitoredProperty<String> setByWorker1 = new MonitoredProperty<>(mockNode, "setByWorker1", subject);
         MonitoredProperty<Integer> setByWorker2 = new MonitoredProperty<>(mockNode, "setByWorker2", subject);
 
-        NamedRunnable task1 = runWithMonitor(() -> {
+        AssemblyTask task1 = new AssemblyTask("", () -> {
             setByWorker2.get();
             setByWorker1.set("aValue");
         });
-        NamedRunnable task2 = runWithMonitor(() -> {
+        AssemblyTask task2 = new AssemblyTask("", () -> {
             setByWorker1.get();
             setByWorker2.set(1);
         });
@@ -65,23 +65,8 @@ public class CompilationThreadManagerTest {
     public void testUnhandledException() throws Exception {
 
         final RuntimeException e = new RuntimeException("No-one expects the Spanish inquisition!");
-        NamedRunnable workerThread1 = runWithMonitor(() -> {
-            throw e;
-        });
-        subject.run(asList(workerThread1));
+        subject.run(asList(new AssemblyTask("", () -> {throw e;})));
     }
 
-    private NamedRunnable runWithMonitor(Runnable task){
-        return new NamedRunnable() {
-            public String getName() {
-                return "";
-            }
-
-            public void run() {
-                task.run();
-                subject.deregisterThread();
-            }
-        };
-    }
 
 }

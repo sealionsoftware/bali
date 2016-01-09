@@ -26,20 +26,16 @@ public class MultithreadedAssemblyEngine implements AssemblyEngine {
 
         final List<CompileError> validationFailures = synchronizedList(new ArrayList<>());
 
-        monitor.run(factory.assemblers().stream().map((assembler) -> new NamedRunnable() {
-            public String getName() {
-                return assembler.getClass().getSimpleName();
-            }
-
-            public void run() {
-                try {
-                    fragment.accept(assembler);
-                } finally {
-                    validationFailures.addAll(assembler.getFailures());
+        monitor.run(factory.assemblers().stream().map((assembler) -> new AssemblyTask(
+                assembler.getClass().getSimpleName(),
+                () -> {
+                    try {
+                        fragment.accept(assembler);
+                    } finally {
+                        validationFailures.addAll(assembler.getFailures());
+                    }
                 }
-                monitor.deregisterThread();
-            }
-        }).collect(Collectors.toList()));
+        )).collect(Collectors.toList()));
 
         if (!validationFailures.isEmpty()){
             throw new CompilationException(validationFailures);

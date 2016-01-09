@@ -7,8 +7,8 @@ import com.sealionsoftware.bali.compiler.reference.MonitoredProperty;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.sealionsoftware.bali.compiler.assembly.Interruptable.wrapException;
 import static java.util.Collections.synchronizedSet;
@@ -20,16 +20,25 @@ public class CompilationThreadManager {
 	private final Object launchMonitor = new Object();
 	private volatile boolean running = false;
 
-	public void run(Collection<NamedRunnable> runnables) {
+	public void run(Collection<AssemblyTask> tasks) {
 
-        ExceptionGatherer gatherer = new ExceptionGatherer(this);
+        ConcurrentHashMap<String, Throwable> exceptions = new ConcurrentHashMap<>();
         running = true;
 
         synchronized (this) {
-            for (NamedRunnable runnable : runnables) {
-                Thread t = new Thread(runnable, runnable.getName());
+            for (AssemblyTask task : tasks) {
+                Thread t = new Thread(() -> {
+                    try {
+                        task.runnable.run();
+                    } catch (Throwable e){
+                        if (!(e.getCause() instanceof InterruptedException)){
+                            exceptions.put(task.name, e);
+                        }
+                    } finally {
+                        deregisterThread();
+                    }
+                }, task.name);
                 monitoredThreads.add(t);
-                t.setUncaughtExceptionHandler(gatherer);
             }
             for (Thread t : monitoredThreads) {
                 t.start();
@@ -49,9 +58,8 @@ public class CompilationThreadManager {
             }
         }
 
-        Map<String, Throwable> uncaughtExceptions = gatherer.getGatheredExceptions();
-        if (!uncaughtExceptions.isEmpty()){
-            throw new RuntimeException(uncaughtExceptions.toString());
+        if (!exceptions.isEmpty()){
+            throw new RuntimeException(exceptions.toString());
         }
     }
 
@@ -66,7 +74,7 @@ public class CompilationThreadManager {
         blockages.remove(property);
 	}
 
-	public synchronized void deregisterThread() {
+	private synchronized void deregisterThread() {
 		assert onMonitoredThread();
 		if (running){
 			monitoredThreads.remove(Thread.currentThread());
