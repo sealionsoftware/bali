@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import java.util.Collections;
 
-import static com.sealionsoftware.Matchers.containsOneValue;
+import static com.sealionsoftware.Matchers.containingError;
 import static com.sealionsoftware.bali.compiler.Matchers.withCode;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -17,6 +17,6 @@ public class CompilationExceptionTest {
 
     @Test
     public void testList() throws Exception {
-        assertThat(subject.errorList, containsOneValue(withCode(ErrorCode.UNKNOWN)));
+        assertThat(subject, containingError(withCode(ErrorCode.UNKNOWN)));
     }
 }

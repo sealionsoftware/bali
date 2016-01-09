@@ -52,9 +52,9 @@ public class MultithreadedAssemblyEngineTest {
 
         doAnswer(invocation -> {
             @SuppressWarnings("unchecked")
-            Collection<Runnable> arguments = (Collection<Runnable>) invocation.getArguments()[0];
-            for (Runnable runnable : arguments){
-                runnable.run();
+            Collection<AssemblyTask> tasks = (Collection<AssemblyTask>) invocation.getArguments()[0];
+            for (AssemblyTask task : tasks) {
+                task.runnable.run();
             }
             return null;
         }).when(monitor).run(any());

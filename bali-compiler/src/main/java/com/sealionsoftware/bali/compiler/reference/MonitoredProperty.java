@@ -26,8 +26,8 @@ public class MonitoredProperty<T> implements Reference<T> {
             monitor.registerBlockage(this);
             try {
                 wait();
-            } catch (InterruptedException ignored) {
-                throw new RuntimeException(ignored);
+            } catch (InterruptedException interrupted) {
+                throw new RuntimeException(interrupted);
             }
         }
 		return referenced;

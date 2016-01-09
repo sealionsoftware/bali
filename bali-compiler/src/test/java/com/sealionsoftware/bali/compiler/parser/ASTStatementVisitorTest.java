@@ -1,4 +1,4 @@
-package com.sealionsoftware.bali.compiler.antlr;
+package com.sealionsoftware.bali.compiler.parser;
 
 import bali.compiler.parser.BaliParser;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
@@ -8,14 +8,15 @@ import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
+import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
 import com.sealionsoftware.bali.compiler.tree.StatementNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.junit.Test;
 
+import static com.sealionsoftware.bali.compiler.parser.Mock.mockContext;
+import static com.sealionsoftware.bali.compiler.parser.Mock.mockTerminal;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
@@ -97,8 +98,8 @@ public class ASTStatementVisitorTest {
         when(context.getChild(0)).thenReturn(literalContext);
         when(literalContext.accept(any(ASTExpressionVisitor.class))).thenReturn(mock(BooleanLiteralNode.class));
 
-        ExpressionNode node = subject.visitExpression(context);
-        assertThat(node, instanceOf(BooleanLiteralNode.class));
+        ExpressionStatementNode node = subject.visitExpression(context);
+        assertThat(node.getExpressionNode(), instanceOf(BooleanLiteralNode.class));
     }
 
     @Test
@@ -157,18 +158,6 @@ public class ASTStatementVisitorTest {
         BaliParser.CodeBlockContext context = mockContext(BaliParser.CodeBlockContext.class);
         CodeBlockNode node = subject.visitCodeBlock(context);
         assertThat(node, notNullValue());
-    }
-
-    private static TerminalNode mockTerminal(String value){
-        TerminalNode ret = mock(TerminalNode.class);
-        when(ret.getText()).thenReturn(value);
-        return ret;
-    }
-
-    private static <T extends ParserRuleContext> T mockContext(Class<T> contextClass){
-        T ret = mock(contextClass);
-        ret.start = mock(Token.class);
-        return ret;
     }
 
 }

@@ -10,7 +10,6 @@ import java.util.Map;
 import static com.sealionsoftware.Constant.list;
 import static com.sealionsoftware.Constant.map;
 import static com.sealionsoftware.Constant.put;
-import static com.sealionsoftware.Matchers.containsOneValue;
 import static com.sealionsoftware.Matchers.hasLength;
 import static com.sealionsoftware.Matchers.isEmpty;
 import static java.util.Arrays.asList;
@@ -19,6 +18,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasToString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
 public class HashMultiMapTest {
@@ -44,7 +44,7 @@ public class HashMultiMapTest {
 
     @Test
     public void testGet() throws Exception {
-        assertThat(subject.get("key"), containsOneValue("value"));
+        assertThat(subject.get("key"), hasItem("value"));
     }
 
     @Test
@@ -61,13 +61,13 @@ public class HashMultiMapTest {
     @Test
     public void testPutOneIntoExistingValue() throws Exception {
         subject.put("key", "anotherValue");
-        assertThat(subject, containsOneValue(new Entry<>("key", asList("value", "anotherValue"))));
+        assertThat(subject, hasItem(new Entry<>("key", asList("value", "anotherValue"))));
     }
 
     @Test
     public void testPutAll() throws Exception {
         subject.putAll(map(put("key", list("anotherValue"))));
-        assertThat(subject, containsOneValue(new Entry<>("key", asList("value", "anotherValue"))));
+        assertThat(subject, hasItem(new Entry<>("key", asList("value", "anotherValue"))));
     }
 
     @Test
@@ -82,7 +82,7 @@ public class HashMultiMapTest {
         assertThat(array, notNullValue());
         assertThat(array.length, equalTo(1));
         assertThat(array[0].getKey(), equalTo("key"));
-        assertThat(array[0].getValue(), containsOneValue("value"));
+        assertThat(array[0].getValue(), hasItem("value"));
     }
 
     @Test
@@ -95,7 +95,7 @@ public class HashMultiMapTest {
     @Test
     public void testAdd() throws Exception {
         subject.add(new Entry<>("key", asList("anotherValue")));
-        assertThat(subject, containsOneValue(new Entry<>("key", asList("value", "anotherValue"))));
+        assertThat(subject, hasItem(new Entry<>("key", asList("value", "anotherValue"))));
     }
 
     @Test
@@ -118,14 +118,14 @@ public class HashMultiMapTest {
     public void testRemoveAll() throws Exception {
         subject.put("anotherKey", "anotherValue");
         subject.removeAll(asList("key"));
-        assertThat(subject, containsOneValue(new Entry<>("anotherKey", asList("anotherValue"))));
+        assertThat(subject, hasItem(new Entry<>("anotherKey", asList("anotherValue"))));
     }
 
     @Test
     public void testRetainAll() throws Exception {
         subject.put("anotherKey", "anotherValue");
         subject.retainAll(asList("key"));
-        assertThat(subject, containsOneValue(new Entry<>("key", asList("value"))));
+        assertThat(subject, hasItem(new Entry<>("key", asList("value"))));
     }
 
     @Test

@@ -8,8 +8,8 @@ import java.util.Iterator;
 
 import static com.sealionsoftware.Collections.both;
 import static com.sealionsoftware.Collections.flatten;
-import static com.sealionsoftware.Matchers.containsValuesMatching;
 import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
@@ -76,6 +76,6 @@ public class CollectionsTest {
     @Test
     public void testFlatten(){
         Collection<String> flat = flatten(asList(asList("one", "two"), asList("three")));
-        assertThat(flat, containsValuesMatching(equalTo("one"), equalTo("two"), equalTo("three")));
+        assertThat(flat, contains(equalTo("one"), equalTo("two"), equalTo("three")));
     }
 }

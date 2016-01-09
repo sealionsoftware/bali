@@ -23,4 +23,8 @@ public interface Visitor {
 
     void visit(ConditionalLoopNode node);
 
+    void visit(InvocationNode node);
+
+    void visit(ExpressionStatementNode node);
+
 }

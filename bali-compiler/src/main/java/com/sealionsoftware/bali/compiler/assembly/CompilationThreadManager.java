@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.sealionsoftware.bali.compiler.assembly.Interruptable.wrapException;
 import static java.util.Collections.synchronizedSet;
@@ -19,16 +20,25 @@ public class CompilationThreadManager {
 	private final Object launchMonitor = new Object();
 	private volatile boolean running = false;
 
-	public void run(Collection<Runnable> runnables) {
+	public void run(Collection<AssemblyTask> tasks) {
 
-        ExceptionGatherer gatherer = new ExceptionGatherer();
+        ConcurrentHashMap<String, Throwable> exceptions = new ConcurrentHashMap<>();
         running = true;
 
         synchronized (this) {
-            for (Runnable runnable : runnables) {
-                Thread t = new Thread(runnable);
+            for (AssemblyTask task : tasks) {
+                Thread t = new Thread(() -> {
+                    try {
+                        task.runnable.run();
+                    } catch (Throwable e){
+                        if (!(e.getCause() instanceof InterruptedException)){
+                            exceptions.put(task.name, e);
+                        }
+                    } finally {
+                        deregisterThread();
+                    }
+                }, task.name);
                 monitoredThreads.add(t);
-                t.setUncaughtExceptionHandler(gatherer);
             }
             for (Thread t : monitoredThreads) {
                 t.start();
@@ -48,8 +58,8 @@ public class CompilationThreadManager {
             }
         }
 
-        if (!gatherer.getGatheredExceptions().isEmpty()){
-            throw new RuntimeException(gatherer.getGatheredExceptions().toString());
+        if (!exceptions.isEmpty()){
+            throw new RuntimeException(exceptions.toString());
         }
     }
 
@@ -64,7 +74,7 @@ public class CompilationThreadManager {
         blockages.remove(property);
 	}
 
-	public synchronized void deregisterThread() {
+	private synchronized void deregisterThread() {
 		assert onMonitoredThread();
 		if (running){
 			monitoredThreads.remove(Thread.currentThread());

@@ -1,21 +1,27 @@
-package com.sealionsoftware.bali.compiler;
+package com.sealionsoftware.bali.compiler.type;
 
+import com.sealionsoftware.bali.compiler.Type;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.sealionsoftware.Matchers.containsOneValue;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.hasToString;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ClasspathClassFactoryTest {
 
+    private ClassLoader loader = Thread.currentThread().getContextClassLoader();
     private Map<String, Class> library = new HashMap<>();
-    private ClasspathClassFactory subject = new ClasspathClassFactory(library);
+    private ClasspathClassFactory subject = new ClasspathClassFactory(library, loader);
 
     @Test
     public void testAddTrivialClassToLibrary(){
@@ -66,7 +72,7 @@ public class ClasspathClassFactoryTest {
         assertThat(constructed, notNullValue());
 
         Type superType = constructed.getSuperType();
-        assertThat(superType.toString(), hasToString(B.class.getName() + "<" + C.class.getName() + ">"));
+        assertThat(superType, hasToString(B.class.getName() + "<" + C.class.getName() + ">"));
     }
 
     @Test
@@ -80,7 +86,7 @@ public class ClasspathClassFactoryTest {
         Class constructed = library.get(a.getName());
 
         assertThat(constructed, notNullValue());
-        assertThat(constructed.getInterfaces(), containsOneValue(hasToString(IA.class.getName())));
+        assertThat(constructed.getInterfaces(), hasItem(hasToString(IA.class.getName())));
     }
 
     @Test
@@ -94,7 +100,7 @@ public class ClasspathClassFactoryTest {
         Class constructed = library.get(a.getName());
 
         assertThat(constructed, notNullValue());
-        assertThat(constructed.getInterfaces(), containsOneValue(hasToString(IB.class.getName())));
+        assertThat(constructed.getInterfaces(), hasItem(hasToString(IB.class.getName())));
     }
 
     @Test
@@ -108,7 +114,7 @@ public class ClasspathClassFactoryTest {
         Class constructed = library.get(a.getName());
 
         assertThat(constructed, notNullValue());
-        assertThat(constructed.getInterfaces(), containsOneValue(hasToString(IC.class.getName() + "<" + B.class.getName() + ">")));
+        assertThat(constructed.getInterfaces(), hasItem(hasToString(IC.class.getName() + "<" + B.class.getName() + ">")));
     }
 
     @Test
@@ -123,15 +129,42 @@ public class ClasspathClassFactoryTest {
         Class constructed = library.get(a.getName());
 
         assertThat(constructed, notNullValue());
-        assertThat(constructed.getTypeParameters(), containsOneValue(hasToString(B.class.getName() + " T")));
+        assertThat(constructed.getTypeParameters(), hasItem(hasToString(B.class.getName() + " T")));
     }
 
     @Test(expected = RuntimeException.class)
-    public void testAddUnsupportedTypeToLibrary(){
+    public void testAddUnsupportedClassWithUnboundedTypeToLibrary(){
 
         class B<V> {}
         class A<T extends B<?>> {}
         java.lang.Class<A> a = A.class;
+
+        subject.addToLibrary(a);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testAddUnsupportedClassWithContravariantTypeToLibrary(){
+
+        class B<V> {}
+        class C{}
+
+        class A<T extends B<? extends C>> {}
+        java.lang.Class<A> a = A.class;
+
+        subject.addToLibrary(a);
+    }
+
+    @Test(expected = RuntimeException.class)
+    @SuppressWarnings("unchecked")
+    public void testAddNotFoundClassToLibrary(){
+
+        class A {}
+        java.lang.Class<A> a = A.class;
+
+        loader = mock(ClassLoader.class);
+        subject = new ClasspathClassFactory(library, loader);
+
+        when(loader.getResourceAsStream(anyString())).thenThrow(IOException.class);
 
         subject.addToLibrary(a);
     }

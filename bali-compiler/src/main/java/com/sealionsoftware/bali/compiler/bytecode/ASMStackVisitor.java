@@ -1,12 +1,17 @@
-package com.sealionsoftware.bali.compiler.asm;
+package com.sealionsoftware.bali.compiler.bytecode;
 
+import com.sealionsoftware.bali.compiler.Method;
+import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.assembly.DescendingVisitor;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
+import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
+import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
 import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
+import com.sealionsoftware.bali.compiler.tree.InvocationNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.StatementNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
@@ -22,6 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static bali.number.Primitive.convert;
 
@@ -35,6 +41,13 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
     public ASMStackVisitor(MethodVisitor methodVisitor) {
         this.methodVisitor = methodVisitor;
         scopeHorizonStack.push(null);
+    }
+
+    public void visit(ExpressionStatementNode node) {
+        visitChildren(node);
+        if (node.getExpressionNode().getType() != null){
+            methodVisitor.visitInsn(POP);
+        }
     }
 
     public void visit(BooleanLiteralNode node) {
@@ -118,8 +131,38 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
         methodVisitor.visitLabel(end);
     }
 
+    public void visit(InvocationNode node) {
+
+        ExpressionNode target = node.getTarget();
+        target.accept(this);
+
+        for (ExpressionNode argument : node.getArguments()){
+            argument.accept(this);
+        }
+
+        Method signatureMethod = node.getResolvedMethod().getTemplateMethod();
+
+        methodVisitor.visitMethodInsn(INVOKEINTERFACE,
+                toLocalName(target.getType()),
+                node.getMethodName(),
+                toSignature(signatureMethod.getReturnType(), signatureMethod.getParameters().stream().map((item) -> item.type).collect(Collectors.toList())),
+                true);
+    }
+
     public List<VariableInfo> getVariables(){
         return variables;
+    }
+
+    private static String toLocalName(Type type){
+        return (type == null || type.getClassName() == null ? Object.class.getName() : type.getClassName()).replaceAll("\\.", "/");
+    }
+
+    private static String toSignature(Type type){
+        return "L" + toLocalName(type) + ";";
+    }
+
+    private static String toSignature(Type returnType, List<Type> parameterTypes){
+        return "(" + parameterTypes.stream().map(ASMStackVisitor::toSignature).collect(Collectors.joining(","))+ ")" + (returnType == null ? "V" : toSignature(returnType));
     }
 
 }

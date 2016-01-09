@@ -1,15 +1,18 @@
 package com.sealionsoftware.bali.compiler.assembly;
 
-import com.sealionsoftware.bali.compiler.Class;
 import com.sealionsoftware.bali.compiler.ErrorCode;
+import com.sealionsoftware.bali.compiler.Method;
+import com.sealionsoftware.bali.compiler.Parameter;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
+import com.sealionsoftware.bali.compiler.tree.InvocationNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
+import com.sealionsoftware.bali.compiler.type.Class;
 import org.junit.Test;
 
 import java.util.Map;
@@ -19,6 +22,8 @@ import static com.sealionsoftware.Constant.map;
 import static com.sealionsoftware.Constant.put;
 import static com.sealionsoftware.bali.compiler.Matchers.containsNoFailures;
 import static com.sealionsoftware.bali.compiler.Matchers.containsOneFailure;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -210,6 +215,62 @@ public class TypeCheckVisitorTest {
 
         ConditionalLoopNode node = new ConditionalLoopNode(2, 3);
         node.setCondition(expressionNode);
+
+        subject.visit(node);
+
+        assertThat(subject, containsNoFailures());
+    }
+
+    @Test
+    public void testInvocationWithoutRequiredArguments(){
+
+        InvocationNode node = mock(InvocationNode.class);
+        Method resolvedMethod = mock(Method.class);
+        Type parameterType = mock(Type.class);
+
+        when(node.getResolvedMethod()).thenReturn(resolvedMethod);
+        when(resolvedMethod.getParameters()).thenReturn(asList(new Parameter("aParameter", parameterType)));
+        when(node.getArguments()).thenReturn(emptyList());
+
+        subject.visit(node);
+
+        assertThat(subject, containsOneFailure(ErrorCode.INVALID_ARGUMENT_LIST));
+    }
+
+    @Test
+    public void testInvocationWithInvalidArgumentType(){
+
+        InvocationNode node = mock(InvocationNode.class);
+        Method resolvedMethod = mock(Method.class);
+        Type parameterType = mock(Type.class);
+        ExpressionNode argumentNode = mock(ExpressionNode.class);
+        Type argumentType = mock(Type.class);
+
+        when(node.getResolvedMethod()).thenReturn(resolvedMethod);
+        when(resolvedMethod.getParameters()).thenReturn(asList(new Parameter("aParameter", parameterType)));
+        when(node.getArguments()).thenReturn(asList(argumentNode));
+        when(argumentNode.getType()).thenReturn(argumentType);
+        when(argumentType.isAssignableTo(parameterType)).thenReturn(false);
+
+        subject.visit(node);
+
+        assertThat(subject, containsOneFailure(ErrorCode.INVALID_TYPE));
+    }
+
+    @Test
+    public void testInvocationWithValidArgumentType(){
+
+        InvocationNode node = mock(InvocationNode.class);
+        Method resolvedMethod = mock(Method.class);
+        Type parameterType = mock(Type.class);
+        ExpressionNode argumentNode = mock(ExpressionNode.class);
+        Type argumentType = mock(Type.class);
+
+        when(node.getResolvedMethod()).thenReturn(resolvedMethod);
+        when(resolvedMethod.getParameters()).thenReturn(asList(new Parameter("aParameter", parameterType)));
+        when(node.getArguments()).thenReturn(asList(argumentNode));
+        when(argumentNode.getType()).thenReturn(argumentType);
+        when(argumentType.isAssignableTo(parameterType)).thenReturn(true);
 
         subject.visit(node);
 

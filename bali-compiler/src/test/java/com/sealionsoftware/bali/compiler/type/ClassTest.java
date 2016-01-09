@@ -1,12 +1,15 @@
-package com.sealionsoftware.bali.compiler;
+package com.sealionsoftware.bali.compiler.type;
 
+import com.sealionsoftware.bali.compiler.Method;
+import com.sealionsoftware.bali.compiler.Parameter;
+import com.sealionsoftware.bali.compiler.Type;
 import org.junit.Test;
 
-import static com.sealionsoftware.Matchers.containsOneValue;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -23,8 +26,8 @@ public class ClassTest {
     @Test
     public void testGetTypeParameters() throws Exception {
         Parameter typeParameter = mock(Parameter.class);
-        subject.initialise(asList(typeParameter), null, emptyList());
-        assertThat(subject.getTypeParameters(), containsOneValue(is(typeParameter)));
+        subject.initialise(asList(typeParameter), null, emptyList(), emptyList());
+        assertThat(subject.getTypeParameters(), hasItem(is(typeParameter)));
     }
 
     @Test(expected = RuntimeException.class)
@@ -35,7 +38,7 @@ public class ClassTest {
     @Test
     public void testGetSuperType() throws Exception {
         Type type = mock(Type.class);
-        subject.initialise(emptyList(), type, emptyList());
+        subject.initialise(emptyList(), type, emptyList(), emptyList());
         assertThat(subject.getSuperType(), is(type));
     }
 
@@ -47,8 +50,17 @@ public class ClassTest {
     @Test
     public void testGetInterfaces() throws Exception {
         Type iface = mock(Type.class);
-        subject.initialise(emptyList(), null, asList(iface));
-        assertThat(subject.getInterfaces(), containsOneValue(is(iface)));
+        subject.initialise(emptyList(), null, asList(iface), emptyList());
+        assertThat(subject.getInterfaces(), hasItem(is(iface)));
+    }
+
+    @Test
+    public void testGetMethods() throws Exception {
+        Type returnType = mock(Type.class);
+        Parameter parameter = mock(Parameter.class);
+        Method method = new Method("aMethod", returnType, asList(parameter));
+        subject.initialise(emptyList(), null, emptyList(), asList(method));
+        assertThat(subject.getMethods(), hasItem(is(method)));
     }
 
     @Test

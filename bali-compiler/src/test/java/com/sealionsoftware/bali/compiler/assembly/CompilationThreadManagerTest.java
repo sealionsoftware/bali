@@ -18,7 +18,6 @@ import static org.mockito.Mockito.mock;
 public class CompilationThreadManagerTest {
 
     private CompilationThreadManager subject = new CompilationThreadManager();
-    private ExceptionGatherer gatherer = new ExceptionGatherer();
 
     @Test
     public void testRunMutuallyCommunicatingThreads() throws Exception {
@@ -27,11 +26,11 @@ public class CompilationThreadManagerTest {
         MonitoredProperty<String> setByWorker1 = new MonitoredProperty<>(mockNode, "setByWorker1", subject);
         MonitoredProperty<Integer> setByWorker2 = new MonitoredProperty<>(mockNode, "setByWorker2", subject);
 
-        Runnable task1 = runWithMonitor(() -> {
+        AssemblyTask task1 = new AssemblyTask("", () -> {
             setByWorker2.get();
             setByWorker1.set("aValue");
         });
-        Runnable task2 = runWithMonitor(() -> {
+        AssemblyTask task2 = new AssemblyTask("", () -> {
             setByWorker2.set(1);
             setByWorker1.get();
         });
@@ -47,11 +46,11 @@ public class CompilationThreadManagerTest {
         MonitoredProperty<String> setByWorker1 = new MonitoredProperty<>(mockNode, "setByWorker1", subject);
         MonitoredProperty<Integer> setByWorker2 = new MonitoredProperty<>(mockNode, "setByWorker2", subject);
 
-        Runnable task1 = runWithMonitor(() -> {
+        AssemblyTask task1 = new AssemblyTask("", () -> {
             setByWorker2.get();
             setByWorker1.set("aValue");
         });
-        Runnable task2 = runWithMonitor(() -> {
+        AssemblyTask task2 = new AssemblyTask("", () -> {
             setByWorker1.get();
             setByWorker2.set(1);
         });
@@ -66,20 +65,8 @@ public class CompilationThreadManagerTest {
     public void testUnhandledException() throws Exception {
 
         final RuntimeException e = new RuntimeException("No-one expects the Spanish inquisition!");
-        Runnable workerThread1 = runWithMonitor(() -> {
-            throw e;
-        });
-        subject.run(asList(workerThread1));
+        subject.run(asList(new AssemblyTask("", () -> {throw e;})));
     }
 
-    private Runnable runWithMonitor(Runnable task){
-        return () -> {
-            try {
-                task.run();
-            } finally {
-                subject.deregisterThread();
-            }
-        };
-    }
 
 }

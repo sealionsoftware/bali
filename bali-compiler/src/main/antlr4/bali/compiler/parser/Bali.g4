@@ -11,7 +11,7 @@ IDENTIFIER:                 [a-zA-Z_]+ ;
 
 TEXT_LITERAL:               '"' ~[^"]* '"' ;
 
-INTEGER_LITERAL:            [1-9][0-9]* ;
+INTEGER_LITERAL:            [0] | [1-9][0-9]*;
 
 // Grammar Definition
 
@@ -39,11 +39,19 @@ assignment:                 reference '=' expression ;
 
 expression:                 '(' expression ')'
 							 | literal
-							 | reference ;
+							 | invocation
+							 | reference
+							 | expression '.' invocation;
+
+invocation:				    IDENTIFIER argumentList ;
 
 type:                       IDENTIFIER ( '<'  typeList '>' )? ;
 
 typeList:                   type (',' type)* ;
+
+argument:                   expression ;
+
+argumentList:               '(' ( argument ( ',' argument)*)? ')' ;
 
 literal:                    booleanLiteral | textLiteral | integerLiteral;
 
@@ -51,6 +59,6 @@ booleanLiteral:             'true' | 'false' ;
 
 textLiteral:                TEXT_LITERAL;
 
-integerLiteral:              INTEGER_LITERAL;
+integerLiteral:             INTEGER_LITERAL;
 
 reference:                  IDENTIFIER ;
