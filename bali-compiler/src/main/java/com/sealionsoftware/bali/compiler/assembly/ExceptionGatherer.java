@@ -1,20 +1,25 @@
 package com.sealionsoftware.bali.compiler.assembly;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ExceptionGatherer implements Thread.UncaughtExceptionHandler {
 
-	private final Map<String, Throwable> gatheredExceptions = new HashMap<>();
+    private CompilationThreadManager threadManager;
+	private final Map<String, Throwable> gatheredExceptions = new ConcurrentHashMap<>();
 
-	public synchronized void uncaughtException(Thread t, Throwable e) {
+    public ExceptionGatherer(CompilationThreadManager threadManager) {
+        this.threadManager = threadManager;
+    }
+
+    public void uncaughtException(Thread t, Throwable e) {
         if (!(e.getCause() instanceof InterruptedException)) {
             gatheredExceptions.put(t.getName(), e);
-            e.printStackTrace();
+            threadManager.deregisterThread();
         }
 	}
 
-	public synchronized Map<String, Throwable> getGatheredExceptions(){
+	public Map<String, Throwable> getGatheredExceptions(){
 		return gatheredExceptions;
 	}
 }

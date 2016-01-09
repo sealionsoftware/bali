@@ -26,10 +26,7 @@ public class TypeVariable implements Type {
             TypeVariable variable = (TypeVariable) other;
             return name.equals(variable.getName());
         }
-        if (bound == null){
-            return true;
-        }
-        return bound.isAssignableTo(other);
+        return (bound != null) && bound.isAssignableTo(other);
     }
 
     public String getClassName() {

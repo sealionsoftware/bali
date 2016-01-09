@@ -78,11 +78,8 @@ public class CompilationThreadManagerTest {
             }
 
             public void run() {
-                try {
-                    task.run();
-                } finally {
-                    subject.deregisterThread();
-                }
+                task.run();
+                subject.deregisterThread();
             }
         };
     }

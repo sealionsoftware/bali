@@ -36,8 +36,8 @@ public class MultithreadedAssemblyEngine implements AssemblyEngine {
                     fragment.accept(assembler);
                 } finally {
                     validationFailures.addAll(assembler.getFailures());
-                    monitor.deregisterThread();
                 }
+                monitor.deregisterThread();
             }
         }).collect(Collectors.toList()));
 

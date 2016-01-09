@@ -13,7 +13,7 @@ import static org.mockito.Mockito.mock;
 
 public class MonitoredPropertyTest {
 
-    private ExceptionGatherer gatherer = new ExceptionGatherer();
+    private ExceptionGatherer gatherer = new ExceptionGatherer(mock(CompilationThreadManager.class));
     private MonitoredProperty<String> subject = new MonitoredProperty<>(mock(Node.class), "aProperty", mock(CompilationThreadManager.class));
 
     @Test

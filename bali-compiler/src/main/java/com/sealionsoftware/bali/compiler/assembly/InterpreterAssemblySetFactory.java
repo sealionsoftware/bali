@@ -13,7 +13,7 @@ public class InterpreterAssemblySetFactory implements AssemblerSetFactory {
     public Collection<ValidatingVisitor> assemblers(){
 
         Map<String, Class> library = new HashMap<>();
-        ClasspathClassFactory classFactory = new ClasspathClassFactory(library);
+        ClasspathClassFactory classFactory = new ClasspathClassFactory(library, Thread.currentThread().getContextClassLoader());
         classFactory.addToLibrary(bali.Boolean.class);
         classFactory.addToLibrary(bali.Text.class);
         classFactory.addToLibrary(bali.Integer.class);

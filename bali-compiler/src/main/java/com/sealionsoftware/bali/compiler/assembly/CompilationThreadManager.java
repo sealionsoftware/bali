@@ -7,6 +7,7 @@ import com.sealionsoftware.bali.compiler.reference.MonitoredProperty;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static com.sealionsoftware.bali.compiler.assembly.Interruptable.wrapException;
@@ -21,7 +22,7 @@ public class CompilationThreadManager {
 
 	public void run(Collection<NamedRunnable> runnables) {
 
-        ExceptionGatherer gatherer = new ExceptionGatherer();
+        ExceptionGatherer gatherer = new ExceptionGatherer(this);
         running = true;
 
         synchronized (this) {
@@ -48,8 +49,9 @@ public class CompilationThreadManager {
             }
         }
 
-        if (!gatherer.getGatheredExceptions().isEmpty()){
-            throw new RuntimeException(gatherer.getGatheredExceptions().toString());
+        Map<String, Throwable> uncaughtExceptions = gatherer.getGatheredExceptions();
+        if (!uncaughtExceptions.isEmpty()){
+            throw new RuntimeException(uncaughtExceptions.toString());
         }
     }
 

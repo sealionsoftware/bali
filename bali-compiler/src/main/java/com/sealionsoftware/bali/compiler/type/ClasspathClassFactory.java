@@ -9,9 +9,11 @@ import java.util.Map;
 public class ClasspathClassFactory {
 
     private Map<String, Class> classLibrary;
+    private ClassLoader loader;
 
-    public ClasspathClassFactory(Map<String, Class> classLibrary) {
+    public ClasspathClassFactory(Map<String, Class> classLibrary, ClassLoader loader) {
         this.classLibrary = classLibrary;
+        this.loader = loader;
     }
 
     public void addToLibrary(java.lang.Class clazz){
@@ -25,11 +27,9 @@ public class ClasspathClassFactory {
             return ret;
         }
 
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-
         ClassReader reader;
         try {
-            InputStream classFileStream = classLoader.getResourceAsStream(className.replace('.','/').concat(".class"));
+            InputStream classFileStream = loader.getResourceAsStream(className.replace('.','/').concat(".class"));
             reader = new ClassReader(classFileStream);
         } catch (IOException e) {
             throw new RuntimeException("Cannot read bytecode for class " + className, e);

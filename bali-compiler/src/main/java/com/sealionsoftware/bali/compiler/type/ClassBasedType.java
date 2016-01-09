@@ -172,19 +172,20 @@ public class ClassBasedType implements Type {
             return null;
         }
 
+        if (raw instanceof TypeVariable){
+
+            if (typeArgumentMap == null){
+                initaliseTypeArguments();
+            }
+
+            TypeVariable vt = (TypeVariable) raw;
+            return typeArgumentMap.get(vt.getName());
+        }
+
         List<Parameter> arguments = raw.getTypeArguments();
 
         if (arguments.isEmpty()){
             return raw;
-        }
-
-        if (typeArgumentMap == null){
-            initaliseTypeArguments();
-        }
-
-        if (raw instanceof TypeVariable){
-            TypeVariable vt = (TypeVariable) raw;
-            return typeArgumentMap.get(vt.getName());
         }
 
         List<Type> newArguments = new ArrayList<>(arguments.size());

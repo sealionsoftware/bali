@@ -12,7 +12,7 @@ import static org.mockito.Mockito.mock;
 
 public class ExceptionGathererTest {
 
-    private ExceptionGatherer subject = new ExceptionGatherer();
+    private ExceptionGatherer subject = new ExceptionGatherer(mock(CompilationThreadManager.class));
 
     @Test
     public void testGatherUncaughtException(){
