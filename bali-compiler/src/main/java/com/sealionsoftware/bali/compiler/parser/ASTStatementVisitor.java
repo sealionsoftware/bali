@@ -14,9 +14,8 @@ import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.antlr.v4.runtime.Token;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.stream.Collectors;
 
 public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
 
@@ -80,7 +79,7 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
     public ExpressionStatementNode visitExpression(BaliParser.ExpressionContext ctx) {
         ASTExpressionVisitor expressionVisitor = new ASTExpressionVisitor(monitor);
         Token start = ctx.start;
-        ExpressionStatementNode node = new ExpressionStatementNode(start.getLine(), start.getCharPositionInLine(), expressionVisitor.visitExpression(ctx));
+        ExpressionStatementNode node = new ExpressionStatementNode(start.getLine(), start.getCharPositionInLine(), ctx.accept(expressionVisitor));
         container.addStatement(node);
         return node;
     }
@@ -119,12 +118,7 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
         Token start = ctx.start;
         TypeNode node = new TypeNode(monitor, start.getLine(), start.getCharPositionInLine());
         node.setName(ctx.IDENTIFIER().getText());
-        List<TypeNode> arguments = new ArrayList<>();
-        BaliParser.TypeListContext argumentContexts = ctx.typeList();
-        if (argumentContexts != null) for (BaliParser.TypeContext argumentContext : argumentContexts.type()) {
-            arguments.add(buildType(argumentContext));
-        }
-        node.setArguments(arguments);
+        node.setArguments(ctx.type().stream().map(this::buildType).collect(Collectors.toList()));
         return node;
     }
 

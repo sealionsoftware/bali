@@ -214,7 +214,7 @@ public class ASMStackVisitorTest implements Opcodes {
         when(targetType.getClassName()).thenReturn("com.sealionsoftware.Target");
         when(node.getResolvedMethod()).thenReturn(resolvedMethod);
         when(resolvedMethod.getTemplateMethod()).thenReturn(resolvedMethod);
-        when(node.getMethodName()).thenReturn("aMethod");
+        when(resolvedMethod.getName()).thenReturn("aMethod");
         when(node.getTarget()).thenReturn(target);
         when(node.getArguments()).thenReturn(asList(argumentOne, argumentTwo));
         when(target.getType()).thenReturn(targetType);

@@ -1,6 +1,7 @@
 package com.sealionsoftware.bali.compiler.type;
 
 import com.sealionsoftware.bali.compiler.Method;
+import com.sealionsoftware.bali.compiler.Operator;
 import com.sealionsoftware.bali.compiler.Parameter;
 import com.sealionsoftware.bali.compiler.Type;
 
@@ -53,8 +54,16 @@ public class TypeVariable implements Type {
         return (bound != null) ? bound.getMethods() : emptyList();
     }
 
+    public List<Operator> getOperators() {
+        return (bound != null) ? bound.getOperators() : emptyList();
+    }
+
     public Method getMethod(String name) {
         return (bound != null) ? bound.getMethod(name) : null;
+    }
+
+    public Operator getOperator(String name) {
+        return (bound != null) ? bound.getOperator(name) :null;
     }
 
     public String getName() {

@@ -41,17 +41,14 @@ expression:                 '(' expression ')'
 							 | literal
 							 | invocation
 							 | reference
+							 | expression operator expression
 							 | expression '.' invocation;
 
-invocation:				    IDENTIFIER argumentList ;
+invocation:				    IDENTIFIER '(' ( argument ( ',' argument )* )? ')' ;
 
-type:                       IDENTIFIER ( '<'  typeList '>' )? ;
-
-typeList:                   type (',' type)* ;
+type:                       IDENTIFIER ( '['  type ( ',' type)* ']' )? ;
 
 argument:                   expression ;
-
-argumentList:               '(' ( argument ( ',' argument)*)? ')' ;
 
 literal:                    booleanLiteral | textLiteral | integerLiteral;
 
@@ -62,3 +59,5 @@ textLiteral:                TEXT_LITERAL;
 integerLiteral:             INTEGER_LITERAL;
 
 reference:                  IDENTIFIER ;
+
+operator:                   ( '+' | '-' | '$' | '%' | '^' | '&' | '*' | '/' | '#' | '~' | '?' | '\\' | '|' | '==' | '!=' | '<' | '>' | '¬' | '¦' | '`' | '!' | '@' )+ ;

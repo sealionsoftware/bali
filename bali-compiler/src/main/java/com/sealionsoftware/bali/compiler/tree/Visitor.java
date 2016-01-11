@@ -25,6 +25,8 @@ public interface Visitor {
 
     void visit(InvocationNode node);
 
+    void visit(OperationNode node);
+
     void visit(ExpressionStatementNode node);
 
 }

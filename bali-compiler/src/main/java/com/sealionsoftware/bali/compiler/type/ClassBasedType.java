@@ -2,6 +2,7 @@ package com.sealionsoftware.bali.compiler.type;
 
 import com.sealionsoftware.Collections.Each;
 import com.sealionsoftware.bali.compiler.Method;
+import com.sealionsoftware.bali.compiler.Operator;
 import com.sealionsoftware.bali.compiler.Parameter;
 import com.sealionsoftware.bali.compiler.Type;
 
@@ -28,6 +29,7 @@ public class ClassBasedType implements Type {
 
     private List<Type> interfaces;
     private Map<String, Method> methods;
+    private Map<String, Operator> operators;
 
     public ClassBasedType(Class template) {
         this(template, emptyList());
@@ -164,6 +166,49 @@ public class ClassBasedType implements Type {
         }
 
         return false;
+    }
+
+    public List<Operator> getOperators() {
+        if (operators == null){
+            initaliseOperators();
+        }
+        return unmodifiableList(new ArrayList<>(operators.values()));
+    }
+
+    public Operator getOperator(String name) {
+        if (operators == null){
+            initaliseOperators();
+        }
+        return operators.get(name);
+    }
+
+    private void initaliseOperators() {
+        Map<String, Operator> operators = new HashMap<>();
+
+        List<Operator> rawOperators = new ArrayList<>();
+        rawOperators.addAll(template.getOperators());
+        for (Type iface : getInterfaces()) {
+            rawOperators.addAll(iface.getOperators());
+        }
+
+        for (Operator rawOperator : rawOperators) {
+            List<Parameter> rawParameters = rawOperator.getParameters();
+            List<Parameter> parameterisedParameters = new ArrayList<>(rawParameters.size());
+            for (Parameter rawParameter : rawParameters) {
+                parameterisedParameters.add(new Parameter(rawParameter.name, parameterise(rawParameter.type)));
+            }
+            operators.put(
+                    rawOperator.getSymbol(),
+                    new Operator(
+                            rawOperator.getName(),
+                            parameterise(rawOperator.getReturnType()),
+                            parameterisedParameters,
+                            rawOperator.getSymbol(),
+                            getUltimateTemplate(rawOperator)
+                    )
+            );
+        }
+        this.operators = operators;
     }
 
     private Type parameterise(Type raw){

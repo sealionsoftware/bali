@@ -26,6 +26,13 @@ public class InvocationIT {
     }
 
     @Test
+    public void testChainedInvocations() {
+
+        Map<String, Object> output = interpreter.run("var size = \"Hello World\".uppercase().size()");
+        assertThat(output, hasEntry("size", convert(11)));
+    }
+
+    @Test
     public void testInvokingMethodWithParameter() {
 
          Map<String, Object> output = interpreter.run(

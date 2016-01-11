@@ -26,7 +26,7 @@ public class ClassTest {
     @Test
     public void testGetTypeParameters() throws Exception {
         Parameter typeParameter = mock(Parameter.class);
-        subject.initialise(asList(typeParameter), null, emptyList(), emptyList());
+        subject.initialise(asList(typeParameter), null, emptyList(), emptyList(), emptyList());
         assertThat(subject.getTypeParameters(), hasItem(is(typeParameter)));
     }
 
@@ -38,7 +38,7 @@ public class ClassTest {
     @Test
     public void testGetSuperType() throws Exception {
         Type type = mock(Type.class);
-        subject.initialise(emptyList(), type, emptyList(), emptyList());
+        subject.initialise(emptyList(), type, emptyList(), emptyList(), emptyList());
         assertThat(subject.getSuperType(), is(type));
     }
 
@@ -50,7 +50,7 @@ public class ClassTest {
     @Test
     public void testGetInterfaces() throws Exception {
         Type iface = mock(Type.class);
-        subject.initialise(emptyList(), null, asList(iface), emptyList());
+        subject.initialise(emptyList(), null, asList(iface), emptyList(), emptyList());
         assertThat(subject.getInterfaces(), hasItem(is(iface)));
     }
 
@@ -59,7 +59,7 @@ public class ClassTest {
         Type returnType = mock(Type.class);
         Parameter parameter = mock(Parameter.class);
         Method method = new Method("aMethod", returnType, asList(parameter));
-        subject.initialise(emptyList(), null, emptyList(), asList(method));
+        subject.initialise(emptyList(), null, emptyList(), asList(method), emptyList());
         assertThat(subject.getMethods(), hasItem(is(method)));
     }
 

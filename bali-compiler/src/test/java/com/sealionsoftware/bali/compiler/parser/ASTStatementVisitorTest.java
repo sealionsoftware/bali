@@ -49,14 +49,12 @@ public class ASTStatementVisitorTest {
         TerminalNode nameTerminal = mockTerminal("aVariable");
 
         BaliParser.TypeContext typeContext = mockContext(BaliParser.TypeContext.class);
-        BaliParser.TypeListContext typeArgumentsContext = mockContext(BaliParser.TypeListContext.class);
         BaliParser.TypeContext typeArgumentContext = mockContext(BaliParser.TypeContext.class);
         BaliParser.ExpressionContext expressionContext = mockContext(BaliParser.ExpressionContext.class);
         BaliParser.VariableDeclarationContext context = mockContext(BaliParser.VariableDeclarationContext.class);
 
         when(typeContext.IDENTIFIER()).thenReturn(typeTerminal);
-        when(typeContext.typeList()).thenReturn(typeArgumentsContext);
-        when(typeArgumentsContext.type()).thenReturn(asList(typeArgumentContext));
+        when(typeContext.type()).thenReturn(asList(typeArgumentContext));
         when(typeArgumentContext.IDENTIFIER()).thenReturn(typeArgumentTerminal);
         when(context.IDENTIFIER()).thenReturn(nameTerminal);
         when(context.expression()).thenReturn(expressionContext);
@@ -91,12 +89,9 @@ public class ASTStatementVisitorTest {
 
     @Test
     public void testVisitExpressionNode() throws Exception {
+        
         BaliParser.ExpressionContext context = mockContext(BaliParser.ExpressionContext.class);
-
-        BaliParser.BooleanLiteralContext literalContext = mockContext(BaliParser.BooleanLiteralContext.class);
-        when(context.getChildCount()).thenReturn(1);
-        when(context.getChild(0)).thenReturn(literalContext);
-        when(literalContext.accept(any(ASTExpressionVisitor.class))).thenReturn(mock(BooleanLiteralNode.class));
+        when(context.accept(any(ASTExpressionVisitor.class))).thenReturn(mock(BooleanLiteralNode.class));
 
         ExpressionStatementNode node = subject.visitExpression(context);
         assertThat(node.getExpressionNode(), instanceOf(BooleanLiteralNode.class));

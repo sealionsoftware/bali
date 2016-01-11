@@ -8,8 +8,8 @@ import static bali.number.Primitive.convert;
 import static com.sealionsoftware.Matchers.containingError;
 import static com.sealionsoftware.Matchers.throwsException;
 import static com.sealionsoftware.bali.compiler.Matchers.withCode;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasEntry;
+import static org.junit.Assert.assertThat;
 
 public class OperationIT {
 
@@ -20,6 +20,13 @@ public class OperationIT {
 
         Map<String, Object> output = interpreter.run("var ret = 1 + 1");
         assertThat(output, hasEntry("ret", convert(2)));
+    }
+
+    @Test
+    public void testChainedOperators() {
+
+        Map<String, Object> output = interpreter.run("var ret = 1 + 2 + 3 + 4 / 2");
+        assertThat(output, hasEntry("ret", convert(5)));
     }
 
     @Test
