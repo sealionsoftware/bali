@@ -12,6 +12,7 @@ import com.sealionsoftware.bali.compiler.tree.ConditionalNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.InvocationNode;
+import com.sealionsoftware.bali.compiler.tree.OperationNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import com.sealionsoftware.bali.compiler.type.Class;
@@ -97,5 +98,9 @@ public class TypeCheckVisitor extends ValidatingVisitor {
         }
 
         visitChildren(node);
+    }
+
+    public void visit(OperationNode operationNode){
+        visit((InvocationNode) operationNode);
     }
 }

@@ -1,5 +1,7 @@
 package bali;
 
+import bali.annotation.Operator;
+
 public interface Number extends Quantified<Number> {
 
 	Boolean isPositive();
@@ -12,12 +14,16 @@ public interface Number extends Quantified<Number> {
 
 	Number negate();
 
+    @Operator("+")
 	Number add(Number operand);
 
+    @Operator("-")
 	Number subtract(Number operand);
 
+    @Operator("*")
 	Number multiply(Number operand);
 
+    @Operator("/")
 	Number divide(Number operand);
 
 }

@@ -7,15 +7,18 @@ import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.InvocationNode;
+import com.sealionsoftware.bali.compiler.tree.OperationNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
 import org.antlr.v4.runtime.Token;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static bali.number.Primitive.parse;
+import static java.util.Arrays.asList;
 
 public class ASTExpressionVisitor extends BaliBaseVisitor<ExpressionNode> {
 
@@ -62,8 +65,7 @@ public class ASTExpressionVisitor extends BaliBaseVisitor<ExpressionNode> {
         node.setMethodName(ctx.IDENTIFIER().getText());
         node.setTarget(targets.peek());
         node.setArguments(
-                ctx.argumentList()
-                        .argument()
+                ctx.argument()
                         .stream()
                         .map((item) -> item.expression().accept(this))
                         .collect(Collectors.toList())
@@ -72,14 +74,28 @@ public class ASTExpressionVisitor extends BaliBaseVisitor<ExpressionNode> {
     }
 
     public ExpressionNode visitExpression(BaliParser.ExpressionContext ctx){
-        BaliParser.ExpressionContext targetContext = ctx.expression();
+
+        List<BaliParser.ExpressionContext> expressionContexts = ctx.expression();
         BaliParser.InvocationContext invocationContext = ctx.invocation();
-        if (targetContext != null && invocationContext != null){
-            targets.push(targetContext.accept(this));
-            ExpressionNode ret = invocationContext.accept(this);
-            targets.pop();
-            return ret;
+        BaliParser.OperatorContext operatorContext = ctx.operator();
+
+        switch (expressionContexts.size()){
+            case 1: if (invocationContext != null) {
+                targets.push(expressionContexts.get(0).accept(this));
+                ExpressionNode ret = invocationContext.accept(this);
+                targets.pop();
+                return ret;
+            } break;
+            case 2: if (operatorContext != null){
+                Token start = ctx.start;
+                OperationNode node = new OperationNode(start.getLine(), start.getCharPositionInLine(), monitor);
+                node.setTarget(expressionContexts.get(0).accept(this));
+                node.setOperatorName(ctx.operator().getText());
+                node.setArguments(asList(expressionContexts.get(1).accept(this)));
+                return node;
+            } break;
         }
+
         return visitChildren(ctx);
     }
 

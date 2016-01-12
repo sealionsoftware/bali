@@ -14,6 +14,7 @@ import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
 import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.InvocationNode;
+import com.sealionsoftware.bali.compiler.tree.OperationNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.StatementNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
@@ -214,7 +215,7 @@ public class ASMStackVisitorTest implements Opcodes {
         when(targetType.getClassName()).thenReturn("com.sealionsoftware.Target");
         when(node.getResolvedMethod()).thenReturn(resolvedMethod);
         when(resolvedMethod.getTemplateMethod()).thenReturn(resolvedMethod);
-        when(node.getMethodName()).thenReturn("aMethod");
+        when(resolvedMethod.getName()).thenReturn("aMethod");
         when(node.getTarget()).thenReturn(target);
         when(node.getArguments()).thenReturn(asList(argumentOne, argumentTwo));
         when(target.getType()).thenReturn(targetType);
@@ -232,5 +233,38 @@ public class ASMStackVisitorTest implements Opcodes {
         verify(argumentOne).accept(subject);
         verify(argumentTwo).accept(subject);
         verify(visitor).visitMethodInsn(INVOKEINTERFACE, "com/sealionsoftware/Target", "aMethod", "(Lcom/sealionsoftware/Argument;,Ljava/lang/Object;)Lcom/sealionsoftware/Return;", true);
+    }
+
+    @Test
+    public void testVisitOperation() throws Exception {
+
+        OperationNode node = mock(OperationNode.class);
+        ExpressionNode target = mock(ExpressionNode.class);
+        ExpressionNode argumentOne = mock(ExpressionNode.class);
+        Method resolvedMethod = mock(Method.class);
+        Type targetType = mock(Type.class);
+        Type argumentType = mock(Type.class);
+        Type returnType = mock(Type.class);
+
+        when(targetType.getClassName()).thenReturn("com.sealionsoftware.Target");
+        when(node.getResolvedMethod()).thenReturn(resolvedMethod);
+        when(resolvedMethod.getTemplateMethod()).thenReturn(resolvedMethod);
+        when(resolvedMethod.getName()).thenReturn("aMethod");
+        when(node.getTarget()).thenReturn(target);
+        when(node.getArguments()).thenReturn(asList(argumentOne));
+        when(target.getType()).thenReturn(targetType);
+        when(resolvedMethod.getParameters()).thenReturn(asList(
+                new Parameter("aParameter", argumentType),
+                new Parameter("aNullParameter", null))
+        );
+        when(argumentType.getClassName()).thenReturn("com.sealionsoftware.Argument");
+        when(resolvedMethod.getReturnType()).thenReturn(returnType);
+        when(returnType.getClassName()).thenReturn("com.sealionsoftware.Return");
+
+        subject.visit(node);
+
+        verify(target).accept(subject);
+        verify(argumentOne).accept(subject);
+        verify(visitor).visitMethodInsn(INVOKEINTERFACE, "com/sealionsoftware/Target", "aMethod", "(Lcom/sealionsoftware/Argument;)Lcom/sealionsoftware/Return;", true);
     }
 }

@@ -20,5 +20,9 @@ public interface Type {
 
     List<Method> getMethods();
 
+    List<Operator> getOperators();
+
     Method getMethod(String name);
+
+    Operator getOperator(String name);
 }

@@ -3,10 +3,6 @@ package com.sealionsoftware.bali.compiler.reference;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.tree.Node;
 
-/**
- * User: Richard
- * Date: 06/10/13
- */
 public class MonitoredProperty<T> implements Reference<T> {
 
 	private volatile boolean isSet = false;

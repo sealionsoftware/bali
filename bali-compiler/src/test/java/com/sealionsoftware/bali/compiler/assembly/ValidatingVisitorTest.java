@@ -8,6 +8,7 @@ import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
 import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.InvocationNode;
+import com.sealionsoftware.bali.compiler.tree.OperationNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
@@ -80,6 +81,11 @@ public class ValidatingVisitorTest {
     @Test
     public void testVisitExpressionStatementNode() throws Exception {
         subject.visit(mock(ExpressionStatementNode.class));
+    }
+
+    @Test
+    public void testVisitOperationNode() throws Exception {
+        subject.visit(mock(OperationNode.class));
     }
 
     @Test

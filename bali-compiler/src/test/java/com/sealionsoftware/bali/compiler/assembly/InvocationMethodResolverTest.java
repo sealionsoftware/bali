@@ -2,9 +2,11 @@ package com.sealionsoftware.bali.compiler.assembly;
 
 import com.sealionsoftware.bali.compiler.ErrorCode;
 import com.sealionsoftware.bali.compiler.Method;
+import com.sealionsoftware.bali.compiler.Operator;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.InvocationNode;
+import com.sealionsoftware.bali.compiler.tree.OperationNode;
 import org.junit.Test;
 
 import static com.sealionsoftware.bali.compiler.Matchers.containsNoFailures;
@@ -19,7 +21,7 @@ public class InvocationMethodResolverTest {
     private InvocationMethodResolver subject = new InvocationMethodResolver();
 
     @Test
-    public void testVisitNodeWithoutTarget() throws Exception {
+    public void testVisitInvocationWithoutTarget() throws Exception {
 
         InvocationNode node = mock(InvocationNode.class);
         subject.visit(node);
@@ -27,7 +29,7 @@ public class InvocationMethodResolverTest {
     }
 
     @Test
-    public void testVisitNodeWithUnresolvedMethod() throws Exception {
+    public void testVisitInvocationWithUnresolvedMethod() throws Exception {
 
         String methodName = "notAMethod";
 
@@ -45,7 +47,7 @@ public class InvocationMethodResolverTest {
     }
 
     @Test
-    public void testVisitNodeWithResolvedMethod() throws Exception {
+    public void testVisitInvocationWithResolvedMethod() throws Exception {
 
         String methodName = "notAMethod";
 
@@ -62,6 +64,53 @@ public class InvocationMethodResolverTest {
         subject.visit(node);
 
         verify(node).setResolvedMethod(resolvedMethod);
+        assertThat(subject, containsNoFailures());
+    }
+
+    @Test
+    public void testVisitOperationWithoutTarget() throws Exception {
+
+        OperationNode node = mock(OperationNode.class);
+        subject.visit(node);
+        assertThat(subject, containsOneFailure(ErrorCode.OPERATOR_NOT_FOUND));
+    }
+
+    @Test
+    public void testVisitOperationWithUnresolvedMethod() throws Exception {
+
+        String operatorName = "+";
+
+        OperationNode node = mock(OperationNode.class);
+        when(node.getOperatorName()).thenReturn("+");
+
+        ExpressionNode target = mock(ExpressionNode.class);
+        when(node.getTarget()).thenReturn(target);
+        Type targetType = mock(Type.class);
+        when(target.getType()).thenReturn(targetType);
+        when(targetType.getOperator(operatorName)).thenReturn(null);
+
+        subject.visit(node);
+        assertThat(subject, containsOneFailure(ErrorCode.OPERATOR_NOT_FOUND));
+    }
+
+    @Test
+    public void testVisitOperationWithResolvedMethod() throws Exception {
+
+        String operatorName = "+";
+
+        OperationNode node = mock(OperationNode.class);
+        when(node.getOperatorName()).thenReturn(operatorName);
+
+        ExpressionNode target = mock(ExpressionNode.class);
+        when(node.getTarget()).thenReturn(target);
+        Type targetType = mock(Type.class);
+        when(target.getType()).thenReturn(targetType);
+        Operator resolvedOperator = mock(Operator.class);
+        when(targetType.getOperator(operatorName)).thenReturn(resolvedOperator);
+
+        subject.visit(node);
+
+        verify(node).setResolvedMethod(resolvedOperator);
         assertThat(subject, containsNoFailures());
     }
 }

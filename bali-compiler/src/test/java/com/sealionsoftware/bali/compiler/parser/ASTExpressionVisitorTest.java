@@ -6,6 +6,7 @@ import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.InvocationNode;
+import com.sealionsoftware.bali.compiler.tree.OperationNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -16,9 +17,10 @@ import static com.sealionsoftware.bali.compiler.parser.Mock.mockContext;
 import static com.sealionsoftware.bali.compiler.parser.Mock.mockTerminal;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -82,13 +84,11 @@ public class ASTExpressionVisitorTest {
         BaliParser.InvocationContext context = mockContext(BaliParser.InvocationContext.class);
 
         TerminalNode methodName = mockTerminal("aMethod");
-        BaliParser.ArgumentListContext argumentListContext = mockContext(BaliParser.ArgumentListContext.class);
         BaliParser.ArgumentContext argumentContext = mockContext(BaliParser.ArgumentContext.class);
         BaliParser.ExpressionContext argumentExpression = mockContext(BaliParser.ExpressionContext.class);
 
         when(context.IDENTIFIER()).thenReturn(methodName);
-        when(context.argumentList()).thenReturn(argumentListContext);
-        when(argumentListContext.argument()).thenReturn(asList(argumentContext));
+        when(context.argument()).thenReturn(asList(argumentContext));
         when(argumentContext.expression()).thenReturn(argumentExpression);
 
         InvocationNode invocationNode = subject.visitInvocation(context);
@@ -107,7 +107,7 @@ public class ASTExpressionVisitorTest {
         ExpressionNode target = mock(ExpressionNode.class);
         InvocationNode invocationNode = mock(InvocationNode.class);
 
-        when(parentContext.expression()).thenReturn(targetContext);
+        when(parentContext.expression()).thenReturn(asList(targetContext));
         when(targetContext.accept(subject)).thenReturn(target);
         when(parentContext.invocation()).thenReturn(invocationContext);
         when(invocationContext.accept(subject)).thenReturn(invocationNode);
@@ -117,5 +117,45 @@ public class ASTExpressionVisitorTest {
         assertThat(result, is(invocationNode));
         verify(targetContext).accept(subject);
         verify(invocationContext).accept(subject);
+    }
+
+    @Test
+    public void testVisitOperation() throws Exception {
+
+        BaliParser.ExpressionContext parentContext = mockContext(BaliParser.ExpressionContext.class);
+        BaliParser.ExpressionContext targetContext = mockContext(BaliParser.ExpressionContext.class);
+        BaliParser.ExpressionContext argumentContext = mockContext(BaliParser.ExpressionContext.class);
+        BaliParser.OperatorContext operatorContext = mockContext(BaliParser.OperatorContext.class);
+        ExpressionNode target = mock(ExpressionNode.class);
+        ExpressionNode argument = mock(ExpressionNode.class);
+
+        when(parentContext.expression()).thenReturn(asList(targetContext, argumentContext));
+        when(targetContext.accept(subject)).thenReturn(target);
+        when(argumentContext.accept(subject)).thenReturn(argument);
+        when(parentContext.operator()).thenReturn(operatorContext);
+
+        ExpressionNode result = subject.visitExpression(parentContext);
+
+        assertThat(result, instanceOf(OperationNode.class));
+        verify(targetContext).accept(subject);
+        verify(argumentContext).accept(subject);
+    }
+
+    @Test
+    public void testVisitParenthesisedOperation() throws Exception {
+
+        BaliParser.ExpressionContext parentContext = mockContext(BaliParser.ExpressionContext.class);
+        BaliParser.ExpressionContext targetContext = mockContext(BaliParser.ExpressionContext.class);
+        ExpressionNode target = mock(ExpressionNode.class);
+
+        when(parentContext.expression()).thenReturn(asList(targetContext));
+        when(parentContext.getChildCount()).thenReturn(1);
+        when(parentContext.getChild(0)).thenReturn(targetContext);
+        when(targetContext.accept(subject)).thenReturn(target);
+
+        ExpressionNode result = subject.visitExpression(parentContext);
+
+        assertThat(result, is(target));
+        verify(targetContext).accept(subject);
     }
 }
