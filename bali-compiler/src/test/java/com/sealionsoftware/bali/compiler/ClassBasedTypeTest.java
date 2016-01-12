@@ -35,6 +35,9 @@ public class ClassBasedTypeTest {
     private Method templateMethod = mock(Method.class);
     private Type templateMethodParameterType = mock(Type.class);
 
+    private Operator templateOperator = mock(Operator.class);
+    private Type templateOperatorParameterType = mock(Type.class);
+
     private ClassBasedType subject = new ClassBasedType(template, asList(typeArgumentType, typeArgumentType));
 
     @Before
@@ -44,6 +47,7 @@ public class ClassBasedTypeTest {
         when(template.getClassName()).thenReturn("com.sealionsoftware.Test");
         when(template.getInterfaces()).thenReturn(asList(templateInterfaceType));
         when(template.getMethods()).thenReturn(asList(templateMethod));
+        when(template.getOperators()).thenReturn(asList(templateOperator));
 
         when(templateSuperType.getClassName()).thenReturn("com.sealionsoftware.Super");
         when(templateInterfaceType.getClassName()).thenReturn("com.sealionsoftware.Interface");
@@ -52,6 +56,12 @@ public class ClassBasedTypeTest {
                 new Parameter("aParameter", templateMethodParameterType),
                 new Parameter("anUnboundedParameter", new TypeVariable("T", null)))
         );
+
+        when(templateOperator.getName()).thenReturn("anOperator");
+        when(templateOperator.getSymbol()).thenReturn("+");
+        when(templateOperator.getParameters()).thenReturn(asList(
+                new Parameter("aParameter", templateOperatorParameterType)
+        ));
 
         when(typeArgumentType.toString()).thenReturn("com.sealionsoftware.TypeArgument");
     }
@@ -218,6 +228,31 @@ public class ClassBasedTypeTest {
         List<Method> methods = subject.getMethods();
 
         assertThat(methods, hasSize(1));
+    }
+
+    @Test
+    public void testGetOperator() throws Exception {
+
+        Operator typeOperator = subject.getOperator("+");
+
+        assertThat(typeOperator, notNullValue());
+        assertThat(typeOperator.getName(), equalTo("anOperator"));
+        assertThat(typeOperator.getReturnType(), nullValue());
+        assertThat(typeOperator.getParameters(), hasSize(1));
+
+        Iterator<Parameter> parameters = typeOperator.getParameters().iterator();
+        Parameter one = parameters.next();
+        assertThat(one.name, equalTo("aParameter"));
+        assertThat(one.type, is(templateOperatorParameterType));
+
+    }
+
+    @Test
+    public void testGetOperators() throws Exception {
+
+        List<Operator> operators = subject.getOperators();
+
+        assertThat(operators, hasSize(1));
     }
 
 }

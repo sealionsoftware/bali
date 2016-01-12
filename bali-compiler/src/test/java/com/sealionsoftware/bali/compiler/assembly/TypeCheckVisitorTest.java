@@ -9,6 +9,7 @@ import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.InvocationNode;
+import com.sealionsoftware.bali.compiler.tree.OperationNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
@@ -261,6 +262,26 @@ public class TypeCheckVisitorTest {
     public void testInvocationWithValidArgumentType(){
 
         InvocationNode node = mock(InvocationNode.class);
+        Method resolvedMethod = mock(Method.class);
+        Type parameterType = mock(Type.class);
+        ExpressionNode argumentNode = mock(ExpressionNode.class);
+        Type argumentType = mock(Type.class);
+
+        when(node.getResolvedMethod()).thenReturn(resolvedMethod);
+        when(resolvedMethod.getParameters()).thenReturn(asList(new Parameter("aParameter", parameterType)));
+        when(node.getArguments()).thenReturn(asList(argumentNode));
+        when(argumentNode.getType()).thenReturn(argumentType);
+        when(argumentType.isAssignableTo(parameterType)).thenReturn(true);
+
+        subject.visit(node);
+
+        assertThat(subject, containsNoFailures());
+    }
+
+    @Test
+    public void testOperation(){
+
+        OperationNode node = mock(OperationNode.class);
         Method resolvedMethod = mock(Method.class);
         Type parameterType = mock(Type.class);
         ExpressionNode argumentNode = mock(ExpressionNode.class);

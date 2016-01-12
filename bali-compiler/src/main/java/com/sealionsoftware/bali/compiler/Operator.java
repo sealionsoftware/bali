@@ -12,8 +12,7 @@ public class Operator extends Method {
     }
 
     public Operator(String name, Type returnType, List<Parameter> parameters, String symbol) {
-        super(name, returnType, parameters);
-        this.symbol = symbol;
+        this(name, returnType, parameters, symbol, null);
     }
 
     public String getSymbol() {

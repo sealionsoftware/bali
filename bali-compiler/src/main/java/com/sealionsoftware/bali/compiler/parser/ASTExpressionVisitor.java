@@ -89,9 +89,9 @@ public class ASTExpressionVisitor extends BaliBaseVisitor<ExpressionNode> {
             case 2: if (operatorContext != null){
                 Token start = ctx.start;
                 OperationNode node = new OperationNode(start.getLine(), start.getCharPositionInLine(), monitor);
-                node.setTarget(ctx.expression(0).accept(this));
+                node.setTarget(expressionContexts.get(0).accept(this));
                 node.setOperatorName(ctx.operator().getText());
-                node.setArguments(asList(ctx.expression(1).accept(this)));
+                node.setArguments(asList(expressionContexts.get(1).accept(this)));
                 return node;
             } break;
         }

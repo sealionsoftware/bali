@@ -1,6 +1,7 @@
 package com.sealionsoftware.bali.compiler.type;
 
 import com.sealionsoftware.bali.compiler.Method;
+import com.sealionsoftware.bali.compiler.Operator;
 import com.sealionsoftware.bali.compiler.Parameter;
 import com.sealionsoftware.bali.compiler.Type;
 import org.junit.Test;
@@ -113,6 +114,24 @@ public class TypeVariableTest {
         when(bound.getMethod("aMethod")).thenReturn(method);
 
         assertThat(subject.getMethod("aMethod"), is(method));
+    }
+
+    @Test
+    public void testGetOperators() throws Exception {
+
+        Operator operator = mock(Operator.class);
+        when(bound.getOperators()).thenReturn(asList(operator));
+
+        assertThat(subject.getOperators(), contains(operator));
+    }
+
+    @Test
+    public void testGetOperator() throws Exception {
+
+        Operator operator = mock(Operator.class);
+        when(bound.getOperator("+")).thenReturn(operator);
+
+        assertThat(subject.getOperator("+"), is(operator));
     }
 
     @Test
