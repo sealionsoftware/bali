@@ -41,6 +41,7 @@ expression:                 '(' expression ')'
 							 | literal
 							 | invocation
 							 | reference
+							 | operator expression
 							 | expression operator expression
 							 | expression '.' invocation;
 
