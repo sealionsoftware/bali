@@ -30,6 +30,7 @@ public class ClassBasedType implements Type {
     private List<Type> interfaces;
     private Map<String, Method> methods;
     private Map<String, Operator> operators;
+    private Map<String, Operator> unaryOperators;
 
     public ClassBasedType(Class template) {
         this(template, emptyList());
@@ -182,14 +183,32 @@ public class ClassBasedType implements Type {
         return operators.get(name);
     }
 
-    private void initaliseOperators() {
-        Map<String, Operator> operators = new HashMap<>();
+    public List<Operator> getUnaryOperators() {
+        if (unaryOperators == null){
+            initaliseUnaryOperators();
+        }
+        return unmodifiableList(new ArrayList<>(unaryOperators.values()));
+    }
 
+    public Operator getUnaryOperator(String name) {
+        if (unaryOperators == null){
+            initaliseUnaryOperators();
+        }
+        return unaryOperators.get(name);
+    }
+
+    private void initaliseOperators() {
         List<Operator> rawOperators = new ArrayList<>();
         rawOperators.addAll(template.getOperators());
         for (Type iface : getInterfaces()) {
             rawOperators.addAll(iface.getOperators());
         }
+
+        this.operators = parameteriseOperators(rawOperators);
+    }
+
+    private  Map<String, Operator> parameteriseOperators(List<Operator> rawOperators) {
+        Map<String, Operator> operators = new HashMap<>();
 
         for (Operator rawOperator : rawOperators) {
             List<Parameter> rawParameters = rawOperator.getParameters();
@@ -208,7 +227,18 @@ public class ClassBasedType implements Type {
                     )
             );
         }
-        this.operators = operators;
+        return operators;
+    }
+
+    private void initaliseUnaryOperators() {
+
+        List<Operator> rawOperators = new ArrayList<>();
+        rawOperators.addAll(template.getUnaryOperators());
+        for (Type iface : getInterfaces()) {
+            rawOperators.addAll(iface.getUnaryOperators());
+        }
+
+        this.unaryOperators = parameteriseOperators(rawOperators);
     }
 
     private Type parameterise(Type raw){

@@ -7,6 +7,7 @@ import com.sealionsoftware.bali.compiler.reference.MonitoredProperty;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -59,6 +60,11 @@ public class CompilationThreadManager {
         }
 
         if (!exceptions.isEmpty()){
+            for (Map.Entry<String, Throwable> entry : exceptions.entrySet()){
+                System.out.print(entry.getKey() + ":");
+                entry.getValue().printStackTrace();
+            }
+
             throw new RuntimeException(exceptions.toString());
         }
     }

@@ -125,20 +125,38 @@ public class ASTExpressionVisitorTest {
         BaliParser.ExpressionContext parentContext = mockContext(BaliParser.ExpressionContext.class);
         BaliParser.ExpressionContext targetContext = mockContext(BaliParser.ExpressionContext.class);
         BaliParser.ExpressionContext argumentContext = mockContext(BaliParser.ExpressionContext.class);
-        BaliParser.OperatorContext operatorContext = mockContext(BaliParser.OperatorContext.class);
+        TerminalNode operatorContext = mock(TerminalNode.class);
         ExpressionNode target = mock(ExpressionNode.class);
         ExpressionNode argument = mock(ExpressionNode.class);
 
         when(parentContext.expression()).thenReturn(asList(targetContext, argumentContext));
         when(targetContext.accept(subject)).thenReturn(target);
         when(argumentContext.accept(subject)).thenReturn(argument);
-        when(parentContext.operator()).thenReturn(operatorContext);
+        when(parentContext.OPERATOR()).thenReturn(operatorContext);
 
         ExpressionNode result = subject.visitExpression(parentContext);
 
         assertThat(result, instanceOf(OperationNode.class));
         verify(targetContext).accept(subject);
         verify(argumentContext).accept(subject);
+    }
+
+    @Test
+    public void testVisitUnaryOperation() throws Exception {
+
+        BaliParser.ExpressionContext parentContext = mockContext(BaliParser.ExpressionContext.class);
+        BaliParser.ExpressionContext targetContext = mockContext(BaliParser.ExpressionContext.class);
+        TerminalNode operatorContext = mock(TerminalNode.class);
+        ExpressionNode target = mock(ExpressionNode.class);
+
+        when(parentContext.expression()).thenReturn(asList(targetContext));
+        when(targetContext.accept(subject)).thenReturn(target);
+        when(parentContext.OPERATOR()).thenReturn(operatorContext);
+
+        ExpressionNode result = subject.visitExpression(parentContext);
+
+        assertThat(result, instanceOf(OperationNode.class));
+        verify(targetContext).accept(subject);
     }
 
     @Test

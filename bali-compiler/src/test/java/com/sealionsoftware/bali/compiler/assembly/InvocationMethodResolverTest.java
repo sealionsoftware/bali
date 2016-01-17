@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import static com.sealionsoftware.bali.compiler.Matchers.containsNoFailures;
 import static com.sealionsoftware.bali.compiler.Matchers.containsOneFailure;
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -100,6 +101,7 @@ public class InvocationMethodResolverTest {
 
         OperationNode node = mock(OperationNode.class);
         when(node.getOperatorName()).thenReturn(operatorName);
+        when(node.getArguments()).thenReturn(asList(mock(ExpressionNode.class)));
 
         ExpressionNode target = mock(ExpressionNode.class);
         when(node.getTarget()).thenReturn(target);

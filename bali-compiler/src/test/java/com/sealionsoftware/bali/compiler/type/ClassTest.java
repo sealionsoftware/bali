@@ -27,7 +27,7 @@ public class ClassTest {
     @Test
     public void testGetTypeParameters() {
         Parameter typeParameter = mock(Parameter.class);
-        subject.initialise(asList(typeParameter), null, emptyList(), emptyList(), emptyList());
+        subject.initialise(asList(typeParameter), null, emptyList(), emptyList(), emptyList(), emptyList());
         assertThat(subject.getTypeParameters(), hasItem(is(typeParameter)));
     }
 
@@ -39,7 +39,7 @@ public class ClassTest {
     @Test
     public void testGetSuperType() {
         Type type = mock(Type.class);
-        subject.initialise(emptyList(), type, emptyList(), emptyList(), emptyList());
+        subject.initialise(emptyList(), type, emptyList(), emptyList(), emptyList(), emptyList());
         assertThat(subject.getSuperType(), is(type));
     }
 
@@ -51,7 +51,7 @@ public class ClassTest {
     @Test
     public void testGetInterfaces() {
         Type iface = mock(Type.class);
-        subject.initialise(emptyList(), null, asList(iface), emptyList(), emptyList());
+        subject.initialise(emptyList(), null, asList(iface), emptyList(), emptyList(), emptyList());
         assertThat(subject.getInterfaces(), hasItem(is(iface)));
     }
 
@@ -60,7 +60,7 @@ public class ClassTest {
         Type returnType = mock(Type.class);
         Parameter parameter = mock(Parameter.class);
         Method method = new Method("aMethod", returnType, asList(parameter));
-        subject.initialise(emptyList(), null, emptyList(), asList(method), emptyList());
+        subject.initialise(emptyList(), null, emptyList(), asList(method), emptyList(), emptyList());
         assertThat(subject.getMethods(), hasItem(is(method)));
     }
 
@@ -69,8 +69,16 @@ public class ClassTest {
         Type returnType = mock(Type.class);
         Parameter parameter = mock(Parameter.class);
         Operator operator = new Operator("aMethod", returnType, asList(parameter), "+");
-        subject.initialise(emptyList(), null, emptyList(), emptyList(), asList(operator));
+        subject.initialise(emptyList(), null, emptyList(), emptyList(), asList(operator), emptyList());
         assertThat(subject.getOperators(), hasItem(is(operator)));
+    }
+
+    @Test
+    public void testGetUnaryOperators() {
+        Type returnType = mock(Type.class);
+        Operator operator = new Operator("aMethod", returnType, emptyList(), "+");
+        subject.initialise(emptyList(), null, emptyList(), emptyList(), emptyList(), asList(operator));
+        assertThat(subject.getUnaryOperators(), hasItem(is(operator)));
     }
 
     @Test

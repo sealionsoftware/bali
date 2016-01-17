@@ -3,10 +3,6 @@ package com.sealionsoftware.bali.compiler.tree;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * User: Richard
- * Date: 08/05/13
- */
 public abstract class Node {
 
 	private Integer line;

@@ -26,7 +26,7 @@ public class UnaryOperationIT {
     @Test
     public void testChainedOperators() {
 
-        Map<String, Object> output = interpreter.run("var ret = | -1");
+        Map<String, Object> output = interpreter.run("var ret = | - 1");
         assertThat(output, hasEntry("ret", convert(1)));
     }
 
@@ -41,5 +41,13 @@ public class UnaryOperationIT {
         Runnable invocation = () -> interpreter.run("var Boolean ret = ++1");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
     }
+
+    @Test
+    public void testUnaryAndBinaryOperators() {
+
+        Map<String, Object> output = interpreter.run("var ret = 1 + - 1");
+        assertThat(output, hasEntry("ret", convert(0)));
+    }
+
 
 }

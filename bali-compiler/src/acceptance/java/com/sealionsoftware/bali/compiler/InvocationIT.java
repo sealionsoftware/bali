@@ -36,8 +36,7 @@ public class InvocationIT {
     public void testInvokingMethodWithParameter() {
 
          Map<String, Object> output = interpreter.run(
-                "var Character char = \"W\".get(0) " +
-                "var contains = \"Hello World\".contains(char) "
+                "var contains = \"Hello World\".contains(\"W\"#0) "
         );
         assertThat(output, hasEntry("contains", convert(true)));
     }

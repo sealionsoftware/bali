@@ -58,12 +58,20 @@ public class TypeVariable implements Type {
         return (bound != null) ? bound.getOperators() : emptyList();
     }
 
+    public List<Operator> getUnaryOperators() {
+        return (bound != null) ? bound.getUnaryOperators() : emptyList();
+    }
+
     public Method getMethod(String name) {
         return (bound != null) ? bound.getMethod(name) : null;
     }
 
     public Operator getOperator(String name) {
         return (bound != null) ? bound.getOperator(name) :null;
+    }
+
+    public Operator getUnaryOperator(String name) {
+        return (bound != null) ? bound.getUnaryOperator(name) :null;
     }
 
     public String getName() {

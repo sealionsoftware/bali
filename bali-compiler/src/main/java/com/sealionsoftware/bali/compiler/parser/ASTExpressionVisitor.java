@@ -11,6 +11,7 @@ import com.sealionsoftware.bali.compiler.tree.OperationNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 
 import static bali.number.Primitive.parse;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 
 public class ASTExpressionVisitor extends BaliBaseVisitor<ExpressionNode> {
 
@@ -77,26 +79,30 @@ public class ASTExpressionVisitor extends BaliBaseVisitor<ExpressionNode> {
 
         List<BaliParser.ExpressionContext> expressionContexts = ctx.expression();
         BaliParser.InvocationContext invocationContext = ctx.invocation();
-        BaliParser.OperatorContext operatorContext = ctx.operator();
+        TerminalNode operatorContext = ctx.OPERATOR();
 
-        switch (expressionContexts.size()){
-            case 1: if (invocationContext != null) {
-                targets.push(expressionContexts.get(0).accept(this));
-                ExpressionNode ret = invocationContext.accept(this);
-                targets.pop();
-                return ret;
-            } break;
-            case 2: if (operatorContext != null){
-                Token start = ctx.start;
-                OperationNode node = new OperationNode(start.getLine(), start.getCharPositionInLine(), monitor);
-                node.setTarget(expressionContexts.get(0).accept(this));
-                node.setOperatorName(ctx.operator().getText());
-                node.setArguments(asList(expressionContexts.get(1).accept(this)));
-                return node;
-            } break;
+        if (operatorContext != null) {
+            Token start = ctx.start;
+            OperationNode node = new OperationNode(start.getLine(), start.getCharPositionInLine(), monitor);
+            node.setTarget(expressionContexts.get(0).accept(this));
+            node.setOperatorName(ctx.OPERATOR().getText());
+            node.setArguments(
+                    expressionContexts.size() == 2 ?
+                            asList(expressionContexts.get(1).accept(this)) :
+                            emptyList()
+            );
+            return node;
+        } else if (invocationContext != null && expressionContexts.size() == 1) {
+            targets.push(expressionContexts.get(0).accept(this));
+            ExpressionNode ret = invocationContext.accept(this);
+            targets.pop();
+            return ret;
         }
 
         return visitChildren(ctx);
     }
 
+    protected ExpressionNode aggregateResult(ExpressionNode aggregate, ExpressionNode nextResult) {
+        return nextResult != null ? nextResult : aggregate;
+    }
 }
