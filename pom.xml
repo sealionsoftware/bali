@@ -15,7 +15,8 @@
 	<modules>
 		<module>bali-lang</module>
 		<module>bali-compiler</module>
-	</modules>
+        <module>bali-repl</module>
+    </modules>
 
 	<build>
 		<plugins>
