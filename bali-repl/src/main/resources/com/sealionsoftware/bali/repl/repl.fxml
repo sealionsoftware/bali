@@ -1,46 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.image.*?>
-<?import java.net.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
-
-<BorderPane minHeight="-Infinity" minWidth="-Infinity" styleClass="root"
-            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import java.net.URL?>
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.sealionsoftware.bali.repl.ExecuteController">
-    <GridPane BorderPane.alignment="CENTER" prefWidth="Infinity" prefHeight="Infinity">
+    <GridPane BorderPane.alignment="CENTER">
         <padding>
             <Insets bottom="2" left="2" right="2" top="2"/>
         </padding>
-        <children>
-            <AnchorPane>
-                <children>
-                    <TextArea fx:id="input" styleClass="code">
-                        var helloWorld = true
-                    </TextArea>
-                    <Button layoutX="-20.0" layoutY="-20" onAction="#execute" styleClass="execute">
-                        <graphic>
-                            <ImageView fitHeight="31.0" fitWidth="34.0">
-                                <image>
-                                    <Image url="@play-icon.png"/>
-                                </image>
-                            </ImageView>
-                        </graphic>
-                    </Button>
-                </children>
-            </AnchorPane>
-            <Pane GridPane.rowIndex="2">
-                <Label fx:id="output"/>
-            </Pane>
-        </children>
 
         <stylesheets>
             <URL value="@repl.css"/>
         </stylesheets>
+
+        <AnchorPane>
+            <TextArea fx:id="input" styleClass="code" prefWidth="1100">
+                var Text greeting = "Hello World"
+            </TextArea>
+            <ImageView styleClass="button" onMouseClicked="#execute" AnchorPane.rightAnchor="10.0"
+                       AnchorPane.bottomAnchor="10.0"/>
+        </AnchorPane>
+
+        <Pane GridPane.rowIndex="2">
+            <Label fx:id="output"/>
+        </Pane>
+
     </GridPane>
 </BorderPane>

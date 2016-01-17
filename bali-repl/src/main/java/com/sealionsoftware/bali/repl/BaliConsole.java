@@ -17,6 +17,10 @@ public class BaliConsole extends Application {
         stage.setTitle("Bali Evaluator");
         Parent root = FXMLLoader.load(getClass().getResource("repl.fxml"));
 
+        stage.setResizable(false);
+        stage.setHeight(400);
+        stage.setWidth(1110);
+
         stage.setScene(new Scene(root));
         stage.show();
     }

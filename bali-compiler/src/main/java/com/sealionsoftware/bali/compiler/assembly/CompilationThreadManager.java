@@ -23,6 +23,9 @@ public class CompilationThreadManager {
 
 	public void run(Collection<AssemblyTask> tasks) {
 
+        monitoredThreads.clear();
+        blockages.clear();
+
         ConcurrentHashMap<String, Throwable> exceptions = new ConcurrentHashMap<>();
         running = true;
 
