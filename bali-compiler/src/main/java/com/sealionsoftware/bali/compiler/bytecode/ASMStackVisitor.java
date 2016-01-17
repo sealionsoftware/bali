@@ -31,7 +31,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static bali.number.Primitive.convert;
-import static java.util.Arrays.asList;
 
 public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
 
@@ -152,17 +151,7 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
     }
 
     public void visit(OperationNode node) {
-        ExpressionNode target = node.getTarget();
-        target.accept(this);
-        node.getArguments().get(0).accept(this);
-
-        Method signatureMethod = node.getResolvedMethod().getTemplateMethod();
-
-        methodVisitor.visitMethodInsn(INVOKEINTERFACE,
-                toLocalName(target.getType()),
-                signatureMethod.getName(),
-                toSignature(signatureMethod.getReturnType(), asList(signatureMethod.getParameters().get(0).type)),
-                true);
+        visit((InvocationNode) node);
     }
 
     public List<VariableInfo> getVariables(){

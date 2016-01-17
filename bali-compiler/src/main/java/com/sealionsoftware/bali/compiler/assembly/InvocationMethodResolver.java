@@ -3,6 +3,7 @@ package com.sealionsoftware.bali.compiler.assembly;
 import com.sealionsoftware.bali.compiler.CompileError;
 import com.sealionsoftware.bali.compiler.ErrorCode;
 import com.sealionsoftware.bali.compiler.Method;
+import com.sealionsoftware.bali.compiler.Operator;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.InvocationNode;
@@ -24,9 +25,15 @@ public class InvocationMethodResolver extends ValidatingVisitor {
         ErrorCode code = ErrorCode.OPERATOR_NOT_FOUND;
         Type targetType = getTargetType(node, code);
         if (targetType != null){
-            setResolvedMethod(node, targetType.getOperator(node.getOperatorName()), code);
+
+            Operator resolvedMethod = node.getArguments().isEmpty() ?
+                    targetType.getUnaryOperator(node.getOperatorName()):
+                    targetType.getOperator(node.getOperatorName());
+
+            setResolvedMethod(node, resolvedMethod, code);
         }
     }
+
 
     private Type getTargetType(InvocationNode node, ErrorCode errorCode) {
         ExpressionNode target = node.getTarget();

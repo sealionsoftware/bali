@@ -32,6 +32,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor implements Opcodes
     private List<Type> interfaces = new ArrayList<>();
     private List<Method> methods = new ArrayList<>();
     private List<Operator> operators = new ArrayList<>();
+    private List<Operator> unaryOperators = new ArrayList<>();
 
     private Map<String, Type> typeVariableBounds = new HashMap<>();
 
@@ -110,12 +111,14 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor implements Opcodes
                 return super.visitAnnotation(desc, visible);
             }
 
-
             public void visitEnd() {
                 super.visitEnd();
 
-                if (isOperator) {
-                    operators.add(new Operator(
+                if (isOperator)  {
+                    (parameters.isEmpty() ?
+                            unaryOperators :
+                            operators
+                    ).add(new Operator(
                             name,
                             returnType,
                             parameters,
@@ -140,7 +143,8 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor implements Opcodes
                 superType,
                 interfaces,
                 methods,
-                operators
+                operators,
+                unaryOperators
         );
     }
 

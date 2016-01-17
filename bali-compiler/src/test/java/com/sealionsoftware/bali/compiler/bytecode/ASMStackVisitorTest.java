@@ -254,8 +254,7 @@ public class ASMStackVisitorTest implements Opcodes {
         when(node.getArguments()).thenReturn(asList(argumentOne));
         when(target.getType()).thenReturn(targetType);
         when(resolvedMethod.getParameters()).thenReturn(asList(
-                new Parameter("aParameter", argumentType),
-                new Parameter("aNullParameter", null))
+                new Parameter("aParameter", argumentType))
         );
         when(argumentType.getClassName()).thenReturn("com.sealionsoftware.Argument");
         when(resolvedMethod.getReturnType()).thenReturn(returnType);

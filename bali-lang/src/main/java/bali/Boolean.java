@@ -9,6 +9,7 @@ public interface Boolean extends Value<Boolean> {
 	Boolean TRUE = True.VALUE;
 	Boolean FALSE = False.VALUE;
 
+    @Operator("!")
 	Boolean not();
 
     @Operator("&")

@@ -10,8 +10,10 @@ public interface Number extends Quantified<Number> {
 
 	Boolean isZero();
 
+    @Operator("|")
 	Number magnitude();
 
+    @Operator("-")
 	Number negate();
 
     @Operator("+")

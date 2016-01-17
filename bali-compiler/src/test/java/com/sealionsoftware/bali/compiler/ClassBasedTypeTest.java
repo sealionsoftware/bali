@@ -9,7 +9,9 @@ import org.junit.Test;
 import java.util.Iterator;
 import java.util.List;
 
+import static com.sealionsoftware.Matchers.isEmpty;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -38,6 +40,8 @@ public class ClassBasedTypeTest {
     private Operator templateOperator = mock(Operator.class);
     private Type templateOperatorParameterType = mock(Type.class);
 
+    private Operator templateUnaryOperator = mock(Operator.class);
+
     private ClassBasedType subject = new ClassBasedType(template, asList(typeArgumentType, typeArgumentType));
 
     @Before
@@ -48,6 +52,7 @@ public class ClassBasedTypeTest {
         when(template.getInterfaces()).thenReturn(asList(templateInterfaceType));
         when(template.getMethods()).thenReturn(asList(templateMethod));
         when(template.getOperators()).thenReturn(asList(templateOperator));
+        when(template.getUnaryOperators()).thenReturn(asList(templateUnaryOperator));
 
         when(templateSuperType.getClassName()).thenReturn("com.sealionsoftware.Super");
         when(templateInterfaceType.getClassName()).thenReturn("com.sealionsoftware.Interface");
@@ -62,6 +67,10 @@ public class ClassBasedTypeTest {
         when(templateOperator.getParameters()).thenReturn(asList(
                 new Parameter("aParameter", templateOperatorParameterType)
         ));
+
+        when(templateUnaryOperator.getName()).thenReturn("anUnaryOperator");
+        when(templateUnaryOperator.getSymbol()).thenReturn("+");
+        when(templateUnaryOperator.getParameters()).thenReturn(emptyList());
 
         when(typeArgumentType.toString()).thenReturn("com.sealionsoftware.TypeArgument");
     }
@@ -251,6 +260,25 @@ public class ClassBasedTypeTest {
     public void testGetOperators() throws Exception {
 
         List<Operator> operators = subject.getOperators();
+
+        assertThat(operators, hasSize(1));
+    }
+
+    @Test
+    public void testGetUnaryOperator() throws Exception {
+
+        Operator typeOperator = subject.getUnaryOperator("+");
+
+        assertThat(typeOperator, notNullValue());
+        assertThat(typeOperator.getName(), equalTo("anUnaryOperator"));
+        assertThat(typeOperator.getReturnType(), nullValue());
+        assertThat(typeOperator.getParameters(), isEmpty());
+    }
+
+    @Test
+    public void testGetUnaryOperators() throws Exception {
+
+        List<Operator> operators = subject.getUnaryOperators();
 
         assertThat(operators, hasSize(1));
     }

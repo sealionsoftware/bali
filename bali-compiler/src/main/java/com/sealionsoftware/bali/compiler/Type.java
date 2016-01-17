@@ -22,7 +22,11 @@ public interface Type {
 
     List<Operator> getOperators();
 
+    List<Operator> getUnaryOperators();
+
     Method getMethod(String name);
 
     Operator getOperator(String name);
+
+    Operator getUnaryOperator(String name);
 }

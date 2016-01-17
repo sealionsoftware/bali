@@ -135,6 +135,24 @@ public class TypeVariableTest {
     }
 
     @Test
+    public void testGetUnaryOperators() throws Exception {
+
+        Operator operator = mock(Operator.class);
+        when(bound.getUnaryOperators()).thenReturn(asList(operator));
+
+        assertThat(subject.getUnaryOperators(), contains(operator));
+    }
+
+    @Test
+    public void testGetUnaryOperator() throws Exception {
+
+        Operator operator = mock(Operator.class);
+        when(bound.getUnaryOperator("+")).thenReturn(operator);
+
+        assertThat(subject.getUnaryOperator("+"), is(operator));
+    }
+
+    @Test
     public void testGetName() throws Exception {
 
         assertThat(subject.getName(), equalTo("T"));

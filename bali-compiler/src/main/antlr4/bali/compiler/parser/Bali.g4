@@ -13,6 +13,8 @@ TEXT_LITERAL:               '"' ~[^"]* '"' ;
 
 INTEGER_LITERAL:            [0] | [1-9][0-9]*;
 
+OPERATOR:                   [\+\-$%\^&\*#\~/\\\|=<>¬¦`!]+ ;
+
 // Grammar Definition
 
 script:                     statement* ;
@@ -41,7 +43,8 @@ expression:                 '(' expression ')'
 							 | literal
 							 | invocation
 							 | reference
-							 | expression operator expression
+							 | OPERATOR expression
+							 | expression OPERATOR expression
 							 | expression '.' invocation;
 
 invocation:				    IDENTIFIER '(' ( argument ( ',' argument )* )? ')' ;
@@ -60,4 +63,3 @@ integerLiteral:             INTEGER_LITERAL;
 
 reference:                  IDENTIFIER ;
 
-operator:                   ( '+' | '-' | '$' | '%' | '^' | '&' | '*' | '/' | '#' | '~' | '?' | '\\' | '|' | '==' | '!=' | '<' | '>' | '¬' | '¦' | '`' | '!' | '@' )+ ;

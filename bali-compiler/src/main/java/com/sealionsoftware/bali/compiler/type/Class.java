@@ -17,19 +17,25 @@ public class Class {
     private List<Type> interfaces;
     private List<Method> methods;
     private List<Operator> operators;
-
+    private List<Operator> unaryOperators;
 
     Class(String className) {
         this.className = className;
     }
 
-    void initialise(List<Parameter> typeParameters, Type superType, List<Type> interfaces, List<Method> methods, List<Operator> operators) {
+    void initialise(List<Parameter> typeParameters,
+                    Type superType,
+                    List<Type> interfaces,
+                    List<Method> methods,
+                    List<Operator> operators,
+                    List<Operator> unaryOperators) {
         this.initialised = true;
         this.superType = superType;
         this.typeParameters = typeParameters;
         this.interfaces = interfaces;
         this.methods = methods;
         this.operators = operators;
+        this.unaryOperators = unaryOperators;
     }
 
     public List<Parameter> getTypeParameters(){
@@ -55,6 +61,11 @@ public class Class {
     public List<Operator> getOperators() {
         assertInitialised();
         return operators;
+    }
+
+    public List<Operator> getUnaryOperators() {
+        assertInitialised();
+        return unaryOperators;
     }
 
     public String getClassName() {
