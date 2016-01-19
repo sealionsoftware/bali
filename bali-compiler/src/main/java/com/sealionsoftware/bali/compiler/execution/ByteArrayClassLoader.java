@@ -16,6 +16,6 @@ public class ByteArrayClassLoader extends ClassLoader {
         if (code!= null){
             return defineClass(name, code, 0, code.length);
         }
-        return super.findClass(name);
+        throw new ClassNotFoundException(name);
     }
 }
