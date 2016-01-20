@@ -11,5 +11,6 @@ deploy:
     - "bali-compiler/target/bali-compiler-1.0-SNAPSHOT.jar"
     - "bali-repl/target/bali-repl-1.0-SNAPSHOT.jar"
   on:
+    tags: true
     repo: sealionsoftware/bali
     branch: master
