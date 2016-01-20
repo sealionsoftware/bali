@@ -35,13 +35,9 @@ public class ByteArrayClassLoaderTest {
         assertThat(clazz.getName(), equalTo(FRAGMENT_CLASS_NAME));
     }
 
-    @Test
+    @Test(expected = ClassNotFoundException.class)
     public void testDefineFromDelegate() throws Exception {
-
-        Class clazz = subject.loadClass(Object.class.getName());
-
-        assertThat(clazz, notNullValue());
-        assertThat(clazz.getName(), equalTo(Object.class.getName()));
+        subject.loadClass("NOT_A_CLASS");
     }
 
 }
