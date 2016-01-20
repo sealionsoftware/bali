@@ -1,14 +1,15 @@
 language: java
 jdk:
-- oraclejdk8
+  - oraclejdk8
 deploy:
   provider: releases
   api_key:
     secure: GNaSiajQhd8cB2wDGEyl4/6O1KoAdaMfXpvhLNv0b8uxgj+EMo3Adppe/CoTKSvTePNhNCI4v3HCepWgPDdRqm8nZRRmp9t/8G0wBWILbUWejLX8kC4xIttqG3HTOmsnSz5CVZm2GWaQRMRFh6mNqX6VZH5KwlPB68bapR805AaZ1a5H2e7EDO90IVmnWPg86mkfsre9TTjYmSH8bH9ebDh0jA/Y8D4JhH41PJ66XXCMud7X7XAxD6crUXOsaR6+7vdF3k/VA9K+15DdPg3LYuHXzjA5k8F0cqf4Qgvxfy9mx7U/Zoe20FjWqFv2Ah+zu98LpF3zgL3wyWBC+oPqpTwjLPFmb84KkYN2trCWCsG4w1303qU2gzI0faW/WCxp8ZBdwGD7W9Z7UT35ekgihrXuIAP30wtBOoqNuhotdg7X/hZBC8jK6noC/EZ71tzoAF5RkrbQKks+OLWPEOABsLWW1qKncBinYvHhd8kQ8+rHvklxJ/XsJlfJ9zss8LRjNr7scAe9FRxzO0yrcuTpDER4u+TnojCfL70HKVsj/5UQX+bPL7cEMNyfZv3f99nOGn/8XBj7vQnXKmvIcZikBuueduyNKf20NKlW2zz0AGjBlgCu7M6QxMUpXCAMatKtk84Lg4n4Y2MghvechumP5gLM0Ru6UksGQxWmoXh+6sY=
+  skip_cleanup: true
   file:
-    - bali-lang/target/bali-lang-1.0-SNAPSHOT.jar
-    - bali-compiler/target/bali-compiler-1.0-SNAPSHOT.jar
-    - bali-repl/target/bali-repl-1.0-SNAPSHOT.jar
+    - "bali-lang/target/bali-lang-1.0-SNAPSHOT.jar"
+    - "bali-compiler/target/bali-compiler-1.0-SNAPSHOT.jar"
+    - "bali-repl/target/bali-repl-1.0-SNAPSHOT.jar"
   on:
     repo: sealionsoftware/bali
     branch: master
