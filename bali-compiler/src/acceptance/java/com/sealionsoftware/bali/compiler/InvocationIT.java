@@ -4,12 +4,13 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import static bali.logic.Primitive.convert;
 import static bali.number.Primitive.convert;
-import static com.sealionsoftware.Matchers.containingError;
 import static com.sealionsoftware.Matchers.isEmptyMap;
 import static com.sealionsoftware.Matchers.throwsException;
+import static com.sealionsoftware.bali.compiler.Matchers.containingError;
 import static com.sealionsoftware.bali.compiler.Matchers.withCode;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasEntry;
@@ -44,14 +45,14 @@ public class InvocationIT {
     @Test
     public void testInvokingMethodWithInvalidArgumentType() {
 
-        Runnable invocation = () -> interpreter.run("var contains = \"Hello World\".contains(42)");
+        Callable invocation = () -> interpreter.run("var contains = \"Hello World\".contains(42)");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
     }
 
     @Test
     public void testInvokingValidMethodWithInvalidNumberOfArguments() {
 
-        Runnable invocation = () -> interpreter.run("var contains = \"Hello World\".contains()");
+        Callable invocation = () -> interpreter.run("var contains = \"Hello World\".contains()");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_ARGUMENT_LIST))));
     }
 
@@ -64,13 +65,13 @@ public class InvocationIT {
 
     @Test
     public void testAssigningInvalidReturnType() {
-        Runnable invocation = () -> interpreter.run("var Boolean size = \"Hello World\".size()");
+        Callable invocation = () -> interpreter.run("var Boolean size = \"Hello World\".size()");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
     }
 
     @Test
     public void testInvokingInvalidMethod() {
-        Runnable invocation = () -> interpreter.run("\"Hello World\".notAMethod()");
+        Callable invocation = () -> interpreter.run("\"Hello World\".notAMethod()");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.METHOD_NOT_FOUND))));
     }
 

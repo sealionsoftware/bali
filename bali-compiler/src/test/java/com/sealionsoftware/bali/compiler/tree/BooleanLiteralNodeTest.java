@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.sealionsoftware.Matchers.isEmpty;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -44,7 +44,7 @@ public class BooleanLiteralNodeTest {
     @Test
     public void testGetChildren() throws Exception {
         List<Node> children = subject.getChildren();
-        assertThat(children, isEmpty());
+        assertThat(children, is(empty()));
     }
 
     @Test

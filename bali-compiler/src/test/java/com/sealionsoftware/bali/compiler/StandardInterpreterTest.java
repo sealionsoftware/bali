@@ -3,6 +3,9 @@ package com.sealionsoftware.bali.compiler;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
@@ -51,5 +54,41 @@ public class StandardInterpreterTest {
         verify(executor).execute(bytecode);
 
         assertThat(ret, is(variables));
+    }
+
+    @Test
+    public void testMain() throws Exception {
+
+        PrintStream out = setUpSystemIn(new String[]{"var three = 3", "exit" });
+
+        StandardInterpreter.main();
+
+        verify(out).println("Compilation successful");
+        verify(out).println("three: 3");
+    }
+
+    @Test
+    public void testMainException() throws Exception {
+
+        PrintStream out = setUpSystemIn(new String[]{ "var Text three = 3", "exit" });
+
+        StandardInterpreter.main();
+
+        verify(out).println("com.sealionsoftware.bali.compiler.CompilationException: Compilation Failed: [INVALID_TYPE(1:0)]");
+    }
+
+    private PrintStream setUpSystemIn(String[] input){
+        StringBuilder sb = new StringBuilder();
+        for (String inputLine : input) {
+            sb.append(inputLine).append(System.lineSeparator());
+        }
+
+        PrintStream out = mock(PrintStream.class);
+        InputStream in = new ByteArrayInputStream(sb.toString().getBytes());
+
+        System.setIn(in);
+        System.setOut(out);
+
+        return out;
     }
 }

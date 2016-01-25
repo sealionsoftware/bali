@@ -128,8 +128,21 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
         node.getCondition().accept(this);
         methodVisitor.visitJumpInsn(IF_ACMPNE, end);
         node.getConditional().accept(this);
+        checkInterruptStatus();
         methodVisitor.visitJumpInsn(GOTO, start);
         methodVisitor.visitLabel(end);
+    }
+
+    private void checkInterruptStatus(){
+        methodVisitor.visitMethodInsn(INVOKESTATIC, "java/lang/Thread", "interrupted", "()Z", false);
+        Label notInterruptedLabel = new Label();
+        methodVisitor.visitJumpInsn(IFEQ, notInterruptedLabel);
+        methodVisitor.visitTypeInsn(NEW, "java/lang/RuntimeException");
+        methodVisitor.visitInsn(DUP);
+        methodVisitor.visitLdcInsn("Thread has been interrupted");
+        methodVisitor.visitMethodInsn(INVOKESPECIAL, "java/lang/RuntimeException", "<init>", "(Ljava/lang/String;)V", false);
+        methodVisitor.visitInsn(ATHROW);
+        methodVisitor.visitLabel(notInterruptedLabel);
     }
 
     public void visit(InvocationNode node) {

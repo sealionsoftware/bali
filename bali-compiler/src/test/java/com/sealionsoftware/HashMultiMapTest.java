@@ -10,10 +10,10 @@ import java.util.Map;
 import static com.sealionsoftware.Constant.list;
 import static com.sealionsoftware.Constant.map;
 import static com.sealionsoftware.Constant.put;
-import static com.sealionsoftware.Matchers.hasLength;
-import static com.sealionsoftware.Matchers.isEmpty;
 import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasToString;
 import static org.hamcrest.Matchers.is;
@@ -49,7 +49,7 @@ public class HashMultiMapTest {
 
     @Test
     public void testGetEmptyList() throws Exception {
-        assertThat(subject.get("notAKey"), isEmpty());
+        assertThat(subject.get("notAKey"), empty());
     }
 
     @Test
@@ -73,7 +73,7 @@ public class HashMultiMapTest {
     @Test
     public void testRemove() throws Exception {
         subject.remove("key");
-        assertThat(subject, isEmpty());
+        assertThat(subject, empty());
     }
 
     @Test
@@ -89,7 +89,7 @@ public class HashMultiMapTest {
     public void testToArrayWithType() throws Exception {
         @SuppressWarnings("unchecked")
         Map.Entry<String, Collection<String>>[] array = subject.toArray(new Map.Entry[15]);
-        assertThat(array, hasLength(15));
+        assertThat(array, arrayWithSize(15));
     }
 
     @Test

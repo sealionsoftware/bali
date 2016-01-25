@@ -6,11 +6,12 @@ import org.junit.Test;
 
 import java.util.Collection;
 
-import static com.sealionsoftware.Matchers.containsValuesMatching;
-import static com.sealionsoftware.Matchers.isEmpty;
 import static com.sealionsoftware.bali.compiler.Matchers.blockageOnProperty;
 import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -36,7 +37,7 @@ public class CompilationThreadManagerTest {
         });
         subject.run(asList(task1, task2));
 
-        assertThat(subject.getBlockages(), isEmpty());
+        assertThat(subject.getBlockages(), is(empty()));
     }
 
     @Test
@@ -58,7 +59,7 @@ public class CompilationThreadManagerTest {
 
         Collection<BlockageDescription> blockages = subject.getBlockages();
         assertThat(blockages, hasSize(2));
-        assertThat(blockages, containsValuesMatching(blockageOnProperty("setByWorker1"), blockageOnProperty("setByWorker2")));
+        assertThat(blockages, containsInAnyOrder(asList(blockageOnProperty("setByWorker1"), blockageOnProperty("setByWorker2"))));
     }
 
     @Test(expected = RuntimeException.class)

@@ -9,6 +9,7 @@ import com.sealionsoftware.bali.compiler.parser.ANTLRParseEngine;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 
 import java.util.Map;
+import java.util.Scanner;
 
 public class StandardInterpreter implements Interpreter {
 
@@ -46,5 +47,36 @@ public class StandardInterpreter implements Interpreter {
 //            }
 //        }
         return executor.execute(generatedPackage);
+    }
+
+    public static void main(String... args) throws Exception {
+
+        Interpreter interpreter = new StandardInterpreter();
+
+        Scanner scanner = new Scanner(System.in);
+        while (true){
+
+            System.out.println("Enter code to run:");
+
+            String input = scanner.nextLine();
+            if ("exit".compareToIgnoreCase(input.trim()) == 0){
+                break;
+            }
+
+            try {
+                Map<String, Object> output = interpreter.run(input);
+
+                System.out.println("Compilation successful");
+
+                for (Map.Entry<String, Object> entry : output.entrySet() ){
+                    System.out.println(entry.getKey() + ": " + entry.getValue());
+                }
+
+            } catch (Exception e){
+                System.out.println(e.toString());
+            }
+
+            System.out.println();
+        }
     }
 }

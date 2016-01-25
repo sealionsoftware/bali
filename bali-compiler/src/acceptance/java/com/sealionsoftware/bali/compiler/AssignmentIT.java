@@ -3,9 +3,10 @@ package com.sealionsoftware.bali.compiler;
 import org.junit.Test;
 
 import java.util.Map;
+import java.util.concurrent.Callable;
 
-import static com.sealionsoftware.Matchers.containingError;
 import static com.sealionsoftware.Matchers.throwsException;
+import static com.sealionsoftware.bali.compiler.Matchers.containingError;
 import static com.sealionsoftware.bali.compiler.Matchers.withCode;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -36,7 +37,7 @@ public class AssignmentIT {
     @Test
     public void testScriptContainingIncorrectlyTypedVariable() {
 
-        Runnable invocation = () -> interpreter.run("var Text aVariable = \"Hello World\" aVariable = true");
+        Callable invocation = () -> interpreter.run("var Text aVariable = \"Hello World\" aVariable = true");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
 
     }
