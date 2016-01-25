@@ -18,7 +18,7 @@ public class ANTLRParseEngineTest {
     @Test
     public void testParse() throws Exception {
 
-        CodeBlockNode ret = subject.parse("");
+        CodeBlockNode ret = subject.parseFragment("");
 
         assertThat(ret, notNullValue());
         assertThat(ret.getStatements().size(), equalTo(0));
@@ -27,6 +27,6 @@ public class ANTLRParseEngineTest {
     @Test(expected = RuntimeException.class)
     public void testParseInvalid() throws Exception {
 
-        subject.parse("if try gobbledegook");
+        subject.parseFragment("if try gobbledegook");
     }
 }

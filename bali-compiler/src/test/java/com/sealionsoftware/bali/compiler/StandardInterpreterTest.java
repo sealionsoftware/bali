@@ -42,16 +42,16 @@ public class StandardInterpreterTest {
         @SuppressWarnings("unchecked")
         Map<String, Object> variables = mock(Map.class);
 
-        when(parseEngine.parse(fragment)).thenReturn(ast);
+        when(parseEngine.parseFragment(fragment)).thenReturn(ast);
         when(bytecodeEngine.generate(ast)).thenReturn(bytecode);
-        when(executor.execute(bytecode)).thenReturn(variables);
+        when(executor.executeFragment(bytecode)).thenReturn(variables);
 
         Map<String, Object> ret = subject.run(fragment);
 
-        verify(parseEngine).parse(fragment);
+        verify(parseEngine).parseFragment(fragment);
         verify(assemblyEngine).assemble(ast);
         verify(bytecodeEngine).generate(ast);
-        verify(executor).execute(bytecode);
+        verify(executor).executeFragment(bytecode);
 
         assertThat(ret, is(variables));
     }

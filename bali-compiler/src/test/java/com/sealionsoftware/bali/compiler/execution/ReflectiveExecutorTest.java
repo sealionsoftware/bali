@@ -33,7 +33,7 @@ public class ReflectiveExecutorTest {
                 loader.resourceAsBytes(getClass().getResource(FRAGMENT_CLASS_NAME + ".class"))
         );
 
-        Map<String, Object> ret = subject.execute(generatedPackage);
+        Map<String, Object> ret = subject.executeFragment(generatedPackage);
 
         assertThat(ret, notNullValue());
         assertThat(ret, isEmptyMap());
@@ -49,7 +49,7 @@ public class ReflectiveExecutorTest {
         when(generatedClass.getName()).thenReturn(FRAGMENT_CLASS_NAME);
         when(generatedClass.getCode()).thenReturn(new byte[0]);
 
-        subject.execute(generatedPackage);
+        subject.executeFragment(generatedPackage);
     }
 
 
