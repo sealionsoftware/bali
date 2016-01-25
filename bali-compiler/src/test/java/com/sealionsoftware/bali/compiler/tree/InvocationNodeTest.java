@@ -7,8 +7,8 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.sealionsoftware.Matchers.isEmpty;
 import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -92,6 +92,6 @@ public class InvocationNodeTest {
 
     @Test
     public void testGetChildren() throws Exception {
-        assertThat(subject.getChildren(), isEmpty());
+        assertThat(subject.getChildren(), is(empty()));
     }
 }

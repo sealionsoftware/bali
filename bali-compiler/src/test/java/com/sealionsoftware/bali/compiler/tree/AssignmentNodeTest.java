@@ -2,8 +2,8 @@ package com.sealionsoftware.bali.compiler.tree;
 
 import org.junit.Test;
 
-import static com.sealionsoftware.Matchers.isEmpty;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.same;
@@ -40,7 +40,7 @@ public class AssignmentNodeTest {
 
     @Test
     public void testGetChildren() throws Exception {
-        assertThat(subject.getChildren(), isEmpty());
+        assertThat(subject.getChildren(), is(empty()));
     }
 
     @Test

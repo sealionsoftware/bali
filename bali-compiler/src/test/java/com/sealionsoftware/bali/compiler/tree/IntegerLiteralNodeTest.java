@@ -5,7 +5,7 @@ import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import org.junit.Test;
 
 import static bali.number.Primitive.convert;
-import static com.sealionsoftware.Matchers.isEmpty;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -35,7 +35,7 @@ public class IntegerLiteralNodeTest {
 
     @Test
     public void testGetChildren() throws Exception {
-        assertThat(subject.getChildren(), isEmpty());
+        assertThat(subject.getChildren(), is(empty()));
     }
 
     @Test

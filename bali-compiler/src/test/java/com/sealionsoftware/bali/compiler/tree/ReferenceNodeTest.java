@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import java.util.UUID;
 
-import static com.sealionsoftware.Matchers.isEmpty;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -48,7 +48,7 @@ public class ReferenceNodeTest {
 
 	@Test
 	public void testGetChildren() throws Exception {
-		assertThat(subject.getChildren(), isEmpty());
+		assertThat(subject.getChildren(), is(empty()));
 	}
 
     @Test

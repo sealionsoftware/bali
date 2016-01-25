@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import java.util.Collections;
 
-import static com.sealionsoftware.Matchers.containingError;
+import static com.sealionsoftware.bali.compiler.Matchers.containingError;
 import static com.sealionsoftware.bali.compiler.Matchers.withCode;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;

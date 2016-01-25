@@ -9,10 +9,10 @@ import org.junit.Test;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.sealionsoftware.Matchers.isEmpty;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.hasToString;
@@ -272,7 +272,7 @@ public class ClassBasedTypeTest {
         assertThat(typeOperator, notNullValue());
         assertThat(typeOperator.getName(), equalTo("anUnaryOperator"));
         assertThat(typeOperator.getReturnType(), nullValue());
-        assertThat(typeOperator.getParameters(), isEmpty());
+        assertThat(typeOperator.getParameters(), empty());
     }
 
     @Test

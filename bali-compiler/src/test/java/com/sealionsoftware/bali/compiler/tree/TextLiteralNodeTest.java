@@ -4,7 +4,7 @@ import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import org.junit.Test;
 
-import static com.sealionsoftware.Matchers.isEmpty;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -34,7 +34,7 @@ public class TextLiteralNodeTest {
 
     @Test
     public void testGetChildren() throws Exception {
-        assertThat(subject.getChildren(), isEmpty());
+        assertThat(subject.getChildren(), is(empty()));
     }
 
     @Test

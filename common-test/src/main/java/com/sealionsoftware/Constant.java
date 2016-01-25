@@ -50,4 +50,5 @@ public class Constant {
             this.value = value;
         }
     }
+
 }

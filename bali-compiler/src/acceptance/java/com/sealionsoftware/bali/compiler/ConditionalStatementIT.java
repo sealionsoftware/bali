@@ -4,10 +4,11 @@ import bali.Boolean;
 import org.junit.Test;
 
 import java.util.Map;
+import java.util.concurrent.Callable;
 
-import static com.sealionsoftware.Matchers.containingError;
 import static com.sealionsoftware.Matchers.isEmptyMap;
 import static com.sealionsoftware.Matchers.throwsException;
+import static com.sealionsoftware.bali.compiler.Matchers.containingError;
 import static com.sealionsoftware.bali.compiler.Matchers.withCode;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasEntry;
@@ -51,7 +52,7 @@ public class ConditionalStatementIT {
     @Test
     public void testConditionalWithNonBooleanCondition() {
 
-        Runnable invocation = () -> interpreter.run("if (\"true\") {}");
+        Callable invocation = () -> interpreter.run("if (\"true\") {}");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
     }
 
