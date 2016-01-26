@@ -8,6 +8,8 @@ import org.hamcrest.TypeSafeDiagnosingMatcher;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import static org.hamcrest.Matchers.equalTo;
+
 public class Matchers {
 
     public static Matcher<Map<?,?>> isEmptyMap() {
@@ -38,6 +40,24 @@ public class Matchers {
 
             public void describeTo(Description description) {
                 description.appendText("throws " + exceptionMatcher);
+            }
+        };
+    }
+
+    public static Matcher<Exception> withMessage(String message) {
+        return withMessage(equalTo(message));
+    }
+
+    public static Matcher<Exception> withMessage(Matcher<String> messageMatcher) {
+        return new TypeSafeDiagnosingMatcher<Exception>() {
+            protected boolean matchesSafely(Exception runnable, Description description) {
+                description.appendText("the exception was not thrown");
+                return messageMatcher.matches(runnable.getMessage());
+            }
+
+            public void describeTo(Description description) {
+                description.appendText("with message ");
+                messageMatcher.describeTo(description);
             }
         };
     }

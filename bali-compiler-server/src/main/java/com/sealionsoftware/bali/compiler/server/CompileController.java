@@ -52,10 +52,7 @@ public class CompileController {
             return future.get(1, TimeUnit.SECONDS);
         }  catch (ExecutionException exception){
             Throwable cause = exception.getCause();
-            if (cause instanceof Exception){
-                throw (Exception) cause;
-            }
-            throw exception;
+            throw (cause instanceof Exception) ? (Exception) cause : exception;
         } catch (TimeoutException timeout) {
             future.cancel(true);
             throw new RuntimeException("The submitted code timed out before completing", timeout);
