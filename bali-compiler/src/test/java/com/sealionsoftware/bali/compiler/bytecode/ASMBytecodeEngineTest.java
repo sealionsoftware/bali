@@ -24,7 +24,7 @@ public class ASMBytecodeEngineTest {
     private BytecodeEngine subject = new ASMBytecodeEngine();
 
     @Test
-    public void testGenerate() throws Exception {
+    public void testGenerateFragment() throws Exception {
 
         VariableNode variableNode = new VariableNode(0, 0);
         variableNode.setName("aVariable");
@@ -48,5 +48,24 @@ public class ASMBytecodeEngineTest {
         assertThat(clazz.getCode(), notNullValue());
     }
 
+    @Test
+    public void testGenerateEvaluation() throws Exception {
+
+        BooleanLiteralNode valueNode = new BooleanLiteralNode(0, 0, monitor);
+
+        GeneratedPackage ret = subject.generate(valueNode);
+
+        assertThat(ret, notNullValue());
+        assertThat(ret.getName(), equalTo(""));
+
+        List<GeneratedClass> generatedClasses = ret.getClasses();
+        assertThat(generatedClasses, notNullValue());
+        assertThat(generatedClasses, hasSize(1));
+
+        GeneratedClass clazz = generatedClasses.get(0);
+        assertThat(clazz, notNullValue());
+        assertThat(clazz.getName(), equalTo(Interpreter.EVALUATION_CLASS_NAME));
+        assertThat(clazz.getCode(), notNullValue());
+    }
 
 }

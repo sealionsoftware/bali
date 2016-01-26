@@ -3,6 +3,7 @@ package com.sealionsoftware.bali.compiler.parser;
 import com.sealionsoftware.bali.compiler.ParseEngine;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
+import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import org.junit.Test;
 
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -16,12 +17,20 @@ public class ANTLRParseEngineTest {
     private ParseEngine subject = new ANTLRParseEngine(monitor);
 
     @Test
-    public void testParse() throws Exception {
+    public void testParseFragment() throws Exception {
 
-        CodeBlockNode ret = subject.parseFragment("");
+        CodeBlockNode ret = subject.parseFragment("var Boolean isTrue = true");
 
         assertThat(ret, notNullValue());
-        assertThat(ret.getStatements().size(), equalTo(0));
+        assertThat(ret.getStatements().size(), equalTo(1));
+    }
+
+    @Test
+    public void testParseEvaluation() throws Exception {
+
+        ExpressionNode ret = subject.parseExpression("true");
+
+        assertThat(ret, notNullValue());
     }
 
     @Test(expected = RuntimeException.class)

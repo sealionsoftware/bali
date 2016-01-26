@@ -9,6 +9,7 @@ import org.junit.Test;
 import java.util.Map;
 
 import static com.sealionsoftware.Matchers.isEmptyMap;
+import static com.sealionsoftware.bali.compiler.Interpreter.EVALUATION_CLASS_NAME;
 import static com.sealionsoftware.bali.compiler.Interpreter.FRAGMENT_CLASS_NAME;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -22,7 +23,7 @@ public class ReflectiveExecutorTest {
     private ClasspathLoader loader = new ClasspathLoader();
 
     @Test
-    public void testExecute() throws Exception {
+    public void testExecuteFragment() throws Exception {
 
         GeneratedClass generatedClass = mock(GeneratedClass.class);
         GeneratedPackage generatedPackage = mock(GeneratedPackage.class);
@@ -50,6 +51,23 @@ public class ReflectiveExecutorTest {
         when(generatedClass.getCode()).thenReturn(new byte[0]);
 
         subject.executeFragment(generatedPackage);
+    }
+
+    @Test
+    public void testExecuteEvaluation() throws Exception {
+
+        GeneratedClass generatedClass = mock(GeneratedClass.class);
+        GeneratedPackage generatedPackage = mock(GeneratedPackage.class);
+        when(generatedPackage.getName()).thenReturn("");
+        when(generatedPackage.getClasses()).thenReturn(singletonList(generatedClass));
+        when(generatedClass.getName()).thenReturn(EVALUATION_CLASS_NAME);
+        when(generatedClass.getCode()).thenReturn(
+                loader.resourceAsBytes(getClass().getResource(EVALUATION_CLASS_NAME + ".class"))
+        );
+
+        Object ret = subject.executeExpression(generatedPackage);
+
+        assertThat(ret, notNullValue());
     }
 
 
