@@ -4,6 +4,8 @@ import java.util.Map;
 
 public interface Executor {
 
-    Map<String, Object> execute(GeneratedPackage generated);
+    Map<String, Object> executeFragment(GeneratedPackage generated);
+
+    Object executeExpression(GeneratedPackage generated);
 
 }

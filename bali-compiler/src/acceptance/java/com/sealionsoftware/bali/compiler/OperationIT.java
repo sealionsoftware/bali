@@ -2,14 +2,13 @@ package com.sealionsoftware.bali.compiler;
 
 import org.junit.Test;
 
-import java.util.Map;
 import java.util.concurrent.Callable;
 
 import static bali.number.Primitive.convert;
 import static com.sealionsoftware.Matchers.throwsException;
 import static com.sealionsoftware.bali.compiler.Matchers.containingError;
 import static com.sealionsoftware.bali.compiler.Matchers.withCode;
-import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 public class OperationIT {
@@ -19,26 +18,26 @@ public class OperationIT {
     @Test
     public void testValidOperator() {
 
-        Map<String, Object> output = interpreter.run("var ret = 1 + 1");
-        assertThat(output, hasEntry("ret", convert(2)));
+        Object output = interpreter.evaluate("1 + 1");
+        assertThat(output, equalTo(convert(2)));
     }
 
     @Test
     public void testChainedOperators() {
 
-        Map<String, Object> output = interpreter.run("var ret = 1 + 2 + 3 + 4 / 2");
-        assertThat(output, hasEntry("ret", convert(5)));
+        Object output = interpreter.evaluate("1 + 2 + 3 + 4 / 2");
+        assertThat(output, equalTo(convert(5)));
     }
 
     @Test
     public void testInvalidOperator() {
-        Callable invocation = () -> interpreter.run("var ret = 1 & 1");
+        Callable invocation = () -> interpreter.evaluate("1 & 1");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.OPERATOR_NOT_FOUND))));
     }
 
     @Test
     public void testOperatorWithInvalidArgumentType() {
-        Callable invocation = () -> interpreter.run("var ret = 1 + true");
+        Callable invocation = () -> interpreter.evaluate("1 + true");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
     }
 

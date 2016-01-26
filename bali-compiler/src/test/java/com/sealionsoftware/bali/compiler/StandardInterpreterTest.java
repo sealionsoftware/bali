@@ -1,6 +1,7 @@
 package com.sealionsoftware.bali.compiler;
 
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
+import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -42,18 +43,40 @@ public class StandardInterpreterTest {
         @SuppressWarnings("unchecked")
         Map<String, Object> variables = mock(Map.class);
 
-        when(parseEngine.parse(fragment)).thenReturn(ast);
+        when(parseEngine.parseFragment(fragment)).thenReturn(ast);
         when(bytecodeEngine.generate(ast)).thenReturn(bytecode);
-        when(executor.execute(bytecode)).thenReturn(variables);
+        when(executor.executeFragment(bytecode)).thenReturn(variables);
 
         Map<String, Object> ret = subject.run(fragment);
 
-        verify(parseEngine).parse(fragment);
+        verify(parseEngine).parseFragment(fragment);
         verify(assemblyEngine).assemble(ast);
         verify(bytecodeEngine).generate(ast);
-        verify(executor).execute(bytecode);
+        verify(executor).executeFragment(bytecode);
 
         assertThat(ret, is(variables));
+    }
+
+    @Test
+    public void testEvaluate() throws Exception {
+
+        String expression = "Hello World";
+        ExpressionNode ast = mock(ExpressionNode.class);
+        GeneratedPackage bytecode = mock(GeneratedPackage.class);
+        Object returnValue = mock(Object.class);
+
+        when(parseEngine.parseExpression(expression)).thenReturn(ast);
+        when(bytecodeEngine.generate(ast)).thenReturn(bytecode);
+        when(executor.executeExpression(bytecode)).thenReturn(returnValue);
+
+        Object ret = subject.evaluate(expression);
+
+        verify(parseEngine).parseExpression(expression);
+        verify(assemblyEngine).assemble(ast);
+        verify(bytecodeEngine).generate(ast);
+        verify(executor).executeExpression(bytecode);
+
+        assertThat(ret, is(returnValue));
     }
 
     @Test

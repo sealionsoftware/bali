@@ -7,6 +7,7 @@ import com.sealionsoftware.bali.compiler.bytecode.ASMBytecodeEngine;
 import com.sealionsoftware.bali.compiler.execution.ReflectiveExecutor;
 import com.sealionsoftware.bali.compiler.parser.ANTLRParseEngine;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
+import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 
 import java.util.Map;
 import java.util.Scanner;
@@ -37,16 +38,17 @@ public class StandardInterpreter implements Interpreter {
     }
 
     public Map<String, Object> run(String fragment) {
-        CodeBlockNode codeBlockNode = parseEngine.parse(fragment);
+        CodeBlockNode codeBlockNode = parseEngine.parseFragment(fragment);
         assemblyEngine.assemble(codeBlockNode);
         GeneratedPackage generatedPackage = bytecodeEngine.generate(codeBlockNode);
-//        for (GeneratedClass clazz : generatedPackage.getClasses()){
-//            try (FileOutputStream fos = new FileOutputStream(new File(clazz.getName() + ".class"))) {
-//                fos.write(clazz.getCode());
-//            } catch (IOException ignore) {
-//            }
-//        }
-        return executor.execute(generatedPackage);
+        return executor.executeFragment(generatedPackage);
+    }
+
+    public Object evaluate(String expression) {
+        ExpressionNode expressionNode = parseEngine.parseExpression(expression);
+        assemblyEngine.assemble(expressionNode);
+        GeneratedPackage generatedPackage = bytecodeEngine.generate(expressionNode);
+        return executor.executeExpression(generatedPackage);
     }
 
     public static void main(String... args) throws Exception {

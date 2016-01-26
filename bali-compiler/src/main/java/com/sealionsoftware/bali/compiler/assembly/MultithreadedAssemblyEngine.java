@@ -3,7 +3,7 @@ package com.sealionsoftware.bali.compiler.assembly;
 import com.sealionsoftware.bali.compiler.AssemblyEngine;
 import com.sealionsoftware.bali.compiler.CompilationException;
 import com.sealionsoftware.bali.compiler.CompileError;
-import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
+import com.sealionsoftware.bali.compiler.tree.Node;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,7 +22,7 @@ public class MultithreadedAssemblyEngine implements AssemblyEngine {
         this.factory = factory;
     }
 
-    public void assemble(CodeBlockNode fragment) {
+    public void assemble(Node fragment) {
 
         final List<CompileError> validationFailures = synchronizedList(new ArrayList<>());
 
@@ -46,4 +46,5 @@ public class MultithreadedAssemblyEngine implements AssemblyEngine {
             throw new RuntimeException(blockages.toString());
         }
     }
+
 }

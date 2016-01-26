@@ -1,5 +1,6 @@
 package com.sealionsoftware.bali.compiler.execution;
 
+import com.sealionsoftware.bali.compiler.Evaluation;
 import com.sealionsoftware.bali.compiler.Executor;
 import com.sealionsoftware.bali.compiler.Fragment;
 import com.sealionsoftware.bali.compiler.GeneratedClass;
@@ -11,8 +12,37 @@ import java.util.Map;
 
 public class ReflectiveExecutor implements Executor {
 
-    public Map<String, Object> execute(GeneratedPackage generated) {
+    public Map<String, Object> executeFragment(GeneratedPackage generated) {
+        return execute(
+                generated,
+                Interpreter.FRAGMENT_CLASS_NAME,
+                (clazz) -> {
+                    return ((Fragment) clazz.newInstance()).execute();
+                });
+    }
 
+    public Object executeExpression(GeneratedPackage generated) {
+        return execute(generated,
+                Interpreter.EVALUATION_CLASS_NAME,
+                (clazz) -> {
+                    return ((Evaluation) clazz.newInstance()).evaluate();
+                });
+    }
+
+    public <I extends Class, O> O execute(GeneratedPackage generated, String className, F<I, O> payload) {
+
+        ClassLoader classLoader = buildClassLoader(generated);
+        try {
+            @SuppressWarnings("unchecked")
+            I expressionClass = (I) classLoader.loadClass(className);
+            return payload.apply(expressionClass);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    private ClassLoader buildClassLoader(GeneratedPackage generated){
         String packageName = generated.getName();
         String qualifier = packageName != null && !packageName.isEmpty() ? packageName + "." : null;
         Map<String, byte[]> code = new HashMap<>();
@@ -24,16 +54,11 @@ public class ReflectiveExecutor implements Executor {
             code.put(name, clazz.getCode());
         }
 
-        ClassLoader classLoader = new ByteArrayClassLoader(Thread.currentThread().getContextClassLoader(), code);
-
-        Fragment instance;
-        try {
-            Class<?> fragmentClass = classLoader.loadClass(Interpreter.FRAGMENT_CLASS_NAME);
-            instance  = (Fragment) fragmentClass.newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        return instance.execute();
+        return new ByteArrayClassLoader(Thread.currentThread().getContextClassLoader(), code);
     }
+
+    private interface F<I, O> {
+        O apply(I i) throws Exception;
+    }
+
 }
