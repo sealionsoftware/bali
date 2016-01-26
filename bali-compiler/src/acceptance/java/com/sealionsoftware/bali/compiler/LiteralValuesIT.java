@@ -2,10 +2,11 @@ package com.sealionsoftware.bali.compiler;
 
 import org.junit.Test;
 
-import java.util.Map;
-
-import static com.sealionsoftware.Matchers.isEmptyMap;
+import static bali.logic.Primitive.convert;
+import static bali.number.Primitive.convert;
+import static bali.text.Primitive.convert;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 public class LiteralValuesIT {
 
@@ -14,25 +15,25 @@ public class LiteralValuesIT {
     @Test
     public void testScriptContainingBoolean() {
 
-        Map<String, Object> output = interpreter.run("true");
+        Object output = interpreter.evaluate("true");
 
-        assertThat(output, isEmptyMap());
+        assertThat(output, equalTo(convert(true)));
     }
 
     @Test
     public void testScriptContainingText() {
 
-        Map<String, Object> output = interpreter.run("\"A String\"");
+        Object output = interpreter.evaluate("\"A String\"");
 
-        assertThat(output, isEmptyMap());
+        assertThat(output, equalTo(convert("A String")));
     }
 
     @Test
     public void testScriptContainingInteger() {
 
-        Map<String, Object> output = interpreter.run("123");
+        Object output = interpreter.evaluate("123");
 
-        assertThat(output, isEmptyMap());
+        assertThat(output, equalTo(convert(123)));
     }
 
 }

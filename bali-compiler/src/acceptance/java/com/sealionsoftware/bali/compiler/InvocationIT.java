@@ -3,17 +3,16 @@ package com.sealionsoftware.bali.compiler;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.Map;
 import java.util.concurrent.Callable;
 
 import static bali.logic.Primitive.convert;
 import static bali.number.Primitive.convert;
-import static com.sealionsoftware.Matchers.isEmptyMap;
 import static com.sealionsoftware.Matchers.throwsException;
 import static com.sealionsoftware.bali.compiler.Matchers.containingError;
 import static com.sealionsoftware.bali.compiler.Matchers.withCode;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 
 public class InvocationIT {
 
@@ -22,45 +21,43 @@ public class InvocationIT {
     @Test
     public void testInvokingValidMethod() {
 
-        Map<String, Object> output = interpreter.run("var size = \"Hello World\".size()");
-        assertThat(output, hasEntry("size", convert(11)));
+        Object output = interpreter.evaluate("\"Hello World\".size()");
+        assertThat(output, equalTo(convert(11)));
     }
 
     @Test
     public void testChainedInvocations() {
 
-        Map<String, Object> output = interpreter.run("var size = \"Hello World\".uppercase().size()");
-        assertThat(output, hasEntry("size", convert(11)));
+        Object output = interpreter.evaluate("\"Hello World\".uppercase().size()");
+        assertThat(output, equalTo(convert(11)));
     }
 
     @Test
     public void testInvokingMethodWithParameter() {
 
-         Map<String, Object> output = interpreter.run(
-                "var contains = \"Hello World\".contains(\"W\"#0) "
-        );
-        assertThat(output, hasEntry("contains", convert(true)));
+        Object output = interpreter.evaluate("\"Hello World\".contains(\"W\"#0) ");
+        assertThat(output, equalTo(convert(true)));
     }
 
     @Test
     public void testInvokingMethodWithInvalidArgumentType() {
 
-        Callable invocation = () -> interpreter.run("var contains = \"Hello World\".contains(42)");
+        Callable invocation = () -> interpreter.evaluate("\"Hello World\".contains(42)");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
     }
 
     @Test
     public void testInvokingValidMethodWithInvalidNumberOfArguments() {
 
-        Callable invocation = () -> interpreter.run("var contains = \"Hello World\".contains()");
+        Callable invocation = () -> interpreter.evaluate("\"Hello World\".contains()");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_ARGUMENT_LIST))));
     }
 
     @Test @Ignore("Awaiting implementation of types with void methods")
     public void testInvokingValidVoidMethod() {
 
-        Map<String, Object> output = interpreter.run("CONSOLE.aVoidMethod()");
-        assertThat(output, isEmptyMap());
+        Object output = interpreter.evaluate("CONSOLE.aVoidMethod()");
+        assertThat(output, nullValue());
     }
 
     @Test
@@ -71,7 +68,7 @@ public class InvocationIT {
 
     @Test
     public void testInvokingInvalidMethod() {
-        Callable invocation = () -> interpreter.run("\"Hello World\".notAMethod()");
+        Callable invocation = () -> interpreter.evaluate("\"Hello World\".notAMethod()");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.METHOD_NOT_FOUND))));
     }
 
