@@ -31,7 +31,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -81,7 +80,7 @@ public class CompileControllerTest {
         when(future.get(any(long.class), any(TimeUnit.class))).thenThrow(new TimeoutException());
 
         Callable invocation = () -> subject.compileFragment("var Text greeting = \"Hello World\"");
-        assertThat(invocation, throwsException(hasMessage(equalTo("The submitted code timed out before completing"))));
+        assertThat(invocation, throwsException(withMessage("The submitted code timed out before completing")));
         verify(future).cancel(true);
     }
 
