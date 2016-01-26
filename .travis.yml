@@ -1,16 +1,12 @@
 language: java
 jdk:
-  - oraclejdk8
+- oraclejdk8
 deploy:
-  provider: releases
+  provider: heroku
   api_key:
-    secure: GNaSiajQhd8cB2wDGEyl4/6O1KoAdaMfXpvhLNv0b8uxgj+EMo3Adppe/CoTKSvTePNhNCI4v3HCepWgPDdRqm8nZRRmp9t/8G0wBWILbUWejLX8kC4xIttqG3HTOmsnSz5CVZm2GWaQRMRFh6mNqX6VZH5KwlPB68bapR805AaZ1a5H2e7EDO90IVmnWPg86mkfsre9TTjYmSH8bH9ebDh0jA/Y8D4JhH41PJ66XXCMud7X7XAxD6crUXOsaR6+7vdF3k/VA9K+15DdPg3LYuHXzjA5k8F0cqf4Qgvxfy9mx7U/Zoe20FjWqFv2Ah+zu98LpF3zgL3wyWBC+oPqpTwjLPFmb84KkYN2trCWCsG4w1303qU2gzI0faW/WCxp8ZBdwGD7W9Z7UT35ekgihrXuIAP30wtBOoqNuhotdg7X/hZBC8jK6noC/EZ71tzoAF5RkrbQKks+OLWPEOABsLWW1qKncBinYvHhd8kQ8+rHvklxJ/XsJlfJ9zss8LRjNr7scAe9FRxzO0yrcuTpDER4u+TnojCfL70HKVsj/5UQX+bPL7cEMNyfZv3f99nOGn/8XBj7vQnXKmvIcZikBuueduyNKf20NKlW2zz0AGjBlgCu7M6QxMUpXCAMatKtk84Lg4n4Y2MghvechumP5gLM0Ru6UksGQxWmoXh+6sY=
+    secure: dro873PHOc/DWPwmVwVgKNGBFIV28xloT3t5qir5hhxniERC1MZP54PWWup9rSfSP1B71XUp/iYTm/+Ib2fIUU4L7T7vAemwqmziAePl0IOiLYoB2D9UAenxrk/aA+Xat+qGa6ARy9otibYhhHf5B1xsceeu+YEmjw1uGN5cB0rvdqFyuOH+XbbbzANB53ytZ4cFJYPEeW3G1GVFFfdDmYtLmlAGrmn98JbAMBR/mRTKdWtLt2PQcIdGhdbQtwyIpHEqA+cWq2PkXOkaZ+ogAZT0vQCRBccmFpNeCc+dC9L/sdcy+I3pM3QCUvAHpobem643el2tM5M1JLZZjS4UDBEgq9HKybD52ocVthaVoWK5cOSiz17SEta+eUqeMTBCeQnjIXA0KyVstymyDp88TmYxRzrOjkVSxfSagEqCIl4NDDO9MnLElrEOHpFCe318vEkfO/2j2P7ymoiRDXTaNgge5sqwHbU+dnx1cavIy34mCkyasSxifjxf2iSqD0maNSMTO14yJvfy23R+tyxeydHU96vHAn7dfsWJqc87bxXHS/Efjw3Qkzk1Ippan6xLctqNFUZE/m2DNn28R/dXT+aw3WfqLNvTLfCRpMcuGMTS59J5XaixyaxntLQVKdVzE4+KcNefwAvv08XdGw7D9IZqy88gm6P8mMo+Sq0b2EQ=
   skip_cleanup: true
   file:
-    - "bali-lang/target/bali-lang-1.0-SNAPSHOT.jar"
-    - "bali-compiler/target/bali-compiler-1.0-SNAPSHOT.jar"
-    - "bali-repl/target/bali-repl-1.0-SNAPSHOT.jar"
+  - bali-compiler-server/target/bali-compiler-server-1.0-SNAPSHOT.jar
   on:
-    tags: true
-    repo: sealionsoftware/bali
     branch: master
