@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 @Controller
+@CrossOrigin("http://sealionsoftware.github.io")
 @Scope("request")
 public class CompileController {
 
@@ -31,7 +32,7 @@ public class CompileController {
     @Inject
     private Interpreter interpreter;
 
-    @CrossOrigin
+
     @RequestMapping(value = "/fragment", method = RequestMethod.POST)
     public @ResponseBody Map<String, Object> compileFragment(@RequestBody String body) throws Exception {
         return runWithTimeout(executor.submit(() -> {
@@ -39,7 +40,6 @@ public class CompileController {
         }));
     }
 
-    @CrossOrigin
     @RequestMapping(value = "/expression", method = RequestMethod.POST)
     public @ResponseBody Object compileExpression(@RequestBody String body) throws Exception {
         return runWithTimeout(executor.submit(() -> {
