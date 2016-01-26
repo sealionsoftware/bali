@@ -1,2 +1,1 @@
-web: java -Dserver.port=$PORT -jar target/bali-compiler-server.jar
-
+web: java -Dserver.port=$PORT -jar bali-compiler-server/target/bali-compiler-server.jar
