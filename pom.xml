@@ -15,7 +15,6 @@
 	<modules>
 		<module>bali-lang</module>
 		<module>bali-compiler</module>
-        <!--<module>bali-repl</module>-->
         <module>bali-compiler-server</module>
         <module>common-test</module>
     </modules>
