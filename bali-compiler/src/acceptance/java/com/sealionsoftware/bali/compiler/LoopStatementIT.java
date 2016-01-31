@@ -1,6 +1,6 @@
 package com.sealionsoftware.bali.compiler;
 
-import bali.Boolean;
+import bali.Logic;
 import org.junit.Test;
 
 import java.util.Map;
@@ -20,26 +20,26 @@ public class LoopStatementIT {
     public void testLoopBodyWhenMet() {
 
         Map<String, Object> output = interpreter.run(
-                "var Boolean loop = true " +
+                "var Logic loop = true " +
                 "while (loop) { " +
                     "loop = false " +
                 "}"
         );
 
-        assertThat(output, hasEntry("loop", Boolean.FALSE));
+        assertThat(output, hasEntry("loop", Logic.FALSE));
     }
 
     @Test
     public void testLoopBodyWhenNotMet() {
 
         Map<String, Object> output = interpreter.run(
-                "var Boolean loop = false " +
+                "var Logic loop = false " +
                 "while (loop) { " +
                     "loop = true " +
                 "}"
         );
 
-        assertThat(output, hasEntry("loop", Boolean.FALSE));
+        assertThat(output, hasEntry("loop", Logic.FALSE));
     }
 
     @Test

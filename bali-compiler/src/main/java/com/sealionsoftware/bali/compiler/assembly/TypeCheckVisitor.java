@@ -1,5 +1,6 @@
 package com.sealionsoftware.bali.compiler.assembly;
 
+import bali.Logic;
 import com.sealionsoftware.Collections.Each;
 import com.sealionsoftware.bali.compiler.CompileError;
 import com.sealionsoftware.bali.compiler.ErrorCode;
@@ -64,7 +65,7 @@ public class TypeCheckVisitor extends ValidatingVisitor {
     }
 
     private void visitConditional(ConditionalNode node) {
-        Type targetType = new ClassBasedType(library.get(bali.Boolean.class.getName()));
+        Type targetType = new ClassBasedType(library.get(Logic.class.getName()));
         Type valueType =  node.getCondition().getType();
         if (valueType == null || !valueType.isAssignableTo(targetType)){
             failures.add(new CompileError(

@@ -2,7 +2,7 @@ package bali;
 
 public interface Iterator<T> {
 
-	Boolean hasNext();
+	Logic hasNext();
 
 	T next();
 

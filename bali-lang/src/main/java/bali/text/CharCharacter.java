@@ -1,9 +1,9 @@
 package bali.text;
 
-import bali.Boolean;
 import bali.Character;
+import bali.Logic;
 
-import static bali.Boolean.FALSE;
+import static bali.Logic.FALSE;
 import static bali.logic.Primitive.convert;
 
 // TODO: extend this to work with full unicode
@@ -30,14 +30,14 @@ public final class CharCharacter implements Character {
 		return new CharCharacter(java.lang.Character.toLowerCase(value));
 	}
 
-	public Boolean equalTo(Character operand) {
+	public Logic equalTo(Character operand) {
 		if (operand instanceof CharCharacter){
 			return convert(operand == this);
 		}
 		return FALSE;
 	}
 
-	public Boolean notEqualTo(Character operand) {
+	public Logic notEqualTo(Character operand) {
 		return equalTo(operand).not();
 	}
 

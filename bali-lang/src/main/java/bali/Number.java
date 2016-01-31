@@ -4,11 +4,11 @@ import bali.annotation.Operator;
 
 public interface Number extends Quantified<Number> {
 
-	Boolean isPositive();
+	Logic isPositive();
 
-	Boolean isNegative();
+	Logic isNegative();
 
-	Boolean isZero();
+	Logic isZero();
 
     @Operator("|")
 	Number magnitude();

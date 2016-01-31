@@ -5,9 +5,9 @@ import bali.annotation.Operator;
 public interface Value<T extends Value> {
 
     @Operator("==")
-	Boolean equalTo(T operand);
+    Logic equalTo(T operand);
 
     @Operator("!=")
-	Boolean notEqualTo(T operand);
+    Logic notEqualTo(T operand);
 
 }

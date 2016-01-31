@@ -6,27 +6,27 @@ import org.hamcrest.TypeSafeDiagnosingMatcher;
 
 public class Matchers {
 
-    public static Matcher<Boolean> isTrue(){
-        return new TypeSafeDiagnosingMatcher<Boolean>() {
-            protected boolean matchesSafely(Boolean aBoolean, Description description) {
-                return aBoolean == Boolean.TRUE || description.appendText(aBoolean.toString()) == null;
+    public static Matcher<Logic> isTrue(){
+        return new TypeSafeDiagnosingMatcher<Logic>() {
+            protected boolean matchesSafely(Logic aBoolean, Description description) {
+                return aBoolean == Logic.TRUE || description.appendText(aBoolean.toString()) == null;
             }
 
             public void describeTo(Description description) {
-                description.appendText(Boolean.TRUE.toString());
+                description.appendText(Logic.TRUE.toString());
             }
         };
 
     }
 
-    public static Matcher<Boolean> isFalse(){
-        return new TypeSafeDiagnosingMatcher<Boolean>() {
-            protected boolean matchesSafely(Boolean aBoolean, Description description) {
-                return aBoolean == Boolean.FALSE || description.appendText(aBoolean.toString()) == null;
+    public static Matcher<Logic> isFalse(){
+        return new TypeSafeDiagnosingMatcher<Logic>() {
+            protected boolean matchesSafely(Logic aBoolean, Description description) {
+                return aBoolean == Logic.FALSE || description.appendText(aBoolean.toString()) == null;
             }
 
             public void describeTo(Description description) {
-                description.appendText(Boolean.FALSE.toString());
+                description.appendText(Logic.FALSE.toString());
             }
         };
 

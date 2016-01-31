@@ -1,7 +1,7 @@
 package bali.number;
 
-import bali.Boolean;
 import bali.Integer;
+import bali.Logic;
 import bali.Number;
 
 import static bali.logic.Primitive.convert;
@@ -20,15 +20,15 @@ public final class Int implements Integer {
         this.value = value;
     }
 
-    public Boolean isPositive() {
+    public Logic isPositive() {
         return convert(value > 0);
     }
 
-    public Boolean isNegative() {
+    public Logic isNegative() {
         return convert(value < 0);
     }
 
-    public Boolean isZero() {
+    public Logic isZero() {
         return convert(value == 0);
     }
 
@@ -68,28 +68,28 @@ public final class Int implements Integer {
         throw new NotImplementedException();
     }
 
-    public Boolean greaterThan(Number operand) {
+    public Logic greaterThan(Number operand) {
         if (operand instanceof Int){
             return convert(value > ((Int) operand).value);
         }
         throw new NotImplementedException();
     }
 
-    public Boolean lessThan(Number operand) {
+    public Logic lessThan(Number operand) {
         if (operand instanceof Int){
             return convert(value < ((Int) operand).value);
         }
         throw new NotImplementedException();
     }
 
-    public Boolean equalTo(Number operand) {
+    public Logic equalTo(Number operand) {
         if (operand instanceof Int){
             return convert(value == ((Int) operand).value);
         }
         throw new NotImplementedException();
     }
 
-    public Boolean notEqualTo(Number operand) {
+    public Logic notEqualTo(Number operand) {
         if (operand instanceof Int){
             return convert(value != ((Int) operand).value);
         }

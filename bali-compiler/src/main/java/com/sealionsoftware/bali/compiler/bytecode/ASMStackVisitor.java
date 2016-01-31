@@ -4,7 +4,6 @@ import com.sealionsoftware.bali.compiler.Method;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.assembly.DescendingVisitor;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
-import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
@@ -12,6 +11,7 @@ import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
 import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.InvocationNode;
+import com.sealionsoftware.bali.compiler.tree.LogicLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.OperationNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.StatementNode;
@@ -51,8 +51,8 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
         }
     }
 
-    public void visit(BooleanLiteralNode node) {
-        methodVisitor.visitFieldInsn(GETSTATIC, "bali/Boolean", node.isTrue() ? "TRUE" : "FALSE", "Lbali/Boolean;");
+    public void visit(LogicLiteralNode node) {
+        methodVisitor.visitFieldInsn(GETSTATIC, "bali/Logic", node.isTrue() ? "TRUE" : "FALSE", "Lbali/Logic;");
     }
 
     public void visit(TextLiteralNode node) {
@@ -100,7 +100,7 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
 
         if (contraStatementNode == null ){
             Label end = new Label();
-            methodVisitor.visitFieldInsn(GETSTATIC, "bali/Boolean", "TRUE", "Lbali/Boolean;");
+            methodVisitor.visitFieldInsn(GETSTATIC, "bali/Logic", "TRUE", "Lbali/Logic;");
             node.getCondition().accept(this);
             methodVisitor.visitJumpInsn(IF_ACMPNE, end);
             node.getConditional().accept(this);
@@ -109,7 +109,7 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
             Label end = new Label();
             Label contra = new Label();
 
-            methodVisitor.visitFieldInsn(GETSTATIC, "bali/Boolean", "TRUE", "Lbali/Boolean;");
+            methodVisitor.visitFieldInsn(GETSTATIC, "bali/Logic", "TRUE", "Lbali/Logic;");
             node.getCondition().accept(this);
             methodVisitor.visitJumpInsn(IF_ACMPNE, contra);
             node.getConditional().accept(this);
@@ -124,7 +124,7 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
         Label start = new Label();
         Label end = new Label();
         methodVisitor.visitLabel(start);
-        methodVisitor.visitFieldInsn(GETSTATIC, "bali/Boolean", "TRUE", "Lbali/Boolean;");
+        methodVisitor.visitFieldInsn(GETSTATIC, "bali/Logic", "TRUE", "Lbali/Logic;");
         node.getCondition().accept(this);
         methodVisitor.visitJumpInsn(IF_ACMPNE, end);
         node.getConditional().accept(this);

@@ -1,7 +1,7 @@
 package com.sealionsoftware.bali.compiler.assembly;
 
-import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
+import com.sealionsoftware.bali.compiler.tree.LogicLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.type.Class;
@@ -31,7 +31,7 @@ public class TypeAssigningVisitorTest {
 
     @Test
     public void testVisitBooleanNode() throws Exception {
-        BooleanLiteralNode node = mock(BooleanLiteralNode.class);
+        LogicLiteralNode node = mock(LogicLiteralNode.class);
         subject.visit(node);
         verify(node).setType(any(ClassBasedType.class));
     }

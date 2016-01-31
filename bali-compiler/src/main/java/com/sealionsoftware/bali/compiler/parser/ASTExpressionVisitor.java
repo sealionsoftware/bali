@@ -3,10 +3,10 @@ package com.sealionsoftware.bali.compiler.parser;
 import bali.compiler.parser.BaliBaseVisitor;
 import bali.compiler.parser.BaliParser;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
-import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.InvocationNode;
+import com.sealionsoftware.bali.compiler.tree.LogicLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.OperationNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
@@ -32,9 +32,9 @@ public class ASTExpressionVisitor extends BaliBaseVisitor<ExpressionNode> {
         this.monitor = monitor;
     }
 
-    public BooleanLiteralNode visitBooleanLiteral(BaliParser.BooleanLiteralContext ctx) {
+    public LogicLiteralNode visitLogicLiteral(BaliParser.LogicLiteralContext ctx) {
         Token start = ctx.start;
-        BooleanLiteralNode node = new BooleanLiteralNode(start.getLine(), start.getCharPositionInLine(), monitor);
+        LogicLiteralNode node = new LogicLiteralNode(start.getLine(), start.getCharPositionInLine(), monitor);
         node.setValue("true".equals(ctx.getText()));
         return node;
     }

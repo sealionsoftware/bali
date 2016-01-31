@@ -6,7 +6,6 @@ import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.assembly.VariableData;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
-import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
@@ -14,6 +13,7 @@ import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
 import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.InvocationNode;
+import com.sealionsoftware.bali.compiler.tree.LogicLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.OperationNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.StatementNode;
@@ -48,23 +48,23 @@ public class ASMStackVisitorTest implements Opcodes {
     @Test
     public void testVisitLiteralTrue() throws Exception {
 
-        BooleanLiteralNode node = new BooleanLiteralNode(0, 0, monitor);
+        LogicLiteralNode node = new LogicLiteralNode(0, 0, monitor);
         node.setValue(true);
 
         subject.visit(node);
 
-        verify(visitor).visitFieldInsn(GETSTATIC, "bali/Boolean", "TRUE", "Lbali/Boolean;");
+        verify(visitor).visitFieldInsn(GETSTATIC, "bali/Logic", "TRUE", "Lbali/Logic;");
     }
 
     @Test
     public void testVisitLiteralFalse() throws Exception {
 
-        BooleanLiteralNode node = new BooleanLiteralNode(0, 0, monitor);
+        LogicLiteralNode node = new LogicLiteralNode(0, 0, monitor);
         node.setValue(false);
 
         subject.visit(node);
 
-        verify(visitor).visitFieldInsn(GETSTATIC, "bali/Boolean", "FALSE", "Lbali/Boolean;");
+        verify(visitor).visitFieldInsn(GETSTATIC, "bali/Logic", "FALSE", "Lbali/Logic;");
     }
 
     @Test

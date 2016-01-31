@@ -53,9 +53,9 @@ type:                       IDENTIFIER ( '['  type ( ',' type)* ']' )? ;
 
 argument:                   expression ;
 
-literal:                    booleanLiteral | textLiteral | integerLiteral;
+literal:                    logicLiteral | textLiteral | integerLiteral;
 
-booleanLiteral:             'true' | 'false' ;
+logicLiteral:               'true' | 'false' ;
 
 textLiteral:                TEXT_LITERAL;
 
