@@ -20,10 +20,6 @@ public final class False implements Logic {
 		return operand;
 	}
 
-	public Logic xor(Logic that) {
-		return that;
-	}
-
 	public Logic equalTo(Logic operand) {
 		return this == operand ? TRUE : this;
 	}
