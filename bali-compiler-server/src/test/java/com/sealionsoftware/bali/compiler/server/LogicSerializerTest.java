@@ -10,7 +10,7 @@ import static org.mockito.Mockito.verify;
 
 public class LogicSerializerTest {
 
-    private BooleanSerializer subject = new BooleanSerializer();
+    private LogicSerializer subject = new LogicSerializer();
 
     @Test
     public void testSerialize() throws Exception {

@@ -47,19 +47,6 @@ public class TrueTest {
         assertThat(ret, equalTo(TRUE));
     }
 
-    @Test
-    public void testXorTrue() throws Exception {
-
-        Logic ret = subject.xor(TRUE);
-        assertThat(ret, equalTo(FALSE));
-    }
-
-    @Test
-    public void testXorFalse() throws Exception {
-
-        Logic ret = subject.xor(FALSE);
-        assertThat(ret, equalTo(TRUE));
-    }
 
     @Test
     public void testEqualToTrue() throws Exception {

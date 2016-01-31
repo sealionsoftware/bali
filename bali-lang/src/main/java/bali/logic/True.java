@@ -20,10 +20,6 @@ public final class True implements Logic {
 		return this;
 	}
 
-	public Logic xor(Logic that) {
-		return that.not();
-	}
-
 	public Logic equalTo(Logic operand) {
 		return this == operand ? this : FALSE;
 	}

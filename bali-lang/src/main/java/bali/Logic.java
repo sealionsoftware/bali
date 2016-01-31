@@ -18,7 +18,4 @@ public interface Logic extends Value<Logic> {
     @Operator("|")
     Logic or(Logic operand);
 
-    @Operator("^")
-    Logic xor(Logic that);
-
 }

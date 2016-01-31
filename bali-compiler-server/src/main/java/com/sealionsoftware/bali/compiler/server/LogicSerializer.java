@@ -9,7 +9,7 @@ import java.io.IOException;
 
 import static bali.logic.Primitive.convert;
 
-public class BooleanSerializer extends JsonSerializer<Logic> {
+public class LogicSerializer extends JsonSerializer<Logic> {
     public void serialize(Logic value, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
         jsonGenerator.writeBoolean(convert(value));
     }
