@@ -20,18 +20,6 @@ public final class Int implements Integer {
         this.value = value;
     }
 
-    public Logic isPositive() {
-        return convert(value > 0);
-    }
-
-    public Logic isNegative() {
-        return convert(value < 0);
-    }
-
-    public Logic isZero() {
-        return convert(value == 0);
-    }
-
     public Number magnitude() {
         return value > 0 ? this : negate();
     }

@@ -19,27 +19,6 @@ public class IntTest {
     private Int min = new Int(Integer.MIN_VALUE);
 
     @Test
-    public void testIsPositive() throws Exception {
-        assertThat(positive.isPositive(), isTrue());
-        assertThat(zero.isPositive(), isFalse());
-        assertThat(negative.isPositive(), isFalse());
-    }
-
-    @Test
-    public void testIsNegative() throws Exception {
-        assertThat(positive.isNegative(), isFalse());
-        assertThat(zero.isNegative(), isFalse());
-        assertThat(negative.isNegative(), isTrue());
-    }
-
-    @Test
-    public void testIsZero() throws Exception {
-        assertThat(positive.isZero(), isFalse());
-        assertThat(zero.isZero(), isTrue());
-        assertThat(negative.isZero(), isFalse());
-    }
-
-    @Test
     public void testMagnitude() throws Exception {
         assertThat(positive.magnitude(), equalTo(positive));
         assertThat(zero.magnitude(), equalTo(zero));
