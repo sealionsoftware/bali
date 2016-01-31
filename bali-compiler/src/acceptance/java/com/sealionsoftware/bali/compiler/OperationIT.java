@@ -43,7 +43,7 @@ public class OperationIT {
 
     @Test
     public void testInvalidReturnType() {
-        Callable invocation = () -> interpreter.run("var Boolean ret = 1 + 1");
+        Callable invocation = () -> interpreter.run("var Logic ret = 1 + 1");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
     }
 

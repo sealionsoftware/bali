@@ -1,6 +1,6 @@
 package com.sealionsoftware.bali.compiler;
 
-import bali.Boolean;
+import bali.Logic;
 import org.junit.Test;
 
 import java.util.Map;
@@ -21,15 +21,15 @@ public class VariableDeclarationIT {
 
         Map<String, Object> output = interpreter.run("var aVariable = true");
 
-        assertThat(output, hasEntry("aVariable", Boolean.TRUE));
+        assertThat(output, hasEntry("aVariable", Logic.TRUE));
     }
 
     @Test
     public void testScriptContainingTypedVariable() {
 
-        Map<String, Object> output = interpreter.run("var Boolean aVariable = true");
+        Map<String, Object> output = interpreter.run("var Logic aVariable = true");
 
-        assertThat(output, hasEntry("aVariable", Boolean.TRUE));
+        assertThat(output, hasEntry("aVariable", Logic.TRUE));
     }
 
     @Test

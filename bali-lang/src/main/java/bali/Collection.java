@@ -6,7 +6,7 @@ public interface Collection<T> extends Iterable<T> {
 
 	Integer size();
 
-	Boolean isEmpty();
+	Logic isEmpty();
 
     @Operator("#")
 	T get(Integer index);

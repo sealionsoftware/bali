@@ -1,5 +1,6 @@
 package com.sealionsoftware.bali.compiler;
 
+import bali.Logic;
 import org.junit.Test;
 
 import java.util.Map;
@@ -22,16 +23,16 @@ public class AssignmentIT {
         Map<String, Object> output = interpreter.run("var aVariable = false aVariable = true");
 
         assertThat(output, notNullValue());
-        assertThat(output, hasEntry("aVariable", bali.Boolean.TRUE));
+        assertThat(output, hasEntry("aVariable", Logic.TRUE));
     }
 
     @Test
     public void testAssigningTypedVariable() {
 
-        Map<String, Object> output = interpreter.run("var Boolean aVariable = false aVariable = true");
+        Map<String, Object> output = interpreter.run("var Logic aVariable = false aVariable = true");
 
         assertThat(output, notNullValue());
-        assertThat(output, hasEntry("aVariable", bali.Boolean.TRUE));
+        assertThat(output, hasEntry("aVariable", Logic.TRUE));
     }
 
     @Test

@@ -3,12 +3,12 @@ package com.sealionsoftware.bali.compiler.parser;
 import bali.compiler.parser.BaliParser;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
-import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
+import com.sealionsoftware.bali.compiler.tree.LogicLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.StatementNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
@@ -91,10 +91,10 @@ public class ASTStatementVisitorTest {
     public void testVisitExpressionNode() throws Exception {
         
         BaliParser.ExpressionContext context = mockContext(BaliParser.ExpressionContext.class);
-        when(context.accept(any(ASTExpressionVisitor.class))).thenReturn(mock(BooleanLiteralNode.class));
+        when(context.accept(any(ASTExpressionVisitor.class))).thenReturn(mock(LogicLiteralNode.class));
 
         ExpressionStatementNode node = subject.visitExpression(context);
-        assertThat(node.getExpressionNode(), instanceOf(BooleanLiteralNode.class));
+        assertThat(node.getExpressionNode(), instanceOf(LogicLiteralNode.class));
     }
 
     @Test

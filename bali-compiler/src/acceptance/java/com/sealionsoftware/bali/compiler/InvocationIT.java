@@ -62,7 +62,7 @@ public class InvocationIT {
 
     @Test
     public void testAssigningInvalidReturnType() {
-        Callable invocation = () -> interpreter.run("var Boolean size = \"Hello World\".size()");
+        Callable invocation = () -> interpreter.run("var Logic size = \"Hello World\".size()");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
     }
 

@@ -1,6 +1,6 @@
 package com.sealionsoftware.bali.compiler;
 
-import bali.Boolean;
+import bali.Logic;
 import org.junit.Test;
 
 import java.util.Map;
@@ -35,7 +35,7 @@ public class ConditionalStatementIT {
                 "if (true) {ret = true}"
         );
 
-        assertThat(output, hasEntry("ret", Boolean.TRUE));
+        assertThat(output, hasEntry("ret", Logic.TRUE));
     }
 
     @Test
@@ -46,7 +46,7 @@ public class ConditionalStatementIT {
                 "if (false) {ret = true}"
         );
 
-        assertThat(output, hasEntry("ret", Boolean.FALSE));
+        assertThat(output, hasEntry("ret", Logic.FALSE));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class ConditionalStatementIT {
                 "if (true) {} else {ret = false}"
         );
 
-        assertThat(output, hasEntry("ret", Boolean.TRUE));
+        assertThat(output, hasEntry("ret", Logic.TRUE));
     }
 
     @Test
@@ -75,7 +75,7 @@ public class ConditionalStatementIT {
                 "if (false) {} else {ret = false} "
         );
 
-        assertThat(output, hasEntry("ret", Boolean.FALSE));
+        assertThat(output, hasEntry("ret", Logic.FALSE));
     }
 
 

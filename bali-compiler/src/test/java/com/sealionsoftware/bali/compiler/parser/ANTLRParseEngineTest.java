@@ -19,7 +19,7 @@ public class ANTLRParseEngineTest {
     @Test
     public void testParseFragment() throws Exception {
 
-        CodeBlockNode ret = subject.parseFragment("var Boolean isTrue = true");
+        CodeBlockNode ret = subject.parseFragment("var Logic isTrue = true");
 
         assertThat(ret, notNullValue());
         assertThat(ret.getStatements().size(), equalTo(1));

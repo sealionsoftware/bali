@@ -1,15 +1,15 @@
 package bali.text;
 
-import bali.Boolean;
 import bali.Character;
 import bali.Integer;
 import bali.Iterator;
+import bali.Logic;
 import bali.Text;
 
 import java.util.Arrays;
 
-import static bali.Boolean.FALSE;
-import static bali.Boolean.TRUE;
+import static bali.Logic.FALSE;
+import static bali.Logic.TRUE;
 import static bali.logic.Primitive.convert;
 import static bali.number.Primitive.convert;
 import static bali.text.Primitive.convert;
@@ -32,7 +32,7 @@ public final class CharArrayString implements Text {
 		return new CharArrayString(upper);
 	}
 
-	public Boolean contains(Character value) {
+	public Logic contains(Character value) {
 		for (char c : characters){
 			if (value == CharCharacter.CHARS[c]){
 				return TRUE;
@@ -45,7 +45,7 @@ public final class CharArrayString implements Text {
 		return convert(characters.length);
 	}
 
-	public Boolean isEmpty() {
+	public Logic isEmpty() {
 		return convert(characters.length == 0);
 	}
 
@@ -58,7 +58,7 @@ public final class CharArrayString implements Text {
 
 			int i = 0;
 
-			public Boolean hasNext() {
+			public Logic hasNext() {
 				return convert(i < characters.length);
 			}
 
@@ -68,7 +68,7 @@ public final class CharArrayString implements Text {
 		};
 	}
 
-	public Boolean equalTo(Text operand) {
+	public Logic equalTo(Text operand) {
 
 		if (operand instanceof CharArrayString){
 			CharArrayString cas = (CharArrayString) operand;
@@ -78,7 +78,7 @@ public final class CharArrayString implements Text {
 		return FALSE;
 	}
 
-	public Boolean notEqualTo(Text operand) {
+	public Logic notEqualTo(Text operand) {
 
 		if (operand instanceof CharArrayString){
 			CharArrayString cas = (CharArrayString) operand;

@@ -1,34 +1,30 @@
 package bali.logic;
 
-import bali.Boolean;
+import bali.Logic;
 
-public final class True implements Boolean {
+public final class True implements Logic {
 
-	public static final Boolean VALUE = new True();
+	public static final Logic VALUE = new True();
 
 	private True(){}
 
-	public Boolean not() {
+	public Logic not() {
 		return FALSE;
 	}
 
-	public Boolean and(Boolean operand) {
+	public Logic and(Logic operand) {
 		return operand;
 	}
 
-	public Boolean or(Boolean operand) {
+	public Logic or(Logic operand) {
 		return this;
 	}
 
-	public Boolean xor(Boolean that) {
-		return that.not();
-	}
-
-	public Boolean equalTo(Boolean operand) {
+	public Logic equalTo(Logic operand) {
 		return this == operand ? this : FALSE;
 	}
 
-	public Boolean notEqualTo(Boolean operand) {
+	public Logic notEqualTo(Logic operand) {
 		return equalTo(operand).not();
 	}
 

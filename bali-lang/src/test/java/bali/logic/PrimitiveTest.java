@@ -1,6 +1,6 @@
 package bali.logic;
 
-import bali.Boolean;
+import bali.Logic;
 import org.junit.Test;
 
 import static bali.logic.Primitive.convert;
@@ -16,11 +16,11 @@ public class PrimitiveTest {
 
     @Test
     public void testConvertToPrimitive() throws Exception {
-        assertThat(convert(Boolean.TRUE), equalTo(true));
+        assertThat(convert(Logic.TRUE), equalTo(true));
     }
 
     @Test
     public void testConvertToObject() throws Exception {
-        assertThat(convert(true), equalTo(Boolean.TRUE));
+        assertThat(convert(true), equalTo(Logic.TRUE));
     }
 }

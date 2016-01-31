@@ -1,7 +1,7 @@
 package com.sealionsoftware.bali.compiler.server;
 
-import bali.Boolean;
 import bali.Integer;
+import bali.Logic;
 import bali.Text;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,7 +32,7 @@ public class BaliInterpreterServer {
     public void initialise(){
 
         mapper.registerModule(new SimpleModule("BaliModule", new Version(1, 0, 0, null, null, null))
-                .addSerializer(Boolean.class, new BooleanSerializer())
+                .addSerializer(Logic.class, new LogicSerializer())
                 .addSerializer(Integer.class, new IntegerSerializer())
                 .addSerializer(Text.class, new TextSerializer()));
     }

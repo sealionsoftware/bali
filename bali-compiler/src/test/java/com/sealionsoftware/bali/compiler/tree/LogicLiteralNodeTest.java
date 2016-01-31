@@ -14,9 +14,9 @@ import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class BooleanLiteralNodeTest {
+public class LogicLiteralNodeTest {
 
-    private BooleanLiteralNode subject = new BooleanLiteralNode(2, 3, mock(CompilationThreadManager.class));
+    private LogicLiteralNode subject = new LogicLiteralNode(2, 3, mock(CompilationThreadManager.class));
 
     @Test
     public void testSetValue() throws Exception {

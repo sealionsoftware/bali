@@ -5,8 +5,8 @@ import com.sealionsoftware.bali.compiler.GeneratedClass;
 import com.sealionsoftware.bali.compiler.GeneratedPackage;
 import com.sealionsoftware.bali.compiler.Interpreter;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
-import com.sealionsoftware.bali.compiler.tree.BooleanLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
+import com.sealionsoftware.bali.compiler.tree.LogicLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.junit.Test;
 
@@ -28,7 +28,7 @@ public class ASMBytecodeEngineTest {
 
         VariableNode variableNode = new VariableNode(0, 0);
         variableNode.setName("aVariable");
-        BooleanLiteralNode valueNode = new BooleanLiteralNode(0, 0, monitor);
+        LogicLiteralNode valueNode = new LogicLiteralNode(0, 0, monitor);
         variableNode.setValue(valueNode);
         CodeBlockNode node = new CodeBlockNode(0, 0);
         node.addStatement(variableNode);
@@ -51,7 +51,7 @@ public class ASMBytecodeEngineTest {
     @Test
     public void testGenerateEvaluation() throws Exception {
 
-        BooleanLiteralNode valueNode = new BooleanLiteralNode(0, 0, monitor);
+        LogicLiteralNode valueNode = new LogicLiteralNode(0, 0, monitor);
 
         GeneratedPackage ret = subject.generate(valueNode);
 
