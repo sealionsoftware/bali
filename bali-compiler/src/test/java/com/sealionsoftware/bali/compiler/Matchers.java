@@ -1,13 +1,20 @@
 package com.sealionsoftware.bali.compiler;
 
+import bali.Iterator;
+import bali.Logic;
+import bali.collection.Array;
 import com.sealionsoftware.bali.compiler.assembly.BlockageDescription;
 import com.sealionsoftware.bali.compiler.assembly.ValidatingVisitor;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
+import static bali.number.Primitive.convert;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasItem;
 
@@ -79,6 +86,44 @@ public class Matchers {
                 description.appendText("CompilationException containing error " + errorMatcher);
             }
         };
+    }
+
+    public static <T> Matcher<Array<? super T>> hasValues(final T... values){
+        List<Matcher<T>> matchers = Arrays.stream(values).map(org.hamcrest.Matchers::equalTo).collect(toList());
+        @SuppressWarnings("unchecked")
+        Matcher<T>[] matcherArray = matchers.toArray(new Matcher[matchers.size()]);
+        return hasValues(matcherArray);
+    }
+
+    @SafeVarargs
+    public static <T> Matcher<Array<? super T>> hasValues(final Matcher<T>... matchers){
+        return new TypeSafeDiagnosingMatcher<Array<? super T>>() {
+            protected boolean matchesSafely(Array<? super T> anArray, Description description) {
+
+                int expectedSize = matchers.length;
+
+                if (convert(anArray.size()) != expectedSize) {
+                    description.appendText("The array was not of size " + expectedSize);
+                    return false;
+                }
+
+                Iterator<? super T> iterator = anArray.iterator();
+                for (Matcher<T> matcher : matchers) {
+                    Object next = iterator.next();
+                    if (!matcher.matches(next)) {
+                        matcher.describeMismatch(next, description);
+                        return false;
+                    }
+
+                }
+                return true;
+            }
+
+            public void describeTo(Description description) {
+                description.appendText(Logic.FALSE.toString());
+            }
+        };
+
     }
 
 }
