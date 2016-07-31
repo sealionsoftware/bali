@@ -1,5 +1,6 @@
 package com.sealionsoftware.bali.compiler.assembly;
 
+import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
@@ -36,6 +37,11 @@ public class ValidatingVisitorTest {
     @Test
     public void testVisitIntegerLiteralNode() throws Exception {
         subject.visit(mock(IntegerLiteralNode.class));
+    }
+
+    @Test
+    public void testVisitArrayLiteralNode() throws Exception {
+        subject.visit(mock(ArrayLiteralNode.class));
     }
 
     @Test

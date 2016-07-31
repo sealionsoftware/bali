@@ -12,7 +12,8 @@ public class Array<T> implements Collection<T> {
 
     private T[] items;
 
-    public Array(T[] items) {
+    @SafeVarargs
+    public Array(T... items) {
         this.items = items;
     }
 
@@ -32,7 +33,7 @@ public class Array<T> implements Collection<T> {
     public Iterator<T> iterator() {
         return new Iterator<T>() {
 
-            int i = 0;
+            private int i = 0;
 
             public Logic hasNext() {
                 return convert(i < items.length);

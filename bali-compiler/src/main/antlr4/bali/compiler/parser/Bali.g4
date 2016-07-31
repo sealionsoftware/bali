@@ -61,7 +61,7 @@ textLiteral:                TEXT_LITERAL;
 
 integerLiteral:             INTEGER_LITERAL;
 
-arrayLiteral:               '('  ( expression ( ',' expression )* )? ')';
+arrayLiteral:               '['  ( expression ( ',' expression )* )? ']';
 
 reference:                  IDENTIFIER ;
 

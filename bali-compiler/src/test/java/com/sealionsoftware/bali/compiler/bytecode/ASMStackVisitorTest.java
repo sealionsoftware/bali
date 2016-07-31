@@ -5,6 +5,7 @@ import com.sealionsoftware.bali.compiler.Parameter;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.assembly.VariableData;
+import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
@@ -28,7 +29,6 @@ import org.objectweb.asm.Opcodes;
 import java.util.List;
 import java.util.UUID;
 
-import static bali.number.Primitive.convert;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -78,7 +78,7 @@ public class ASMStackVisitorTest implements Opcodes {
     @Test
     public void testVisitIntegerLiteral() throws Exception {
         IntegerLiteralNode node = mock(IntegerLiteralNode.class);
-        when(node.getValue()).thenReturn(convert(5));
+        when(node.getValue()).thenReturn(5);
         subject.visit(node);
         verify(visitor).visitLdcInsn(5);
         verify(visitor).visitMethodInsn(INVOKESTATIC, "bali/number/Primitive", "convert", "(I)Lbali/Integer;", false);
@@ -265,5 +265,29 @@ public class ASMStackVisitorTest implements Opcodes {
         verify(target).accept(subject);
         verify(argumentOne).accept(subject);
         verify(visitor).visitMethodInsn(INVOKEINTERFACE, "com/sealionsoftware/Target", "aMethod", "(Lcom/sealionsoftware/Argument;)Lcom/sealionsoftware/Return;", true);
+    }
+
+    @Test
+    public void testVisitArrayNode(){
+
+        List<ExpressionNode> mockItems = asList(
+                setupMock(1),
+                setupMock(2),
+                setupMock(3),
+                setupMock(4),
+                setupMock(5),
+                setupMock(6)
+        );
+
+        ArrayLiteralNode node = mock(ArrayLiteralNode.class);
+        when(node.getItems()).thenReturn(mockItems);
+
+        subject.visit(node);
+    }
+
+    private IntegerLiteralNode setupMock(int i) {
+        IntegerLiteralNode oneMock = mock(IntegerLiteralNode.class);
+        when(oneMock.getValue()).thenReturn(i);
+        return oneMock;
     }
 }

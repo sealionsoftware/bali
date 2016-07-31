@@ -3,6 +3,7 @@ package com.sealionsoftware.bali.compiler.parser;
 import bali.compiler.parser.BaliBaseVisitor;
 import bali.compiler.parser.BaliParser;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
+import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.InvocationNode;
@@ -18,6 +19,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static bali.number.Primitive.convert;
 import static bali.number.Primitive.parse;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -50,7 +52,17 @@ public class ASTExpressionVisitor extends BaliBaseVisitor<ExpressionNode> {
     public IntegerLiteralNode visitIntegerLiteral(BaliParser.IntegerLiteralContext ctx) {
         Token start = ctx.start;
         IntegerLiteralNode node = new IntegerLiteralNode(start.getLine(), start.getCharPositionInLine(), monitor);
-        node.setValue(parse(ctx.getText()));
+        node.setValue(convert(parse(ctx.getText())));
+        return node;
+    }
+
+    public ArrayLiteralNode visitArrayLiteral(BaliParser.ArrayLiteralContext ctx) {
+        Token start = ctx.start;
+        ArrayLiteralNode node = new ArrayLiteralNode(start.getLine(), start.getCharPositionInLine(), monitor);
+        node.setItems(ctx.expression()
+                .stream()
+                .map((item) -> item.accept(this))
+                .collect(Collectors.toList()));
         return node;
     }
 

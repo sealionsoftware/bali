@@ -42,7 +42,7 @@ public class LiteralValuesIT {
     @Test
     public void testScriptContainingArray() {
 
-        Object output = interpreter.evaluate("(true, 45, \"Be my guest\")");
+        Object output = interpreter.evaluate("[true, 45, \"Be my guest\"]");
 
         assertThat(output, instanceOf(Array.class));
         @SuppressWarnings("unchecked")

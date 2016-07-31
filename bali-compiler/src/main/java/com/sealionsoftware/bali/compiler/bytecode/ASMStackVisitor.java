@@ -3,6 +3,7 @@ package com.sealionsoftware.bali.compiler.bytecode;
 import com.sealionsoftware.bali.compiler.Method;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.assembly.DescendingVisitor;
+import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
@@ -30,8 +31,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static bali.number.Primitive.convert;
-
 public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
 
     private MethodVisitor methodVisitor;
@@ -52,7 +51,7 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
     }
 
     public void visit(LogicLiteralNode node) {
-        methodVisitor.visitFieldInsn(GETSTATIC, "bali/Logic", node.isTrue() ? "TRUE" : "FALSE", "Lbali/Logic;");
+        methodVisitor.visitFieldInsn(GETSTATIC, "bali/Logic", node.getValue() ? "TRUE" : "FALSE", "Lbali/Logic;");
     }
 
     public void visit(TextLiteralNode node) {
@@ -61,8 +60,44 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
     }
 
     public void visit(IntegerLiteralNode node) {
-        methodVisitor.visitLdcInsn(convert(node.getValue()));
+        methodVisitor.visitLdcInsn(node.getValue());
         methodVisitor.visitMethodInsn(INVOKESTATIC, "bali/number/Primitive", "convert", "(I)Lbali/Integer;", false);
+    }
+
+    public void visit(ArrayLiteralNode node) {
+
+        visitChildren(node);
+
+        methodVisitor.visitTypeInsn(NEW, "bali/collection/Array");
+        methodVisitor.visitInsn(DUP);
+
+        List<ExpressionNode> items = node.getItems();
+        int size = items.size();
+
+        push(size);
+        methodVisitor.visitTypeInsn(ANEWARRAY, "java/lang/Object");
+
+        int i = 0;
+        for (ExpressionNode item : items){
+            methodVisitor.visitInsn(DUP);
+            push(i++);
+            item.accept(this);
+            methodVisitor.visitInsn(AASTORE);
+        }
+
+        methodVisitor.visitMethodInsn(INVOKESPECIAL, "bali/collection/Array", "<init>", "([Ljava/lang/Object;)V", false);
+    }
+
+    private void push(int i){
+        switch (i){
+            case 0 : methodVisitor.visitInsn(ICONST_0);  break;
+            case 1 : methodVisitor.visitInsn(ICONST_1);  break;
+            case 2 : methodVisitor.visitInsn(ICONST_2);  break;
+            case 3 : methodVisitor.visitInsn(ICONST_3);  break;
+            case 4 : methodVisitor.visitInsn(ICONST_4);  break;
+            case 5 : methodVisitor.visitInsn(ICONST_5);  break;
+            default: methodVisitor.visitIntInsn(BIPUSH, i);
+        }
     }
 
     public void visit(TypeNode node) {

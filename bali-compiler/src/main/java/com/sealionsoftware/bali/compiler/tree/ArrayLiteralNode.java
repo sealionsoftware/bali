@@ -4,16 +4,28 @@ import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.reference.MonitoredProperty;
 
-public class TextLiteralNode extends LiteralNode<String> {
+import java.util.List;
 
+public class ArrayLiteralNode extends ExpressionNode {
+
+    private List<ExpressionNode> items;
     private final MonitoredProperty<Type> type;
 
-    public TextLiteralNode(Integer line, Integer character, CompilationThreadManager monitor) {
+    public ArrayLiteralNode(Integer line, Integer character, CompilationThreadManager monitor) {
         super(line, character);
         this.type = new MonitoredProperty<>(this, "type", monitor);
     }
 
-    public void setType(Type type) {
+    public List<ExpressionNode> getItems() {
+        return items;
+    }
+
+    public void setItems(List<ExpressionNode> items) {
+        this.items = items;
+        children.addAll(items);
+    }
+
+    public void setType(Type type){
         this.type.set(type);
     }
 

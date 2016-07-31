@@ -29,6 +29,7 @@ public class ASMBytecodeEngineTest {
         VariableNode variableNode = new VariableNode(0, 0);
         variableNode.setName("aVariable");
         LogicLiteralNode valueNode = new LogicLiteralNode(0, 0, monitor);
+        valueNode.setValue(true);
         variableNode.setValue(valueNode);
         CodeBlockNode node = new CodeBlockNode(0, 0);
         node.addStatement(variableNode);
@@ -52,6 +53,7 @@ public class ASMBytecodeEngineTest {
     public void testGenerateEvaluation() throws Exception {
 
         LogicLiteralNode valueNode = new LogicLiteralNode(0, 0, monitor);
+        valueNode.setValue(true);
 
         GeneratedPackage ret = subject.generate(valueNode);
 

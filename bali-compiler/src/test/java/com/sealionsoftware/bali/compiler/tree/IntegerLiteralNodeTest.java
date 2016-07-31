@@ -4,7 +4,6 @@ import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import org.junit.Test;
 
-import static bali.number.Primitive.convert;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -19,8 +18,8 @@ public class IntegerLiteralNodeTest {
 
     @Test
     public void testSetValue() throws Exception {
-        subject.setValue(convert(5));
-        assertThat(subject.getValue(), equalTo(convert(5)));
+        subject.setValue(5);
+        assertThat(subject.getValue(), equalTo(5));
     }
 
     @Test
