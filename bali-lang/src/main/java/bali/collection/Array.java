@@ -53,13 +53,8 @@ public class Array<T> implements Collection<T> {
 
         Array<?> array = (Array<?>) o;
 
-        // Probably incorrect - comparing Object[] arrays with Arrays.equals
         return Arrays.equals(items, array.items);
 
-    }
-
-    public int hashCode() {
-        return Arrays.hashCode(items);
     }
 
     public String toString() {

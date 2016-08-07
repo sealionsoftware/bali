@@ -43,4 +43,15 @@ public class ArrayTest {
         assertThat(i.next(), nullValue());
 
     }
+
+    @Test
+    public void testToString(){
+        assertThat(subject.toString(), equalTo("[Hello, World]"));
+    }
+
+    @Test
+    public void testEquals(){
+        assertThat(subject.equals(new Array<>(convert("Hello"), convert("World"))), equalTo(true));
+    }
+
 }
