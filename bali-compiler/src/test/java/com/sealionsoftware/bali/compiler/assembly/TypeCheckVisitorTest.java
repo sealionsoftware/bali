@@ -4,6 +4,7 @@ import com.sealionsoftware.bali.compiler.ErrorCode;
 import com.sealionsoftware.bali.compiler.Method;
 import com.sealionsoftware.bali.compiler.Parameter;
 import com.sealionsoftware.bali.compiler.Type;
+import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
@@ -296,6 +297,26 @@ public class TypeCheckVisitorTest {
         subject.visit(node);
 
         assertThat(subject, containsNoFailures());
+    }
+
+    @Test
+    public void testArrayLiteralHasInvalidArgumentType(){
+
+        ArrayLiteralNode node = mock(ArrayLiteralNode.class);
+        Type resolvedType = mock(Type.class);
+        Parameter inferredTypeArgument = mock(Parameter.class);
+        ExpressionNode argumentNode = mock(ExpressionNode.class);
+        Type argumentType = mock(Type.class);
+
+        when(node.getType()).thenReturn(resolvedType);
+        when(resolvedType.getTypeArguments()).thenReturn(asList(inferredTypeArgument));
+        when(node.getItems()).thenReturn(asList(argumentNode));
+        when(argumentNode.getType()).thenReturn(argumentType);
+        when(argumentType.isAssignableTo(any())).thenReturn(false);
+
+        subject.visit(node);
+
+        assertThat(subject, containsOneFailure(ErrorCode.INVALID_TYPE));
     }
 
 }

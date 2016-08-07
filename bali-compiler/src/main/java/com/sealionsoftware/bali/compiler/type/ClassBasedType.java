@@ -139,7 +139,7 @@ public class ClassBasedType implements Type {
 
     public Boolean isAssignableTo(Type other) {
 
-        if (other == null || other == this) {
+        if (other == null || other == this || other.getClassName() == null) {
             return true;
         }
 
