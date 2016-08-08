@@ -19,7 +19,7 @@ public class InterpreterAssemblySetFactory implements AssemblerSetFactory {
         classFactory.addToLibrary(bali.Text.class);
         classFactory.addToLibrary(bali.Integer.class);
 
-        return Arrays.<ValidatingVisitor>asList(
+        return Arrays.asList(
                 new TypeAssigningVisitor(library),
                 new TypeCheckVisitor(library),
                 new ReferenceMatchingVisitor(),

@@ -1,6 +1,8 @@
 package com.sealionsoftware.bali.compiler;
 
 import bali.Logic;
+import bali.collection.Array;
+import bali.number.Int;
 import org.junit.Test;
 
 import java.util.Map;
@@ -38,5 +40,38 @@ public class VariableDeclarationIT {
         Callable invocation = () -> interpreter.run("var Text aVariable = true");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
     }
+
+    @Test
+    public void testScriptContainingGenericTypedVariable() {
+
+        Map<String, Object> output = interpreter.run("var Collection[Logic] aVariable = [true]");
+
+        assertThat(output, hasEntry("aVariable", new Array<>(Logic.TRUE)));
+    }
+
+    @Test
+    public void testScriptContainingIncorrectGenericTypedArgumets() {
+
+        Callable invocation = () -> interpreter.run("var Collection[Logic] aVariable = [1]");
+
+        assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
+    }
+
+    @Test
+    public void testScriptContainingSomeIncorrectGenericTypedVariables() {
+
+        Callable invocation = () -> interpreter.run("var Collection[Logic] aVariable = [true, 1]");
+
+        assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
+    }
+
+    @Test
+    public void testScriptContainingUnboundedGenericTypedVariable() {
+
+        Map<String, Object> output = interpreter.run("var Collection aVariable = [true, 1]");
+
+        assertThat(output, hasEntry("aVariable", new Array<>(Logic.TRUE, new Int(1))));
+    }
+
 
 }

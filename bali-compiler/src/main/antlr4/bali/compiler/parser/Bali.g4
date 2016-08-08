@@ -53,13 +53,15 @@ type:                       IDENTIFIER ( '['  type ( ',' type)* ']' )? ;
 
 argument:                   expression ;
 
-literal:                    logicLiteral | textLiteral | integerLiteral;
+literal:                    logicLiteral | textLiteral | integerLiteral | arrayLiteral;
 
 logicLiteral:               'true' | 'false' ;
 
 textLiteral:                TEXT_LITERAL;
 
 integerLiteral:             INTEGER_LITERAL;
+
+arrayLiteral:               '['  ( expression ( ',' expression )* )? ']';
 
 reference:                  IDENTIFIER ;
 

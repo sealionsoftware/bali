@@ -2,6 +2,7 @@ package com.sealionsoftware.bali.compiler.parser;
 
 import bali.compiler.parser.BaliParser;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
+import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.InvocationNode;
@@ -12,7 +13,6 @@ import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.junit.Test;
 
-import static bali.number.Primitive.convert;
 import static com.sealionsoftware.bali.compiler.parser.Mock.mockContext;
 import static com.sealionsoftware.bali.compiler.parser.Mock.mockTerminal;
 import static java.util.Arrays.asList;
@@ -39,7 +39,7 @@ public class ASTExpressionVisitorTest {
         LogicLiteralNode node = subject.visitLogicLiteral(context);
 
         assertThat(node, notNullValue());
-        assertThat(node.isTrue(), equalTo(true));
+        assertThat(node.getValue(), equalTo(true));
     }
 
     @Test
@@ -63,7 +63,22 @@ public class ASTExpressionVisitorTest {
         IntegerLiteralNode node = subject.visitIntegerLiteral(context);
 
         assertThat(node, notNullValue());
-        assertThat(node.getValue(), equalTo(convert(5)));
+        assertThat(node.getValue(), equalTo(5));
+    }
+
+    @Test
+    public void testVisitArrayLiteral() throws Exception {
+
+        BaliParser.ExpressionContext itemExpressionOne = mockContext(BaliParser.ExpressionContext.class);
+        BaliParser.ExpressionContext itemExpressionTwo = mockContext(BaliParser.ExpressionContext.class);
+
+        BaliParser.ArrayLiteralContext context = mockContext(BaliParser.ArrayLiteralContext.class);
+        when(context.expression()).thenReturn(asList(itemExpressionOne, itemExpressionTwo));
+
+        ArrayLiteralNode node = subject.visitArrayLiteral(context);
+
+        assertThat(node, notNullValue());
+        assertThat(node.getItems(), hasSize(2));
     }
 
     @Test

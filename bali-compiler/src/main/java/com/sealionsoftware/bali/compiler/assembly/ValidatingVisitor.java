@@ -1,6 +1,7 @@
 package com.sealionsoftware.bali.compiler.assembly;
 
 import com.sealionsoftware.bali.compiler.CompileError;
+import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
@@ -31,6 +32,10 @@ public abstract class ValidatingVisitor extends DescendingVisitor {
     }
 
     public void visit(IntegerLiteralNode node) {
+        visitChildren(node);
+    }
+
+    public void visit(ArrayLiteralNode node) {
         visitChildren(node);
     }
 

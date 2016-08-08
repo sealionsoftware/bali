@@ -9,6 +9,8 @@ public interface Visitor {
 
     void visit(IntegerLiteralNode node);
 
+    void visit(ArrayLiteralNode node);
+
     void visit(VariableNode node);
 
     void visit(AssignmentNode node);

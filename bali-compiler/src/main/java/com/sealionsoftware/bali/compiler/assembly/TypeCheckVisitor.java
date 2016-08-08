@@ -7,6 +7,7 @@ import com.sealionsoftware.bali.compiler.ErrorCode;
 import com.sealionsoftware.bali.compiler.Method;
 import com.sealionsoftware.bali.compiler.Parameter;
 import com.sealionsoftware.bali.compiler.Type;
+import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalNode;
@@ -103,5 +104,21 @@ public class TypeCheckVisitor extends ValidatingVisitor {
 
     public void visit(OperationNode operationNode){
         visit((InvocationNode) operationNode);
+    }
+
+    public void visit(ArrayLiteralNode literalNode){
+        List<Parameter> typeArguments = literalNode.getType().getTypeArguments();
+        if (typeArguments.size() == 1){
+            Type argumentType = typeArguments.get(0).type;
+            for (ExpressionNode expressionNode : literalNode.getItems()){
+                if (!expressionNode.getType().isAssignableTo(argumentType)){
+                    failures.add(new CompileError(
+                            ErrorCode.INVALID_TYPE,
+                            expressionNode
+                    ));
+                }
+            }
+        }
+        visitChildren(literalNode);
     }
 }
