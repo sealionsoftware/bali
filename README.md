@@ -1,6 +1,6 @@
 bali
 ====
-[![Build Status](https://travis-ci.org/travis-examples/travis-java-ant-example.png?branch=master)](https://travis-ci.org/travis-examples/travis-java-ant-example)
+[![Build Status](https://travis-ci.org/sealionsoftware/bali.svg?branch=master)](https://travis-ci.org/sealionsoftware/bali)
 
 A simple imperative JVM dialect with compile time checking of null and concurrent safety.
 
