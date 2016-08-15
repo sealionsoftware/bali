@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 @Controller
-@CrossOrigin("http://sealionsoftware.github.io")
+@CrossOrigin({"http://sealionsoftware.github.io", "localhost"})
 @Scope("request")
 public class CompileController {
 
