@@ -1,6 +1,6 @@
 package bali;
 
-public interface Text extends ValueCollection<Character>, Value<Text> {
+public interface Text extends ValueGroup<Character>, Value<Text> {
 
 	Text uppercase();
 

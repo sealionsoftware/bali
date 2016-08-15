@@ -50,7 +50,8 @@ public final class CharArrayString implements Text {
 	}
 
 	public Character get(Integer index) {
-		return convert(characters[convert(index)]);
+        int i = convert(index);
+        return i > 0 && i <= characters.length ? convert(characters[i - 1]) : null;
 	}
 
 	public Iterator<Character> iterator() {

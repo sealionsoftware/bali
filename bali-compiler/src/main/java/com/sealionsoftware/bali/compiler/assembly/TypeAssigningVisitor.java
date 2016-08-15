@@ -1,5 +1,6 @@
 package com.sealionsoftware.bali.compiler.assembly;
 
+import bali.Group;
 import bali.Logic;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
@@ -38,7 +39,7 @@ public class TypeAssigningVisitor extends ValidatingVisitor {
     }
 
     public void visit(ArrayLiteralNode node) {
-        node.setType(new ClassBasedType(library.get(bali.Collection.class.getName()), asList(new InferredType(null))));
+        node.setType(new ClassBasedType(library.get(Group.class.getName()), asList(new InferredType(null))));
         visitChildren(node);
     }
 
