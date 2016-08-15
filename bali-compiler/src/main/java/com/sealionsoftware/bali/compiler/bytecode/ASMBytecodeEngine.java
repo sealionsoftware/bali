@@ -89,9 +89,9 @@ public class ASMBytecodeEngine implements BytecodeEngine, Opcodes {
         List<VariableInfo> variables = visitor.getVariables();
         int retIndex = variables.size() + 1;
 
-        methodVisitor.visitTypeInsn(NEW, "java/util/HashMap");
+        methodVisitor.visitTypeInsn(NEW, "java/util/LinkedHashMap");
         methodVisitor.visitInsn(DUP);
-        methodVisitor.visitMethodInsn(INVOKESPECIAL, "java/util/HashMap", "<init>", "()V", false);
+        methodVisitor.visitMethodInsn(INVOKESPECIAL, "java/util/LinkedHashMap", "<init>", "()V", false);
         methodVisitor.visitVarInsn(ASTORE, retIndex);
         Label retStart = new Label();
         methodVisitor.visitLabel(retStart);
