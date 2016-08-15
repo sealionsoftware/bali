@@ -112,4 +112,8 @@ public class HashMultiMap<K, V> implements MultiMap<K, V> {
     public String toString() {
         return delegate.toString();
     }
+
+    public Integer numberOfValues() {
+        return delegate.values().stream().mapToInt(Collection::size).sum();
+    }
 }

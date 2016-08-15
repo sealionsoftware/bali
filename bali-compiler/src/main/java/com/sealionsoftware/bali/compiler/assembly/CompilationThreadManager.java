@@ -92,7 +92,7 @@ public class CompilationThreadManager {
 	}
 
 	private void checkContinue() {
-		if (blockages.size() == monitoredThreads.size()) {
+		if (blockages.numberOfValues() == monitoredThreads.size()) {
             synchronized (launchMonitor) {
 				running = false;
 				launchMonitor.notifyAll();

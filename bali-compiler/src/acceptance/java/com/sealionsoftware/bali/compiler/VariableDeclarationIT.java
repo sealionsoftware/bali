@@ -42,9 +42,16 @@ public class VariableDeclarationIT {
     }
 
     @Test
+    public void testScriptContainingUnknownTypedVariable() {
+
+        Callable invocation = () -> interpreter.run("var Foo aVariable = true");
+        assertThat(invocation, throwsException(containingError(withCode(ErrorCode.UNKNOWN_TYPE))));
+    }
+
+    @Test
     public void testScriptContainingGenericTypedVariable() {
 
-        Map<String, Object> output = interpreter.run("var Collection[Logic] aVariable = [true]");
+        Map<String, Object> output = interpreter.run("var Group[Logic] aVariable = [true]");
 
         assertThat(output, hasEntry("aVariable", new Array<>(Logic.TRUE)));
     }
@@ -52,7 +59,7 @@ public class VariableDeclarationIT {
     @Test
     public void testScriptContainingIncorrectGenericTypedArgumets() {
 
-        Callable invocation = () -> interpreter.run("var Collection[Logic] aVariable = [1]");
+        Callable invocation = () -> interpreter.run("var Group[Logic] aVariable = [1]");
 
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
     }
@@ -60,7 +67,7 @@ public class VariableDeclarationIT {
     @Test
     public void testScriptContainingSomeIncorrectGenericTypedVariables() {
 
-        Callable invocation = () -> interpreter.run("var Collection[Logic] aVariable = [true, 1]");
+        Callable invocation = () -> interpreter.run("var Group[Logic] aVariable = [true, 1]");
 
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
     }
@@ -68,7 +75,7 @@ public class VariableDeclarationIT {
     @Test
     public void testScriptContainingUnboundedGenericTypedVariable() {
 
-        Map<String, Object> output = interpreter.run("var Collection aVariable = [true, 1]");
+        Map<String, Object> output = interpreter.run("var Group aVariable = [true, 1]");
 
         assertThat(output, hasEntry("aVariable", new Array<>(Logic.TRUE, new Int(1))));
     }
