@@ -2,6 +2,8 @@ package com.sealionsoftware.bali.compiler.assembly;
 
 import bali.Group;
 import bali.Logic;
+import com.sealionsoftware.bali.compiler.CompileError;
+import com.sealionsoftware.bali.compiler.ErrorCode;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
@@ -46,7 +48,18 @@ public class TypeAssigningVisitor extends ValidatingVisitor {
     public void visit(TypeNode node) {
         visitChildren(node);
         List<Type> resolvedArgumentTypes = node.getArguments().stream().map(TypeNode::getResolvedType).collect(Collectors.toList());
-        node.setResolvedType(new ClassBasedType(library.get("bali." + node.getName()), resolvedArgumentTypes));
+
+        Class clazz = library.get("bali." + node.getName());
+
+        if (clazz == null){
+            failures.add(new CompileError(
+                    ErrorCode.UNKNOWN_TYPE,
+                    node
+            ));
+            return;
+        }
+
+        node.setResolvedType(new ClassBasedType(clazz, resolvedArgumentTypes));
     }
 
 }

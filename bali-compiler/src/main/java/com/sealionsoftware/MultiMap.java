@@ -10,4 +10,6 @@ public interface MultiMap<K, V> extends Collection<Map.Entry<K, Collection<V>>> 
 
     Collection<V> values();
 
+    Integer numberOfValues();
+
 }
