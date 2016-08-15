@@ -35,7 +35,7 @@ public class InvocationIT {
     @Test
     public void testInvokingMethodWithParameter() {
 
-        Object output = interpreter.evaluate("\"Hello World\".contains(\"W\"#0) ");
+        Object output = interpreter.evaluate("\"Hello World\".contains(\"W\"#1) ");
         assertThat(output, equalTo(convert(true)));
     }
 
