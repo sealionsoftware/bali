@@ -1,7 +1,9 @@
 package com.sealionsoftware.bali.compiler.server;
 
 import bali.Character;
+import bali.Group;
 import bali.Integer;
+import bali.Iterator;
 import bali.Logic;
 import bali.Text;
 import com.fasterxml.jackson.core.Version;
@@ -36,7 +38,9 @@ public class BaliInterpreterServer {
                 .addSerializer(Logic.class, new LogicSerializer())
                 .addSerializer(Integer.class, new IntegerSerializer())
                 .addSerializer(Text.class, new TextSerializer())
-                .addSerializer(Character.class, new CharacterSerializer()));
+                .addSerializer(Character.class, new CharacterSerializer())
+                .addSerializer(Group.class, new GroupSerializer())
+                .addSerializer(Iterator.class, new IteratorSerializer()));
     }
 
     @Bean
