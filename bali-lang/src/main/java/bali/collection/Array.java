@@ -1,6 +1,6 @@
 package bali.collection;
 
-import bali.Collection;
+import bali.Group;
 import bali.Integer;
 import bali.Iterator;
 import bali.Logic;
@@ -10,7 +10,7 @@ import java.util.Arrays;
 import static bali.logic.Primitive.convert;
 import static bali.number.Primitive.convert;
 
-public class Array<T> implements Collection<T> {
+public class Array<T> implements Group<T> {
 
     private T[] items;
 
