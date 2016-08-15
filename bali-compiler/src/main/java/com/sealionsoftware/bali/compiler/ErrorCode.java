@@ -3,6 +3,7 @@ package com.sealionsoftware.bali.compiler;
 public enum ErrorCode {
 
     INVALID_TYPE,
+    UNKNOWN_TYPE,
     CANNOT_RESOLVE_REFERENCE,
     METHOD_NOT_FOUND,
     OPERATOR_NOT_FOUND,
