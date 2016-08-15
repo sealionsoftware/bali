@@ -8,6 +8,7 @@ public enum ErrorCode {
     METHOD_NOT_FOUND,
     OPERATOR_NOT_FOUND,
     INVALID_ARGUMENT_LIST,
+    VALUE_REQUIRED,
     UNKNOWN
 
 }

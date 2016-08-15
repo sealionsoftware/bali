@@ -11,6 +11,7 @@ import java.util.concurrent.Callable;
 import static com.sealionsoftware.Matchers.throwsException;
 import static com.sealionsoftware.bali.compiler.Matchers.containingError;
 import static com.sealionsoftware.bali.compiler.Matchers.withCode;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasEntry;
 
@@ -78,6 +79,23 @@ public class VariableDeclarationIT {
         Map<String, Object> output = interpreter.run("var Group aVariable = [true, 1]");
 
         assertThat(output, hasEntry("aVariable", new Array<>(Logic.TRUE, new Int(1))));
+    }
+
+    @Test
+    public void testDeclaringRequiredVariableWithoutValue() {
+
+        Callable invocation = () -> interpreter.run("var Text aVariable");
+
+        assertThat(invocation, throwsException(containingError(withCode(ErrorCode.VALUE_REQUIRED))));
+    }
+
+    @Test
+    public void testDeclaringOptionalVariable() {
+
+        Map<String, Object> output = interpreter.run("var Text? aVariable");
+
+        assertThat(output, notNullValue());
+        assertThat(output, hasEntry("aVariable", null));
     }
 
 
