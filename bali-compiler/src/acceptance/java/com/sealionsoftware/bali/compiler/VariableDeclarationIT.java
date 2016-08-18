@@ -58,7 +58,7 @@ public class VariableDeclarationIT {
     }
 
     @Test
-    public void testScriptContainingIncorrectGenericTypedArgumets() {
+    public void testScriptContainingIncorrectGenericTypedArguments() {
 
         Callable invocation = () -> interpreter.run("var Group[Logic] aVariable = [1]");
 
