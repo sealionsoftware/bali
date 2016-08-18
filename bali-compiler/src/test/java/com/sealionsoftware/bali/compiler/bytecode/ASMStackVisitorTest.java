@@ -106,6 +106,25 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
+    public void testVisitOptionalVariableDeclaration() throws Exception {
+
+        VariableNode node = new VariableNode(0, 0);
+        node.setName("aVariable");
+
+        subject.visit(node);
+
+        verify(visitor).visitLabel(any(Label.class));
+        verify(visitor).visitInsn(ACONST_NULL);
+        verify(visitor).visitVarInsn(ASTORE, 1);
+
+        List<VariableInfo> variables = subject.getVariables();
+        assertThat(variables, notNullValue());
+        assertThat(variables.size(), equalTo(1));
+        VariableInfo variableInfo = variables.get(0);
+        assertThat(variableInfo.node.getName(), equalTo("aVariable"));
+    }
+
+    @Test
     public void testVisitAssignment() throws Exception {
 
         ExpressionNode expressionNode = mock(ExpressionNode.class);

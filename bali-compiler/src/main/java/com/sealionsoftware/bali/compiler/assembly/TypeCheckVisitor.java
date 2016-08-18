@@ -35,12 +35,15 @@ public class TypeCheckVisitor extends ValidatingVisitor {
 
     public void visit(VariableNode node) {
         TypeNode variableType = node.getType();
-        Type valueType = node.getValue().getType();
-        if (variableType != null && (valueType == null || !valueType.isAssignableTo(variableType.getResolvedType()))){
-            failures.add(new CompileError(
-                    ErrorCode.INVALID_TYPE,
-                    node
-            ));
+        ExpressionNode value = node.getValue();
+        if (value != null){
+            Type valueType = node.getValue().getType();
+            if (variableType != null && (valueType == null || !valueType.isAssignableTo(variableType.getResolvedType()))){
+                failures.add(new CompileError(
+                        ErrorCode.INVALID_TYPE,
+                        node
+                ));
+            }
         }
         visitChildren(node);
     }

@@ -49,11 +49,14 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
         VariableNode node = new VariableNode(start.getLine(), start.getCharPositionInLine());
         node.setName(ctx.IDENTIFIER().getText());
         container.addStatement(node);
-        ASTExpressionVisitor expressionVisitor = new ASTExpressionVisitor(monitor);
-        node.setValue(ctx.expression().accept(expressionVisitor));
         BaliParser.TypeContext typeContext = ctx.type();
         if (typeContext != null){
             node.setType(buildType(typeContext));
+        }
+        BaliParser.ExpressionContext expressionContext = ctx.expression();
+        if (expressionContext != null){
+            ASTExpressionVisitor expressionVisitor = new ASTExpressionVisitor(monitor);
+            node.setValue(ctx.expression().accept(expressionVisitor));
         }
         return node;
     }

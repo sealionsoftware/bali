@@ -107,7 +107,13 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
     public void visit(VariableNode node) {
         Label varStart = new Label();
         methodVisitor.visitLabel(varStart);
-        visitChildren(node);
+        ExpressionNode value = node.getValue();
+        if (value != null) {
+            value.accept(this);
+        } else {
+            methodVisitor.visitInsn(ACONST_NULL);
+        }
+
         variables.add(new VariableInfo(
                 node,
                 varStart,
