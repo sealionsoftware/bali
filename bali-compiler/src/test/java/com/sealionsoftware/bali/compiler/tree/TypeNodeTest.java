@@ -43,6 +43,12 @@ public class TypeNodeTest {
     }
 
     @Test
+    public void testGetOptional() throws Exception {
+        subject.setOptional(true);
+        assertThat(subject.getOptional(), equalTo(true));
+    }
+
+    @Test
     public void testGetResolvedType() throws Exception {
         Type resolvedType = mock(Type.class);
         subject.setResolvedType(resolvedType);

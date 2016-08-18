@@ -10,6 +10,7 @@ public class TypeNode extends Node {
 
     private String name;
     private List<TypeNode> arguments;
+    private Boolean isOptional;
 
     private MonitoredProperty<Type> resolvedType;
 
@@ -33,6 +34,14 @@ public class TypeNode extends Node {
     public void setArguments(List<TypeNode> arguments) {
         children.addAll(arguments);
         this.arguments = arguments;
+    }
+
+    public Boolean getOptional() {
+        return isOptional;
+    }
+
+    public void setOptional(Boolean optional) {
+        isOptional = optional;
     }
 
     public Type getResolvedType() {

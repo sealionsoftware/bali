@@ -17,7 +17,8 @@ public class InterpreterAssemblySetFactoryTest {
                 instanceOf(TypeAssigningVisitor.class),
                 instanceOf(TypeCheckVisitor.class),
                 instanceOf(ReferenceMatchingVisitor.class),
-                instanceOf(InvocationMethodResolver.class)
+                instanceOf(InvocationMethodResolver.class),
+                instanceOf(RequiredVariableVisitor.class)
         ));
     }
 }

@@ -122,6 +122,7 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
         TypeNode node = new TypeNode(monitor, start.getLine(), start.getCharPositionInLine());
         node.setName(ctx.IDENTIFIER().getText());
         node.setArguments(ctx.type().stream().map(this::buildType).collect(Collectors.toList()));
+        node.setOptional(ctx.OPTIONAL_MODIFIER() != null);
         return node;
     }
 

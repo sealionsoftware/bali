@@ -65,7 +65,7 @@ public class AssignmentIT {
 
         Callable invocation = () -> interpreter.run(
                 "var Text? aVariable " +
-                "var Text anotherVariable " +
+                "var Text anotherVariable = \"Hello\" " +
                 "anotherVariable = aVariable");
 
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
