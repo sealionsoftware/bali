@@ -35,7 +35,7 @@ lineStatement:              expression
 
 controlStatement:           conditionalStatement | loopStatement;
 
-variableDeclaration:        'var' type? IDENTIFIER '=' expression ;
+variableDeclaration:        'var' type? IDENTIFIER ('=' expression)? ;
 
 assignment:                 reference '=' expression ;
 
@@ -49,7 +49,7 @@ expression:                 '(' expression ')'
 
 invocation:				    IDENTIFIER '(' ( argument ( ',' argument )* )? ')' ;
 
-type:                       IDENTIFIER ( '['  type ( ',' type)* ']' )? ;
+type:                       IDENTIFIER ( '['  type ( ',' type)* ']' )? '?' ? ;
 
 argument:                   expression ;
 
