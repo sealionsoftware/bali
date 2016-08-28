@@ -27,8 +27,8 @@ public class ClassBasedTypeTest {
 
     private Class template = mock(Class.class);
     private Type templateParameterType = mock(Type.class);
-    private Parameter templateParameterOne = new Parameter("T", templateParameterType);
-    private Parameter templateParameterTwo = new Parameter("U", templateParameterType);
+    private Parameter templateParameterOne = new Parameter("T", new Site(templateParameterType));
+    private Parameter templateParameterTwo = new Parameter("U", new Site(templateParameterType));
 
     private Type templateSuperType = mock(Type.class);
     private Type templateInterfaceType = mock(Type.class);
@@ -42,7 +42,7 @@ public class ClassBasedTypeTest {
 
     private Operator templateUnaryOperator = mock(Operator.class);
 
-    private ClassBasedType subject = new ClassBasedType(template, asList(typeArgumentType, typeArgumentType));
+    private ClassBasedType subject = new ClassBasedType(template, asList(new Site(typeArgumentType), new Site(typeArgumentType)));
 
     @Before
     public void setUp(){
@@ -58,14 +58,14 @@ public class ClassBasedTypeTest {
         when(templateInterfaceType.getClassName()).thenReturn("com.sealionsoftware.Interface");
         when(templateMethod.getName()).thenReturn("aMethod");
         when(templateMethod.getParameters()).thenReturn(asList(
-                new Parameter("aParameter", templateMethodParameterType),
-                new Parameter("anUnboundedParameter", new TypeVariable("T", null)))
+                new Parameter("aParameter",  new Site(templateMethodParameterType)),
+                new Parameter("anUnboundedParameter", new Site(new TypeVariable("T", null))))
         );
 
         when(templateOperator.getName()).thenReturn("anOperator");
         when(templateOperator.getSymbol()).thenReturn("+");
         when(templateOperator.getParameters()).thenReturn(asList(
-                new Parameter("aParameter", templateOperatorParameterType)
+                new Parameter("aParameter", new Site(templateOperatorParameterType))
         ));
 
         when(templateUnaryOperator.getName()).thenReturn("anUnaryOperator");
@@ -102,7 +102,7 @@ public class ClassBasedTypeTest {
     public void testGetParameterisedSuperType() throws Exception {
 
         Type templateSuperTypeTypeArgument = new TypeVariable("T", null);
-        when(templateSuperType.getTypeArguments()).thenReturn(asList(new Parameter("X", templateSuperTypeTypeArgument)));
+        when(templateSuperType.getTypeArguments()).thenReturn(asList(new Parameter("X", new Site(templateSuperTypeTypeArgument))));
 
         Class templateSuperTypeTemplate = mock(Class.class);
         when(templateSuperType.getTemplate()).thenReturn(templateSuperTypeTemplate);
@@ -126,7 +126,7 @@ public class ClassBasedTypeTest {
     public void testGetParameterisedInterfaces() throws Exception {
 
         Type templateInterfaceTypeTypeArgument = new TypeVariable("T", null);
-        when(templateInterfaceType.getTypeArguments()).thenReturn(asList(new Parameter("X", templateInterfaceTypeTypeArgument)));
+        when(templateInterfaceType.getTypeArguments()).thenReturn(asList(new Parameter("X", new Site(templateInterfaceTypeTypeArgument))));
 
         Class templateInterfaceTypeTemplate = mock(Class.class);
         when(templateInterfaceType.getTemplate()).thenReturn(templateInterfaceTypeTemplate);
@@ -154,7 +154,7 @@ public class ClassBasedTypeTest {
         Type otherArgumentType = mock(Type.class);
 
         when(other.getClassName()).thenReturn("com.sealionsoftware.Test");
-        when(other.getTypeArguments()).thenReturn(asList(new Parameter("T", otherArgumentType)));
+        when(other.getTypeArguments()).thenReturn(asList(new Parameter("T", new Site(otherArgumentType))));
         when(typeArgumentType.isAssignableTo(otherArgumentType)).thenReturn(true);
 
         assertThat(subject.isAssignableTo(other), is(true));
@@ -165,7 +165,7 @@ public class ClassBasedTypeTest {
 
         Type other = mock(Type.class);
         Type otherArgumentType = mock(Type.class);
-        Parameter otherArgument = new Parameter("T", otherArgumentType);
+        Parameter otherArgument = new Parameter("T", new Site(otherArgumentType));
         when(other.getClassName()).thenReturn("com.sealionsoftware.Test");
         when(other.getTypeArguments()).thenReturn(asList(otherArgument));
         when(typeArgumentType.isAssignableTo(otherArgumentType)).thenReturn(false);
@@ -223,11 +223,11 @@ public class ClassBasedTypeTest {
         Iterator<Parameter> parameters = typeMethod.getParameters().iterator();
         Parameter one = parameters.next();
         assertThat(one.name, equalTo("aParameter"));
-        assertThat(one.type, is(templateMethodParameterType));
+        assertThat(one.site.type, is(templateMethodParameterType));
 
         Parameter two = parameters.next();
         assertThat(two.name, equalTo("anUnboundedParameter"));
-        assertThat(two.type, is(typeArgumentType));
+        assertThat(two.site.type, is(typeArgumentType));
 
     }
 
@@ -252,7 +252,7 @@ public class ClassBasedTypeTest {
         Iterator<Parameter> parameters = typeOperator.getParameters().iterator();
         Parameter one = parameters.next();
         assertThat(one.name, equalTo("aParameter"));
-        assertThat(one.type, is(templateOperatorParameterType));
+        assertThat(one.site.type, is(templateOperatorParameterType));
 
     }
 

@@ -72,4 +72,12 @@ public class InvocationIT {
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.METHOD_NOT_FOUND))));
     }
 
+    @Test
+    public void testInvokingMethodOnOptionalVariable() {
+        Callable invocation = () -> interpreter.run(
+                "var Text? maybeText " +
+                "maybeText.size()");
+        assertThat(invocation, throwsException(containingError(withCode(ErrorCode.CANNOT_INVOKE_ON_OPTIONAL))));
+    }
+
 }

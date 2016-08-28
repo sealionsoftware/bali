@@ -1,7 +1,7 @@
 package com.sealionsoftware.bali.compiler.assembly;
 
 import com.sealionsoftware.bali.compiler.ErrorCode;
-import com.sealionsoftware.bali.compiler.Type;
+import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
@@ -42,7 +42,7 @@ public class ReferenceMatchingVisitorTest {
 
         CompilationThreadManager mockMonitor = mock(CompilationThreadManager.class);
         TypeNode typeNode = mock(TypeNode.class);
-        typeNode.setResolvedType(mock(Type.class));
+        typeNode.setResolvedType(mock(Site.class));
 
         VariableNode variableNode = new VariableNode(2, 3);
         variableNode.setName("aVariable");

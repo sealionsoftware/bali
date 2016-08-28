@@ -1,6 +1,7 @@
 package com.sealionsoftware.bali.compiler.type;
 
 import com.sealionsoftware.bali.compiler.Parameter;
+import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.Type;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureVisitor;
@@ -20,10 +21,10 @@ public class ClassSignatureVisitor extends SignatureVisitor implements Opcodes {
     private TypeSignatureVisitor superClassVisitor;
 
     private Deque<TypeContext> typeParamStack = new LinkedList<>();
-    private Map<String, Type> typeVariableBounds;
+    private Map<String, Site> typeVariableBounds;
 
 
-    public ClassSignatureVisitor(ClasspathClassFactory library, Map<String, Type> typeVariableBounds) {
+    public ClassSignatureVisitor(ClasspathClassFactory library, Map<String, Site> typeVariableBounds) {
         super(ASM5);
         this.library = library;
         this.typeVariableBounds = typeVariableBounds;
@@ -55,16 +56,16 @@ public class ClassSignatureVisitor extends SignatureVisitor implements Opcodes {
     }
 
     public List<Parameter> getTypeParameters() {
-        return typeParamStack.stream().map((context) -> new Parameter(context.name, context.typeVisitor.getType())).collect(Collectors.toList());
+        return typeParamStack.stream().map((context) -> new Parameter(context.name, context.typeVisitor.getSite())).collect(Collectors.toList());
     }
 
     public List<Type> getInterfaces() {
-        return interfaceVisitors.stream().map(TypeSignatureVisitor::getType).collect(Collectors.toList());
+        return interfaceVisitors.stream().map((item) -> item.getSite().type).collect(Collectors.toList());
 
     }
 
     public Type getSuperType() {
-        return superClassVisitor != null ? superClassVisitor.getType() : null;
+        return superClassVisitor != null ? superClassVisitor.getSite() != null ? superClassVisitor.getSite().type : null : null;
     }
 
 }

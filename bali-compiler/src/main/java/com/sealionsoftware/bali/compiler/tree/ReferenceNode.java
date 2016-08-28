@@ -1,7 +1,7 @@
 package com.sealionsoftware.bali.compiler.tree;
 
 
-import com.sealionsoftware.bali.compiler.Type;
+import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.assembly.VariableData;
 import com.sealionsoftware.bali.compiler.reference.MonitoredProperty;
@@ -36,7 +36,7 @@ public class ReferenceNode extends ExpressionNode {
         visitor.visit(this);
     }
 
-    public Type getType() {
+    public Site getSite() {
         return variableData.get().type;
     }
 }

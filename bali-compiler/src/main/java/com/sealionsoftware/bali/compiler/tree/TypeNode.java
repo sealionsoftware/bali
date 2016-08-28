@@ -1,6 +1,6 @@
 package com.sealionsoftware.bali.compiler.tree;
 
-import com.sealionsoftware.bali.compiler.Type;
+import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.reference.MonitoredProperty;
 
@@ -10,8 +10,9 @@ public class TypeNode extends Node {
 
     private String name;
     private List<TypeNode> arguments;
+    private Boolean isOptional;
 
-    private MonitoredProperty<Type> resolvedType;
+    private MonitoredProperty<Site> resolvedType;
 
     public TypeNode(CompilationThreadManager monitor, Integer line, Integer character) {
         super(line, character);
@@ -35,11 +36,19 @@ public class TypeNode extends Node {
         this.arguments = arguments;
     }
 
-    public Type getResolvedType() {
+    public Boolean getOptional() {
+        return isOptional;
+    }
+
+    public void setOptional(Boolean optional) {
+        isOptional = optional;
+    }
+
+    public Site getResolvedType() {
         return resolvedType.get();
     }
 
-    public void setResolvedType(Type resolvedType) {
+    public void setResolvedType(Site resolvedType) {
         this.resolvedType.set(resolvedType);
     }
 

@@ -3,6 +3,7 @@ package com.sealionsoftware.bali.compiler.type;
 import com.sealionsoftware.bali.compiler.Method;
 import com.sealionsoftware.bali.compiler.Operator;
 import com.sealionsoftware.bali.compiler.Parameter;
+import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.Type;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
@@ -34,7 +35,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor implements Opcodes
     private List<Operator> operators = new ArrayList<>();
     private List<Operator> unaryOperators = new ArrayList<>();
 
-    private Map<String, Type> typeVariableBounds = new HashMap<>();
+    private Map<String, Site> typeVariableBounds = new HashMap<>();
 
     public ClassPathTypeBuilderVisitor(ClasspathClassFactory library, String name) {
         super(ASM5);
@@ -50,7 +51,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor implements Opcodes
 
             typeParameters = visitor.getTypeParameters();
             for (Parameter typeParameter : typeParameters){
-                Type bound = typeParameter.type;
+                Site bound = typeParameter.site;
                 typeVariableBounds.put(typeParameter.name, bound);
             }
 
@@ -75,7 +76,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor implements Opcodes
 
     public MethodVisitor visitMethod(int access, final String name, final String desc, final String signature, String[] exceptions) {
 
-        final Type returnType;
+        final Site returnType;
         final List<Parameter> parameters;
 
         if(signature != null) {
@@ -83,12 +84,11 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor implements Opcodes
             new SignatureReader(signature).accept(visitor);
             returnType = visitor.getReturnType();
             parameters = visitor.getParameterTypes().stream().map((type) -> new Parameter(null, type)).collect(Collectors.toList());
-
         }  else {
             org.objectweb.asm.Type methodType = org.objectweb.asm.Type.getMethodType(desc);
             org.objectweb.asm.Type methodReturnType = methodType.getReturnType();
-            returnType = methodReturnType.getClassName().equals(void.class.getName()) ? null : new ClassBasedType(library.get(methodReturnType.getClassName()));
-            parameters = stream(methodType.getArgumentTypes()).map((type) -> new Parameter(null, new ClassBasedType(library.get(type.getClassName())))).collect(Collectors.toList());
+            returnType = methodReturnType.getClassName().equals(void.class.getName()) ? null : new Site(new ClassBasedType(library.get(methodReturnType.getClassName())), false);
+            parameters = stream(methodType.getArgumentTypes()).map((type) -> new Parameter(null, new Site(new ClassBasedType(library.get(type.getClassName())), false))).collect(Collectors.toList());
         }
 
         return new MethodVisitor(Opcodes.ASM4, super.visitMethod(access, name, desc, signature, exceptions)) {
@@ -155,6 +155,5 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor implements Opcodes
     private static String fromLocalName(String in){
         return in.replaceAll("/", ".");
     }
-
 
 }

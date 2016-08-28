@@ -5,24 +5,24 @@ import java.util.List;
 
 public class Method {
 
-    private Type returnType;
+    private Site returnType;
     private String name;
 	private List<Parameter> parameters;
 
     private Method templateMethod;
 
-    public Method(String name, Type returnType, List<Parameter> parameters, Method templateMethod) {
+    public Method(String name, Site returnType, List<Parameter> parameters, Method templateMethod) {
         this.returnType = returnType;
         this.name = name;
         this.parameters = parameters;
         this.templateMethod = templateMethod;
     }
 
-    public Method(String name, Type returnType, List<Parameter> parameters) {
+    public Method(String name, Site returnType, List<Parameter> parameters) {
         this(name, returnType, parameters, null);
 	}
 
-    public Type getReturnType() {
+    public Site getReturnType() {
         return returnType;
     }
 

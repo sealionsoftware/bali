@@ -1,6 +1,7 @@
 package com.sealionsoftware.bali.compiler.bytecode;
 
 import com.sealionsoftware.bali.compiler.Method;
+import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.assembly.DescendingVisitor;
 import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
@@ -45,7 +46,7 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
 
     public void visit(ExpressionStatementNode node) {
         visitChildren(node);
-        if (node.getExpressionNode().getType() != null){
+        if (node.getExpressionNode().getSite() != null){
             methodVisitor.visitInsn(POP);
         }
     }
@@ -107,7 +108,13 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
     public void visit(VariableNode node) {
         Label varStart = new Label();
         methodVisitor.visitLabel(varStart);
-        visitChildren(node);
+        ExpressionNode value = node.getValue();
+        if (value != null) {
+            value.accept(this);
+        } else {
+            methodVisitor.visitInsn(ACONST_NULL);
+        }
+
         variables.add(new VariableInfo(
                 node,
                 varStart,
@@ -192,9 +199,9 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
         Method signatureMethod = node.getResolvedMethod().getTemplateMethod();
 
         methodVisitor.visitMethodInsn(INVOKEINTERFACE,
-                toLocalName(target.getType()),
+                toLocalName(target.getSite()),
                 signatureMethod.getName(),
-                toSignature(signatureMethod.getReturnType(), signatureMethod.getParameters().stream().map((item) -> item.type).collect(Collectors.toList())),
+                toSignature(signatureMethod.getReturnType(), signatureMethod.getParameters().stream().map((item) -> item.site).collect(Collectors.toList())),
                 true);
     }
 
@@ -206,15 +213,19 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
         return variables;
     }
 
+    private static String toLocalName(Site site){
+        return toLocalName(site == null ? null : site.type);
+    }
+
     private static String toLocalName(Type type){
         return (type == null || type.getClassName() == null ? Object.class.getName() : type.getClassName()).replaceAll("\\.", "/");
     }
 
-    private static String toSignature(Type type){
+    private static String toSignature(Site type){
         return "L" + toLocalName(type) + ";";
     }
 
-    private static String toSignature(Type returnType, List<Type> parameterTypes){
+    private static String toSignature(Site returnType, List<Site> parameterTypes){
         return "(" + parameterTypes.stream().map(ASMStackVisitor::toSignature).collect(Collectors.joining(","))+ ")" + (returnType == null ? "V" : toSignature(returnType));
     }
 

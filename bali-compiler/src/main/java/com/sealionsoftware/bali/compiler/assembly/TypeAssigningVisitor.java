@@ -4,7 +4,7 @@ import bali.Group;
 import bali.Logic;
 import com.sealionsoftware.bali.compiler.CompileError;
 import com.sealionsoftware.bali.compiler.ErrorCode;
-import com.sealionsoftware.bali.compiler.Type;
+import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.LogicLiteralNode;
@@ -29,25 +29,25 @@ public class TypeAssigningVisitor extends ValidatingVisitor {
     }
 
     public void visit(LogicLiteralNode node) {
-        node.setType(new ClassBasedType(library.get(Logic.class.getName())));
+        node.setSite(new Site(new ClassBasedType(library.get(Logic.class.getName())), false));
     }
 
     public void visit(TextLiteralNode node) {
-        node.setType(new ClassBasedType(library.get(bali.Text.class.getName())));
+        node.setSite(new Site(new ClassBasedType(library.get(bali.Text.class.getName())), false));
     }
 
     public void visit(IntegerLiteralNode node) {
-        node.setType(new ClassBasedType(library.get(bali.Integer.class.getName())));
+        node.setSite(new Site(new ClassBasedType(library.get(bali.Integer.class.getName())), false));
     }
 
     public void visit(ArrayLiteralNode node) {
-        node.setType(new ClassBasedType(library.get(Group.class.getName()), asList(new InferredType(null))));
+        node.setSite(new Site(new ClassBasedType(library.get(Group.class.getName()), asList(new Site(new InferredType(null), false))), false));
         visitChildren(node);
     }
 
     public void visit(TypeNode node) {
         visitChildren(node);
-        List<Type> resolvedArgumentTypes = node.getArguments().stream().map(TypeNode::getResolvedType).collect(Collectors.toList());
+        List<Site> resolvedArgumentTypes = node.getArguments().stream().map(TypeNode::getResolvedType).collect(Collectors.toList());
 
         Class clazz = library.get("bali." + node.getName());
 
@@ -59,7 +59,7 @@ public class TypeAssigningVisitor extends ValidatingVisitor {
             return;
         }
 
-        node.setResolvedType(new ClassBasedType(clazz, resolvedArgumentTypes));
+        node.setResolvedType(new Site(new ClassBasedType(clazz, resolvedArgumentTypes), node.getOptional()));
     }
 
 }

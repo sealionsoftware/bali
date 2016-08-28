@@ -4,6 +4,7 @@ import com.sealionsoftware.Collections.Each;
 import com.sealionsoftware.bali.compiler.Method;
 import com.sealionsoftware.bali.compiler.Operator;
 import com.sealionsoftware.bali.compiler.Parameter;
+import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.Type;
 
 import java.util.ArrayList;
@@ -20,9 +21,9 @@ import static java.util.Collections.unmodifiableList;
 public class ClassBasedType implements Type {
 
     private Class template;
-    private List<Type> typeArguments;
+    private List<Site> typeArguments;
 
-    private Map<String, Type> typeArgumentMap;
+    private Map<String, Site> typeArgumentMap;
 
     private boolean superTypeInitialised = false;
     private Type superType;
@@ -36,7 +37,7 @@ public class ClassBasedType implements Type {
         this(template, emptyList());
     }
 
-    public ClassBasedType(Class template, List<Type> typeArguments) {
+    public ClassBasedType(Class template, List<Site> typeArguments) {
         this.template = template;
         this.typeArguments = typeArguments;
     }
@@ -99,7 +100,7 @@ public class ClassBasedType implements Type {
             List<Parameter> rawParameters = rawMethod.getParameters();
             List<Parameter> parameterisedParameters = new ArrayList<>(rawParameters.size());
             for (Parameter rawParameter : rawParameters){
-                parameterisedParameters.add(new Parameter(rawParameter.name, parameterise(rawParameter.type)));
+                parameterisedParameters.add(new Parameter(rawParameter.name, parameterise(rawParameter.site)));
             }
             methods.put(
                     rawMethod.getName(),
@@ -132,7 +133,7 @@ public class ClassBasedType implements Type {
 
     private void initaliseTypeArguments() {
         typeArgumentMap = new HashMap<>();
-        for (Each<Parameter, Type> item : both(template.getTypeParameters(), typeArguments)){
+        for (Each<Parameter, Site> item : both(template.getTypeParameters(), typeArguments)){
             typeArgumentMap.put(item.i.name, item.j);
         }
     }
@@ -149,8 +150,8 @@ public class ClassBasedType implements Type {
 
         if (template.getClassName().equals(other.getClassName())) {
             for (Parameter argument : other.getTypeArguments()){
-                Type typeArgument = typeArgumentMap.get(argument.name);
-                if (!typeArgument.isAssignableTo(argument.type)) {
+                Site typeArgument = typeArgumentMap.get(argument.name);
+                if (!typeArgument.isAssignableTo(argument.site)) {
                     return false;
                 }
             }
@@ -214,7 +215,7 @@ public class ClassBasedType implements Type {
             List<Parameter> rawParameters = rawOperator.getParameters();
             List<Parameter> parameterisedParameters = new ArrayList<>(rawParameters.size());
             for (Parameter rawParameter : rawParameters) {
-                parameterisedParameters.add(new Parameter(rawParameter.name, parameterise(rawParameter.type)));
+                parameterisedParameters.add(new Parameter(rawParameter.name, parameterise(rawParameter.site)));
             }
             operators.put(
                     rawOperator.getSymbol(),
@@ -241,11 +242,13 @@ public class ClassBasedType implements Type {
         this.unaryOperators = parameteriseOperators(rawOperators);
     }
 
-    private Type parameterise(Type raw){
+    private Site parameterise(Site site){
 
-        if (raw == null){
+        if (site == null){
             return null;
         }
+
+        Type raw = site.type;
 
         if (raw instanceof TypeVariable){
 
@@ -257,16 +260,24 @@ public class ClassBasedType implements Type {
             return typeArgumentMap.get(vt.getName());
         }
 
+        Type parameterised = parameterise(raw);
+
+        return new Site(parameterised, site.isOptional);
+    }
+
+    private Type parameterise(Type raw){
+
+        if (raw == null){
+            return null;
+        }
+
         List<Parameter> arguments = raw.getTypeArguments();
 
         if (arguments.isEmpty()){
             return raw;
         }
 
-        List<Type> newArguments = new ArrayList<>(arguments.size());
-        for (Parameter argument : arguments){
-            newArguments.add(parameterise(argument.type));
-        }
+        List<Site> newArguments = arguments.stream().map(argument -> parameterise(argument.site)).collect(Collectors.toList());
 
         return new ClassBasedType(raw.getTemplate(), newArguments);
     }
@@ -276,7 +287,7 @@ public class ClassBasedType implements Type {
         StringBuilder builder = new StringBuilder(template.getClassName());
         if (typeArguments != null && !typeArguments.isEmpty()){
             builder.append("<");
-            Iterator<Type> i = typeArguments.iterator();
+            Iterator<Site> i = typeArguments.iterator();
             builder.append(i.next());
             while (i.hasNext()){
                 builder.append(", ").append(i.next());

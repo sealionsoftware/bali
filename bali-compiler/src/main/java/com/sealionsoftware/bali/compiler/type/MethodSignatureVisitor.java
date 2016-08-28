@@ -1,6 +1,6 @@
 package com.sealionsoftware.bali.compiler.type;
 
-import com.sealionsoftware.bali.compiler.Type;
+import com.sealionsoftware.bali.compiler.Site;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureVisitor;
 
@@ -16,9 +16,9 @@ public class MethodSignatureVisitor extends SignatureVisitor {
 
     private TypeSignatureVisitor returnTypeVisitor ;
     private List<TypeSignatureVisitor> parameterVisitors = new ArrayList<>();
-    private Map<String, Type> typeVariableBounds;
+    private Map<String, Site> typeVariableBounds;
 
-    public MethodSignatureVisitor(ClasspathClassFactory library, Map<String, Type> typeVariableBounds) {
+    public MethodSignatureVisitor(ClasspathClassFactory library, Map<String, Site> typeVariableBounds) {
         super(Opcodes.ASM5);
         this.library = library;
         this.typeVariableBounds = typeVariableBounds;
@@ -35,11 +35,11 @@ public class MethodSignatureVisitor extends SignatureVisitor {
         return visitor;
     }
 
-    public Type getReturnType() {
-        return returnTypeVisitor.getType();
+    public Site getReturnType() {
+        return returnTypeVisitor.getSite();
     }
 
-    public List<Type> getParameterTypes() {
-        return parameterVisitors.stream().map(TypeSignatureVisitor::getType).collect(Collectors.toList());
+    public List<Site> getParameterTypes() {
+        return parameterVisitors.stream().map(TypeSignatureVisitor::getSite).collect(Collectors.toList());
     }
 }

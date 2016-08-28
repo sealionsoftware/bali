@@ -1,6 +1,6 @@
 package com.sealionsoftware.bali.compiler.tree;
 
-import com.sealionsoftware.bali.compiler.Type;
+import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -47,8 +47,8 @@ public class ArrayLiteralNodeTest {
     }
 
     @Test
-    public void testGetType() throws Exception {
-        Type type = mock(Type.class);
-        subject.setType(type);
-        assertThat(subject.getType(), Is.is(type));
+    public void testGetSite() throws Exception {
+        Site site = mock(Site.class);
+        subject.setSite(site);
+        assertThat(subject.getSite(), Is.is(site));
     }}

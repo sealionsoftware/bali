@@ -6,7 +6,7 @@ import com.sealionsoftware.bali.compiler.CompileError;
 import com.sealionsoftware.bali.compiler.ErrorCode;
 import com.sealionsoftware.bali.compiler.Method;
 import com.sealionsoftware.bali.compiler.Parameter;
-import com.sealionsoftware.bali.compiler.Type;
+import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
@@ -22,6 +22,7 @@ import com.sealionsoftware.bali.compiler.type.ClassBasedType;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.sealionsoftware.Collections.both;
 
@@ -35,19 +36,22 @@ public class TypeCheckVisitor extends ValidatingVisitor {
 
     public void visit(VariableNode node) {
         TypeNode variableType = node.getType();
-        Type valueType = node.getValue().getType();
-        if (variableType != null && (valueType == null || !valueType.isAssignableTo(variableType.getResolvedType()))){
-            failures.add(new CompileError(
-                    ErrorCode.INVALID_TYPE,
-                    node
-            ));
+        ExpressionNode value = node.getValue();
+        if (value != null){
+            Site valueType = node.getValue().getSite();
+            if (variableType != null && (valueType == null || !valueType.isAssignableTo(variableType.getResolvedType()))){
+                failures.add(new CompileError(
+                        ErrorCode.INVALID_TYPE,
+                        node
+                ));
+            }
         }
         visitChildren(node);
     }
 
     public void visit(AssignmentNode node) {
-        Type targetType = node.getTarget().getVariableData().type;
-        Type valueType =  node.getValue().getType();
+        Site targetType = node.getTarget().getVariableData().type;
+        Site valueType =  node.getValue().getSite();
         if (targetType != null && (valueType == null || !valueType.isAssignableTo(targetType))){
             failures.add(new CompileError(
                     ErrorCode.INVALID_TYPE,
@@ -66,8 +70,8 @@ public class TypeCheckVisitor extends ValidatingVisitor {
     }
 
     private void visitConditional(ConditionalNode node) {
-        Type targetType = new ClassBasedType(library.get(Logic.class.getName()));
-        Type valueType =  node.getCondition().getType();
+        Site targetType = new Site(new ClassBasedType(library.get(Logic.class.getName())), true);
+        Site valueType =  node.getCondition().getSite();
         if (valueType == null || !valueType.isAssignableTo(targetType)){
             failures.add(new CompileError(
                     ErrorCode.INVALID_TYPE,
@@ -91,7 +95,7 @@ public class TypeCheckVisitor extends ValidatingVisitor {
         }
 
         for (Each<Parameter, ExpressionNode> pair : both(parameterList, argumentNodes)){
-            if (!pair.j.getType().isAssignableTo(pair.i.type)){
+            if (!pair.j.getSite().isAssignableTo(pair.i.site)){
                 failures.add(new CompileError(
                         ErrorCode.INVALID_TYPE,
                         pair.j
@@ -107,17 +111,13 @@ public class TypeCheckVisitor extends ValidatingVisitor {
     }
 
     public void visit(ArrayLiteralNode literalNode){
-        List<Parameter> typeArguments = literalNode.getType().getTypeArguments();
+        List<Parameter> typeArguments = literalNode.getSite().type.getTypeArguments();
         if (typeArguments.size() == 1){
-            Type argumentType = typeArguments.get(0).type;
-            for (ExpressionNode expressionNode : literalNode.getItems()){
-                if (!expressionNode.getType().isAssignableTo(argumentType)){
-                    failures.add(new CompileError(
-                            ErrorCode.INVALID_TYPE,
-                            expressionNode
-                    ));
-                }
-            }
+            Site argumentType = typeArguments.get(0).site;
+            failures.addAll(literalNode.getItems().stream().filter(expressionNode -> !expressionNode.getSite().isAssignableTo(argumentType)).map(expressionNode -> new CompileError(
+                    ErrorCode.INVALID_TYPE,
+                    expressionNode
+            )).collect(Collectors.toList()));
         }
         visitChildren(literalNode);
     }

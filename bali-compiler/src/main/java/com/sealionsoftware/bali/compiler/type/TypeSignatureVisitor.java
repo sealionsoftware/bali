@@ -1,6 +1,6 @@
 package com.sealionsoftware.bali.compiler.type;
 
-import com.sealionsoftware.bali.compiler.Type;
+import com.sealionsoftware.bali.compiler.Site;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureVisitor;
 
@@ -12,14 +12,14 @@ import java.util.stream.Collectors;
 public class TypeSignatureVisitor extends SignatureVisitor {
 
 	private ClasspathClassFactory library;
-	private Map<String, Type> typeVariableBounds;
+	private Map<String, Site> typeVariableBounds;
 
-	private Type type;
+	private Site type;
 
 	private Class template;
 	private List<TypeSignatureVisitor> typeArgumentVisitors = new ArrayList<>();
 
-	public TypeSignatureVisitor(ClasspathClassFactory library, Map<String, Type> typeVariableBounds) {
+	public TypeSignatureVisitor(ClasspathClassFactory library, Map<String, Site> typeVariableBounds) {
 		super(Opcodes.ASM5);
 		this.library = library;
 		this.typeVariableBounds = typeVariableBounds;
@@ -31,23 +31,24 @@ public class TypeSignatureVisitor extends SignatureVisitor {
 			return;
 		}
 
-        type = new ClassBasedType(
+        type = new Site(new ClassBasedType(
                 template,
                 typeArgumentVisitors
                         .stream()
-                        .map(TypeSignatureVisitor::getType)
+                        .map(TypeSignatureVisitor::getSite)
                         .collect(Collectors.toList())
-        );
+        ), false);
 
 		super.visitEnd();
 	}
 
 	public void visitTypeVariable(String name) {
-		type = new TypeVariable(name, typeVariableBounds.get(name));
+        Site bound = typeVariableBounds.get(name);
+		type = bound != null ? new Site(new TypeVariable(name, bound.type), bound.isOptional) : new Site(new TypeVariable(name));
 	}
 
 	public void visitTypeArgument() {
-		throw new RuntimeException("Unbounded type arguments are not supported");
+		throw new RuntimeException("Unbounded site arguments are not supported");
 	}
 
 	public SignatureVisitor visitTypeArgument(char wildcard) {
@@ -71,7 +72,7 @@ public class TypeSignatureVisitor extends SignatureVisitor {
 		template = library.get(canonicalName);
 	}
 
-	public Type getType() {
+	public Site getSite() {
 		return type;
 	}
 }

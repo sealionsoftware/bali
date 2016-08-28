@@ -20,7 +20,9 @@ public class AssignmentIT {
     @Test
     public void testAssigningUntypedVariable() {
 
-        Map<String, Object> output = interpreter.run("var aVariable = false aVariable = true");
+        Map<String, Object> output = interpreter.run(
+                "var aVariable = false " +
+                "aVariable = true");
 
         assertThat(output, notNullValue());
         assertThat(output, hasEntry("aVariable", Logic.TRUE));
@@ -29,7 +31,9 @@ public class AssignmentIT {
     @Test
     public void testAssigningTypedVariable() {
 
-        Map<String, Object> output = interpreter.run("var Logic aVariable = false aVariable = true");
+        Map<String, Object> output = interpreter.run(
+                "var Logic aVariable = false " +
+                "aVariable = true");
 
         assertThat(output, notNullValue());
         assertThat(output, hasEntry("aVariable", Logic.TRUE));
@@ -38,9 +42,33 @@ public class AssignmentIT {
     @Test
     public void testScriptContainingIncorrectlyTypedVariable() {
 
-        Callable invocation = () -> interpreter.run("var Text aVariable = \"Hello World\" aVariable = true");
+        Callable invocation = () -> interpreter.run(
+                "var Text aVariable = \"Hello World\" " +
+                "aVariable = true");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
 
+    }
+
+    @Test
+    public void testAssigningOptionalVariable() {
+
+        Map<String, Object> output = interpreter.run(
+                "var Logic? aVariable " +
+                "aVariable = true");
+
+        assertThat(output, notNullValue());
+        assertThat(output, hasEntry("aVariable", Logic.TRUE));
+    }
+
+    @Test
+    public void testAssigningOptionalValueToRequiredVariable() {
+
+        Callable invocation = () -> interpreter.run(
+                "var Text? aVariable " +
+                "var Text anotherVariable = \"Hello\" " +
+                "anotherVariable = aVariable");
+
+        assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
     }
 
 }

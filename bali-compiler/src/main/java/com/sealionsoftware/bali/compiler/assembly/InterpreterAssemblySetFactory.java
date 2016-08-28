@@ -23,7 +23,8 @@ public class InterpreterAssemblySetFactory implements AssemblerSetFactory {
                 new TypeAssigningVisitor(library),
                 new TypeCheckVisitor(library),
                 new ReferenceMatchingVisitor(),
-                new InvocationMethodResolver()
+                new InvocationMethodResolver(),
+                new RequiredVariableVisitor()
         );
     }
 }

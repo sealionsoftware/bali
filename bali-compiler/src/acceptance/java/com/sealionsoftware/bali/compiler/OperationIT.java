@@ -1,5 +1,6 @@
 package com.sealionsoftware.bali.compiler;
 
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 import java.util.concurrent.Callable;
@@ -45,6 +46,14 @@ public class OperationIT {
     public void testInvalidReturnType() {
         Callable invocation = () -> interpreter.run("var Logic ret = 1 + 1");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
+    }
+
+    @Test
+    public void testOperatorOnOptionalVariable() {
+        Callable invocation = () -> interpreter.run(
+                "var Text? maybeText " +
+                "maybeText + \" append\" ");
+        MatcherAssert.assertThat(invocation, throwsException(containingError(withCode(ErrorCode.CANNOT_INVOKE_ON_OPTIONAL))));
     }
 
 }

@@ -3,6 +3,7 @@ package com.sealionsoftware.bali.compiler.type;
 import com.sealionsoftware.bali.compiler.Method;
 import com.sealionsoftware.bali.compiler.Operator;
 import com.sealionsoftware.bali.compiler.Parameter;
+import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.Type;
 import org.junit.Test;
 
@@ -91,7 +92,7 @@ public class TypeVariableTest {
     @Test
     public void testGetTypeArguments() throws Exception {
 
-        Type typeArgument = mock(Type.class);
+        Site typeArgument = mock(Site.class);
         Parameter parameter = new Parameter("aTypeArgument", typeArgument);
         when(bound.getTypeArguments()).thenReturn(asList(parameter));
 

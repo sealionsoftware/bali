@@ -15,6 +15,8 @@ INTEGER_LITERAL:            [0] | [1-9][0-9]*;
 
 OPERATOR:                   [\+\-$%\^&\*#\~/\\\|=<>¬¦`!]+ ;
 
+OPTIONAL_MODIFIER:          [?];
+
 // Grammar Definition
 
 script:                     statement* ;
@@ -35,7 +37,7 @@ lineStatement:              expression
 
 controlStatement:           conditionalStatement | loopStatement;
 
-variableDeclaration:        'var' type? IDENTIFIER '=' expression ;
+variableDeclaration:        'var' type? IDENTIFIER ('=' expression)? ;
 
 assignment:                 reference '=' expression ;
 
@@ -49,7 +51,7 @@ expression:                 '(' expression ')'
 
 invocation:				    IDENTIFIER '(' ( argument ( ',' argument )* )? ')' ;
 
-type:                       IDENTIFIER ( '['  type ( ',' type)* ']' )? ;
+type:                       IDENTIFIER ( '['  type ( ',' type)* ']' )? OPTIONAL_MODIFIER ? ;
 
 argument:                   expression ;
 
