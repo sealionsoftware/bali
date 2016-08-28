@@ -3,6 +3,7 @@ package com.sealionsoftware.bali.compiler.assembly;
 import com.sealionsoftware.bali.compiler.ErrorCode;
 import com.sealionsoftware.bali.compiler.Method;
 import com.sealionsoftware.bali.compiler.Operator;
+import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.InvocationNode;
@@ -40,7 +41,7 @@ public class InvocationMethodResolverTest {
         ExpressionNode target = mock(ExpressionNode.class);
         when(node.getTarget()).thenReturn(target);
         Type targetType = mock(Type.class);
-        when(target.getType()).thenReturn(targetType);
+        when(target.getSite()).thenReturn(new Site(targetType));
         when(targetType.getMethod(methodName)).thenReturn(null);
 
         subject.visit(node);
@@ -58,7 +59,8 @@ public class InvocationMethodResolverTest {
         ExpressionNode target = mock(ExpressionNode.class);
         when(node.getTarget()).thenReturn(target);
         Type targetType = mock(Type.class);
-        when(target.getType()).thenReturn(targetType);
+        when(target.getSite()).thenReturn(new Site(targetType));
+
         Method resolvedMethod = mock(Method.class);
         when(targetType.getMethod(methodName)).thenReturn(resolvedMethod);
 
@@ -86,8 +88,9 @@ public class InvocationMethodResolverTest {
 
         ExpressionNode target = mock(ExpressionNode.class);
         when(node.getTarget()).thenReturn(target);
+
         Type targetType = mock(Type.class);
-        when(target.getType()).thenReturn(targetType);
+        when(target.getSite()).thenReturn(new Site(targetType));
         when(targetType.getOperator(operatorName)).thenReturn(null);
 
         subject.visit(node);
@@ -106,7 +109,8 @@ public class InvocationMethodResolverTest {
         ExpressionNode target = mock(ExpressionNode.class);
         when(node.getTarget()).thenReturn(target);
         Type targetType = mock(Type.class);
-        when(target.getType()).thenReturn(targetType);
+        when(target.getSite()).thenReturn(new Site(targetType));
+
         Operator resolvedOperator = mock(Operator.class);
         when(targetType.getOperator(operatorName)).thenReturn(resolvedOperator);
 

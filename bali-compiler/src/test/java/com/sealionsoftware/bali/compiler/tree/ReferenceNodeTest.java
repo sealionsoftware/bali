@@ -1,6 +1,6 @@
 package com.sealionsoftware.bali.compiler.tree;
 
-import com.sealionsoftware.bali.compiler.Type;
+import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.assembly.VariableData;
 import org.junit.Test;
@@ -30,7 +30,7 @@ public class ReferenceNodeTest {
 	@Test
 	public void testGetVariableData() throws Exception {
 		VariableData variableData = new VariableData(
-				"aVariable", mock(Type.class), UUID.randomUUID()
+				"aVariable", mock(Site.class), UUID.randomUUID()
 		);
 		subject.setVariableData(variableData);
 		assertThat(subject.getVariableData(), is(variableData));
@@ -53,12 +53,12 @@ public class ReferenceNodeTest {
 
     @Test
     public void testGetType() throws Exception {
-        Type mockType = mock(Type.class);
+        Site mockType = mock(Site.class);
         VariableData variableData = new VariableData(
                 "aVariable", mockType, UUID.randomUUID()
         );
         subject.setVariableData(variableData);
-        assertThat(subject.getType(), is(mockType));
+        assertThat(subject.getSite(), is(mockType));
     }
 
 	@Test

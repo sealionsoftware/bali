@@ -15,8 +15,8 @@ import static org.mockito.Mockito.when;
 public class MethodTest {
 
     private String name = "aMethod";
-    private Type returnType = mock(Type.class);
-    private Type parameterType = mock(Type.class);
+    private Site returnType = mock(Site.class);
+    private Site parameterType = mock(Site.class);
     private List<Parameter> parameters = asList(
             new Parameter("aParameter", parameterType),
             new Parameter("anotherParameter", parameterType)

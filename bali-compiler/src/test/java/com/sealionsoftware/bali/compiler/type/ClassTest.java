@@ -3,6 +3,7 @@ package com.sealionsoftware.bali.compiler.type;
 import com.sealionsoftware.bali.compiler.Method;
 import com.sealionsoftware.bali.compiler.Operator;
 import com.sealionsoftware.bali.compiler.Parameter;
+import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.Type;
 import org.junit.Test;
 
@@ -57,7 +58,7 @@ public class ClassTest {
 
     @Test
     public void testGetMethods() {
-        Type returnType = mock(Type.class);
+        Site returnType = mock(Site.class);
         Parameter parameter = mock(Parameter.class);
         Method method = new Method("aMethod", returnType, asList(parameter));
         subject.initialise(emptyList(), null, emptyList(), asList(method), emptyList(), emptyList());
@@ -66,7 +67,7 @@ public class ClassTest {
 
     @Test
     public void testGetOperators() {
-        Type returnType = mock(Type.class);
+        Site returnType = mock(Site.class);
         Parameter parameter = mock(Parameter.class);
         Operator operator = new Operator("aMethod", returnType, asList(parameter), "+");
         subject.initialise(emptyList(), null, emptyList(), emptyList(), asList(operator), emptyList());
@@ -75,7 +76,7 @@ public class ClassTest {
 
     @Test
     public void testGetUnaryOperators() {
-        Type returnType = mock(Type.class);
+        Site returnType = mock(Site.class);
         Operator operator = new Operator("aMethod", returnType, emptyList(), "+");
         subject.initialise(emptyList(), null, emptyList(), emptyList(), emptyList(), asList(operator));
         assertThat(subject.getUnaryOperators(), hasItem(is(operator)));

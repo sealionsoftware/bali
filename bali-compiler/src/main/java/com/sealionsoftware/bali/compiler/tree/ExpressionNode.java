@@ -1,6 +1,6 @@
 package com.sealionsoftware.bali.compiler.tree;
 
-import com.sealionsoftware.bali.compiler.Type;
+import com.sealionsoftware.bali.compiler.Site;
 
 public abstract class ExpressionNode extends Node {
 
@@ -8,6 +8,6 @@ public abstract class ExpressionNode extends Node {
         super(line, character);
     }
 
-    public abstract Type getType();
+    public abstract Site getSite();
 
 }

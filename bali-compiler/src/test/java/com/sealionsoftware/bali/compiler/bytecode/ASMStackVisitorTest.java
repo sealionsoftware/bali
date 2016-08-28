@@ -2,6 +2,7 @@ package com.sealionsoftware.bali.compiler.bytecode;
 
 import com.sealionsoftware.bali.compiler.Method;
 import com.sealionsoftware.bali.compiler.Parameter;
+import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.assembly.VariableData;
@@ -140,7 +141,7 @@ public class ASMStackVisitorTest implements Opcodes {
         when(variableNode.getId()).thenReturn(setupNode.getId());
 
         VariableData data = new VariableData(
-                "aVariable", mock(Type.class), setupNode.getId()
+                "aVariable", mock(Site.class), setupNode.getId()
         );
         when(referenceNode.getVariableData()).thenReturn(data);
 
@@ -209,10 +210,10 @@ public class ASMStackVisitorTest implements Opcodes {
     public void testVisitExpressionStatement() throws Exception {
         ExpressionStatementNode mockNode = mock(ExpressionStatementNode.class);
         ExpressionNode mockExpressionNode = mock(ExpressionNode.class);
-        Type returnType = mock(Type.class);
+        Site returnType = mock(Site.class);
 
         when(mockNode.getExpressionNode()).thenReturn(mockExpressionNode);
-        when(mockExpressionNode.getType()).thenReturn(returnType);
+        when(mockExpressionNode.getSite()).thenReturn(returnType);
 
         subject.visit(mockNode);
 
@@ -237,13 +238,13 @@ public class ASMStackVisitorTest implements Opcodes {
         when(resolvedMethod.getName()).thenReturn("aMethod");
         when(node.getTarget()).thenReturn(target);
         when(node.getArguments()).thenReturn(asList(argumentOne, argumentTwo));
-        when(target.getType()).thenReturn(targetType);
+        when(target.getSite()).thenReturn(new Site(targetType));
         when(resolvedMethod.getParameters()).thenReturn(asList(
-                new Parameter("aParameter", argumentType),
+                new Parameter("aParameter", new Site(argumentType)),
                 new Parameter("aNullParameter", null))
         );
         when(argumentType.getClassName()).thenReturn("com.sealionsoftware.Argument");
-        when(resolvedMethod.getReturnType()).thenReturn(returnType);
+        when(resolvedMethod.getReturnType()).thenReturn(new Site(returnType));
         when(returnType.getClassName()).thenReturn("com.sealionsoftware.Return");
 
         subject.visit(node);
@@ -271,12 +272,12 @@ public class ASMStackVisitorTest implements Opcodes {
         when(resolvedMethod.getName()).thenReturn("aMethod");
         when(node.getTarget()).thenReturn(target);
         when(node.getArguments()).thenReturn(asList(argumentOne));
-        when(target.getType()).thenReturn(targetType);
+        when(target.getSite()).thenReturn(new Site(targetType));
         when(resolvedMethod.getParameters()).thenReturn(asList(
-                new Parameter("aParameter", argumentType))
+                new Parameter("aParameter", new Site(argumentType)))
         );
         when(argumentType.getClassName()).thenReturn("com.sealionsoftware.Argument");
-        when(resolvedMethod.getReturnType()).thenReturn(returnType);
+        when(resolvedMethod.getReturnType()).thenReturn(new Site(returnType));
         when(returnType.getClassName()).thenReturn("com.sealionsoftware.Return");
 
         subject.visit(node);

@@ -1,6 +1,6 @@
 package com.sealionsoftware.bali.compiler.tree;
 
-import com.sealionsoftware.bali.compiler.Type;
+import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import org.junit.Test;
 
@@ -45,9 +45,9 @@ public class IntegerLiteralNodeTest {
     }
 
     @Test
-    public void testGetType() throws Exception {
-        Type type = mock(Type.class);
-        subject.setType(type);
-        assertThat(subject.getType(), is(type));
+    public void testGetSite() throws Exception {
+        Site type = mock(Site.class);
+        subject.setSite(type);
+        assertThat(subject.getSite(), is(type));
     }
 }

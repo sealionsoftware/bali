@@ -1,7 +1,7 @@
 package com.sealionsoftware.bali.compiler.tree;
 
 import com.sealionsoftware.bali.compiler.Method;
-import com.sealionsoftware.bali.compiler.Type;
+import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import org.junit.Test;
 
@@ -24,13 +24,13 @@ public class InvocationNodeTest {
     @Test
     public void testGetType() throws Exception {
 
-        Type returnType = mock(Type.class);
+        Site returnType = mock(Site.class);
         Method method = mock(Method.class);
         when(method.getReturnType()).thenReturn(returnType);
 
         subject.setResolvedMethod(method);
 
-        assertThat(subject.getType(), is(returnType));
+        assertThat(subject.getSite(), is(returnType));
     }
 
     @Test

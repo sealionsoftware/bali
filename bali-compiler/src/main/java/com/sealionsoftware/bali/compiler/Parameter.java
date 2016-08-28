@@ -3,14 +3,14 @@ package com.sealionsoftware.bali.compiler;
 public class Parameter {
 
     public final String name;
-    public final Type type;
+    public final Site site;
 
-    public Parameter(String name, Type type) {
+    public Parameter(String name, Site site) {
         this.name = name;
-        this.type = type;
+        this.site = site;
     }
 
     public String toString() {
-        return type + " " + name;
+        return site + " " + name;
     }
 }

@@ -14,6 +14,10 @@ public class TypeVariable implements Type {
     private final String name;
     private final Type bound;
 
+    public TypeVariable(String name) {
+        this(name, null);
+    }
+
     public TypeVariable(String name, Type bound) {
         this.name = name;
         this.bound = bound;

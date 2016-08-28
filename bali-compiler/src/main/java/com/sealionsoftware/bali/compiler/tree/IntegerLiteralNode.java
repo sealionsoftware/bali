@@ -1,16 +1,16 @@
 package com.sealionsoftware.bali.compiler.tree;
 
-import com.sealionsoftware.bali.compiler.Type;
+import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.reference.MonitoredProperty;
 
 public class IntegerLiteralNode extends LiteralNode<Integer> {
 
-    private final MonitoredProperty<Type> type;
+    private final MonitoredProperty<Site> site;
 
     public IntegerLiteralNode(Integer line, Integer character, CompilationThreadManager monitor) {
         super(line, character);
-        this.type =  new MonitoredProperty<>(this, "type", monitor);
+        this.site =  new MonitoredProperty<>(this, "site", monitor);
     }
 
     @Override
@@ -18,11 +18,11 @@ public class IntegerLiteralNode extends LiteralNode<Integer> {
         visitor.visit(this);
     }
 
-    public void setType(Type type) {
-        this.type.set(type);
+    public void setSite(Site type) {
+        this.site.set(type);
     }
 
-    public Type getType() {
-        return type.get();
+    public Site getSite() {
+        return site.get();
     }
 }

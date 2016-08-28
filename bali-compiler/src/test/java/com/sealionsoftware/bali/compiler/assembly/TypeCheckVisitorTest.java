@@ -3,6 +3,7 @@ package com.sealionsoftware.bali.compiler.assembly;
 import com.sealionsoftware.bali.compiler.ErrorCode;
 import com.sealionsoftware.bali.compiler.Method;
 import com.sealionsoftware.bali.compiler.Parameter;
+import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
@@ -56,13 +57,13 @@ public class TypeCheckVisitorTest {
     @Test
     public void testVisitVariableWithCorrectType(){
 
-        Type variableType = mock(Type.class);
+        Site variableType = mock(Site.class);
         TypeNode typeNode = mock(TypeNode.class);
         when(typeNode.getResolvedType()).thenReturn(variableType);
 
-        Type expressionType = mock(Type.class);
+        Site expressionType = mock(Site.class);
         ExpressionNode expressionNode = mock(ExpressionNode.class);
-        when(expressionNode.getType()).thenReturn(expressionType);
+        when(expressionNode.getSite()).thenReturn(expressionType);
         when(expressionType.isAssignableTo(variableType)).thenReturn(true);
 
         VariableNode node = new VariableNode(2, 3);
@@ -77,13 +78,13 @@ public class TypeCheckVisitorTest {
 
     @Test
     public void testVisitVariableWithIncorrectType(){
-        Type variableType = mock(Type.class);
+        Site variableType = mock(Site.class);
         TypeNode typeNode = mock(TypeNode.class);
         when(typeNode.getResolvedType()).thenReturn(variableType);
 
-        Type expressionType = mock(Type.class);
+        Site expressionType = mock(Site.class);
         ExpressionNode expressionNode = mock(ExpressionNode.class);
-        when(expressionNode.getType()).thenReturn(expressionType);
+        when(expressionNode.getSite()).thenReturn(expressionType);
         when(expressionType.isAssignableTo(variableType)).thenReturn(false);
 
         VariableNode node = new VariableNode(2, 3);
@@ -117,15 +118,15 @@ public class TypeCheckVisitorTest {
     @Test
     public void testVisitAssignmentWithCorrectType(){
 
-        Type variableType = mock(Type.class);
+        Site variableType = mock(Site.class);
         VariableData variableData = new VariableData("aName", variableType, UUID.randomUUID());
 
         ReferenceNode referenceNode = mock(ReferenceNode.class);
         when(referenceNode.getVariableData()).thenReturn(variableData);
 
-        Type expressionType = mock(Type.class);
+        Site expressionType = mock(Site.class);
         ExpressionNode expressionNode = mock(ExpressionNode.class);
-        when(expressionNode.getType()).thenReturn(expressionType);
+        when(expressionNode.getSite()).thenReturn(expressionType);
         when(expressionType.isAssignableTo(variableType)).thenReturn(true);
 
         AssignmentNode node = new AssignmentNode(2, 3);
@@ -139,15 +140,15 @@ public class TypeCheckVisitorTest {
 
     @Test
     public void testVisitAssignmentWithIncorrectType(){
-        Type variableType = mock(Type.class);
+        Site variableType = mock(Site.class);
         VariableData variableData = new VariableData("aName", variableType, UUID.randomUUID());
 
         ReferenceNode referenceNode = mock(ReferenceNode.class);
         when(referenceNode.getVariableData()).thenReturn(variableData);
 
-        Type expressionType = mock(Type.class);
+        Site expressionType = mock(Site.class);
         ExpressionNode expressionNode = mock(ExpressionNode.class);
-        when(expressionNode.getType()).thenReturn(expressionType);
+        when(expressionNode.getSite()).thenReturn(expressionType);
         when(expressionType.isAssignableTo(variableType)).thenReturn(false);
 
         AssignmentNode node = new AssignmentNode(2, 3);
@@ -162,10 +163,10 @@ public class TypeCheckVisitorTest {
     @Test
     public void testVisitConditionalWithNonBooleanType(){
 
-        Type expressionType = mock(Type.class);
+        Site expressionType = mock(Site.class);
         ExpressionNode expressionNode = mock(ExpressionNode.class);
-        when(expressionNode.getType()).thenReturn(expressionType);
-        when(expressionType.isAssignableTo(any(Type.class))).thenReturn(false);
+        when(expressionNode.getSite()).thenReturn(expressionType);
+        when(expressionType.isAssignableTo(any(Site.class))).thenReturn(false);
 
         ConditionalStatementNode node = new ConditionalStatementNode(2, 3);
         node.setCondition(expressionNode);
@@ -178,10 +179,10 @@ public class TypeCheckVisitorTest {
     @Test
     public void testVisitConditionalWithBooleanType(){
 
-        Type expressionType = mock(Type.class);
+        Site expressionType = mock(Site.class);
         ExpressionNode expressionNode = mock(ExpressionNode.class);
-        when(expressionNode.getType()).thenReturn(expressionType);
-        when(expressionType.isAssignableTo(any(Type.class))).thenReturn(true);
+        when(expressionNode.getSite()).thenReturn(expressionType);
+        when(expressionType.isAssignableTo(any(Site.class))).thenReturn(true);
 
         ConditionalStatementNode node = new ConditionalStatementNode(2, 3);
         node.setCondition(expressionNode);
@@ -194,10 +195,10 @@ public class TypeCheckVisitorTest {
     @Test
     public void testVisitLoopWithNonBooleanType(){
 
-        Type expressionType = mock(Type.class);
+        Site expressionType = mock(Site.class);
         ExpressionNode expressionNode = mock(ExpressionNode.class);
-        when(expressionNode.getType()).thenReturn(expressionType);
-        when(expressionType.isAssignableTo(any(Type.class))).thenReturn(false);
+        when(expressionNode.getSite()).thenReturn(expressionType);
+        when(expressionType.isAssignableTo(any(Site.class))).thenReturn(false);
 
         ConditionalLoopNode node = new ConditionalLoopNode(2, 3);
         node.setCondition(expressionNode);
@@ -210,10 +211,10 @@ public class TypeCheckVisitorTest {
     @Test
     public void testVisitLoopWithBooleanType(){
 
-        Type expressionType = mock(Type.class);
+        Site expressionType = mock(Site.class);
         ExpressionNode expressionNode = mock(ExpressionNode.class);
-        when(expressionNode.getType()).thenReturn(expressionType);
-        when(expressionType.isAssignableTo(any(Type.class))).thenReturn(true);
+        when(expressionNode.getSite()).thenReturn(expressionType);
+        when(expressionType.isAssignableTo(any(Site.class))).thenReturn(true);
 
         ConditionalLoopNode node = new ConditionalLoopNode(2, 3);
         node.setCondition(expressionNode);
@@ -228,7 +229,7 @@ public class TypeCheckVisitorTest {
 
         InvocationNode node = mock(InvocationNode.class);
         Method resolvedMethod = mock(Method.class);
-        Type parameterType = mock(Type.class);
+        Site parameterType = mock(Site.class);
 
         when(node.getResolvedMethod()).thenReturn(resolvedMethod);
         when(resolvedMethod.getParameters()).thenReturn(asList(new Parameter("aParameter", parameterType)));
@@ -244,14 +245,14 @@ public class TypeCheckVisitorTest {
 
         InvocationNode node = mock(InvocationNode.class);
         Method resolvedMethod = mock(Method.class);
-        Type parameterType = mock(Type.class);
+        Site parameterType = mock(Site.class);
         ExpressionNode argumentNode = mock(ExpressionNode.class);
-        Type argumentType = mock(Type.class);
+        Site argumentType = mock(Site.class);
 
         when(node.getResolvedMethod()).thenReturn(resolvedMethod);
         when(resolvedMethod.getParameters()).thenReturn(asList(new Parameter("aParameter", parameterType)));
         when(node.getArguments()).thenReturn(asList(argumentNode));
-        when(argumentNode.getType()).thenReturn(argumentType);
+        when(argumentNode.getSite()).thenReturn(argumentType);
         when(argumentType.isAssignableTo(parameterType)).thenReturn(false);
 
         subject.visit(node);
@@ -264,14 +265,14 @@ public class TypeCheckVisitorTest {
 
         InvocationNode node = mock(InvocationNode.class);
         Method resolvedMethod = mock(Method.class);
-        Type parameterType = mock(Type.class);
+        Site parameterType = mock(Site.class);
         ExpressionNode argumentNode = mock(ExpressionNode.class);
-        Type argumentType = mock(Type.class);
+        Site argumentType = mock(Site.class);
 
         when(node.getResolvedMethod()).thenReturn(resolvedMethod);
         when(resolvedMethod.getParameters()).thenReturn(asList(new Parameter("aParameter", parameterType)));
         when(node.getArguments()).thenReturn(asList(argumentNode));
-        when(argumentNode.getType()).thenReturn(argumentType);
+        when(argumentNode.getSite()).thenReturn(argumentType);
         when(argumentType.isAssignableTo(parameterType)).thenReturn(true);
 
         subject.visit(node);
@@ -284,14 +285,14 @@ public class TypeCheckVisitorTest {
 
         OperationNode node = mock(OperationNode.class);
         Method resolvedMethod = mock(Method.class);
-        Type parameterType = mock(Type.class);
+        Site parameterType = mock(Site.class);
         ExpressionNode argumentNode = mock(ExpressionNode.class);
-        Type argumentType = mock(Type.class);
+        Site argumentType = mock(Site.class);
 
         when(node.getResolvedMethod()).thenReturn(resolvedMethod);
         when(resolvedMethod.getParameters()).thenReturn(asList(new Parameter("aParameter", parameterType)));
         when(node.getArguments()).thenReturn(asList(argumentNode));
-        when(argumentNode.getType()).thenReturn(argumentType);
+        when(argumentNode.getSite()).thenReturn(argumentType);
         when(argumentType.isAssignableTo(parameterType)).thenReturn(true);
 
         subject.visit(node);
@@ -303,15 +304,15 @@ public class TypeCheckVisitorTest {
     public void testArrayLiteralHasInvalidArgumentType(){
 
         ArrayLiteralNode node = mock(ArrayLiteralNode.class);
-        Type resolvedType = mock(Type.class);
         Parameter inferredTypeArgument = mock(Parameter.class);
         ExpressionNode argumentNode = mock(ExpressionNode.class);
-        Type argumentType = mock(Type.class);
+        Site argumentType = mock(Site.class);
+        Type resolvedType = mock(Type.class);
 
-        when(node.getType()).thenReturn(resolvedType);
+        when(node.getSite()).thenReturn(new Site(resolvedType));
         when(resolvedType.getTypeArguments()).thenReturn(asList(inferredTypeArgument));
         when(node.getItems()).thenReturn(asList(argumentNode));
-        when(argumentNode.getType()).thenReturn(argumentType);
+        when(argumentNode.getSite()).thenReturn(argumentType);
         when(argumentType.isAssignableTo(any())).thenReturn(false);
 
         subject.visit(node);

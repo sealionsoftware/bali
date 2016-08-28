@@ -53,7 +53,7 @@ public class AssignmentIT {
     public void testAssigningOptionalVariable() {
 
         Map<String, Object> output = interpreter.run(
-                "var Text? aVariable " +
+                "var Logic? aVariable " +
                 "aVariable = true");
 
         assertThat(output, notNullValue());

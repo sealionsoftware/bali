@@ -9,8 +9,8 @@ import static org.mockito.Mockito.mock;
 
 public class OperatorTest {
 
-    private Type returnType = mock(Type.class);
-    private Type parameterType = mock(Type.class);
+    private Site returnType = mock(Site.class);
+    private Site parameterType = mock(Site.class);
     private Operator subject = new Operator("aMethod", returnType, asList(new Parameter(null, parameterType)), "+", null);
 
     @Test

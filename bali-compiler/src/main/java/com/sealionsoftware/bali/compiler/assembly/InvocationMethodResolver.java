@@ -4,6 +4,7 @@ import com.sealionsoftware.bali.compiler.CompileError;
 import com.sealionsoftware.bali.compiler.ErrorCode;
 import com.sealionsoftware.bali.compiler.Method;
 import com.sealionsoftware.bali.compiler.Operator;
+import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.InvocationNode;
@@ -44,7 +45,8 @@ public class InvocationMethodResolver extends ValidatingVisitor {
             ));
             return null;
         }
-        return target.getType();
+        Site targetSite = target.getSite();
+        return targetSite == null ? null : targetSite.type;
     }
 
     private void setResolvedMethod(InvocationNode node, Method method, ErrorCode errorCode) {
