@@ -119,4 +119,22 @@ public class InvocationMethodResolverTest {
         verify(node).setResolvedMethod(resolvedOperator);
         assertThat(subject, containsNoFailures());
     }
+
+    @Test
+    public void testVisitInvocationOnOptionalType() throws Exception {
+
+        String methodName = "aMethod";
+
+        InvocationNode node = mock(InvocationNode.class);
+        when(node.getMethodName()).thenReturn(methodName);
+
+        ExpressionNode target = mock(ExpressionNode.class);
+        when(node.getTarget()).thenReturn(target);
+        Type targetType = mock(Type.class);
+        when(target.getSite()).thenReturn(new Site(targetType, true));
+        when(targetType.getMethod(methodName)).thenReturn(mock(Method.class));
+
+        subject.visit(node);
+        assertThat(subject, containsOneFailure(ErrorCode.CANNOT_INVOKE_ON_OPTIONAL));
+    }
 }

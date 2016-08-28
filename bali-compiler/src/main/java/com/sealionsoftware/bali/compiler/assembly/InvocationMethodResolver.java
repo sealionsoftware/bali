@@ -46,6 +46,12 @@ public class InvocationMethodResolver extends ValidatingVisitor {
             return null;
         }
         Site targetSite = target.getSite();
+        if (targetSite.isOptional){
+            failures.add(new CompileError(
+                    ErrorCode.CANNOT_INVOKE_ON_OPTIONAL,
+                    node
+            ));
+        }
         return targetSite == null ? null : targetSite.type;
     }
 

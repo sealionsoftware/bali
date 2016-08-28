@@ -1,5 +1,6 @@
 package com.sealionsoftware.bali.compiler;
 
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 import java.util.concurrent.Callable;
@@ -47,6 +48,14 @@ public class UnaryOperationIT {
 
         Object output = interpreter.evaluate("1 + - 1");
         assertThat(output, equalTo(convert(0)));
+    }
+
+    @Test
+    public void testOperatorOnOptionalVariable() {
+        Callable invocation = () -> interpreter.run(
+                "var Logic? maybeTrue " +
+                "!maybeTrue");
+        MatcherAssert.assertThat(invocation, throwsException(containingError(withCode(ErrorCode.CANNOT_INVOKE_ON_OPTIONAL))));
     }
 
 
