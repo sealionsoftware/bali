@@ -78,5 +78,33 @@ public class ConditionalStatementIT {
         assertThat(output, hasEntry("ret", Logic.FALSE));
     }
 
+    @Test
+    public void testFlowTypingOptionalVariable() {
+
+        Map<String, Object> output = interpreter.run(
+                "var Logic? aTrue = true " +
+                "var Logic output = false " +
+                "if (?isTrue) {" +
+                "   output = isTrue" +
+                "}"
+        );
+
+        assertThat(output, hasEntry("output", Logic.TRUE));
+    }
+
+    @Test
+    public void testFlowTypingTypedVariable() {
+
+        Map<String, Object> output = interpreter.run(
+                "var aVariable = true " +
+                "var Logic? output" +
+                "if (aVariable ? Logic) {" +
+                "   output = isTrue" +
+                "}"
+        );
+
+        assertThat(output, hasEntry("output", Logic.TRUE));
+    }
+
 
 }
