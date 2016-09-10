@@ -1,11 +1,10 @@
 package com.sealionsoftware.bali.compiler;
 
-import org.hamcrest.MatcherAssert;
+import bali.Logic;
 import org.junit.Test;
 
 import java.util.concurrent.Callable;
 
-import static bali.logic.Primitive.convert;
 import static bali.number.Primitive.convert;
 import static com.sealionsoftware.Matchers.throwsException;
 import static com.sealionsoftware.bali.compiler.Matchers.containingError;
@@ -21,7 +20,7 @@ public class UnaryOperationIT {
     public void testValidOperator() {
 
         Object output = interpreter.evaluate("!true");
-        assertThat(output, equalTo(convert(false)));
+        assertThat(output, equalTo(Logic.FALSE));
     }
 
     @Test
@@ -55,8 +54,19 @@ public class UnaryOperationIT {
         Callable invocation = () -> interpreter.run(
                 "var Logic? maybeTrue " +
                 "!maybeTrue");
-        MatcherAssert.assertThat(invocation, throwsException(containingError(withCode(ErrorCode.CANNOT_INVOKE_ON_OPTIONAL))));
+        assertThat(invocation, throwsException(containingError(withCode(ErrorCode.CANNOT_INVOKE_ON_OPTIONAL))));
     }
 
+    @Test
+    public void testExistsOperatorOnValue() {
+        Object output = interpreter.evaluate("?false");
+        assertThat(output, equalTo(Logic.TRUE));
+    }
+
+    @Test
+    public void testExistsOperatorOnAbsence() {
+        Object output = interpreter.evaluate("?[]#0)");
+        assertThat(output, equalTo(Logic.FALSE));
+    }
 
 }
