@@ -65,7 +65,7 @@ public class UnaryOperationIT {
 
     @Test
     public void testExistsOperatorOnAbsence() {
-        Object output = interpreter.evaluate("?[]#0)");
+        Object output = interpreter.evaluate("?([]#0)");
         assertThat(output, equalTo(Logic.FALSE));
     }
 
