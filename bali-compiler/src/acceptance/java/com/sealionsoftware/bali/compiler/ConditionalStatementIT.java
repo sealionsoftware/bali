@@ -84,27 +84,12 @@ public class ConditionalStatementIT {
         Map<String, Object> output = interpreter.run(
                 "var Logic? aTrue = true " +
                 "var Logic output = false " +
-                "if (?isTrue) {" +
-                "   output = isTrue" +
+                "if (?aTrue) {" +
+                "   output = aTrue" +
                 "}"
         );
 
         assertThat(output, hasEntry("output", Logic.TRUE));
     }
-
-    @Test
-    public void testFlowTypingTypedVariable() {
-
-        Map<String, Object> output = interpreter.run(
-                "var aVariable = true " +
-                "var Logic? output" +
-                "if (aVariable ? Logic) {" +
-                "   output = isTrue" +
-                "}"
-        );
-
-        assertThat(output, hasEntry("output", Logic.TRUE));
-    }
-
 
 }
