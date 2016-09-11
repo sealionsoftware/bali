@@ -8,6 +8,7 @@ import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
+import com.sealionsoftware.bali.compiler.tree.ConditionalNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExistenceCheckNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
@@ -174,6 +175,9 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
         checkInterruptStatus();
         methodVisitor.visitJumpInsn(GOTO, start);
         methodVisitor.visitLabel(end);
+    }
+
+    public void visit(ConditionalNode node) {
     }
 
     private void checkInterruptStatus(){

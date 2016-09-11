@@ -2,7 +2,11 @@ package com.sealionsoftware.bali.compiler.assembly;
 
 import com.sealionsoftware.bali.compiler.CompileError;
 import com.sealionsoftware.bali.compiler.ErrorCode;
+import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
+import com.sealionsoftware.bali.compiler.tree.ConditionalNode;
+import com.sealionsoftware.bali.compiler.tree.ExistenceCheckNode;
+import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.Node;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
@@ -26,6 +30,25 @@ public class ReferenceMatchingVisitor extends ValidatingVisitor {
     public void visit(VariableNode variable) {
         scopeStack.peek().add(createData(variable));
         visitChildren(variable);
+    }
+
+    public void visit(ConditionalNode conditionalNode) {
+
+        ExpressionNode condition = conditionalNode.getCondition();
+        if (condition instanceof ExistenceCheckNode){
+            ExistenceCheckNode existenceCheckNode = (ExistenceCheckNode) condition;
+            ExpressionNode target = existenceCheckNode.getTarget();
+            if (target instanceof ReferenceNode){
+                ReferenceNode referenceNode = (ReferenceNode) target;
+                VariableData data = referenceNode.getVariableData();
+                Site originalSite = data.type;
+                Scope scope = new Scope();
+                scope.add(new VariableData(data.name, new Site(originalSite != null ? originalSite.type : null, false), data.id));
+                pushAndWalk(conditionalNode, scope);
+                return;
+            }
+        }
+        visitChildren(conditionalNode);
     }
 
     private void pushAndWalk(Node node, Scope scope) {

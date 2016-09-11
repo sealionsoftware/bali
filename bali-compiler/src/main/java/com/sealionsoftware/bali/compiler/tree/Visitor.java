@@ -21,6 +21,8 @@ public interface Visitor {
 
     void visit(ReferenceNode node);
 
+    void visit(ConditionalNode node);
+
     void visit(ConditionalStatementNode node);
 
     void visit(ConditionalLoopNode node);
