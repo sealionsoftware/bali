@@ -3,6 +3,7 @@ package com.sealionsoftware.bali.compiler.parser;
 import bali.compiler.parser.BaliParser;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
+import com.sealionsoftware.bali.compiler.tree.ExistenceCheckNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.InvocationNode;
@@ -140,14 +141,14 @@ public class ASTExpressionVisitorTest {
         BaliParser.ExpressionContext parentContext = mockContext(BaliParser.ExpressionContext.class);
         BaliParser.ExpressionContext targetContext = mockContext(BaliParser.ExpressionContext.class);
         BaliParser.ExpressionContext argumentContext = mockContext(BaliParser.ExpressionContext.class);
-        TerminalNode operatorContext = mock(TerminalNode.class);
+        BaliParser.OperatorContext operatorContext = mock(BaliParser.OperatorContext.class);
         ExpressionNode target = mock(ExpressionNode.class);
         ExpressionNode argument = mock(ExpressionNode.class);
 
         when(parentContext.expression()).thenReturn(asList(targetContext, argumentContext));
         when(targetContext.accept(subject)).thenReturn(target);
         when(argumentContext.accept(subject)).thenReturn(argument);
-        when(parentContext.OPERATOR()).thenReturn(operatorContext);
+        when(parentContext.operator()).thenReturn(operatorContext);
 
         ExpressionNode result = subject.visitExpression(parentContext);
 
@@ -161,12 +162,12 @@ public class ASTExpressionVisitorTest {
 
         BaliParser.ExpressionContext parentContext = mockContext(BaliParser.ExpressionContext.class);
         BaliParser.ExpressionContext targetContext = mockContext(BaliParser.ExpressionContext.class);
-        TerminalNode operatorContext = mock(TerminalNode.class);
+        BaliParser.OperatorContext operatorContext = mock(BaliParser.OperatorContext.class);
         ExpressionNode target = mock(ExpressionNode.class);
 
         when(parentContext.expression()).thenReturn(asList(targetContext));
         when(targetContext.accept(subject)).thenReturn(target);
-        when(parentContext.OPERATOR()).thenReturn(operatorContext);
+        when(parentContext.operator()).thenReturn(operatorContext);
 
         ExpressionNode result = subject.visitExpression(parentContext);
 
@@ -190,5 +191,26 @@ public class ASTExpressionVisitorTest {
 
         assertThat(result, is(target));
         verify(targetContext).accept(subject);
+    }
+
+    @Test
+    public void testVisitExistenceCheckOperation() throws Exception {
+
+        BaliParser.ExpressionContext parentContext = mockContext(BaliParser.ExpressionContext.class);
+        BaliParser.ExpressionContext targetContext = mockContext(BaliParser.ExpressionContext.class);
+        BaliParser.OperatorContext operatorContext = mock(BaliParser.OperatorContext.class);
+        ExpressionNode target = mock(ExpressionNode.class);
+        TerminalNode questionMark = mockTerminal("?");
+
+        when(parentContext.expression()).thenReturn(asList(targetContext));
+        when(targetContext.accept(subject)).thenReturn(target);
+        when(parentContext.operator()).thenReturn(operatorContext);
+        when(operatorContext.QUERY()).thenReturn(questionMark);
+
+        ExpressionNode result = subject.visitExpression(parentContext);
+
+        assertThat(result, instanceOf(ExistenceCheckNode.class));
+        verify(targetContext).accept(subject);
+
     }
 }

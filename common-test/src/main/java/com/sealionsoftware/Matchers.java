@@ -31,7 +31,6 @@ public class Matchers {
                     runnable.call();
                 } catch (Exception e) {
                     if (exceptionMatcher.matches(e)) return true;
-                    e.printStackTrace();
                     exceptionMatcher.describeMismatch(e, description);
                     return false;
                 }

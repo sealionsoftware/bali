@@ -2,7 +2,9 @@ package com.sealionsoftware.bali.compiler.assembly;
 
 import com.sealionsoftware.bali.compiler.ErrorCode;
 import com.sealionsoftware.bali.compiler.Site;
+import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
+import com.sealionsoftware.bali.compiler.tree.ExistenceCheckNode;
 import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.LogicLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
@@ -37,28 +39,28 @@ public class TypeAssigningVisitorTest {
     public void testVisitBooleanNode() throws Exception {
         LogicLiteralNode node = mock(LogicLiteralNode.class);
         subject.visit(node);
-        verify(node).setSite(any(Site.class));
+        verify(node).setType(any(Type.class));
     }
 
     @Test
     public void testVisitTextNode() throws Exception {
         TextLiteralNode node = mock(TextLiteralNode.class);
         subject.visit(node);
-        verify(node).setSite(any(Site.class));
+        verify(node).setType(any(Type.class));
     }
 
     @Test
     public void testVisitIntegerNode() throws Exception {
         IntegerLiteralNode node = mock(IntegerLiteralNode.class);
         subject.visit(node);
-        verify(node).setSite(any(Site.class));
+        verify(node).setType(any(Type.class));
     }
 
     @Test
     public void testVisitArrayNode() throws Exception {
         ArrayLiteralNode node = mock(ArrayLiteralNode.class);
         subject.visit(node);
-        verify(node).setSite(any(Site.class));
+        verify(node).setType(any(Type.class));
     }
 
     @Test
@@ -75,5 +77,12 @@ public class TypeAssigningVisitorTest {
         when(node.getName()).thenReturn("Foo");
         subject.visit(node);
         assertThat(subject,  containsOneFailure(ErrorCode.UNKNOWN_TYPE));
+    }
+
+    @Test
+    public void testVisitExistenceCheckNode() throws Exception {
+        ExistenceCheckNode node = mock(ExistenceCheckNode.class);
+        subject.visit(node);
+        verify(node).setType(any(Type.class));
     }
 }

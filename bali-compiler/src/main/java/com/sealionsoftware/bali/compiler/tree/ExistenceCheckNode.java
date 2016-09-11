@@ -5,13 +5,14 @@ import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.reference.MonitoredProperty;
 
-public class TextLiteralNode extends LiteralNode<String> {
+public class ExistenceCheckNode extends ExpressionNode  {
 
+    private ExpressionNode target;
     private final MonitoredProperty<Site> site;
 
-    public TextLiteralNode(Integer line, Integer character, CompilationThreadManager monitor) {
+    public ExistenceCheckNode(Integer line, Integer character, CompilationThreadManager monitor) {
         super(line, character);
-        this.site = new MonitoredProperty<>(this, "site", monitor);
+        site = new MonitoredProperty<>(this, "site", monitor);
     }
 
     public void setType(Type type){
@@ -20,6 +21,15 @@ public class TextLiteralNode extends LiteralNode<String> {
 
     public Site getSite() {
         return site.get();
+    }
+
+    public ExpressionNode getTarget() {
+        return target;
+    }
+
+    public void setTarget(ExpressionNode target) {
+        children.add(target);
+        this.target = target;
     }
 
     public void accept(Visitor visitor) {
