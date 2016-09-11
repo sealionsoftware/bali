@@ -6,6 +6,7 @@ import com.sealionsoftware.bali.compiler.CompileError;
 import com.sealionsoftware.bali.compiler.ErrorCode;
 import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
+import com.sealionsoftware.bali.compiler.tree.ExistenceCheckNode;
 import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.LogicLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
@@ -29,19 +30,24 @@ public class TypeAssigningVisitor extends ValidatingVisitor {
     }
 
     public void visit(LogicLiteralNode node) {
-        node.setSite(new Site(new ClassBasedType(library.get(Logic.class.getName())), false));
+        node.setType(new ClassBasedType(library.get(Logic.class.getName())));
     }
 
     public void visit(TextLiteralNode node) {
-        node.setSite(new Site(new ClassBasedType(library.get(bali.Text.class.getName())), false));
+        node.setType(new ClassBasedType(library.get(bali.Text.class.getName())));
     }
 
     public void visit(IntegerLiteralNode node) {
-        node.setSite(new Site(new ClassBasedType(library.get(bali.Integer.class.getName())), false));
+        node.setType(new ClassBasedType(library.get(bali.Integer.class.getName())));
     }
 
     public void visit(ArrayLiteralNode node) {
-        node.setSite(new Site(new ClassBasedType(library.get(Group.class.getName()), asList(new Site(new InferredType(null), false))), false));
+        node.setType(new ClassBasedType(library.get(Group.class.getName()), asList(new Site(new InferredType(null), false))));
+        visitChildren(node);
+    }
+
+    public void visit(ExistenceCheckNode node) {
+        node.setType(new ClassBasedType(library.get(Logic.class.getName())));
         visitChildren(node);
     }
 

@@ -38,7 +38,7 @@ public class InvocationMethodResolver extends ValidatingVisitor {
 
     private Type getTargetType(InvocationNode node, ErrorCode errorCode) {
         ExpressionNode target = node.getTarget();
-        if (target == null){
+        if (target.getSite() == null){
             failures.add(new CompileError(
                     errorCode,
                     node
@@ -46,9 +46,6 @@ public class InvocationMethodResolver extends ValidatingVisitor {
             return null;
         }
         Site targetSite = target.getSite();
-        if (targetSite == null){
-            return null;
-        }
         if (targetSite.isOptional){
             failures.add(new CompileError(
                     ErrorCode.CANNOT_INVOKE_ON_OPTIONAL,

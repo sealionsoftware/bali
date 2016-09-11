@@ -31,4 +31,6 @@ public interface Visitor {
 
     void visit(ExpressionStatementNode node);
 
+    void visit(ExistenceCheckNode node);
+
 }

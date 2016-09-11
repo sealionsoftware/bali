@@ -79,7 +79,7 @@ public class Matchers {
             private final Matcher<? super Iterable<CompileError>> listMatcher = hasItem(errorMatcher);
 
             protected boolean matchesSafely(CompilationException exception, Description description) {
-                return listMatcher.matches(exception.errorList);
+                return listMatcher.matches(exception.errorList) || description.appendText("error received was " + exception.errorList) == null;
             }
 
             public void describeTo(Description description) {
@@ -88,6 +88,7 @@ public class Matchers {
         };
     }
 
+    @SafeVarargs
     public static <T> Matcher<Array<? super T>> hasValues(final T... values){
         List<Matcher<T>> matchers = Arrays.stream(values).map(org.hamcrest.Matchers::equalTo).collect(toList());
         @SuppressWarnings("unchecked")
@@ -124,6 +125,19 @@ public class Matchers {
             }
         };
 
+    }
+
+    public static Matcher<Site> isSiteOfType(Type type) {
+        return new TypeSafeDiagnosingMatcher<Site>() {
+            protected boolean matchesSafely(Site site, Description description) {
+                Type siteType = site.type;
+                return type == siteType || type.isAssignableTo(siteType) || description.appendValue(siteType).appendText(" is not assignable") == null;
+            }
+
+            public void describeTo(Description description) {
+                description.appendText("is assignable to " + type);
+            }
+        };
     }
 
 }

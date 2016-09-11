@@ -25,7 +25,9 @@ public class InvocationMethodResolverTest {
     @Test
     public void testVisitInvocationWithoutTarget() throws Exception {
 
+        ExpressionNode target = mock(ExpressionNode.class);
         InvocationNode node = mock(InvocationNode.class);
+        when(node.getTarget()).thenReturn(target);
         subject.visit(node);
         assertThat(subject, containsOneFailure(ErrorCode.METHOD_NOT_FOUND));
     }
@@ -73,7 +75,9 @@ public class InvocationMethodResolverTest {
     @Test
     public void testVisitOperationWithoutTarget() throws Exception {
 
+        ExpressionNode target = mock(ExpressionNode.class);
         OperationNode node = mock(OperationNode.class);
+        when(node.getTarget()).thenReturn(target);
         subject.visit(node);
         assertThat(subject, containsOneFailure(ErrorCode.OPERATOR_NOT_FOUND));
     }
@@ -136,5 +140,21 @@ public class InvocationMethodResolverTest {
 
         subject.visit(node);
         assertThat(subject, containsOneFailure(ErrorCode.CANNOT_INVOKE_ON_OPTIONAL));
+    }
+
+    @Test
+    public void testVisitInvocationTypelessExpression() throws Exception {
+
+        String methodName = "aMethod";
+
+        InvocationNode node = mock(InvocationNode.class);
+        when(node.getMethodName()).thenReturn(methodName);
+
+        ExpressionNode target = mock(ExpressionNode.class);
+        when(node.getTarget()).thenReturn(target);
+        when(target.getSite()).thenReturn(null);
+
+        subject.visit(node);
+        assertThat(subject, containsOneFailure(ErrorCode.METHOD_NOT_FOUND));
     }
 }

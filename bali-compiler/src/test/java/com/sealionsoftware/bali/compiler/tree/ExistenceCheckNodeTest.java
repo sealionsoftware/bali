@@ -2,6 +2,7 @@ package com.sealionsoftware.bali.compiler.tree;
 
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
+import org.hamcrest.core.Is;
 import org.junit.Test;
 
 import static com.sealionsoftware.bali.compiler.Matchers.isSiteOfType;
@@ -13,14 +14,22 @@ import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class IntegerLiteralNodeTest {
+public class ExistenceCheckNodeTest {
 
-    private IntegerLiteralNode subject = new IntegerLiteralNode(2, 3, mock(CompilationThreadManager.class));
+    private ExistenceCheckNode subject = new ExistenceCheckNode(2, 3, mock(CompilationThreadManager.class));
 
     @Test
-    public void testSetValue() throws Exception {
-        subject.setValue(5);
-        assertThat(subject.getValue(), equalTo(5));
+    public void testGetTarget() throws Exception {
+        ExpressionNode target = mock(ExpressionNode.class);
+        subject.setTarget(target);
+        assertThat(subject.getTarget(), is(target));
+    }
+
+    @Test
+    public void testGetSite() throws Exception {
+        Type type = mock(Type.class);
+        subject.setType(type);
+        assertThat(subject.getSite(), isSiteOfType(type));
     }
 
     @Test
@@ -35,7 +44,7 @@ public class IntegerLiteralNodeTest {
 
     @Test
     public void testGetChildren() throws Exception {
-        assertThat(subject.getChildren(), is(empty()));
+        assertThat(subject.getChildren(), Is.is(empty()));
     }
 
     @Test
@@ -43,13 +52,6 @@ public class IntegerLiteralNodeTest {
         Visitor visitor = mock(Visitor.class);
         subject.accept(visitor);
         verify(visitor).visit(same(subject));
-    }
-
-    @Test
-    public void testGetSite() throws Exception {
-        Type type = mock(Type.class);
-        subject.setType(type);
-        assertThat(subject.getSite(), isSiteOfType(type));
     }
 
 }

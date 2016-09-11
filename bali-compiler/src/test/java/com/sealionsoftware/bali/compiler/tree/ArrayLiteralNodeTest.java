@@ -1,10 +1,11 @@
 package com.sealionsoftware.bali.compiler.tree;
 
-import com.sealionsoftware.bali.compiler.Site;
+import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
+import static com.sealionsoftware.bali.compiler.Matchers.isSiteOfType;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
@@ -48,7 +49,7 @@ public class ArrayLiteralNodeTest {
 
     @Test
     public void testGetSite() throws Exception {
-        Site site = mock(Site.class);
-        subject.setSite(site);
-        assertThat(subject.getSite(), Is.is(site));
+        Type type = mock(Type.class);
+        subject.setType(type);
+        assertThat(subject.getSite(), isSiteOfType(type));
     }}

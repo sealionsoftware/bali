@@ -6,6 +6,7 @@ import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
+import com.sealionsoftware.bali.compiler.tree.ExistenceCheckNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
 import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.InvocationNode;
@@ -76,6 +77,10 @@ public abstract class ValidatingVisitor extends DescendingVisitor {
     }
 
     public void visit(ExpressionStatementNode node) {
+        visitChildren(node);
+    }
+
+    public void visit(ExistenceCheckNode node) {
         visitChildren(node);
     }
 

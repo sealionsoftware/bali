@@ -1,6 +1,7 @@
 package com.sealionsoftware.bali.compiler.tree;
 
 import com.sealionsoftware.bali.compiler.Site;
+import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.reference.MonitoredProperty;
 
@@ -25,8 +26,8 @@ public class ArrayLiteralNode extends ExpressionNode {
         children.addAll(items);
     }
 
-    public void setSite(Site site){
-        this.site.set(site);
+    public void setType(Type type){
+        site.set(new Site(type, false));
     }
 
     public Site getSite() {
