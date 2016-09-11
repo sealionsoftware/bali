@@ -13,9 +13,9 @@ TEXT_LITERAL:               '"' ~[^"]* '"' ;
 
 INTEGER_LITERAL:            [0] | [1-9][0-9]*;
 
-OPERATOR:                   [\+\-$%\^&\*#\~/\\\|=<>¬¦`!]+ ;
+SYMBOL:                     [\+\-$%\^&\*#\~/\\\|=<>¬¦`!]+ ;
 
-OPTIONAL_MODIFIER:          [?];
+QUERY:                      [?];
 
 // Grammar Definition
 
@@ -41,17 +41,19 @@ variableDeclaration:        'var' type? IDENTIFIER ('=' expression)? ;
 
 assignment:                 reference '=' expression ;
 
+operator:                   QUERY | SYMBOL ;
+
 expression:                 '(' expression ')'
 							 | literal
 							 | invocation
 							 | reference
-							 | OPERATOR expression
-							 | expression OPERATOR expression
+							 | operator expression
+							 | expression operator expression
 							 | expression '.' invocation;
 
 invocation:				    IDENTIFIER '(' ( argument ( ',' argument )* )? ')' ;
 
-type:                       IDENTIFIER ( '['  type ( ',' type)* ']' )? OPTIONAL_MODIFIER ? ;
+type:                       IDENTIFIER ( '['  type ( ',' type)* ']' )? QUERY ? ;
 
 argument:                   expression ;
 

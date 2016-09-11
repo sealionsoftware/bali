@@ -11,6 +11,7 @@ import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
+import com.sealionsoftware.bali.compiler.tree.ExistenceCheckNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
 import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
@@ -35,6 +36,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -303,6 +305,17 @@ public class ASMStackVisitorTest implements Opcodes {
         when(node.getItems()).thenReturn(mockItems);
 
         subject.visit(node);
+    }
+
+    @Test
+    public void testVisitExistenceCheckNode() {
+        ExistenceCheckNode node = mock(ExistenceCheckNode.class);
+        ExpressionNode target = mock(ExpressionNode.class);
+        when(node.getTarget()).thenReturn(target);
+
+        subject.visit(node);
+        verify(target).accept(subject);
+        verify(visitor).visitJumpInsn(eq(IFNULL), any(Label.class));
     }
 
     private IntegerLiteralNode setupMock(int i) {

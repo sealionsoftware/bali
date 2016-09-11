@@ -4,6 +4,7 @@ import bali.compiler.parser.BaliBaseVisitor;
 import bali.compiler.parser.BaliParser;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
+import com.sealionsoftware.bali.compiler.tree.ExistenceCheckNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.InvocationNode;
@@ -12,7 +13,6 @@ import com.sealionsoftware.bali.compiler.tree.OperationNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
 import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -91,19 +91,28 @@ public class ASTExpressionVisitor extends BaliBaseVisitor<ExpressionNode> {
 
         List<BaliParser.ExpressionContext> expressionContexts = ctx.expression();
         BaliParser.InvocationContext invocationContext = ctx.invocation();
-        TerminalNode operatorContext = ctx.OPERATOR();
+        BaliParser.OperatorContext operatorContext = ctx.operator();
 
         if (operatorContext != null) {
             Token start = ctx.start;
-            OperationNode node = new OperationNode(start.getLine(), start.getCharPositionInLine(), monitor);
-            node.setTarget(expressionContexts.get(0).accept(this));
-            node.setOperatorName(ctx.OPERATOR().getText());
-            node.setArguments(
-                    expressionContexts.size() == 2 ?
-                            asList(expressionContexts.get(1).accept(this)) :
-                            emptyList()
-            );
-            return node;
+            ExpressionNode target = expressionContexts.get(0).accept(this);
+
+            if (operatorContext.QUERY() != null && expressionContexts.size() == 1){
+                ExistenceCheckNode node = new ExistenceCheckNode(start.getLine(), start.getCharPositionInLine(), monitor);
+                node.setTarget(target);
+                return node;
+            } else {
+                OperationNode node = new OperationNode(start.getLine(), start.getCharPositionInLine(), monitor);
+                node.setTarget(target);
+                node.setOperatorName(operatorContext.getText());
+                node.setArguments(
+                        expressionContexts.size() == 2 ?
+                                asList(expressionContexts.get(1).accept(this)) :
+                                emptyList()
+                );
+                return node;
+            }
+
         } else if (invocationContext != null && expressionContexts.size() == 1) {
             targets.push(expressionContexts.get(0).accept(this));
             ExpressionNode ret = invocationContext.accept(this);

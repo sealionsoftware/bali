@@ -1,11 +1,12 @@
 package com.sealionsoftware.bali.compiler.tree;
 
-import com.sealionsoftware.bali.compiler.Site;
+import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import org.junit.Test;
 
 import java.util.List;
 
+import static com.sealionsoftware.bali.compiler.Matchers.isSiteOfType;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
@@ -49,8 +50,8 @@ public class LogicLiteralNodeTest {
 
     @Test
     public void testGetType() throws Exception {
-        Site type = mock(Site.class);
-        subject.setSite(type);
-        assertThat(subject.getSite(), is(type));
+        Type type = mock(Type.class);
+        subject.setType(type);
+        assertThat(subject.getSite(), isSiteOfType(type));
     }
 }

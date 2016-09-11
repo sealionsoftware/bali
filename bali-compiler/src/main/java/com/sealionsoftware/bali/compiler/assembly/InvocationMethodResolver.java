@@ -38,7 +38,7 @@ public class InvocationMethodResolver extends ValidatingVisitor {
 
     private Type getTargetType(InvocationNode node, ErrorCode errorCode) {
         ExpressionNode target = node.getTarget();
-        if (target == null){
+        if (target.getSite() == null){
             failures.add(new CompileError(
                     errorCode,
                     node
@@ -52,7 +52,7 @@ public class InvocationMethodResolver extends ValidatingVisitor {
                     node
             ));
         }
-        return targetSite == null ? null : targetSite.type;
+        return targetSite.type;
     }
 
     private void setResolvedMethod(InvocationNode node, Method method, ErrorCode errorCode) {

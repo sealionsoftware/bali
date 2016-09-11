@@ -8,9 +8,9 @@ import com.sealionsoftware.bali.compiler.tree.Node;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.synchronizedList;
+import static java.util.stream.Collectors.toList;
 
 public class MultithreadedAssemblyEngine implements AssemblyEngine {
 
@@ -35,7 +35,7 @@ public class MultithreadedAssemblyEngine implements AssemblyEngine {
                         validationFailures.addAll(assembler.getFailures());
                     }
                 }
-        )).collect(Collectors.toList()));
+        )).collect(toList()));
 
         if (!validationFailures.isEmpty()){
             throw new CompilationException(validationFailures);
