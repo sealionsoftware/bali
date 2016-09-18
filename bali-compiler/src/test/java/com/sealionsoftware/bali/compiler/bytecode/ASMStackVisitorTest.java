@@ -10,6 +10,7 @@ import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
+import com.sealionsoftware.bali.compiler.tree.ConditionalNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExistenceCheckNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
@@ -184,7 +185,7 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
-    public void testVisitConditionalNode() throws Exception {
+    public void testVisitConditionalStatementNode() throws Exception {
         ConditionalStatementNode mockNode = mock(ConditionalStatementNode.class);
         when(mockNode.getCondition()).thenReturn(mock(ExpressionNode.class));
         when(mockNode.getConditional()).thenReturn(mock(StatementNode.class));
@@ -316,6 +317,12 @@ public class ASMStackVisitorTest implements Opcodes {
         subject.visit(node);
         verify(target).accept(subject);
         verify(visitor).visitJumpInsn(eq(IFNULL), any(Label.class));
+    }
+
+    @Test
+    public void testVisitConditionalNode() {
+        ConditionalNode node = mock(ConditionalNode.class);
+        subject.visit(node);
     }
 
     private IntegerLiteralNode setupMock(int i) {
