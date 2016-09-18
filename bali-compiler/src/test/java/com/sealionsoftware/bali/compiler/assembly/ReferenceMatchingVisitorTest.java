@@ -2,16 +2,22 @@ package com.sealionsoftware.bali.compiler.assembly;
 
 import com.sealionsoftware.bali.compiler.ErrorCode;
 import com.sealionsoftware.bali.compiler.Site;
+import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
+import com.sealionsoftware.bali.compiler.tree.ConditionalNode;
+import com.sealionsoftware.bali.compiler.tree.ExistenceCheckNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.junit.Test;
 
+import java.util.UUID;
+
 import static com.sealionsoftware.bali.compiler.Matchers.containsNoFailures;
 import static com.sealionsoftware.bali.compiler.Matchers.containsOneFailure;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ReferenceMatchingVisitorTest {
 
@@ -66,6 +72,20 @@ public class ReferenceMatchingVisitorTest {
         subject.visit(node);
 
         assertThat(subject, containsOneFailure(ErrorCode.CANNOT_RESOLVE_REFERENCE));
+    }
+
+    @Test
+    public void testVisitFlowTypingNode() throws Exception {
+
+        ConditionalNode conditionalNode = mock(ConditionalNode.class);
+        ExistenceCheckNode expressionNode = mock(ExistenceCheckNode.class);
+        ReferenceNode node = mock(ReferenceNode.class);
+
+        when(conditionalNode.getCondition()).thenReturn(expressionNode);
+        when(expressionNode.getTarget()).thenReturn(node);
+        when(node.getVariableData()).thenReturn(new VariableData("reference", new Site(mock(Type.class), true), UUID.randomUUID()));
+
+        subject.visit(conditionalNode);
     }
 
 }

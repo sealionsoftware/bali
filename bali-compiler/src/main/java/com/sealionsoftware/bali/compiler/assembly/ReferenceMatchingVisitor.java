@@ -45,7 +45,6 @@ public class ReferenceMatchingVisitor extends ValidatingVisitor {
                 Scope scope = new Scope();
                 scope.add(new VariableData(data.name, new Site(originalSite != null ? originalSite.type : null, false), data.id));
                 pushAndWalk(conditionalNode, scope);
-                return;
             }
         }
         visitChildren(conditionalNode);
