@@ -4,9 +4,12 @@ import com.sealionsoftware.bali.compiler.ErrorCode;
 import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
-import com.sealionsoftware.bali.compiler.tree.ConditionalNode;
+import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
+import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExistenceCheckNode;
+import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
+import com.sealionsoftware.bali.compiler.tree.StatementNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.junit.Test;
@@ -15,6 +18,7 @@ import java.util.UUID;
 
 import static com.sealionsoftware.bali.compiler.Matchers.containsNoFailures;
 import static com.sealionsoftware.bali.compiler.Matchers.containsOneFailure;
+import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -75,16 +79,43 @@ public class ReferenceMatchingVisitorTest {
     }
 
     @Test
-    public void testVisitFlowTypingNode() throws Exception {
+    public void testVisitFlowTypingConditionalStatementNode() throws Exception {
 
-        ConditionalNode conditionalNode = mock(ConditionalNode.class);
+        ConditionalStatementNode conditionalNode = mock(ConditionalStatementNode.class);
         ExistenceCheckNode expressionNode = mock(ExistenceCheckNode.class);
         ReferenceNode node = mock(ReferenceNode.class);
+        StatementNode statementNode = mock(StatementNode.class);
 
         when(conditionalNode.getCondition()).thenReturn(expressionNode);
+        when(conditionalNode.getConditional()).thenReturn(statementNode);
         when(expressionNode.getTarget()).thenReturn(node);
         when(node.getVariableData()).thenReturn(new VariableData("reference", new Site(mock(Type.class), true), UUID.randomUUID()));
+        when(statementNode.getChildren()).thenReturn(emptyList());
 
+        subject.visit(conditionalNode);
+    }
+
+    @Test
+    public void testVisitNonFlowTypingConditionalStatementNode() throws Exception {
+
+        ConditionalStatementNode conditionalNode = mock(ConditionalStatementNode.class);
+        ExpressionNode condition = mock(ExpressionNode.class);
+        StatementNode conditional = mock(StatementNode.class);
+        StatementNode contraConditional = mock(StatementNode.class);
+        when(conditionalNode.getCondition()).thenReturn(condition);
+        when(conditionalNode.getConditional()).thenReturn(conditional);
+        when(conditionalNode.getContraConditional()).thenReturn(contraConditional);
+        subject.visit(conditionalNode);
+    }
+
+    @Test
+    public void testVisitFlowTypingConditionalLoopNode() throws Exception {
+
+        ConditionalLoopNode conditionalNode = mock(ConditionalLoopNode.class);
+        ExpressionNode condition = mock(ExpressionNode.class);
+        StatementNode conditional = mock(StatementNode.class);
+        when(conditionalNode.getCondition()).thenReturn(condition);
+        when(conditionalNode.getConditional()).thenReturn(conditional);
         subject.visit(conditionalNode);
     }
 

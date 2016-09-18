@@ -4,7 +4,6 @@ import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
-import com.sealionsoftware.bali.compiler.tree.ConditionalNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExistenceCheckNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
@@ -100,12 +99,6 @@ public class ValidatingVisitorTest {
     public void testVisitExistenceCheckNodeNode() throws Exception {
         subject.visit(mock(ExistenceCheckNode.class));
     }
-
-    @Test
-    public void testVisitConditionalNode() throws Exception {
-        subject.visit(mock(ConditionalNode.class));
-    }
-
 
     @Test
     public void testGetFailures() throws Exception {

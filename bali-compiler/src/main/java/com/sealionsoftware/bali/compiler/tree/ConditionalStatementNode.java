@@ -19,7 +19,6 @@ public class ConditionalStatementNode extends ConditionalNode {
 
     public void accept(Visitor visitor) {
         visitor.visit(this);
-        visitor.visit((ConditionalNode) this);
     }
 
 }
