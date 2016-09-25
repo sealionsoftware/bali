@@ -24,7 +24,7 @@ public class OperationIT {
     public void testChainedOperators() {
 
         Object output = interpreter.evaluate("1 + 2 + 3 + 4 / 2");
-        assertThat(output, equalTo(convert(5)));
+        assertThat(output, equalTo(convert(8)));
     }
 
     @Test

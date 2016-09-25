@@ -3,6 +3,7 @@ package com.sealionsoftware.bali.compiler.server;
 import com.sealionsoftware.bali.compiler.CompilationException;
 import com.sealionsoftware.bali.compiler.CompileError;
 import com.sealionsoftware.bali.compiler.Interpreter;
+import com.sealionsoftware.bali.compiler.TextBuffer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -11,25 +12,21 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.task.AsyncTaskExecutor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 
-import java.util.Map;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static com.sealionsoftware.Constant.map;
-import static com.sealionsoftware.Constant.put;
+import static bali.text.Primitive.convert;
 import static com.sealionsoftware.Matchers.throwsException;
 import static com.sealionsoftware.Matchers.withMessage;
 import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -40,6 +37,8 @@ import static org.mockito.Mockito.when;
 public class CompileControllerTest {
 
     @Mock
+    private TextBuffer buffer;
+    @Mock
     private AsyncTaskExecutor executor;
     @Mock
     private Interpreter interpreter;
@@ -47,39 +46,45 @@ public class CompileControllerTest {
     @InjectMocks
     private CompileController subject;
 
-    @Test
+    @Test @SuppressWarnings("unchecked")
     public void testCompileFragment() throws Exception {
 
-        String name = "greeting";
         String value = "Hello World";
-        String fragment = "var Text " + name + " = \"" + value + "\"";
+        String fragment = "console << " + value;
 
+        Future future = mock(Future.class);
         @SuppressWarnings("unchecked")
-        Future<Map<String, Object>> future = mock(Future.class);
-        Map<String, Object> mockOutput = map(put(name, value));
+        List<String> mockOutput = mock(List.class);
 
-        when(executor.submit(Mockito.<Callable<Map<String, Object>>>any())).thenReturn(future);
+        when(executor.submit(any(Runnable.class))).thenReturn(future);
         when(future.get(any(long.class), any(TimeUnit.class))).thenReturn(mockOutput);
+        when(buffer.getWrittenLines()).thenReturn(asList(convert(value)));
 
-        Map<String, Object> output = subject.compileFragment(fragment);
-        assertThat(output, hasEntry(name, value));
+        List<String> output = subject.compileFragment(fragment);
+        assertThat(output, contains(value));
 
-        ArgumentCaptor<Callable> callCapture = ArgumentCaptor.forClass(Callable.class);
+        ArgumentCaptor<Runnable> callCapture = ArgumentCaptor.forClass(Runnable.class);
         verify(executor).submit(callCapture.capture());
-        callCapture.getValue().call();
+        callCapture.getValue().run();
         verify(interpreter).run(fragment);
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testCompileTimeout() throws Exception {
 
-        @SuppressWarnings("unchecked")
-        Future<Map<String, Object>> future = mock(Future.class);
+        Future future = mock(Future.class);
 
-        when(executor.submit(Mockito.<Callable<Map<String, Object>>>any())).thenReturn(future);
+        when(executor.submit(any(Runnable.class))).thenReturn(future);
         when(future.get(any(long.class), any(TimeUnit.class))).thenThrow(new TimeoutException());
 
-        Callable invocation = () -> subject.compileFragment("var Text greeting = \"Hello World\"");
+        Runnable invocation = () -> {
+            try {
+                subject.compileFragment("var Text greeting = \"Hello World\"");
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        };
         assertThat(invocation, throwsException(withMessage("The submitted code timed out before completing")));
         verify(future).cancel(true);
     }
@@ -105,6 +110,7 @@ public class CompileControllerTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testCompileInvalidExpression() throws Exception {
 
         String value = "1 + true";
@@ -120,7 +126,13 @@ public class CompileControllerTest {
 
         when(future.get(any(long.class), any(TimeUnit.class))).thenThrow(new ExecutionException(toThrow));
 
-        Callable output = () -> subject.compileExpression(value);
+        Runnable output = () -> {
+            try {
+                subject.compileExpression(value);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        };
         assertThat(output, throwsException(withMessage(equalTo("Compilation Failed: [SUCKY_CODE]"))));
 
         ArgumentCaptor<Callable> callCapture = ArgumentCaptor.forClass(Callable.class);
@@ -132,9 +144,7 @@ public class CompileControllerTest {
     @Test
     public void testHandleBadRequest(){
 
-        ResponseEntity entity = subject.handle(mock(HttpMessageNotReadableException.class));
+        subject.handle(mock(HttpMessageNotReadableException.class));
 
-        assertThat(entity, notNullValue());
-        assertThat(entity.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
 }

@@ -5,6 +5,8 @@ import com.sealionsoftware.bali.compiler.Parameter;
 import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
+import com.sealionsoftware.bali.compiler.assembly.FieldData;
+import com.sealionsoftware.bali.compiler.assembly.ReferenceData;
 import com.sealionsoftware.bali.compiler.assembly.VariableData;
 import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
@@ -158,6 +160,44 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
+    public void testVisitFieldAssignment() throws Exception {
+
+        ExpressionNode expressionNode = mock(ExpressionNode.class);
+        ReferenceNode referenceNode = mock(ReferenceNode.class);
+
+        FieldData data = new FieldData(
+                "aField", mock(Site.class)
+        );
+        when(referenceNode.getReferenceData()).thenReturn(data);
+
+        AssignmentNode node = new AssignmentNode(0, 0);
+        node.setValue(expressionNode);
+        node.setTarget(referenceNode);
+
+        subject.visit(node);
+
+        verify(visitor).visitFieldInsn(PUTFIELD, "AType", "aField", "Ljava/lang/Object;");
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testVisitUnknownReferenceAssignment() throws Exception {
+
+        ExpressionNode expressionNode = mock(ExpressionNode.class);
+        ReferenceNode referenceNode = mock(ReferenceNode.class);
+
+        ReferenceData data = mock(ReferenceData.class);
+        when(referenceNode.getReferenceData()).thenReturn(data);
+
+        AssignmentNode node = new AssignmentNode(0, 0);
+        node.setValue(expressionNode);
+        node.setTarget(referenceNode);
+
+        subject.visit(node);
+
+        verify(visitor, times(2)).visitVarInsn(ASTORE, 1);
+    }
+
+    @Test
      public void testVisitCodeBlock() throws Exception {
         CodeBlockNode mockNode = mock(CodeBlockNode.class);
         subject.visit(mockNode);
@@ -170,7 +210,7 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
-    public void testVisitReferenceNode() throws Exception {
+    public void testVisitVariableReferenceNode() throws Exception {
         UUID id = UUID.randomUUID();
         VariableNode mockTarget = mock(VariableNode.class);
         when(mockTarget.getId()).thenReturn(id);
@@ -179,6 +219,16 @@ public class ASMStackVisitorTest implements Opcodes {
         VariableData variableData = new VariableData("name", null, id);
         ReferenceNode mockNode = mock(ReferenceNode.class);
         when(mockNode.getReferenceData()).thenReturn(variableData);
+
+        subject.visit(mockNode);
+        verify(visitor).visitVarInsn(ALOAD, 1);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testVisitUnknownReferenceNode() throws Exception {
+        ReferenceData referenceData = mock(ReferenceData.class);
+        ReferenceNode mockNode = mock(ReferenceNode.class);
+        when(mockNode.getReferenceData()).thenReturn(referenceData);
 
         subject.visit(mockNode);
         verify(visitor).visitVarInsn(ALOAD, 1);

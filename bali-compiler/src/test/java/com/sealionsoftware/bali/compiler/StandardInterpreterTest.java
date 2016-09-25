@@ -10,6 +10,8 @@ import java.io.PrintStream;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -46,11 +48,9 @@ public class StandardInterpreterTest {
         subject.run(fragment);
 
         verify(parseEngine).parseFragment(fragment);
-        verify(assemblyEngine).assemble(ast);
+        verify(assemblyEngine).assemble(same(ast), any());
         verify(bytecodeEngine).generate(ast);
         verify(executor).executeFragment(bytecode);
-
-
     }
 
     @Test
@@ -78,25 +78,25 @@ public class StandardInterpreterTest {
     @Test
     public void testMain() throws Exception {
 
-        PrintStream out = setUpSystemIn(new String[]{"var three = 3", "exit" });
+        PrintStream out = setUpSystemIn("console << \"Hello World\"", "exit");
 
         StandardInterpreter.main();
 
         verify(out).println("Compilation successful");
-        verify(out).println("three: 3");
+        verify(out).println("Hello World");
     }
 
     @Test
     public void testMainException() throws Exception {
 
-        PrintStream out = setUpSystemIn(new String[]{ "var Text three = 3", "exit" });
+        PrintStream out = setUpSystemIn("var Text three = 3", "exit");
 
         StandardInterpreter.main();
 
         verify(out).println("com.sealionsoftware.bali.compiler.CompilationException: Compilation Failed: [INVALID_TYPE(1:0)]");
     }
 
-    private PrintStream setUpSystemIn(String[] input){
+    private PrintStream setUpSystemIn(String... input){
         StringBuilder sb = new StringBuilder();
         for (String inputLine : input) {
             sb.append(inputLine).append(System.lineSeparator());

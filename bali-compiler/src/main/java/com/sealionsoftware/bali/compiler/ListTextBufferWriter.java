@@ -27,7 +27,7 @@ public class ListTextBufferWriter implements Writer, TextBuffer {
     public void writeLine(Text in) {
         Text line = in;
         if (lineBuffer.length() > 0){
-            line = line.concatenate(drainLineBuffer());
+            line = drainLineBuffer().concatenate(line);
         }
         written.add(line);
     }

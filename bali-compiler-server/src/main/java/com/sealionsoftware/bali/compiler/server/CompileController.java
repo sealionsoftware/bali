@@ -6,7 +6,6 @@ import com.sealionsoftware.bali.compiler.TextBuffer;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -39,9 +39,7 @@ public class CompileController {
 
     @RequestMapping(value = "/fragment", method = RequestMethod.POST)
     public @ResponseBody List<String> compileFragment(@RequestBody String body) throws Exception {
-        runWithTimeout(executor.submit(() -> {
-            interpreter.run(body);
-        }));
+        runWithTimeout(executor.submit(() -> interpreter.run(body)));
         return console.getWrittenLines().stream().map(bali.text.Primitive::convert).collect(Collectors.toList());
     }
 
@@ -64,9 +62,9 @@ public class CompileController {
         }
     }
 
-    @ExceptionHandler
-    public ResponseEntity<String> handle(HttpMessageNotReadableException exception){
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    @ExceptionHandler @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public void handle(HttpMessageNotReadableException exception){
+        exception.printStackTrace();
     }
 
 }
