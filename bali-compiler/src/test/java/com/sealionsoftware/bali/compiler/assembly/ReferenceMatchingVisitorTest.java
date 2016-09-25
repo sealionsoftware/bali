@@ -89,7 +89,7 @@ public class ReferenceMatchingVisitorTest {
         when(conditionalNode.getCondition()).thenReturn(expressionNode);
         when(conditionalNode.getConditional()).thenReturn(statementNode);
         when(expressionNode.getTarget()).thenReturn(node);
-        when(node.getVariableData()).thenReturn(new VariableData("reference", new Site(mock(Type.class), true), UUID.randomUUID()));
+        when(node.getReferenceData()).thenReturn(new VariableData("reference", new Site(mock(Type.class), true), UUID.randomUUID()));
         when(statementNode.getChildren()).thenReturn(emptyList());
 
         subject.visit(conditionalNode);

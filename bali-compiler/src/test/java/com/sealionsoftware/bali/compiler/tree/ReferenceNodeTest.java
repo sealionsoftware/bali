@@ -32,8 +32,8 @@ public class ReferenceNodeTest {
 		VariableData variableData = new VariableData(
 				"aVariable", mock(Site.class), UUID.randomUUID()
 		);
-		subject.setVariableData(variableData);
-		assertThat(subject.getVariableData(), is(variableData));
+		subject.setReferenceData(variableData);
+		assertThat(subject.getReferenceData(), is(variableData));
 	}
 
 	@Test
@@ -57,7 +57,7 @@ public class ReferenceNodeTest {
         VariableData variableData = new VariableData(
                 "aVariable", mockType, UUID.randomUUID()
         );
-        subject.setVariableData(variableData);
+        subject.setReferenceData(variableData);
         assertThat(subject.getSite(), is(mockType));
     }
 

@@ -104,7 +104,7 @@ public class TypeCheckVisitorTest {
 
         ExpressionNode expressionNode = mock(ExpressionNode.class);
         ReferenceNode referenceNode = mock(ReferenceNode.class);
-        when(referenceNode.getVariableData()).thenReturn(variableData);
+        when(referenceNode.getReferenceData()).thenReturn(variableData);
 
         AssignmentNode node = new AssignmentNode(2, 3);
         node.setTarget(referenceNode);
@@ -122,7 +122,7 @@ public class TypeCheckVisitorTest {
         VariableData variableData = new VariableData("aName", variableType, UUID.randomUUID());
 
         ReferenceNode referenceNode = mock(ReferenceNode.class);
-        when(referenceNode.getVariableData()).thenReturn(variableData);
+        when(referenceNode.getReferenceData()).thenReturn(variableData);
 
         Site expressionType = mock(Site.class);
         ExpressionNode expressionNode = mock(ExpressionNode.class);
@@ -144,7 +144,7 @@ public class TypeCheckVisitorTest {
         VariableData variableData = new VariableData("aName", variableType, UUID.randomUUID());
 
         ReferenceNode referenceNode = mock(ReferenceNode.class);
-        when(referenceNode.getVariableData()).thenReturn(variableData);
+        when(referenceNode.getReferenceData()).thenReturn(variableData);
 
         Site expressionType = mock(Site.class);
         ExpressionNode expressionNode = mock(ExpressionNode.class);

@@ -1,5 +1,6 @@
 package bali.text;
 
+import bali.Character;
 import bali.Iterator;
 import bali.Text;
 import org.junit.Test;
@@ -12,6 +13,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class CharArrayStringTest {
 
@@ -63,13 +65,79 @@ public class CharArrayStringTest {
     }
 
     @Test
+    public void testEqualToOtherImplementationDifferentSize() throws Exception {
+
+        Text other = mock(Text.class);
+        when(other.size()).thenReturn(convert(1));
+
+        assertThat(subject.equalTo(other), equalTo(convert(false)));
+    }
+
+    @Test
+    public void testEqualToOtherImplementationDifferentChars() throws Exception {
+
+        Text other = mock(Text.class);
+        @SuppressWarnings("unchecked")
+        Iterator<Character> iterator = mock(Iterator.class);
+        when(other.size()).thenReturn(convert(11));
+        when(other.iterator()).thenReturn(iterator);
+        when(iterator.next()).thenReturn(convert('G'));
+
+        assertThat(subject.equalTo(other), equalTo(convert(false)));
+    }
+
+    @Test
     public void testEqualToOtherImplementation() throws Exception {
-        assertThat(subject.equalTo(mock(Text.class)), equalTo(convert(false)));
+
+        Text other = mock(Text.class);
+        @SuppressWarnings("unchecked")
+        Iterator<Character> iterator = mock(Iterator.class);
+        when(other.size()).thenReturn(convert(11));
+        when(other.iterator()).thenReturn(iterator);
+        when(iterator.next()).thenReturn(
+                convert('H'), convert('e'), convert('l'), convert('l'), convert('o'),
+                convert(' '),
+                convert('W'), convert('o'), convert('r'), convert('l'), convert('d'));
+
+        assertThat(subject.equalTo(other), equalTo(convert(true)));
+    }
+
+    @Test
+    public void testNotEqualToOtherImplementationDifferentSize() throws Exception {
+
+        Text other = mock(Text.class);
+        when(other.size()).thenReturn(convert(1));
+
+        assertThat(subject.notEqualTo(other), equalTo(convert(true)));
+    }
+
+    @Test
+    public void testNotEqualToOtherImplementationDifferentChars() throws Exception {
+
+        Text other = mock(Text.class);
+        @SuppressWarnings("unchecked")
+        Iterator<Character> iterator = mock(Iterator.class);
+        when(other.size()).thenReturn(convert(11));
+        when(other.iterator()).thenReturn(iterator);
+        when(iterator.next()).thenReturn(convert('G'));
+
+        assertThat(subject.notEqualTo(other), equalTo(convert(true)));
     }
 
     @Test
     public void testNotEqualToOtherImplementation() throws Exception {
-        assertThat(subject.notEqualTo(mock(Text.class)), equalTo(convert(true)));
+
+        Text other = mock(Text.class);
+        @SuppressWarnings("unchecked")
+        Iterator<Character> iterator = mock(Iterator.class);
+        when(other.size()).thenReturn(convert(11));
+        when(other.iterator()).thenReturn(iterator);
+        when(iterator.next()).thenReturn(
+                convert('H'), convert('e'), convert('l'), convert('l'), convert('o'),
+                convert(' '),
+                convert('W'), convert('o'), convert('r'), convert('l'), convert('d'));
+
+        assertThat(subject.notEqualTo(other), equalTo(convert(false)));
     }
 
     @Test
@@ -91,4 +159,21 @@ public class CharArrayStringTest {
     public void testHashCode() throws Exception {
         assertThat(subject.hashCode(), not(equalTo(convert("Goodbye World").hashCode())));
     }
+
+    @Test
+    public void testConcatenate() throws Exception {
+        assertThat(subject.concatenate(convert("!")), equalTo(convert("Hello World!")));
+    }
+
+    @Test
+    public void testConcatenateOtherImplementation() throws Exception {
+        Text operand = mock(Text.class);
+        @SuppressWarnings("unchecked")
+        Iterator<Character> iterator = mock(Iterator.class);
+        when(operand.size()).thenReturn(convert(1));
+        when(operand.iterator()).thenReturn(iterator);
+        when(iterator.next()).thenReturn(convert('!'));
+        assertThat(subject.concatenate(operand), equalTo(convert("Hello World!")));
+    }
+
 }

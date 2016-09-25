@@ -17,14 +17,20 @@ import com.sealionsoftware.bali.compiler.tree.VariableNode;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.HashMap;
-import java.util.Map;
 
 import static java.util.Arrays.asList;
 
 public class ReferenceMatchingVisitor extends ValidatingVisitor {
 
-    private Deque<Scope> scopeStack = new ArrayDeque<>(asList(new Scope()));
+    private final Deque<Scope> scopeStack;
+
+    public ReferenceMatchingVisitor() {
+        this.scopeStack = new ArrayDeque<>(asList(new Scope()));
+    }
+
+    public ReferenceMatchingVisitor(Scope scope) {
+        this.scopeStack = new ArrayDeque<>(asList(scope, new Scope()));
+    }
 
     public void visit(CodeBlockNode codeBlock) {
         pushAndWalk(codeBlock, new Scope());
@@ -57,15 +63,29 @@ public class ReferenceMatchingVisitor extends ValidatingVisitor {
             ExpressionNode target = existenceCheckNode.getTarget();
             if (target instanceof ReferenceNode){
                 ReferenceNode referenceNode = (ReferenceNode) target;
-                VariableData data = referenceNode.getVariableData();
-                Site originalSite = data.type;
                 Scope scope = new Scope();
-                scope.add(new VariableData(data.name, new Site(originalSite != null ? originalSite.type : null, false), data.id));
+                scope.add(buildPresentReference(referenceNode.getReferenceData()));
                 pushAndWalk(conditionalNode.getConditional(), scope);
                 return;
             }
         }
         conditionalNode.getConditional().accept(this);
+    }
+
+    private ReferenceData buildPresentReference(ReferenceData data) {
+        Site originalSite = data.type;
+        if (data instanceof VariableData){
+            return new VariableData(data.name, buildPresentSite(originalSite), ((VariableData) data).id);
+        }
+        if (data instanceof FieldData){
+            return new FieldData(data.name, buildPresentSite(originalSite));
+        }
+
+        throw new RuntimeException("Invalid reference type");
+    }
+
+    private Site buildPresentSite(Site in){
+        return new Site(in != null ? in.type : null);
     }
 
     private void pushAndWalk(Node node, Scope scope) {
@@ -84,7 +104,7 @@ public class ReferenceMatchingVisitor extends ValidatingVisitor {
             return;
         }
 
-        value.setVariableData(declarationScope.find(name));
+        value.setReferenceData(declarationScope.find(name));
     }
 
     private Scope getScopeForReference(String name) {
@@ -93,25 +113,6 @@ public class ReferenceMatchingVisitor extends ValidatingVisitor {
             return scope;
         }
         return null;
-    }
-
-    private static class Scope {
-
-        private Map<String, VariableData> declarations = new HashMap<>();
-
-        public Scope(){}
-
-        public void add(VariableData vd) {
-            declarations.put(vd.name, vd);
-        }
-
-        public VariableData find(String name) {
-            return declarations.get(name);
-        }
-
-        public Boolean contains(String name) {
-            return declarations.containsKey(name);
-        }
     }
 
     private VariableData createData(VariableNode node){

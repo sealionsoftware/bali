@@ -8,7 +8,9 @@ import com.sealionsoftware.bali.compiler.tree.Node;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.synchronizedList;
 import static java.util.stream.Collectors.toList;
 
@@ -23,10 +25,14 @@ public class MultithreadedAssemblyEngine implements AssemblyEngine {
     }
 
     public void assemble(Node fragment) {
+        assemble(fragment, emptyMap());
+    }
+
+    public void assemble(Node fragment, Map<String, Class> externalReferences) {
 
         final List<CompileError> validationFailures = synchronizedList(new ArrayList<>());
 
-        monitor.run(factory.assemblers().stream().map((assembler) -> new AssemblyTask(
+        monitor.run(factory.assemblers(externalReferences).stream().map((assembler) -> new AssemblyTask(
                 assembler.getClass().getSimpleName(),
                 () -> {
                     try {

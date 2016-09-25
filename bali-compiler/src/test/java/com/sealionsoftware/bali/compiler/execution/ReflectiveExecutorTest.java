@@ -1,14 +1,12 @@
 package com.sealionsoftware.bali.compiler.execution;
 
+import bali.Writer;
 import com.sealionsoftware.bali.compiler.ClasspathLoader;
 import com.sealionsoftware.bali.compiler.Executor;
 import com.sealionsoftware.bali.compiler.GeneratedClass;
 import com.sealionsoftware.bali.compiler.GeneratedPackage;
 import org.junit.Test;
 
-import java.util.Map;
-
-import static com.sealionsoftware.Matchers.isEmptyMap;
 import static com.sealionsoftware.bali.compiler.Interpreter.EVALUATION_CLASS_NAME;
 import static com.sealionsoftware.bali.compiler.Interpreter.FRAGMENT_CLASS_NAME;
 import static java.util.Collections.singletonList;
@@ -19,7 +17,7 @@ import static org.mockito.Mockito.when;
 
 public class ReflectiveExecutorTest {
 
-    private Executor subject = new ReflectiveExecutor();
+    private Executor subject = new ReflectiveExecutor(mock(Writer.class));
     private ClasspathLoader loader = new ClasspathLoader();
 
     @Test
@@ -34,10 +32,7 @@ public class ReflectiveExecutorTest {
                 loader.resourceAsBytes(getClass().getResource(FRAGMENT_CLASS_NAME + ".class"))
         );
 
-        Map<String, Object> ret = subject.executeFragment(generatedPackage);
-
-        assertThat(ret, notNullValue());
-        assertThat(ret, isEmptyMap());
+        subject.executeFragment(generatedPackage);
     }
 
     @Test(expected = RuntimeException.class)

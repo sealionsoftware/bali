@@ -38,14 +38,14 @@ public class InvocationMethodResolver extends ValidatingVisitor {
 
     private Type getTargetType(InvocationNode node, ErrorCode errorCode) {
         ExpressionNode target = node.getTarget();
-        if (target.getSite() == null){
+        Site targetSite = target.getSite();
+        if (targetSite == null){
             failures.add(new CompileError(
                     errorCode,
                     node
             ));
             return null;
         }
-        Site targetSite = target.getSite();
         if (targetSite.isOptional){
             failures.add(new CompileError(
                     ErrorCode.CANNOT_INVOKE_ON_OPTIONAL,

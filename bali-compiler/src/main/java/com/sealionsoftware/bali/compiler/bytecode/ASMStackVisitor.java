@@ -4,6 +4,9 @@ import com.sealionsoftware.bali.compiler.Method;
 import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.Type;
 import com.sealionsoftware.bali.compiler.assembly.DescendingVisitor;
+import com.sealionsoftware.bali.compiler.assembly.FieldData;
+import com.sealionsoftware.bali.compiler.assembly.ReferenceData;
+import com.sealionsoftware.bali.compiler.assembly.VariableData;
 import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
@@ -34,16 +37,20 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.joining;
+
 public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
 
+    private String targetLocalName;
     private MethodVisitor methodVisitor;
     private Deque<Label> scopeHorizonStack = new LinkedList<>();
     private List<VariableInfo> variables = new LinkedList<>();
     private Map<UUID, Integer> variablesIndex = new HashMap<>();
 
-    public ASMStackVisitor(MethodVisitor methodVisitor) {
+    public ASMStackVisitor(MethodVisitor methodVisitor, String targetLocalName) {
         this.methodVisitor = methodVisitor;
         scopeHorizonStack.push(null);
+        this.targetLocalName = targetLocalName;
     }
 
     public void visit(ExpressionStatementNode node) {
@@ -131,12 +138,31 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
     }
 
     public void visit(AssignmentNode node) {
-        node.getValue().accept(this);
-        methodVisitor.visitVarInsn(ASTORE, variablesIndex.get(node.getTarget().getVariableData().id));
+
+        ReferenceData data = node.getTarget().getReferenceData();
+        if (data instanceof VariableData){
+            node.getValue().accept(this);
+            methodVisitor.visitVarInsn(ASTORE, variablesIndex.get(((VariableData) data).id));
+        } else if (data instanceof FieldData) {
+            methodVisitor.visitVarInsn(ALOAD, 0);
+            node.getValue().accept(this);
+            methodVisitor.visitFieldInsn(PUTFIELD, targetLocalName, data.name, toSignature(data.type));
+        } else {
+            throw new RuntimeException("Invalid reference type");
+        }
     }
 
     public void visit(ReferenceNode node){
-        methodVisitor.visitVarInsn(ALOAD, variablesIndex.get(node.getVariableData().id));
+
+        ReferenceData data = node.getReferenceData();
+        if (data instanceof VariableData){
+            methodVisitor.visitVarInsn(ALOAD, variablesIndex.get(((VariableData) data).id));
+        } else if (data instanceof FieldData) {
+            methodVisitor.visitVarInsn(ALOAD, 0);
+            methodVisitor.visitFieldInsn(GETFIELD, targetLocalName, data.name, toSignature(data.type));
+        } else {
+            throw new RuntimeException("Invalid reference type");
+        }
     }
 
     public void visit(ConditionalStatementNode node) {
@@ -244,7 +270,7 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
     }
 
     private static String toSignature(Site returnType, List<Site> parameterTypes){
-        return "(" + parameterTypes.stream().map(ASMStackVisitor::toSignature).collect(Collectors.joining(","))+ ")" + (returnType == null ? "V" : toSignature(returnType));
+        return "(" + parameterTypes.stream().map(ASMStackVisitor::toSignature).collect(joining(","))+ ")" + (returnType == null ? "V" : toSignature(returnType));
     }
 
 }

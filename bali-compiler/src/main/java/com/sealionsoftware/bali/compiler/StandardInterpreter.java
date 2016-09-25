@@ -1,5 +1,7 @@
 package com.sealionsoftware.bali.compiler;
 
+import bali.Writer;
+import bali.command.Console;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.assembly.InterpreterAssemblySetFactory;
 import com.sealionsoftware.bali.compiler.assembly.MultithreadedAssemblyEngine;
@@ -9,6 +11,7 @@ import com.sealionsoftware.bali.compiler.parser.ANTLRParseEngine;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -20,28 +23,28 @@ public class StandardInterpreter implements Interpreter {
     private Executor executor;
 
     public StandardInterpreter() {
-        CompilationThreadManager monitor = new CompilationThreadManager();
-        this.parseEngine = new ANTLRParseEngine(monitor);
-        this.assemblyEngine = new MultithreadedAssemblyEngine(
-                monitor,
-                new InterpreterAssemblySetFactory()
-        );
-        this.bytecodeEngine = new ASMBytecodeEngine();
-        this.executor =  new ReflectiveExecutor();
+        this(null, null, null, null);
     }
 
     public StandardInterpreter(ParseEngine parseEngine, AssemblyEngine assemblyEngine, BytecodeEngine bytecodeEngine, Executor executor) {
-        this.parseEngine = parseEngine;
-        this.assemblyEngine = assemblyEngine;
-        this.bytecodeEngine = bytecodeEngine;
-        this.executor = executor;
+        CompilationThreadManager monitor = new CompilationThreadManager();
+
+        this.parseEngine = parseEngine != null ? parseEngine : new ANTLRParseEngine(monitor);
+        this.assemblyEngine = assemblyEngine != null ? assemblyEngine : new MultithreadedAssemblyEngine(
+                monitor,
+                new InterpreterAssemblySetFactory()
+        );
+        this.bytecodeEngine = bytecodeEngine != null ? bytecodeEngine : new ASMBytecodeEngine();
+        this.executor = executor != null ? executor : new ReflectiveExecutor(new Console());
     }
 
-    public Map<String, Object> run(String fragment) {
+    public void run(String fragment) {
         CodeBlockNode codeBlockNode = parseEngine.parseFragment(fragment);
-        assemblyEngine.assemble(codeBlockNode);
+        Map<String, java.lang.Class> externalScope = new HashMap<>();
+        externalScope.put("console", Writer.class);
+        assemblyEngine.assemble(codeBlockNode, externalScope);
         GeneratedPackage generatedPackage = bytecodeEngine.generate(codeBlockNode);
-        return executor.executeFragment(generatedPackage);
+        executor.executeFragment(generatedPackage);
     }
 
     public Object evaluate(String expression) {
@@ -66,13 +69,9 @@ public class StandardInterpreter implements Interpreter {
             }
 
             try {
-                Map<String, Object> output = interpreter.run(input);
+                interpreter.run(input);
 
                 System.out.println("Compilation successful");
-
-                for (Map.Entry<String, Object> entry : output.entrySet() ){
-                    System.out.println(entry.getKey() + ": " + entry.getValue());
-                }
 
             } catch (Exception e){
                 System.out.println(e.toString());

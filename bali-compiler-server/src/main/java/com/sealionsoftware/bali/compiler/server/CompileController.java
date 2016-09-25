@@ -2,6 +2,7 @@ package com.sealionsoftware.bali.compiler.server;
 
 
 import com.sealionsoftware.bali.compiler.Interpreter;
+import com.sealionsoftware.bali.compiler.TextBuffer;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.http.HttpStatus;
@@ -16,11 +17,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.inject.Inject;
-import java.util.Map;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 @Controller
 @CrossOrigin({"http://sealionsoftware.github.io", "http://localhost"})
@@ -31,13 +33,16 @@ public class CompileController {
     private AsyncTaskExecutor executor;
     @Inject
     private Interpreter interpreter;
+    @Inject
+    private TextBuffer console;
 
 
     @RequestMapping(value = "/fragment", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Object> compileFragment(@RequestBody String body) throws Exception {
-        return runWithTimeout(executor.submit(() -> {
-            return interpreter.run(body);
+    public @ResponseBody List<String> compileFragment(@RequestBody String body) throws Exception {
+        runWithTimeout(executor.submit(() -> {
+            interpreter.run(body);
         }));
+        return console.getWrittenLines().stream().map(bali.text.Primitive::convert).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/expression", method = RequestMethod.POST)

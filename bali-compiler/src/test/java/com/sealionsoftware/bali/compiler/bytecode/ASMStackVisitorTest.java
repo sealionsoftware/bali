@@ -47,7 +47,7 @@ public class ASMStackVisitorTest implements Opcodes {
 
     private CompilationThreadManager monitor = mock(CompilationThreadManager.class);
     private MethodVisitor visitor = mock(MethodVisitor.class);
-    private ASMStackVisitor subject = new ASMStackVisitor(visitor);
+    private ASMStackVisitor subject = new ASMStackVisitor(visitor, "AType");
 
     @Test
     public void testVisitLiteralTrue() throws Exception {
@@ -146,7 +146,7 @@ public class ASMStackVisitorTest implements Opcodes {
         VariableData data = new VariableData(
                 "aVariable", mock(Site.class), setupNode.getId()
         );
-        when(referenceNode.getVariableData()).thenReturn(data);
+        when(referenceNode.getReferenceData()).thenReturn(data);
 
         AssignmentNode node = new AssignmentNode(0, 0);
         node.setValue(expressionNode);
@@ -178,7 +178,7 @@ public class ASMStackVisitorTest implements Opcodes {
 
         VariableData variableData = new VariableData("name", null, id);
         ReferenceNode mockNode = mock(ReferenceNode.class);
-        when(mockNode.getVariableData()).thenReturn(variableData);
+        when(mockNode.getReferenceData()).thenReturn(variableData);
 
         subject.visit(mockNode);
         verify(visitor).visitVarInsn(ALOAD, 1);

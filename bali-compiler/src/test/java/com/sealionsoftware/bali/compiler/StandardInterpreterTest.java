@@ -7,7 +7,6 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -40,21 +39,18 @@ public class StandardInterpreterTest {
         String fragment = "Hello World";
         CodeBlockNode ast = mock(CodeBlockNode.class);
         GeneratedPackage bytecode = mock(GeneratedPackage.class);
-        @SuppressWarnings("unchecked")
-        Map<String, Object> variables = mock(Map.class);
 
         when(parseEngine.parseFragment(fragment)).thenReturn(ast);
         when(bytecodeEngine.generate(ast)).thenReturn(bytecode);
-        when(executor.executeFragment(bytecode)).thenReturn(variables);
 
-        Map<String, Object> ret = subject.run(fragment);
+        subject.run(fragment);
 
         verify(parseEngine).parseFragment(fragment);
         verify(assemblyEngine).assemble(ast);
         verify(bytecodeEngine).generate(ast);
         verify(executor).executeFragment(bytecode);
 
-        assertThat(ret, is(variables));
+
     }
 
     @Test

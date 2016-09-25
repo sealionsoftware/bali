@@ -6,7 +6,6 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 import static org.hamcrest.Matchers.equalTo;
 
@@ -24,11 +23,11 @@ public class Matchers {
         };
     }
 
-    public static Matcher<Callable> throwsException(Matcher<? extends Exception> exceptionMatcher) {
-        return new TypeSafeDiagnosingMatcher<Callable>() {
-            protected boolean matchesSafely(Callable runnable, Description description) {
+    public static Matcher<Runnable> throwsException(Matcher<? extends Exception> exceptionMatcher) {
+        return new TypeSafeDiagnosingMatcher<Runnable>() {
+            protected boolean matchesSafely(Runnable runnable, Description description) {
                 try {
-                    runnable.call();
+                    runnable.run();
                 } catch (Exception e) {
                     if (exceptionMatcher.matches(e)) return true;
                     exceptionMatcher.describeMismatch(e, description);

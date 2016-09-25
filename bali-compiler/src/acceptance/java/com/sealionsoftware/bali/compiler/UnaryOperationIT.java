@@ -3,8 +3,6 @@ package com.sealionsoftware.bali.compiler;
 import bali.Logic;
 import org.junit.Test;
 
-import java.util.concurrent.Callable;
-
 import static bali.number.Primitive.convert;
 import static com.sealionsoftware.Matchers.throwsException;
 import static com.sealionsoftware.bali.compiler.Matchers.containingError;
@@ -32,13 +30,13 @@ public class UnaryOperationIT {
 
     @Test
     public void testInvalidOperator() {
-        Callable invocation = () -> interpreter.evaluate("& 1");
+        Runnable invocation = () -> interpreter.evaluate("& 1");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.OPERATOR_NOT_FOUND))));
     }
 
     @Test
     public void testInvalidReturnType() {
-        Callable invocation = () -> interpreter.run("var Logic ret = ++1");
+        Runnable invocation = () -> interpreter.run("var Logic ret = ++1");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
     }
 
@@ -51,7 +49,7 @@ public class UnaryOperationIT {
 
     @Test
     public void testOperatorOnOptionalVariable() {
-        Callable invocation = () -> interpreter.run(
+        Runnable invocation = () -> interpreter.run(
                 "var Logic? maybeTrue " +
                 "!maybeTrue");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.CANNOT_INVOKE_ON_OPTIONAL))));
