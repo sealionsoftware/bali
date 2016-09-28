@@ -89,7 +89,41 @@ public class ReferenceMatchingVisitorTest {
         when(conditionalNode.getCondition()).thenReturn(expressionNode);
         when(conditionalNode.getConditional()).thenReturn(statementNode);
         when(expressionNode.getTarget()).thenReturn(node);
-        when(node.getVariableData()).thenReturn(new VariableData("reference", new Site(mock(Type.class), true), UUID.randomUUID()));
+        when(node.getReferenceData()).thenReturn(new VariableData("reference", new Site(mock(Type.class), true), UUID.randomUUID()));
+        when(statementNode.getChildren()).thenReturn(emptyList());
+
+        subject.visit(conditionalNode);
+    }
+
+    @Test
+    public void testVisitFlowTypingFieldConditionalStatementNode() throws Exception {
+
+        ConditionalStatementNode conditionalNode = mock(ConditionalStatementNode.class);
+        ExistenceCheckNode expressionNode = mock(ExistenceCheckNode.class);
+        ReferenceNode node = mock(ReferenceNode.class);
+        StatementNode statementNode = mock(StatementNode.class);
+
+        when(conditionalNode.getCondition()).thenReturn(expressionNode);
+        when(conditionalNode.getConditional()).thenReturn(statementNode);
+        when(expressionNode.getTarget()).thenReturn(node);
+        when(node.getReferenceData()).thenReturn(new FieldData("reference", new Site(mock(Type.class), true)));
+        when(statementNode.getChildren()).thenReturn(emptyList());
+
+        subject.visit(conditionalNode);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testVisitFlowTypingOtherReferenceConditionalStatementNode() throws Exception {
+
+        ConditionalStatementNode conditionalNode = mock(ConditionalStatementNode.class);
+        ExistenceCheckNode expressionNode = mock(ExistenceCheckNode.class);
+        ReferenceNode node = mock(ReferenceNode.class);
+        StatementNode statementNode = mock(StatementNode.class);
+
+        when(conditionalNode.getCondition()).thenReturn(expressionNode);
+        when(conditionalNode.getConditional()).thenReturn(statementNode);
+        when(expressionNode.getTarget()).thenReturn(node);
+        when(node.getReferenceData()).thenReturn(mock(ReferenceData.class));
         when(statementNode.getChildren()).thenReturn(emptyList());
 
         subject.visit(conditionalNode);

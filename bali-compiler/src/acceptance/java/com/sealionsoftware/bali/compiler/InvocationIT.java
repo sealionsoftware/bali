@@ -3,8 +3,6 @@ package com.sealionsoftware.bali.compiler;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.concurrent.Callable;
-
 import static bali.logic.Primitive.convert;
 import static bali.number.Primitive.convert;
 import static com.sealionsoftware.Matchers.throwsException;
@@ -42,14 +40,14 @@ public class InvocationIT {
     @Test
     public void testInvokingMethodWithInvalidArgumentType() {
 
-        Callable invocation = () -> interpreter.evaluate("\"Hello World\".contains(42)");
+        Runnable invocation = () -> interpreter.evaluate("\"Hello World\".contains(42)");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
     }
 
     @Test
     public void testInvokingValidMethodWithInvalidNumberOfArguments() {
 
-        Callable invocation = () -> interpreter.evaluate("\"Hello World\".contains()");
+        Runnable invocation = () -> interpreter.evaluate("\"Hello World\".contains()");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_ARGUMENT_LIST))));
     }
 
@@ -62,19 +60,19 @@ public class InvocationIT {
 
     @Test
     public void testAssigningInvalidReturnType() {
-        Callable invocation = () -> interpreter.run("var Logic size = \"Hello World\".size()");
+        Runnable invocation = () -> interpreter.run("var Logic size = \"Hello World\".size()");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
     }
 
     @Test
     public void testInvokingInvalidMethod() {
-        Callable invocation = () -> interpreter.evaluate("\"Hello World\".notAMethod()");
+        Runnable invocation = () -> interpreter.evaluate("\"Hello World\".notAMethod()");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.METHOD_NOT_FOUND))));
     }
 
     @Test
     public void testInvokingMethodOnOptionalVariable() {
-        Callable invocation = () -> interpreter.run(
+        Runnable invocation = () -> interpreter.run(
                 "var Text? maybeText " +
                 "maybeText.size()");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.CANNOT_INVOKE_ON_OPTIONAL))));

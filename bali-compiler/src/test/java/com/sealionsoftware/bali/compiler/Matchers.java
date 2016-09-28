@@ -2,6 +2,7 @@ package com.sealionsoftware.bali.compiler;
 
 import bali.Iterator;
 import bali.Logic;
+import bali.Text;
 import bali.collection.Array;
 import com.sealionsoftware.bali.compiler.assembly.BlockageDescription;
 import com.sealionsoftware.bali.compiler.assembly.ValidatingVisitor;
@@ -14,8 +15,10 @@ import java.util.Collection;
 import java.util.List;
 
 import static bali.number.Primitive.convert;
+import static bali.text.Primitive.convert;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 
 public class Matchers {
@@ -136,6 +139,56 @@ public class Matchers {
 
             public void describeTo(Description description) {
                 description.appendText("is assignable to " + type);
+            }
+        };
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Matcher<TextBuffer> wrote(String... statements){
+        return wrote(Arrays.stream(statements).map((line) -> equalTo(convert(line))).toArray(Matcher[]::new));
+    }
+
+    @SafeVarargs
+    public static Matcher<TextBuffer> wrote(Matcher<Text>... statementMatchers){
+        return new TypeSafeDiagnosingMatcher<TextBuffer>(){
+
+            protected boolean matchesSafely(TextBuffer target, Description description) {
+                List<Text> written = target.getWrittenLines();
+
+                if (statementMatchers.length != written.size()){
+                    description.appendText("Number of written statements was " + written.size());
+                    return false;
+                }
+
+                java.util.Iterator<Text> i = target.getWrittenLines().iterator();
+                for (Matcher<Text> matcher : statementMatchers) if (!matcher.matches(i.next())) {
+                    matcher.describeMismatch(target, description);
+                    return false;
+                }
+
+                return true;
+            }
+
+            public void describeTo(Description description) {
+                description.appendText(" TextBuffer wrote lines matching ");
+                for (Matcher<Text> statementMatcher : statementMatchers){
+                    statementMatcher.describeTo(description);
+                }
+            }
+        };
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Matcher<TextBuffer> wroteNothing(){
+        return new TypeSafeDiagnosingMatcher<TextBuffer>(){
+
+            protected boolean matchesSafely(TextBuffer target, Description description) {
+                List<Text> written = target.getWrittenLines();
+                return written.isEmpty() || description.appendText(written.toString()).appendText(" was written") == null;
+            }
+
+            public void describeTo(Description description) {
+                description.appendText(" TextBuffer wrote no lines");
             }
         };
     }

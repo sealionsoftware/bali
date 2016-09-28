@@ -1,95 +1,91 @@
 package com.sealionsoftware.bali.compiler;
 
-import bali.Logic;
+import com.sealionsoftware.bali.compiler.execution.ReflectiveExecutor;
 import org.junit.Test;
 
-import java.util.Map;
-import java.util.concurrent.Callable;
-
-import static com.sealionsoftware.Matchers.isEmptyMap;
 import static com.sealionsoftware.Matchers.throwsException;
 import static com.sealionsoftware.bali.compiler.Matchers.containingError;
 import static com.sealionsoftware.bali.compiler.Matchers.withCode;
+import static com.sealionsoftware.bali.compiler.Matchers.wrote;
+import static com.sealionsoftware.bali.compiler.Matchers.wroteNothing;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasEntry;
 
 public class ConditionalStatementIT {
 
-    private Interpreter interpreter = new StandardInterpreter();
+    private ListTextBufferWriter console = new ListTextBufferWriter();
+    private Interpreter interpreter = new StandardInterpreter(null, null, null, new ReflectiveExecutor(console));
 
     @Test
     public void testConditional() {
 
-        Map<String, Object> output = interpreter.run(
-                "if (true) {}"
+        interpreter.run(
+                "if (true) { console << \"success\" }"
         );
 
-        assertThat(output, isEmptyMap());
+        assertThat(console, wrote("success"));
     }
 
     @Test
-    public void testConditionalBodyWhenMet() {
+    public void testConditionalWhenNotMet() {
 
-        Map<String, Object> output = interpreter.run(
-                "var ret = false " +
-                "if (true) {ret = true}"
+        interpreter.run(
+                "if (false) { console << \"fail\" }"
         );
 
-        assertThat(output, hasEntry("ret", Logic.TRUE));
-    }
-
-    @Test
-    public void testConditionalBodyWhenNotMet() {
-
-        Map<String, Object> output = interpreter.run(
-                "var ret = false " +
-                "if (false) {ret = true}"
-        );
-
-        assertThat(output, hasEntry("ret", Logic.FALSE));
+        assertThat(console, wroteNothing());
     }
 
     @Test
     public void testConditionalWithNonBooleanCondition() {
 
-        Callable invocation = () -> interpreter.run("if (\"true\") {}");
+        Runnable invocation = () -> interpreter.run("if (\"true\") {}");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
     }
 
     @Test
     public void testContraConditionalBodyWhenMet() {
 
-        Map<String, Object> output = interpreter.run(
-                "var ret = true " +
-                "if (true) {} else {ret = false}"
+        interpreter.run(
+                "if (true) {} else { console << \"fail\" }"
         );
 
-        assertThat(output, hasEntry("ret", Logic.TRUE));
+        assertThat(console, wroteNothing());
     }
 
     @Test
     public void testContraConditionalBodyWhenNotMet() {
 
-        Map<String, Object> output = interpreter.run(
-                "var ret = true " +
-                "if (false) {} else {ret = false} "
+        interpreter.run(
+                "if (false) {} else { console << \"success\" } "
         );
 
-        assertThat(output, hasEntry("ret", Logic.FALSE));
+        assertThat(console, wrote("success"));
     }
 
     @Test
     public void testFlowTypingOptionalVariable() {
 
-        Map<String, Object> output = interpreter.run(
+        interpreter.run(
                 "var Logic? aTrue = true " +
-                "var Logic output = false " +
                 "if (?aTrue) {" +
-                "   output = aTrue" +
+                "   var Logic mandatory = aTrue " +
+                "   console << \"success\" " +
                 "}"
         );
 
-        assertThat(output, hasEntry("output", Logic.TRUE));
+        assertThat(console, wrote("success"));
+    }
+
+    @Test
+    public void testDoubleConditional() {
+
+        interpreter.run(
+                "if (true) if (true) {" +
+                "   console << \"success\" " +
+                "}"
+        );
+
+        assertThat(console, wrote("success"));
     }
 
 }

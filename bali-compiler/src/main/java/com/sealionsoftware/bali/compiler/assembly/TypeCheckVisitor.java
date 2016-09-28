@@ -50,7 +50,7 @@ public class TypeCheckVisitor extends ValidatingVisitor {
     }
 
     public void visit(AssignmentNode node) {
-        Site targetType = node.getTarget().getVariableData().type;
+        Site targetType = node.getTarget().getReferenceData().type;
         Site valueType =  node.getValue().getSite();
         if (targetType != null && (valueType == null || !valueType.isAssignableTo(targetType))){
             failures.add(new CompileError(
@@ -82,6 +82,9 @@ public class TypeCheckVisitor extends ValidatingVisitor {
     }
 
     public void visit(InvocationNode node) {
+
+        visitChildren(node);
+
         Method resolvedMethod = node.getResolvedMethod();
         List<Parameter> parameterList = resolvedMethod.getParameters();
         List<ExpressionNode> argumentNodes = node.getArguments();
@@ -95,15 +98,15 @@ public class TypeCheckVisitor extends ValidatingVisitor {
         }
 
         for (Each<Parameter, ExpressionNode> pair : both(parameterList, argumentNodes)){
-            if (!pair.j.getSite().isAssignableTo(pair.i.site)){
+            Site argumentSite = pair.j.getSite();
+            Site parameterSite = pair.i.site;
+            if (parameterSite != null && (argumentSite == null || !argumentSite.isAssignableTo(parameterSite))){
                 failures.add(new CompileError(
                         ErrorCode.INVALID_TYPE,
                         pair.j
                 ));
             }
         }
-
-        visitChildren(node);
     }
 
     public void visit(OperationNode operationNode){

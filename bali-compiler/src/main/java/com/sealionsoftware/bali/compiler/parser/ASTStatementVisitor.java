@@ -27,19 +27,19 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
     }
 
     public CodeBlockNode visitScript(BaliParser.ScriptContext ctx) {
-        visitChildren(ctx);
-        return container;
+        Token start = ctx.start;
+        CodeBlockNode child = new CodeBlockNode(start.getLine(), start.getCharPositionInLine());
+        for (BaliParser.StatementContext statementContext : ctx.statement()){
+            child.addStatement(statementContext.accept(this));
+        }
+        return child;
     }
 
     public CodeBlockNode visitCodeBlock(BaliParser.CodeBlockContext ctx) {
-        CodeBlockNode parent = container;
         Token start = ctx.start;
         CodeBlockNode child = new CodeBlockNode(start.getLine(), start.getCharPositionInLine());
-        try {
-            container = child;
-            visitChildren(ctx);
-        } finally {
-            container = parent;
+        for (BaliParser.StatementContext statementContext : ctx.statement()){
+            child.addStatement(statementContext.accept(this));
         }
         return child;
     }

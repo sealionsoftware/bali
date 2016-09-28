@@ -1,9 +1,6 @@
 package com.sealionsoftware.bali.compiler;
 
-import org.hamcrest.MatcherAssert;
 import org.junit.Test;
-
-import java.util.concurrent.Callable;
 
 import static bali.number.Primitive.convert;
 import static com.sealionsoftware.Matchers.throwsException;
@@ -27,33 +24,33 @@ public class OperationIT {
     public void testChainedOperators() {
 
         Object output = interpreter.evaluate("1 + 2 + 3 + 4 / 2");
-        assertThat(output, equalTo(convert(5)));
+        assertThat(output, equalTo(convert(8)));
     }
 
     @Test
     public void testInvalidOperator() {
-        Callable invocation = () -> interpreter.evaluate("1 & 1");
+        Runnable invocation = () -> interpreter.evaluate("1 & 1");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.OPERATOR_NOT_FOUND))));
     }
 
     @Test
     public void testOperatorWithInvalidArgumentType() {
-        Callable invocation = () -> interpreter.evaluate("1 + true");
+        Runnable invocation = () -> interpreter.evaluate("1 + true");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
     }
 
     @Test
     public void testInvalidReturnType() {
-        Callable invocation = () -> interpreter.run("var Logic ret = 1 + 1");
+        Runnable invocation = () -> interpreter.run("var Logic ret = 1 + 1");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
     }
 
     @Test
     public void testOperatorOnOptionalVariable() {
-        Callable invocation = () -> interpreter.run(
+        Runnable invocation = () -> interpreter.run(
                 "var Text? maybeText " +
                 "maybeText + \" append\" ");
-        MatcherAssert.assertThat(invocation, throwsException(containingError(withCode(ErrorCode.CANNOT_INVOKE_ON_OPTIONAL))));
+        assertThat(invocation, throwsException(containingError(withCode(ErrorCode.CANNOT_INVOKE_ON_OPTIONAL))));
     }
 
 }

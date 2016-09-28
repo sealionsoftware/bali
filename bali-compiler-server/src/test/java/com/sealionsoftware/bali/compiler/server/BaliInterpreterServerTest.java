@@ -1,8 +1,10 @@
 package com.sealionsoftware.bali.compiler.server;
 
+import bali.Writer;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sealionsoftware.bali.compiler.Interpreter;
+import com.sealionsoftware.bali.compiler.TextBuffer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -13,6 +15,7 @@ import org.springframework.core.task.AsyncTaskExecutor;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -36,8 +39,13 @@ public class BaliInterpreterServerTest {
     }
 
     @Test
+    public void testConsole() throws Exception {
+        assertThat(subject.console(), instanceOf(TextBuffer.class));
+    }
+
+    @Test
     public void testInterpreter() throws Exception {
-        assertThat(subject.interpreter(), instanceOf(Interpreter.class));
+        assertThat(subject.interpreter(mock(Writer.class)), instanceOf(Interpreter.class));
     }
 
     @Test

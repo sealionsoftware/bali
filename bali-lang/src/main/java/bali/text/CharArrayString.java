@@ -32,7 +32,26 @@ public final class CharArrayString implements Text {
 		return new CharArrayString(upper);
 	}
 
-	public Logic contains(Character value) {
+    public Text concatenate(Text operand) {
+        int originalLength = characters.length;
+        if (operand instanceof CharArrayString){
+            char[] otherCharacters =  ((CharArrayString) operand).characters;
+            char[] newChars = Arrays.copyOf(characters, originalLength + otherCharacters.length);
+            System.arraycopy(otherCharacters, 0 , newChars, originalLength, otherCharacters.length);
+            return new CharArrayString(newChars);
+        }
+
+        int newLength = originalLength + convert(operand.size());
+        char[] newChars = Arrays.copyOf(characters, newLength);
+        Iterator<Character> characterIterator = operand.iterator();
+        for (int i = characters.length ; i < newLength ; i++){
+            newChars[i] = convert(characterIterator.next());
+        }
+
+        return new CharArrayString(newChars);
+    }
+
+    public Logic contains(Character value) {
 		for (char c : characters){
 			if (value == CharCharacter.CHARS[c]){
 				return TRUE;
@@ -76,7 +95,16 @@ public final class CharArrayString implements Text {
 			return convert(Arrays.equals(characters, cas.characters));
 		}
 
-		return FALSE;
+        if (characters.length != convert(operand.size())){
+            return Logic.FALSE;
+        }
+
+        Iterator<Character> otherCharacters = operand.iterator();
+        for (char character : characters) if (convert(CharCharacter.CHARS[character].notEqualTo(otherCharacters.next()))) {
+            return Logic.FALSE;
+        }
+
+        return Logic.TRUE;
 	}
 
 	public Logic notEqualTo(Text operand) {
@@ -85,7 +113,17 @@ public final class CharArrayString implements Text {
 			CharArrayString cas = (CharArrayString) operand;
 			return convert(!Arrays.equals(characters, cas.characters));
 		}
-		return TRUE;
+
+        if (characters.length != convert(operand.size())){
+            return Logic.TRUE;
+        }
+
+        Iterator<Character> otherCharacters = operand.iterator();
+        for (char character : characters) if (convert(CharCharacter.CHARS[character].notEqualTo(otherCharacters.next()))) {
+            return Logic.TRUE;
+        }
+
+        return Logic.FALSE;
 	}
 
 	public java.lang.String toString() {

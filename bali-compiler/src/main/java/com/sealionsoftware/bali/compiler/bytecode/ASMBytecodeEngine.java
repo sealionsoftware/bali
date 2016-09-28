@@ -6,11 +6,10 @@ import com.sealionsoftware.bali.compiler.GeneratedPackage;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-
-import java.util.List;
 
 import static com.sealionsoftware.bali.compiler.Interpreter.EVALUATION_CLASS_NAME;
 import static com.sealionsoftware.bali.compiler.Interpreter.FRAGMENT_CLASS_NAME;
@@ -28,7 +27,8 @@ public class ASMBytecodeEngine implements BytecodeEngine, Opcodes {
                 "java/lang/Object",
                 new String[]{"com/sealionsoftware/bali/compiler/Fragment"});
 
-        buildConstructor(cw, FRAGMENT_CLASS_NAME);
+        buildConsoleField(cw);
+        buildConsoleConstructor(cw, FRAGMENT_CLASS_NAME);
         buildFragmentMethod(cw, fragment);
 
         cw.visitEnd();
@@ -49,7 +49,7 @@ public class ASMBytecodeEngine implements BytecodeEngine, Opcodes {
                 "java/lang/Object",
                 new String[]{"com/sealionsoftware/bali/compiler/Evaluation"});
 
-        buildConstructor(cw, EVALUATION_CLASS_NAME);
+        buildDefaultConstructor(cw, EVALUATION_CLASS_NAME);
         buildExpressionMethod(cw, expression);
 
         cw.visitEnd();
@@ -59,7 +59,32 @@ public class ASMBytecodeEngine implements BytecodeEngine, Opcodes {
         return generatedPackage;
     }
 
-    private void buildConstructor(ClassWriter cw, String className) {
+    private void buildConsoleField(ClassWriter cw) {
+        FieldVisitor fieldVisitor = cw.visitField(ACC_PRIVATE + ACC_FINAL, "console", "Lbali/Writer;", null, null);
+        fieldVisitor.visitEnd();
+    }
+
+    private void buildConsoleConstructor(ClassWriter cw, String className) {
+
+        MethodVisitor methodVisitor = cw.visitMethod(ACC_PUBLIC, "<init>", "(Lbali/Writer;)V", null, null);
+        methodVisitor.visitCode();
+        Label constructorStart = new Label();
+        methodVisitor.visitLabel(constructorStart);
+        methodVisitor.visitVarInsn(ALOAD, 0);
+        methodVisitor.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+        methodVisitor.visitVarInsn(ALOAD, 0);
+        methodVisitor.visitVarInsn(ALOAD, 1);
+        methodVisitor.visitFieldInsn(PUTFIELD, className, "console", "Lbali/Writer;");
+        methodVisitor.visitInsn(RETURN);
+        Label constructorEnd = new Label();
+        methodVisitor.visitLabel(constructorEnd);
+        methodVisitor.visitLocalVariable("this", "L" + className + ";", null, constructorStart, constructorEnd, 0);
+        methodVisitor.visitLocalVariable("writer", "Lbali/Writer;", null, constructorStart, constructorEnd, 1);
+        methodVisitor.visitMaxs(2, 2);
+        methodVisitor.visitEnd();
+    }
+
+    private void buildDefaultConstructor(ClassWriter cw, String className) {
 
         MethodVisitor methodVisitor = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
         methodVisitor.visitCode();
@@ -77,48 +102,28 @@ public class ASMBytecodeEngine implements BytecodeEngine, Opcodes {
 
     private void buildFragmentMethod(ClassWriter cw, CodeBlockNode fragment) {
 
-        MethodVisitor methodVisitor = cw.visitMethod(ACC_PUBLIC, "execute", "()Ljava/util/Map;", "()Ljava/util/Map<Ljava/lang/String;Ljava/lang/Object;>;", null);
+        MethodVisitor methodVisitor = cw.visitMethod(ACC_PUBLIC, "execute", "()V", "()V", null);
         methodVisitor.visitCode();
         Label startLabel = new Label();
         Label endLabel = new Label();
         methodVisitor.visitLabel(startLabel);
 
-        ASMStackVisitor visitor = new ASMStackVisitor(methodVisitor);
+        ASMStackVisitor visitor = new ASMStackVisitor(methodVisitor, FRAGMENT_CLASS_NAME);
         fragment.accept(visitor);
 
-        List<VariableInfo> variables = visitor.getVariables();
-        int retIndex = variables.size() + 1;
-
-        methodVisitor.visitTypeInsn(NEW, "java/util/LinkedHashMap");
-        methodVisitor.visitInsn(DUP);
-        methodVisitor.visitMethodInsn(INVOKESPECIAL, "java/util/LinkedHashMap", "<init>", "()V", false);
-        methodVisitor.visitVarInsn(ASTORE, retIndex);
-        Label retStart = new Label();
-        methodVisitor.visitLabel(retStart);
-
-        int i = 1;
-        for (VariableInfo variable : variables){
-            methodVisitor.visitVarInsn(ALOAD, retIndex);
-            methodVisitor.visitLdcInsn(variable.node.getName());
-            methodVisitor.visitVarInsn(ALOAD, i++);
-            methodVisitor.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true);
-            methodVisitor.visitInsn(POP);
-        }
-
-        methodVisitor.visitVarInsn(ALOAD, retIndex);
-        methodVisitor.visitInsn(ARETURN);
+        methodVisitor.visitInsn(RETURN);
         methodVisitor.visitLabel(endLabel);
 
-        i = 0;
+        int i = 0;
         methodVisitor.visitLocalVariable("this", "L" + FRAGMENT_CLASS_NAME + ";", null, startLabel, endLabel, i++);
-        for (VariableInfo variable: variables){
+
+        for (VariableInfo variable: visitor.getVariables()){
             Label to = variable.end;
             if (to == null){
                 to = endLabel;
             }
             methodVisitor.visitLocalVariable(variable.node.getName(), "Ljava/lang/Object;", null, variable.start, to, i++);
         }
-        methodVisitor.visitLocalVariable("ret", "Ljava/util/Map;", "Ljava/util/Map<Ljava/lang/String;Ljava/lang/Object;>;", retStart, endLabel, retIndex);
 
         methodVisitor.visitMaxs(0, 0);
         methodVisitor.visitEnd();
@@ -132,7 +137,7 @@ public class ASMBytecodeEngine implements BytecodeEngine, Opcodes {
         Label endLabel = new Label();
         methodVisitor.visitLabel(startLabel);
 
-        ASMStackVisitor visitor = new ASMStackVisitor(methodVisitor);
+        ASMStackVisitor visitor = new ASMStackVisitor(methodVisitor, EVALUATION_CLASS_NAME);
         expression.accept(visitor);
 
         methodVisitor.visitInsn(ARETURN);

@@ -9,6 +9,7 @@ import org.junit.Test;
 import java.util.Collection;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyMap;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -24,7 +25,7 @@ public class MultithreadedAssemblyEngineTest {
     public void testAssemble() throws Exception {
 
         ValidatingVisitor visitor = mock(ValidatingVisitor.class);
-        when(assemblerSetFactory.assemblers()).thenReturn(asList(visitor));
+        when(assemblerSetFactory.assemblers(emptyMap())).thenReturn(asList(visitor));
 
         CodeBlockNode node = mock(CodeBlockNode.class);
         subject.assemble(node);
@@ -47,7 +48,7 @@ public class MultithreadedAssemblyEngineTest {
 
         CompileError error = mock(CompileError.class);
         ValidatingVisitor visitor = mock(ValidatingVisitor.class);
-        when(assemblerSetFactory.assemblers()).thenReturn(asList(visitor));
+        when(assemblerSetFactory.assemblers(emptyMap())).thenReturn(asList(visitor));
         when(visitor.getFailures()).thenReturn(asList(error));
 
         doAnswer(invocation -> {

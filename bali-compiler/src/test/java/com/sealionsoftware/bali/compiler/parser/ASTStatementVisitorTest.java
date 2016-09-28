@@ -19,6 +19,7 @@ import static com.sealionsoftware.bali.compiler.parser.Mock.mockContext;
 import static com.sealionsoftware.bali.compiler.parser.Mock.mockTerminal;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -34,11 +35,14 @@ public class ASTStatementVisitorTest {
     @Test
     public void testVisitScript() throws Exception {
 
-        BaliParser.ScriptContext context = mock(BaliParser.ScriptContext.class);
+        BaliParser.ScriptContext context = mockContext(BaliParser.ScriptContext.class);
+        BaliParser.StatementContext statementContext = mockContext(BaliParser.StatementContext.class);
+        when(context.statement()).thenReturn(asList(statementContext));
 
         CodeBlockNode node = subject.visitScript(context);
 
         assertThat(node, notNullValue());
+        assertThat(node.getChildren(), hasSize(1));
     }
 
     @Test
@@ -151,8 +155,13 @@ public class ASTStatementVisitorTest {
     @Test
     public void testVisitCodeBlockNode() throws Exception {
         BaliParser.CodeBlockContext context = mockContext(BaliParser.CodeBlockContext.class);
+        BaliParser.StatementContext statementContext = mockContext(BaliParser.StatementContext.class);
+        when(context.statement()).thenReturn(asList(statementContext));
+
         CodeBlockNode node = subject.visitCodeBlock(context);
+
         assertThat(node, notNullValue());
+        assertThat(node.getStatements(), hasSize(1));
     }
 
 }

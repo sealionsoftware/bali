@@ -48,7 +48,7 @@ expression:                 '(' expression ')'
 							 | invocation
 							 | reference
 							 | operator expression
-							 | expression operator expression
+							 | expression operator expression <assoc=right>
 							 | expression '.' invocation;
 
 invocation:				    IDENTIFIER '(' ( argument ( ',' argument )* )? ')' ;

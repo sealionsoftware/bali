@@ -6,11 +6,14 @@ import bali.Integer;
 import bali.Iterator;
 import bali.Logic;
 import bali.Text;
+import bali.Writer;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.sealionsoftware.bali.compiler.Interpreter;
+import com.sealionsoftware.bali.compiler.ListTextBufferWriter;
 import com.sealionsoftware.bali.compiler.StandardInterpreter;
+import com.sealionsoftware.bali.compiler.execution.ReflectiveExecutor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -52,8 +55,15 @@ public class BaliInterpreterServer {
     }
 
     @Bean @Scope("request")
-    public Interpreter interpreter(){
-        return new StandardInterpreter();
+    public ListTextBufferWriter console() {
+        return new ListTextBufferWriter();
+    }
+
+    @Bean @Scope("request")
+    public Interpreter interpreter(Writer console) {
+        return new StandardInterpreter(
+               null, null, null, new ReflectiveExecutor(console)
+        );
     }
 
     public static void main(String... args) throws Exception {

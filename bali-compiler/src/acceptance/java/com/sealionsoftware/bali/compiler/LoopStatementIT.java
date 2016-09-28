@@ -1,51 +1,51 @@
 package com.sealionsoftware.bali.compiler;
 
-import bali.Logic;
+import com.sealionsoftware.bali.compiler.execution.ReflectiveExecutor;
 import org.junit.Test;
-
-import java.util.Map;
-import java.util.concurrent.Callable;
 
 import static com.sealionsoftware.Matchers.throwsException;
 import static com.sealionsoftware.bali.compiler.Matchers.containingError;
 import static com.sealionsoftware.bali.compiler.Matchers.withCode;
+import static com.sealionsoftware.bali.compiler.Matchers.wrote;
+import static com.sealionsoftware.bali.compiler.Matchers.wroteNothing;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasEntry;
 
 public class LoopStatementIT {
 
-    private Interpreter interpreter = new StandardInterpreter();
+    private ListTextBufferWriter console = new ListTextBufferWriter();
+    private Interpreter interpreter = new StandardInterpreter(null, null, null, new ReflectiveExecutor(console));
 
     @Test
     public void testLoopBodyWhenMet() {
 
-        Map<String, Object> output = interpreter.run(
-                "var Logic loop = true " +
-                "while (loop) { " +
-                    "loop = false " +
+        interpreter.run(
+                "var Integer i = 0 " +
+                "while (i < 3) { " +
+                    "console << \"loop\" " +
+                    "i = ++i  " +
                 "}"
         );
 
-        assertThat(output, hasEntry("loop", Logic.FALSE));
+        assertThat(console, wrote("loop", "loop", "loop"));
     }
 
     @Test
     public void testLoopBodyWhenNotMet() {
 
-        Map<String, Object> output = interpreter.run(
+        interpreter.run(
                 "var Logic loop = false " +
                 "while (loop) { " +
-                    "loop = true " +
+                    "console << \"loop\" " +
                 "}"
         );
 
-        assertThat(output, hasEntry("loop", Logic.FALSE));
+        assertThat(console, wroteNothing());
     }
 
     @Test
     public void testLoopWithNonBooleanCondition() {
 
-        Callable invocation = () -> interpreter.run("while (\"true\") {}");
+        Runnable invocation = () -> interpreter.run("while (\"true\") {}");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
     }
 

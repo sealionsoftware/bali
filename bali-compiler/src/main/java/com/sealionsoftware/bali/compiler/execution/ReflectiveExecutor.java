@@ -1,5 +1,6 @@
 package com.sealionsoftware.bali.compiler.execution;
 
+import bali.Writer;
 import com.sealionsoftware.bali.compiler.Evaluation;
 import com.sealionsoftware.bali.compiler.Executor;
 import com.sealionsoftware.bali.compiler.Fragment;
@@ -12,12 +13,20 @@ import java.util.Map;
 
 public class ReflectiveExecutor implements Executor {
 
-    public Map<String, Object> executeFragment(GeneratedPackage generated) {
-        return execute(
+    private Writer console;
+
+    public ReflectiveExecutor(Writer console) {
+        this.console = console;
+    }
+
+    @SuppressWarnings("unchecked")
+    public void executeFragment(GeneratedPackage generated) {
+        execute(
                 generated,
                 Interpreter.FRAGMENT_CLASS_NAME,
                 (clazz) -> {
-                    return ((Fragment) clazz.newInstance()).execute();
+                    ((Fragment) clazz.getConstructor(Writer.class).newInstance(console)).execute();
+                    return null;
                 });
     }
 
