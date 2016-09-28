@@ -145,7 +145,7 @@ public class Matchers {
 
     @SuppressWarnings("unchecked")
     public static Matcher<TextBuffer> wrote(String... statements){
-        return wrote(Arrays.stream(statements).map((line) -> equalTo(convert(line))).toArray(Matcher[]::new));
+        return wrote((Matcher[]) Arrays.stream(statements).map((line) -> equalTo(convert(line))).toArray(Matcher[]::new));
     }
 
     @SafeVarargs
