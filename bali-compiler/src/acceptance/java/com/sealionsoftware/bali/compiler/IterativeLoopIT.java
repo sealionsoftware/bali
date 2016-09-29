@@ -10,32 +10,30 @@ import static com.sealionsoftware.bali.compiler.Matchers.wrote;
 import static com.sealionsoftware.bali.compiler.Matchers.wroteNothing;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class LoopStatementIT {
+public class IterativeLoopIT {
 
     private ListTextBufferWriter console = new ListTextBufferWriter();
     private Interpreter interpreter = new StandardInterpreter(null, null, null, new ReflectiveExecutor(console));
 
     @Test
-    public void testLoopBodyWhenMet() {
+    public void testLoop() {
 
         interpreter.run(
-                "var Integer i = 0 " +
-                "while (i < 3) { " +
-                    "console << \"loop\" " +
-                    "i = ++i  " +
+                "for (word : [\"one\", \"two\", \"three\"]) { " +
+                    "console << word " +
                 "}"
         );
 
-        assertThat(console, wrote("loop", "loop", "loop"));
+        assertThat(console, wrote("one", "two", "three"));
     }
+
 
     @Test
     public void testLoopBodyWhenNotMet() {
 
         interpreter.run(
-                "var Logic loop = false " +
-                "while (loop) { " +
-                    "console << \"loop\" " +
+                "for (word : []) { " +
+                    "console << word " +
                 "}"
         );
 
@@ -43,9 +41,9 @@ public class LoopStatementIT {
     }
 
     @Test
-    public void testLoopWithNonBooleanCondition() {
+    public void testLoopWithNonIterativeArgument() {
 
-        Runnable invocation = () -> interpreter.run("while (\"true\") {}");
+        Runnable invocation = () -> interpreter.run("for (item : true) {}");
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
     }
 
