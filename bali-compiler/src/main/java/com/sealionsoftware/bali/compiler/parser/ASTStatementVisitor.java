@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 
 public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
 
-    private CodeBlockNode container = new CodeBlockNode(0, 0);
     private CompilationThreadManager monitor;
 
     public ASTStatementVisitor(CompilationThreadManager monitor) {
@@ -49,7 +48,6 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
         Token start = ctx.start;
         VariableNode node = new VariableNode(start.getLine(), start.getCharPositionInLine());
         node.setName(ctx.IDENTIFIER().getText());
-        container.addStatement(node);
         BaliParser.TypeContext typeContext = ctx.type();
         if (typeContext != null){
             node.setType(buildType(typeContext));
@@ -67,7 +65,6 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
         Token start = ctx.start;
         AssignmentNode node = new AssignmentNode(start.getLine(), start.getCharPositionInLine());
         node.setTarget(visitAssignmentReference(ctx.reference()));
-        container.addStatement(node);
         ASTExpressionVisitor expressionVisitor = new ASTExpressionVisitor(monitor);
         node.setValue(ctx.expression().accept(expressionVisitor));
         return node;
@@ -84,7 +81,6 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
         ASTExpressionVisitor expressionVisitor = new ASTExpressionVisitor(monitor);
         Token start = ctx.start;
         ExpressionStatementNode node = new ExpressionStatementNode(start.getLine(), start.getCharPositionInLine(), ctx.accept(expressionVisitor));
-        container.addStatement(node);
         return node;
     }
 
@@ -101,8 +97,6 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
             conditionalStatementNode.setContraConditional(controlExpressions.next().accept(this));
         }
 
-        container.addStatement(conditionalStatementNode);
-
         return conditionalStatementNode;
     }
 
@@ -113,7 +107,6 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
 
         loopNode.setCondition(ctx.expression().accept(expressionVisitor));
         loopNode.setConditional(ctx.controlExpression().accept(this));
-        container.addStatement(loopNode);
 
         return loopNode;
     }
