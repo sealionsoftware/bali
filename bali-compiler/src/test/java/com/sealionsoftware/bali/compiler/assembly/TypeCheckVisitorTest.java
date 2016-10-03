@@ -328,10 +328,12 @@ public class TypeCheckVisitorTest {
         IterationNode node = mock(IterationNode.class);
         ExpressionNode targetNode = mock(ExpressionNode.class);
         StatementNode statementNode = mock(StatementNode.class);
+        VariableData itemData = mock(VariableData.class);
         Type targetType = mock(Type.class);
 
         when(node.getTarget()).thenReturn(targetNode);
         when(node.getStatement()).thenReturn(statementNode);
+        when(node.getItemData()).thenReturn(itemData);
         when(targetNode.getSite()).thenReturn(new Site(targetType));
         when(targetType.isAssignableTo(any())).thenReturn(false);
 
@@ -346,10 +348,12 @@ public class TypeCheckVisitorTest {
         IterationNode node = mock(IterationNode.class);
         ExpressionNode targetNode = mock(ExpressionNode.class);
         StatementNode statementNode = mock(StatementNode.class);
+        VariableData itemData = mock(VariableData.class);
         Type targetType = mock(Type.class);
 
         when(node.getTarget()).thenReturn(targetNode);
         when(node.getStatement()).thenReturn(statementNode);
+        when(node.getItemData()).thenReturn(itemData);
         when(targetNode.getSite()).thenReturn(new Site(targetType));
         when(targetType.isAssignableTo(any())).thenReturn(true);
 

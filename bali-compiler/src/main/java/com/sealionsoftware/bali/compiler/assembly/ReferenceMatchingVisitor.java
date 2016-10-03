@@ -98,7 +98,7 @@ public class ReferenceMatchingVisitor extends ValidatingVisitor {
         target.accept(this);
 
         Site listSite = target.getSite();
-        Type itemType = findIterativeTypeArgument(listSite.type);
+        Type itemType = listSite != null ? findIterativeTypeArgument(listSite.type) : null;
         VariableData itemDeclaration = new VariableData(
                 iterationNode.getIdentifier(),
                 itemType == null ? null : new Site(itemType),
@@ -120,7 +120,8 @@ public class ReferenceMatchingVisitor extends ValidatingVisitor {
         if (className != null && className.equals(bali.Iterable.class.getName())){
             List<Parameter> typeArguments = type.getTypeArguments();
             for (Parameter argument : typeArguments) if (argument.name.equals("T")) {
-                return argument.site.type;
+                Site argumentSite = argument.site;
+                return argumentSite != null ? argumentSite.type : null;
             }
             return null;
         }

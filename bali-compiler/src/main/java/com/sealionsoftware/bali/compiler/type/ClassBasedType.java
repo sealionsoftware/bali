@@ -151,7 +151,7 @@ public class ClassBasedType implements Type {
         if (template.getClassName().equals(other.getClassName())) {
             for (Parameter argument : other.getTypeArguments()){
                 Site typeArgument = typeArgumentMap.get(argument.name);
-                if (!typeArgument.isAssignableTo(argument.site)) {
+                if (typeArgument != null && !typeArgument.isAssignableTo(argument.site)) {
                     return false;
                 }
             }
