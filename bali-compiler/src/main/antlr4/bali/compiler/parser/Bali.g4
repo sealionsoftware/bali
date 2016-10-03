@@ -49,9 +49,9 @@ expression:                 '(' expression ')'
 							 | literal
 							 | invocation
 							 | reference
+							 | expression '.' invocation
 							 | operator expression
-							 | <assoc=right> expression operator expression
-							 | expression '.' invocation;
+							 | <assoc=right> expression operator expression;
 
 invocation:				    IDENTIFIER '(' ( argument ( ',' argument )* )? ')' ;
 

@@ -23,7 +23,7 @@ public class VariableDeclarationIT {
 
         interpreter.run(
                 "var Text aVariable = \"text\" " +
-                "console << aVariable"
+                "console << aVariable.uppercase()"
         );
     }
 
