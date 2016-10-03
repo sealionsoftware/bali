@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.sealionsoftware.Collections.both;
+import static java.util.Arrays.asList;
 
 public class TypeCheckVisitor extends ValidatingVisitor {
 
@@ -84,7 +85,8 @@ public class TypeCheckVisitor extends ValidatingVisitor {
     }
 
     public void visit(IterationNode node) {
-        Site expectedType = new Site(new ClassBasedType(library.get(Iterable.class.getName())), true);
+        Site argumentType = node.getItemData().type;
+        Site expectedType = new Site(new ClassBasedType(library.get(Iterable.class.getName()), asList(argumentType)), true);
         Site valueType =  node.getTarget().getSite();
         if (valueType == null || !valueType.isAssignableTo(expectedType)){
             failures.add(new CompileError(

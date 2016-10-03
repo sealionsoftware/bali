@@ -11,6 +11,6 @@ public class Parameter {
     }
 
     public String toString() {
-        return site + " " + name;
+        return site != null ? site + " " + name : name;
     }
 }

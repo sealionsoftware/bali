@@ -76,8 +76,6 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
 
     public void visit(ArrayLiteralNode node) {
 
-        visitChildren(node);
-
         methodVisitor.visitTypeInsn(NEW, "bali/collection/Array");
         methodVisitor.visitInsn(DUP);
 

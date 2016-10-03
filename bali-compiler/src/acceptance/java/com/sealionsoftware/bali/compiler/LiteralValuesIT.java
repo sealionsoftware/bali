@@ -50,4 +50,13 @@ public class LiteralValuesIT {
         assertThat(outputArray, hasValues(convert(true), convert(45), convert("Be my guest")));
     }
 
+    @Test
+    public void testScriptContainingMatrix(){
+
+        interpreter.run(
+                "[[\"Hello\"], [\"Pretty\", \"Lady\"]]"
+        );
+
+    }
+
 }

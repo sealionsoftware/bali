@@ -69,4 +69,16 @@ public class IterativeLoopIT {
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
     }
 
+    @Test
+    public void testDoubleIteration(){
+
+        interpreter.run(
+                "for (word : [\"one\", \"two\", \"three\"]) for (character : word) {" +
+                    "console < character" +
+                "}"
+        );
+
+        assertThat(console, wrote("onetwothree"));
+    }
+
 }
