@@ -33,4 +33,6 @@ public interface Visitor {
 
     void visit(ExistenceCheckNode node);
 
+    void visit(IterationNode node);
+
 }

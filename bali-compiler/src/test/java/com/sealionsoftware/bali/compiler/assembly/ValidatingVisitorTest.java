@@ -9,6 +9,7 @@ import com.sealionsoftware.bali.compiler.tree.ExistenceCheckNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
 import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.InvocationNode;
+import com.sealionsoftware.bali.compiler.tree.IterationNode;
 import com.sealionsoftware.bali.compiler.tree.LogicLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.OperationNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
@@ -96,8 +97,13 @@ public class ValidatingVisitorTest {
     }
 
     @Test
-    public void testVisitExistenceCheckNodeNode() throws Exception {
+    public void testVisitExistenceCheckNode() throws Exception {
         subject.visit(mock(ExistenceCheckNode.class));
+    }
+
+    @Test
+    public void testVisitIterationNode() throws Exception {
+        subject.visit(mock(IterationNode.class));
     }
 
     @Test

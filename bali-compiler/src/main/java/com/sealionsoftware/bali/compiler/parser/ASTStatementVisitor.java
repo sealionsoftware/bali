@@ -8,6 +8,7 @@ import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
+import com.sealionsoftware.bali.compiler.tree.IterationNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.StatementNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
@@ -113,6 +114,18 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
         loopNode.setCondition(ctx.expression().accept(expressionVisitor));
         loopNode.setConditional(ctx.controlExpression().accept(this));
         container.addStatement(loopNode);
+
+        return loopNode;
+    }
+
+    public IterationNode visitIterationStatement(BaliParser.IterationStatementContext ctx){
+        Token start = ctx.start;
+        ASTExpressionVisitor expressionVisitor = new ASTExpressionVisitor(monitor);
+        IterationNode loopNode = new IterationNode(start.getLine(), start.getCharPositionInLine(), monitor);
+
+        loopNode.setIdentifier(ctx.IDENTIFIER().getText());
+        loopNode.setTarget(ctx.expression().accept(expressionVisitor));
+        loopNode.setStatement(ctx.controlExpression().accept(this));
 
         return loopNode;
     }

@@ -122,7 +122,7 @@ public class ASMBytecodeEngine implements BytecodeEngine, Opcodes {
             if (to == null){
                 to = endLabel;
             }
-            methodVisitor.visitLocalVariable(variable.node.getName(), "Ljava/lang/Object;", null, variable.start, to, i++);
+            methodVisitor.visitLocalVariable(variable.name, "Ljava/lang/Object;", null, variable.start, to, i++);
         }
 
         methodVisitor.visitMaxs(0, 0);

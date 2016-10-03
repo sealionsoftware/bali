@@ -1,5 +1,6 @@
 package com.sealionsoftware.bali.compiler.assembly;
 
+import bali.Iterable;
 import bali.Logic;
 import com.sealionsoftware.Collections.Each;
 import com.sealionsoftware.bali.compiler.CompileError;
@@ -14,6 +15,7 @@ import com.sealionsoftware.bali.compiler.tree.ConditionalNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.InvocationNode;
+import com.sealionsoftware.bali.compiler.tree.IterationNode;
 import com.sealionsoftware.bali.compiler.tree.OperationNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
@@ -79,6 +81,19 @@ public class TypeCheckVisitor extends ValidatingVisitor {
             ));
         }
         visitChildren(node);
+    }
+
+    public void visit(IterationNode node) {
+        Site expectedType = new Site(new ClassBasedType(library.get(Iterable.class.getName())), true);
+        Site valueType =  node.getTarget().getSite();
+        if (valueType == null || !valueType.isAssignableTo(expectedType)){
+            failures.add(new CompileError(
+                    ErrorCode.INVALID_TYPE,
+                    node
+            ));
+        }
+        node.getStatement().accept(this);
+        node.getTarget().accept(this);
     }
 
     public void visit(InvocationNode node) {

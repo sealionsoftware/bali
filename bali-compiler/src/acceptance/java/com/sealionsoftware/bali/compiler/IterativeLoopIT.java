@@ -47,4 +47,26 @@ public class IterativeLoopIT {
         assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
     }
 
+    @Test
+    public void testLoopWithNameClash() {
+
+        Runnable invocation = () -> interpreter.run(
+                "var item " +
+                "for (item : []) {}"
+        );
+        assertThat(invocation, throwsException(containingError(withCode(ErrorCode.NAME_ALREADY_USED))));
+    }
+
+    @Test
+    public void testLiteralTypingInLoop() {
+
+        Runnable invocation = () -> interpreter.run(
+                "for (word : [true]) { " +
+                    "console << word " +
+                "}"
+        );
+
+        assertThat(invocation, throwsException(containingError(withCode(ErrorCode.INVALID_TYPE))));
+    }
+
 }

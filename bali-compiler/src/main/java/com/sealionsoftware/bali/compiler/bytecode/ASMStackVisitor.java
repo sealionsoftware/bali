@@ -11,13 +11,13 @@ import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
-import com.sealionsoftware.bali.compiler.tree.ConditionalNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExistenceCheckNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
 import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.InvocationNode;
+import com.sealionsoftware.bali.compiler.tree.IterationNode;
 import com.sealionsoftware.bali.compiler.tree.LogicLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.OperationNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
@@ -124,12 +124,16 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
             methodVisitor.visitInsn(ACONST_NULL);
         }
 
+        addToVariables(node.getId(), node.getName(), varStart);
+    }
+
+    private void addToVariables(UUID id, String name, Label startLabel){
         variables.add(new VariableInfo(
-                node,
-                varStart,
+                name,
+                startLabel,
                 scopeHorizonStack.peek()
         ));
-        variablesIndex.put(node.getId(), variables.size());
+        variablesIndex.put(id, variables.size());
         methodVisitor.visitVarInsn(ASTORE, variables.size());
     }
 
@@ -203,9 +207,6 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
         methodVisitor.visitLabel(end);
     }
 
-    public void visit(ConditionalNode node) {
-    }
-
     private void checkInterruptStatus(){
         methodVisitor.visitMethodInsn(INVOKESTATIC, "java/lang/Thread", "interrupted", "()Z", false);
         Label notInterruptedLabel = new Label();
@@ -251,6 +252,32 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
         methodVisitor.visitLabel(falseLabel);
         methodVisitor.visitFieldInsn(GETSTATIC, "bali/Logic", "FALSE", "Lbali/Logic;");
         methodVisitor.visitLabel(endLabel);
+    }
+
+    public void visit(IterationNode node) {
+        Label top = new Label();
+        Label start = new Label();
+        Label end = new Label();
+        methodVisitor.visitLabel(top);
+        node.getTarget().accept(this);
+        Site collectionClass = node.getTarget().getSite();
+        methodVisitor.visitMethodInsn(INVOKEINTERFACE, toLocalName(collectionClass), "iterator", "()Lbali/Iterator;", true);
+        methodVisitor.visitLabel(start);
+        methodVisitor.visitInsn(DUP);
+        methodVisitor.visitMethodInsn(INVOKEINTERFACE, "bali/Iterator", "hasNext", "()Lbali/Logic;", true);
+        methodVisitor.visitFieldInsn(GETSTATIC, "bali/Logic", "TRUE", "Lbali/Logic;");
+        methodVisitor.visitJumpInsn(IF_ACMPNE, end);
+        methodVisitor.visitInsn(DUP);
+        methodVisitor.visitMethodInsn(INVOKEINTERFACE, "bali/Iterator", "next", "()Ljava/lang/Object;", true);
+
+        VariableData itemData = node.getItemData();
+        methodVisitor.visitTypeInsn(CHECKCAST, toLocalName(itemData.type));
+
+        addToVariables(itemData.id, node.getIdentifier(), start);
+        node.getStatement().accept(this);
+        methodVisitor.visitJumpInsn(GOTO, start);
+        methodVisitor.visitLabel(end);
+        methodVisitor.visitInsn(POP);
     }
 
     public List<VariableInfo> getVariables(){

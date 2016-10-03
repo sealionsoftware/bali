@@ -31,11 +31,13 @@ conditionalStatement:       'if' '(' expression ')' controlExpression ('else' co
 
 loopStatement:              'while' '(' expression ')' controlExpression ;
 
+iterationStatement:         'for' '(' IDENTIFIER ':' expression ')' controlExpression ;
+
 lineStatement:              expression
 							 | variableDeclaration
 							 | assignment ;
 
-controlStatement:           conditionalStatement | loopStatement;
+controlStatement:           conditionalStatement | loopStatement | iterationStatement;
 
 variableDeclaration:        'var' type? IDENTIFIER ('=' expression)? ;
 
@@ -48,7 +50,7 @@ expression:                 '(' expression ')'
 							 | invocation
 							 | reference
 							 | operator expression
-							 | expression operator expression <assoc=right>
+							 | <assoc=right> expression operator expression
 							 | expression '.' invocation;
 
 invocation:				    IDENTIFIER '(' ( argument ( ',' argument )* )? ')' ;

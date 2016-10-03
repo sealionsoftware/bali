@@ -11,8 +11,10 @@ import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.InvocationNode;
+import com.sealionsoftware.bali.compiler.tree.IterationNode;
 import com.sealionsoftware.bali.compiler.tree.OperationNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
+import com.sealionsoftware.bali.compiler.tree.StatementNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import com.sealionsoftware.bali.compiler.type.Class;
@@ -318,6 +320,42 @@ public class TypeCheckVisitorTest {
         subject.visit(node);
 
         assertThat(subject, containsOneFailure(ErrorCode.INVALID_TYPE));
+    }
+
+    @Test
+    public void testIterationHasInvalidTargetType(){
+
+        IterationNode node = mock(IterationNode.class);
+        ExpressionNode targetNode = mock(ExpressionNode.class);
+        StatementNode statementNode = mock(StatementNode.class);
+        Type targetType = mock(Type.class);
+
+        when(node.getTarget()).thenReturn(targetNode);
+        when(node.getStatement()).thenReturn(statementNode);
+        when(targetNode.getSite()).thenReturn(new Site(targetType));
+        when(targetType.isAssignableTo(any())).thenReturn(false);
+
+        subject.visit(node);
+
+        assertThat(subject, containsOneFailure(ErrorCode.INVALID_TYPE));
+    }
+
+    @Test
+    public void testIteration(){
+
+        IterationNode node = mock(IterationNode.class);
+        ExpressionNode targetNode = mock(ExpressionNode.class);
+        StatementNode statementNode = mock(StatementNode.class);
+        Type targetType = mock(Type.class);
+
+        when(node.getTarget()).thenReturn(targetNode);
+        when(node.getStatement()).thenReturn(statementNode);
+        when(targetNode.getSite()).thenReturn(new Site(targetType));
+        when(targetType.isAssignableTo(any())).thenReturn(true);
+
+        subject.visit(node);
+
+        assertThat(subject, containsNoFailures());
     }
 
 }
