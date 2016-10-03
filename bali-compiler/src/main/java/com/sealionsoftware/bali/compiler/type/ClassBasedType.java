@@ -50,7 +50,7 @@ public class ClassBasedType implements Type {
         return template;
     }
 
-    public Type getSuperType() {
+    public synchronized Type getSuperType() {
         if (!superTypeInitialised){
             superTypeInitialised = true;
             superType = parameterise(template.getSuperType());
@@ -58,7 +58,7 @@ public class ClassBasedType implements Type {
         return superType;
     }
 
-    public List<Type> getInterfaces() {
+    public synchronized List<Type> getInterfaces() {
         if (interfaces == null){
             initialiseInterfaces();
         }
@@ -73,14 +73,14 @@ public class ClassBasedType implements Type {
         this.interfaces = interfaces;
     }
 
-    public List<Method> getMethods() {
+    public synchronized List<Method> getMethods() {
         if (methods == null){
             initaliseMethods();
         }
         return unmodifiableList(new ArrayList<>(methods.values()));
     }
 
-    public Method getMethod(String name) {
+    public synchronized Method getMethod(String name) {
         if (methods == null){
             initaliseMethods();
         }
@@ -120,7 +120,7 @@ public class ClassBasedType implements Type {
         return lowerTemplate == null ? raw : getUltimateTemplate(lowerTemplate);
     }
 
-    public List<Parameter> getTypeArguments() {
+    public synchronized List<Parameter> getTypeArguments() {
         if (typeArgumentMap == null){
             initaliseTypeArguments();
         }
@@ -138,7 +138,7 @@ public class ClassBasedType implements Type {
         }
     }
 
-    public Boolean isAssignableTo(Type other) {
+    public synchronized Boolean isAssignableTo(Type other) {
 
         if (other == null || other == this || other.getClassName() == null) {
             return true;
@@ -170,28 +170,28 @@ public class ClassBasedType implements Type {
         return false;
     }
 
-    public List<Operator> getOperators() {
+    public synchronized List<Operator> getOperators() {
         if (operators == null){
             initaliseOperators();
         }
         return unmodifiableList(new ArrayList<>(operators.values()));
     }
 
-    public Operator getOperator(String name) {
+    public synchronized Operator getOperator(String name) {
         if (operators == null){
             initaliseOperators();
         }
         return operators.get(name);
     }
 
-    public List<Operator> getUnaryOperators() {
+    public synchronized List<Operator> getUnaryOperators() {
         if (unaryOperators == null){
             initaliseUnaryOperators();
         }
         return unmodifiableList(new ArrayList<>(unaryOperators.values()));
     }
 
-    public Operator getUnaryOperator(String name) {
+    public synchronized Operator getUnaryOperator(String name) {
         if (unaryOperators == null){
             initaliseUnaryOperators();
         }

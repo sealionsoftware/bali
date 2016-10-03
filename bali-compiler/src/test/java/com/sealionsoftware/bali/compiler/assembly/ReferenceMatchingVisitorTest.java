@@ -15,6 +15,7 @@ import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.StatementNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
+import com.sealionsoftware.bali.compiler.type.InferredType;
 import org.junit.Test;
 
 import java.util.UUID;
@@ -252,6 +253,23 @@ public class ReferenceMatchingVisitorTest {
         Type targetType = mock(Type.class);
 
         when(targetType.getClassName()).thenReturn("NotIterable");
+
+        when(iterationNode.getTarget()).thenReturn(target);
+        when(target.getSite()).thenReturn(new Site(targetType));
+        when(iterationNode.getStatement()).thenReturn(iteration);
+
+        subject.visit(iterationNode);
+
+        assertThat(subject, containsNoFailures());
+    }
+
+    @Test
+    public void testVisitIterationNodeOverInferredIterable() throws Exception {
+
+        IterationNode iterationNode = mock(IterationNode.class);
+        ExpressionNode target = mock(ExpressionNode.class);
+        StatementNode iteration = mock(StatementNode.class);
+        Type targetType = mock(InferredType.class);
 
         when(iterationNode.getTarget()).thenReturn(target);
         when(target.getSite()).thenReturn(new Site(targetType));

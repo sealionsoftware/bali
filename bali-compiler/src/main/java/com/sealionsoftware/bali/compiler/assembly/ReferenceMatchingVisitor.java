@@ -17,6 +17,7 @@ import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.StatementNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
+import com.sealionsoftware.bali.compiler.type.InferredType;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -30,11 +31,11 @@ public class ReferenceMatchingVisitor extends ValidatingVisitor {
     private final Deque<Scope> scopeStack;
 
     public ReferenceMatchingVisitor() {
-        this(new Scope());
+        this.scopeStack = new ArrayDeque<>(asList(new Scope()));
     }
 
     public ReferenceMatchingVisitor(Scope scope) {
-        this.scopeStack = new ArrayDeque<>(asList(scope));
+        this.scopeStack = new ArrayDeque<>(asList(scope, new Scope()));
     }
 
     public void visit(CodeBlockNode codeBlock) {
@@ -77,7 +78,7 @@ public class ReferenceMatchingVisitor extends ValidatingVisitor {
                 ReferenceNode referenceNode = (ReferenceNode) target;
                 Scope scope = new Scope();
                 scope.add(buildPresentReference(referenceNode.getReferenceData()));
-                pushAndWalk(conditionalNode.getConditional(), scope);
+                pushAndWalkChild(conditionalNode.getConditional(), scope);
                 return;
             }
         }
@@ -97,18 +98,23 @@ public class ReferenceMatchingVisitor extends ValidatingVisitor {
         target.accept(this);
 
         Site listSite = target.getSite();
+        Type itemType = findIterativeTypeArgument(listSite.type);
         VariableData itemDeclaration = new VariableData(
                 iterationNode.getIdentifier(),
-                listSite == null ? null : new Site(findIterativeTypeArgument(listSite.type)),
+                itemType == null ? null : new Site(itemType),
                 UUID.randomUUID()
         );
         iterationNode.setItemData(itemDeclaration);
         Scope loopScope = new Scope();
         loopScope.add(itemDeclaration);
-        pushAndWalk(iterationNode.getStatement(), loopScope);
+        pushAndWalkChild(iterationNode.getStatement(), loopScope);
     }
 
     private Type findIterativeTypeArgument(Type type) {
+
+        if (type instanceof InferredType){
+            return new InferredType(null);
+        }
 
         String className = type.getClassName();
         if (className != null && className.equals(bali.Iterable.class.getName())){
@@ -142,6 +148,12 @@ public class ReferenceMatchingVisitor extends ValidatingVisitor {
 
     private Site buildPresentSite(Site in){
         return new Site(in != null ? in.type : null);
+    }
+
+    private void pushAndWalkChild(Node node, Scope scope) {
+        scopeStack.push(scope);
+        node.accept(this);
+        scopeStack.pop();
     }
 
     private void pushAndWalk(Node node, Scope scope) {
