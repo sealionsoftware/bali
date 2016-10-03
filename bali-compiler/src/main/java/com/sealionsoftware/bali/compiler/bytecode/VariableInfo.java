@@ -1,16 +1,15 @@
 package com.sealionsoftware.bali.compiler.bytecode;
 
-import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.objectweb.asm.Label;
 
 public class VariableInfo {
 
-    public final VariableNode node;
+    public final String name;
     public final Label start;
     public final Label end;
 
-    public VariableInfo(VariableNode node, Label start, Label end) {
-        this.node = node;
+    public VariableInfo(String name, Label start, Label end) {
+        this.name = name;
         this.start = start;
         this.end = end;
     }

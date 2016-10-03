@@ -10,7 +10,7 @@ import static com.sealionsoftware.bali.compiler.Matchers.wrote;
 import static com.sealionsoftware.bali.compiler.Matchers.wroteNothing;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class LoopStatementIT {
+public class ConditionalLoopStatementIT {
 
     private ListTextBufferWriter console = new ListTextBufferWriter();
     private Interpreter interpreter = new StandardInterpreter(null, null, null, new ReflectiveExecutor(console));

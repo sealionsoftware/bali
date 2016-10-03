@@ -17,7 +17,4 @@ public class Scope {
         return declarations.get(name);
     }
 
-    public Boolean contains(String name) {
-        return declarations.containsKey(name);
-    }
 }

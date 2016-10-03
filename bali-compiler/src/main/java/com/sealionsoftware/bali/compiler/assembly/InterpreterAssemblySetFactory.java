@@ -20,6 +20,7 @@ public class InterpreterAssemblySetFactory implements AssemblerSetFactory {
         classFactory.addToLibrary(Logic.class);
         classFactory.addToLibrary(bali.Text.class);
         classFactory.addToLibrary(bali.Integer.class);
+        classFactory.addToLibrary(bali.Iterable.class);
 
         Scope externalScope = new Scope();
         for (Map.Entry<String, java.lang.Class> externalReferenceTypeEntry : externalReferences.entrySet()){

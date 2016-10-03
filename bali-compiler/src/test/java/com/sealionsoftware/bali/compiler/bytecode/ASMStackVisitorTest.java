@@ -12,13 +12,13 @@ import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
-import com.sealionsoftware.bali.compiler.tree.ConditionalNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExistenceCheckNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
 import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.InvocationNode;
+import com.sealionsoftware.bali.compiler.tree.IterationNode;
 import com.sealionsoftware.bali.compiler.tree.LogicLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.OperationNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
@@ -108,7 +108,7 @@ public class ASMStackVisitorTest implements Opcodes {
         assertThat(variables, notNullValue());
         assertThat(variables.size(), equalTo(1));
         VariableInfo variableInfo = variables.get(0);
-        assertThat(variableInfo.node.getName(), equalTo("aVariable"));
+        assertThat(variableInfo.name, equalTo("aVariable"));
     }
 
     @Test
@@ -127,7 +127,7 @@ public class ASMStackVisitorTest implements Opcodes {
         assertThat(variables, notNullValue());
         assertThat(variables.size(), equalTo(1));
         VariableInfo variableInfo = variables.get(0);
-        assertThat(variableInfo.node.getName(), equalTo("aVariable"));
+        assertThat(variableInfo.name, equalTo("aVariable"));
     }
 
     @Test
@@ -222,6 +222,17 @@ public class ASMStackVisitorTest implements Opcodes {
 
         subject.visit(mockNode);
         verify(visitor).visitVarInsn(ALOAD, 1);
+    }
+
+    @Test
+    public void testVisitFieldReferenceNode() throws Exception {
+
+        FieldData variableData = new FieldData("name", null);
+        ReferenceNode mockNode = mock(ReferenceNode.class);
+        when(mockNode.getReferenceData()).thenReturn(variableData);
+
+        subject.visit(mockNode);
+        verify(visitor).visitFieldInsn(GETFIELD, "AType", "name", "Ljava/lang/Object;");
     }
 
     @Test(expected = RuntimeException.class)
@@ -341,6 +352,27 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
+    public void testVisitIteration() throws Exception {
+
+        IterationNode node = mock(IterationNode.class);
+        ExpressionNode target = mock(ExpressionNode.class);
+        StatementNode statementNode = mock(StatementNode.class);
+
+        when(node.getTarget()).thenReturn(target);
+        when(node.getStatement()).thenReturn(statementNode);
+        when(node.getIdentifier()).thenReturn("anItem");
+        when(node.getItemData()).thenReturn(new VariableData("anItem", mock(Site.class), UUID.randomUUID()));
+
+
+        subject.visit(node);
+
+
+        verify(statementNode).accept(subject);
+        verify(target).accept(subject);
+
+    }
+
+    @Test
     public void testVisitArrayNode(){
 
         List<ExpressionNode> mockItems = asList(
@@ -367,12 +399,6 @@ public class ASMStackVisitorTest implements Opcodes {
         subject.visit(node);
         verify(target).accept(subject);
         verify(visitor).visitJumpInsn(eq(IFNULL), any(Label.class));
-    }
-
-    @Test
-    public void testVisitConditionalNode() {
-        ConditionalNode node = mock(ConditionalNode.class);
-        subject.visit(node);
     }
 
     private IntegerLiteralNode setupMock(int i) {

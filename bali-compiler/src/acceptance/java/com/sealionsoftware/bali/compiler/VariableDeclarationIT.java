@@ -86,5 +86,17 @@ public class VariableDeclarationIT {
 
     }
 
+    @Test
+    public void testDeclaringTwoVariablesWithSameName() {
+
+        Runnable invocation = () -> interpreter.run(
+                "var aVariable = \"X\"" +
+                "var aVariable = \"Y\""
+        );
+
+        assertThat(invocation, throwsException(containingError(withCode(ErrorCode.NAME_ALREADY_USED))));
+
+    }
+
 
 }

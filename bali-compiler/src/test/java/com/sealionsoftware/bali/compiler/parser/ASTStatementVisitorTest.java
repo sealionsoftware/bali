@@ -8,6 +8,7 @@ import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
 import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
+import com.sealionsoftware.bali.compiler.tree.IterationNode;
 import com.sealionsoftware.bali.compiler.tree.LogicLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.StatementNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
@@ -150,6 +151,26 @@ public class ASTStatementVisitorTest {
         assertThat(node, notNullValue());
         assertThat(node.getCondition(), notNullValue());
         assertThat(node.getConditional(), notNullValue());
+    }
+
+    @Test
+    public void testVisitIterationNode() throws Exception {
+        BaliParser.IterationStatementContext context = mockContext(BaliParser.IterationStatementContext.class);
+        BaliParser.ExpressionContext targetContext = mockContext(BaliParser.ExpressionContext.class);
+        BaliParser.ControlExpressionContext statementContext = mockContext(BaliParser.ControlExpressionContext.class);
+        TerminalNode identifier = mockTerminal("item");
+
+        when(context.IDENTIFIER()).thenReturn(identifier);
+        when(context.expression()).thenReturn(targetContext);
+        when(targetContext.accept(any(ParseTreeVisitor.class))).thenReturn(mock(ExpressionNode.class));
+        when(context.controlExpression()).thenReturn(statementContext);
+        when(statementContext.accept(any(ParseTreeVisitor.class))).thenReturn(mock(StatementNode.class));
+
+        IterationNode node = subject.visitIterationStatement(context);
+        assertThat(node, notNullValue());
+        assertThat(node.getTarget(), notNullValue());
+        assertThat(node.getStatement(), notNullValue());
+        assertThat(node.getIdentifier(), equalTo("item"));
     }
 
     @Test
