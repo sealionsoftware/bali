@@ -2,6 +2,7 @@ package com.sealionsoftware.bali.compiler;
 
 import bali.Iterator;
 import bali.Logic;
+import bali.RuntimeException;
 import bali.Text;
 import bali.collection.Array;
 import com.sealionsoftware.bali.compiler.assembly.BlockageDescription;
@@ -87,6 +88,20 @@ public class Matchers {
 
             public void describeTo(Description description) {
                 description.appendText("CompilationException containing error " + errorMatcher);
+            }
+        };
+    }
+
+    public static Matcher<RuntimeException> withPayload(final Matcher<?> payloadMatcher) {
+        return new TypeSafeDiagnosingMatcher<RuntimeException>() {
+
+            protected boolean matchesSafely(RuntimeException e, Description description) {
+                return payloadMatcher.matches(e.payload);
+            }
+
+            public void describeTo(Description description) {
+                description.appendText("RuntimeException with payload " );
+                payloadMatcher.describeTo(description);
             }
         };
     }

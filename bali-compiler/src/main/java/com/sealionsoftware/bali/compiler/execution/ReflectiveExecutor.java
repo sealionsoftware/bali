@@ -46,7 +46,7 @@ public class ReflectiveExecutor implements Executor {
             I expressionClass = (I) classLoader.loadClass(className);
             return payload.apply(expressionClass);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw (e instanceof RuntimeException) ? (RuntimeException) e : new RuntimeException(e);
         }
     }
 

@@ -24,6 +24,7 @@ import com.sealionsoftware.bali.compiler.tree.OperationNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.StatementNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
+import com.sealionsoftware.bali.compiler.tree.ThrowNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.junit.Test;
@@ -399,6 +400,18 @@ public class ASMStackVisitorTest implements Opcodes {
         subject.visit(node);
         verify(target).accept(subject);
         verify(visitor).visitJumpInsn(eq(IFNULL), any(Label.class));
+    }
+
+    @Test
+    public void testVisitThrowNode() {
+        ThrowNode node = mock(ThrowNode.class);
+        ExpressionNode payload = mock(ExpressionNode.class);
+        when(node.getPayload()).thenReturn(payload);
+
+        subject.visit(node);
+        verify(payload).accept(subject);
+        verify(visitor).visitInsn(ATHROW);
+
     }
 
     private IntegerLiteralNode setupMock(int i) {

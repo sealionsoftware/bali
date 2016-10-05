@@ -14,6 +14,7 @@ import com.sealionsoftware.bali.compiler.tree.LogicLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.OperationNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
+import com.sealionsoftware.bali.compiler.tree.ThrowNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.junit.Test;
@@ -104,6 +105,11 @@ public class ValidatingVisitorTest {
     @Test
     public void testVisitIterationNode() throws Exception {
         subject.visit(mock(IterationNode.class));
+    }
+
+    @Test
+    public void testVisiThrowNode() throws Exception {
+        subject.visit(mock(ThrowNode.class));
     }
 
     @Test
