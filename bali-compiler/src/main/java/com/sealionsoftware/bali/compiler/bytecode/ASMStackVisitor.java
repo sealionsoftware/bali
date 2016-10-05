@@ -23,6 +23,7 @@ import com.sealionsoftware.bali.compiler.tree.OperationNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.StatementNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
+import com.sealionsoftware.bali.compiler.tree.ThrowNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.objectweb.asm.Label;
@@ -276,6 +277,14 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
         methodVisitor.visitJumpInsn(GOTO, start);
         methodVisitor.visitLabel(end);
         methodVisitor.visitInsn(POP);
+    }
+
+    public void visit(ThrowNode node) {
+        methodVisitor.visitTypeInsn(NEW, "bali/RuntimeException");
+        methodVisitor.visitInsn(DUP);
+        node.getPayload().accept(this);
+        methodVisitor.visitMethodInsn(INVOKESPECIAL, "bali/RuntimeException", "<init>", "(Ljava/lang/Object;)V", false);
+        methodVisitor.visitInsn(ATHROW);
     }
 
     public List<VariableInfo> getVariables(){

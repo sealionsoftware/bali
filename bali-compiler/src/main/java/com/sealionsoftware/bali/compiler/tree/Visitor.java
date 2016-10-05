@@ -35,4 +35,6 @@ public interface Visitor {
 
     void visit(IterationNode node);
 
+    void visit(ThrowNode node);
+
 }

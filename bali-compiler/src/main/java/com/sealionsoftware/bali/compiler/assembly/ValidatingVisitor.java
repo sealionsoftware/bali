@@ -15,6 +15,7 @@ import com.sealionsoftware.bali.compiler.tree.LogicLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.OperationNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
+import com.sealionsoftware.bali.compiler.tree.ThrowNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 
@@ -86,6 +87,10 @@ public abstract class ValidatingVisitor extends DescendingVisitor {
     }
 
     public void visit(IterationNode node) {
+        visitChildren(node);
+    }
+
+    public void visit(ThrowNode node) {
         visitChildren(node);
     }
 

@@ -33,11 +33,13 @@ loopStatement:              'while' '(' expression ')' controlExpression ;
 
 iterationStatement:         'for' '(' IDENTIFIER ':' expression ')' controlExpression ;
 
+throwStatement:             'throw' expression ;
+
 lineStatement:              expression
 							 | variableDeclaration
 							 | assignment ;
 
-controlStatement:           conditionalStatement | loopStatement | iterationStatement;
+controlStatement:           conditionalStatement | loopStatement | iterationStatement | throwStatement;
 
 variableDeclaration:        'var' type? IDENTIFIER ('=' expression)? ;
 

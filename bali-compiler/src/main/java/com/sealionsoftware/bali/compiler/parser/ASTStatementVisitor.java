@@ -11,6 +11,7 @@ import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
 import com.sealionsoftware.bali.compiler.tree.IterationNode;
 import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
 import com.sealionsoftware.bali.compiler.tree.StatementNode;
+import com.sealionsoftware.bali.compiler.tree.ThrowNode;
 import com.sealionsoftware.bali.compiler.tree.TypeNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.antlr.v4.runtime.Token;
@@ -80,8 +81,7 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
     public ExpressionStatementNode visitExpression(BaliParser.ExpressionContext ctx) {
         ASTExpressionVisitor expressionVisitor = new ASTExpressionVisitor(monitor);
         Token start = ctx.start;
-        ExpressionStatementNode node = new ExpressionStatementNode(start.getLine(), start.getCharPositionInLine(), ctx.accept(expressionVisitor));
-        return node;
+        return new ExpressionStatementNode(start.getLine(), start.getCharPositionInLine(), ctx.accept(expressionVisitor));
     }
 
     public ConditionalStatementNode visitConditionalStatement(BaliParser.ConditionalStatementContext ctx){
@@ -121,6 +121,16 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
         loopNode.setStatement(ctx.controlExpression().accept(this));
 
         return loopNode;
+    }
+
+    public ThrowNode visitThrowStatement(BaliParser.ThrowStatementContext ctx){
+        Token start = ctx.start;
+        ASTExpressionVisitor expressionVisitor = new ASTExpressionVisitor(monitor);
+        ThrowNode node = new ThrowNode(start.getLine(), start.getCharPositionInLine());
+
+        node.setPayload(ctx.expression().accept(expressionVisitor));
+
+        return node;
     }
 
     private TypeNode buildType(BaliParser.TypeContext ctx) {

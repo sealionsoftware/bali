@@ -11,6 +11,7 @@ import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
 import com.sealionsoftware.bali.compiler.tree.IterationNode;
 import com.sealionsoftware.bali.compiler.tree.LogicLiteralNode;
 import com.sealionsoftware.bali.compiler.tree.StatementNode;
+import com.sealionsoftware.bali.compiler.tree.ThrowNode;
 import com.sealionsoftware.bali.compiler.tree.VariableNode;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -183,6 +184,19 @@ public class ASTStatementVisitorTest {
 
         assertThat(node, notNullValue());
         assertThat(node.getStatements(), hasSize(1));
+    }
+
+    @Test
+    public void testVisitThrowNode() throws Exception {
+        BaliParser.ThrowStatementContext context = mockContext(BaliParser.ThrowStatementContext.class);
+        BaliParser.ExpressionContext payloadContext = mockContext(BaliParser.ExpressionContext.class);
+
+        when(context.expression()).thenReturn(payloadContext);
+        when(payloadContext.accept(any(ParseTreeVisitor.class))).thenReturn(mock(ExpressionNode.class));
+
+        ThrowNode node = subject.visitThrowStatement(context);
+        assertThat(node, notNullValue());
+        assertThat(node.getPayload(), notNullValue());
     }
 
 }
