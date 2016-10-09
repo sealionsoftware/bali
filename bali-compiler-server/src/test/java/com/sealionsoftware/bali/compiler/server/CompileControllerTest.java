@@ -2,8 +2,10 @@ package com.sealionsoftware.bali.compiler.server;
 
 import com.sealionsoftware.bali.compiler.CompilationException;
 import com.sealionsoftware.bali.compiler.CompileError;
+import com.sealionsoftware.bali.compiler.ErrorCode;
 import com.sealionsoftware.bali.compiler.Interpreter;
 import com.sealionsoftware.bali.compiler.TextBuffer;
+import com.sealionsoftware.bali.compiler.tree.Node;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -27,6 +29,8 @@ import static com.sealionsoftware.Matchers.withMessage;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -145,6 +149,21 @@ public class CompileControllerTest {
     public void testHandleBadRequest(){
 
         subject.handle(mock(HttpMessageNotReadableException.class));
+
+    }
+
+    @Test
+    public void testHandleCompileError(){
+
+        CompileError payload = new CompileError(ErrorCode.INVALID_TYPE, mock(Node.class));
+        assertThat(subject.handle(new CompilationException(asList(payload))), hasItem(is(payload)));
+
+    }
+
+    @Test
+    public void testHandleRuntimeException(){
+
+        assertThat(subject.handle(new bali.RuntimeException("test")), equalTo("test"));
 
     }
 }

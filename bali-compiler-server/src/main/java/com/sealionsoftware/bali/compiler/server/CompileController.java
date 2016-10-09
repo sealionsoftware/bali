@@ -1,6 +1,8 @@
 package com.sealionsoftware.bali.compiler.server;
 
 
+import com.sealionsoftware.bali.compiler.CompilationException;
+import com.sealionsoftware.bali.compiler.CompileError;
 import com.sealionsoftware.bali.compiler.Interpreter;
 import com.sealionsoftware.bali.compiler.TextBuffer;
 import org.springframework.context.annotation.Scope;
@@ -65,6 +67,16 @@ public class CompileController {
     @ExceptionHandler @ResponseStatus(HttpStatus.BAD_REQUEST)
     public void handle(HttpMessageNotReadableException exception){
         exception.printStackTrace();
+    }
+
+    @ExceptionHandler @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public @ResponseBody List<CompileError> handle(CompilationException exception){
+        return exception.errorList;
+    }
+
+    @ExceptionHandler @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Object handle(bali.RuntimeException exception){
+        return exception.payload;
     }
 
 }
