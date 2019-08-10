@@ -17,30 +17,30 @@ public class VariableNodeTest {
 	private VariableNode subject = new VariableNode(2, 3);
 
 	@Test
-	public void testGetName() throws Exception {
+	public void testGetName(){
 		subject.setName("aVariable");
 		assertThat(subject.getName(), equalTo("aVariable"));
 	}
 
 	@Test
-	public void testGetValue() throws Exception {
+	public void testGetValue(){
 		ExpressionNode value = mock(ExpressionNode.class);
 		subject.setValue(value);
 		assertThat(subject.getValue(), equalTo(value));
 	}
 
 	@Test
-	public void testGetLine() throws Exception {
+	public void testGetLine(){
 		assertThat(subject.getLine(), equalTo(2));
 	}
 
 	@Test
-	public void testGetCharacter() throws Exception {
+	public void testGetCharacter(){
 		assertThat(subject.getCharacter(), equalTo(3));
 	}
 
 	@Test
-	public void testGetChildren() throws Exception {
+	public void testGetChildren(){
 
 		TypeNode typeMock = mock(TypeNode.class);
 		ExpressionNode expressionMock = mock(ExpressionNode.class);
@@ -52,14 +52,14 @@ public class VariableNodeTest {
 	}
 
 	@Test
-	public void testAccept() throws Exception {
+	public void testAccept(){
 		Visitor visitor = mock(Visitor.class);
 		subject.accept(visitor);
 		verify(visitor).visit(same(subject));
 	}
 
 	@Test
-	public void testGetID() throws Exception {
+	public void testGetID(){
 		assertThat(subject.getId(), instanceOf(UUID.class));
 	}
 }

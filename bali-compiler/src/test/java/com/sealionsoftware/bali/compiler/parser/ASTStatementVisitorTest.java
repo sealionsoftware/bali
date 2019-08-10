@@ -2,17 +2,7 @@ package com.sealionsoftware.bali.compiler.parser;
 
 import bali.compiler.parser.BaliParser;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
-import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
-import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
-import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
-import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
-import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
-import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
-import com.sealionsoftware.bali.compiler.tree.IterationNode;
-import com.sealionsoftware.bali.compiler.tree.LogicLiteralNode;
-import com.sealionsoftware.bali.compiler.tree.StatementNode;
-import com.sealionsoftware.bali.compiler.tree.ThrowNode;
-import com.sealionsoftware.bali.compiler.tree.VariableNode;
+import com.sealionsoftware.bali.compiler.tree.*;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.junit.Test;
@@ -26,6 +16,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -35,7 +26,7 @@ public class ASTStatementVisitorTest {
     private ASTStatementVisitor subject = new ASTStatementVisitor(monitor);
 
     @Test
-    public void testVisitScript() throws Exception {
+    public void testVisitScript() {
 
         BaliParser.ScriptContext context = mockContext(BaliParser.ScriptContext.class);
         BaliParser.StatementContext statementContext = mockContext(BaliParser.StatementContext.class);
@@ -48,7 +39,7 @@ public class ASTStatementVisitorTest {
     }
 
     @Test
-    public void testVisitVariableNode() throws Exception {
+    public void testVisitVariableNode() {
 
         TerminalNode typeTerminal = mockTerminal("AType");
         TerminalNode typeArgumentTerminal = mockTerminal("ATypeArgument");
@@ -74,7 +65,7 @@ public class ASTStatementVisitorTest {
     }
 
     @Test
-    public void testVisitAssignmentNode() throws Exception {
+    public void testVisitAssignmentNode() {
 
         TerminalNode nameTerminal = mockTerminal("aVariable");
 
@@ -94,7 +85,7 @@ public class ASTStatementVisitorTest {
     }
 
     @Test
-    public void testVisitExpressionNode() throws Exception {
+    public void testVisitExpressionNode() {
         
         BaliParser.ExpressionContext context = mockContext(BaliParser.ExpressionContext.class);
         when(context.accept(any(ASTExpressionVisitor.class))).thenReturn(mock(LogicLiteralNode.class));
@@ -104,14 +95,14 @@ public class ASTStatementVisitorTest {
     }
 
     @Test
-    public void testVisitConditionalNode() throws Exception {
+    public void testVisitConditionalNode() {
         BaliParser.ConditionalStatementContext context = mockContext(BaliParser.ConditionalStatementContext.class);
         BaliParser.ExpressionContext predicateContext = mockContext(BaliParser.ExpressionContext.class);
-        BaliParser.ControlExpressionContext bodyContext = mockContext(BaliParser.ControlExpressionContext.class);
+        BaliParser.ControlStatementContext bodyContext = mockContext(BaliParser.ControlStatementContext.class);
 
         when(context.expression()).thenReturn(predicateContext);
         when(predicateContext.accept(any(ParseTreeVisitor.class))).thenReturn(mock(ExpressionNode.class));
-        when(context.controlExpression()).thenReturn(asList(bodyContext));
+        when(context.controlStatement()).thenReturn(asList(bodyContext));
         when(bodyContext.accept(any(ParseTreeVisitor.class))).thenReturn(mock(StatementNode.class));
 
         ConditionalStatementNode node = subject.visitConditionalStatement(context);
@@ -121,15 +112,15 @@ public class ASTStatementVisitorTest {
     }
 
     @Test
-    public void testVisitConditionalNodeWithContraryBranch() throws Exception {
+    public void testVisitConditionalNodeWithContraryBranch() {
         BaliParser.ConditionalStatementContext context = mockContext(BaliParser.ConditionalStatementContext.class);
         BaliParser.ExpressionContext predicateContext = mockContext(BaliParser.ExpressionContext.class);
-        BaliParser.ControlExpressionContext bodyContext = mockContext(BaliParser.ControlExpressionContext.class);
-        BaliParser.ControlExpressionContext contraContext = mockContext(BaliParser.ControlExpressionContext.class);
+        BaliParser.ControlStatementContext bodyContext = mockContext(BaliParser.ControlStatementContext.class);
+        BaliParser.ControlStatementContext contraContext = mockContext(BaliParser.ControlStatementContext.class);
 
         when(context.expression()).thenReturn(predicateContext);
         when(predicateContext.accept(any(ParseTreeVisitor.class))).thenReturn(mock(ExpressionNode.class));
-        when(context.controlExpression()).thenReturn(asList(bodyContext, contraContext));
+        when(context.controlStatement()).thenReturn(asList(bodyContext, contraContext));
         when(contraContext.accept(any(ParseTreeVisitor.class))).thenReturn(mock(StatementNode.class));
 
         ConditionalStatementNode node = subject.visitConditionalStatement(context);
@@ -138,14 +129,14 @@ public class ASTStatementVisitorTest {
     }
 
     @Test
-    public void testVisitLoopNode() throws Exception {
+    public void testVisitLoopNode() {
         BaliParser.LoopStatementContext context = mockContext(BaliParser.LoopStatementContext.class);
         BaliParser.ExpressionContext predicateContext = mockContext(BaliParser.ExpressionContext.class);
-        BaliParser.ControlExpressionContext bodyContext = mockContext(BaliParser.ControlExpressionContext.class);
+        BaliParser.ControlStatementContext bodyContext = mockContext(BaliParser.ControlStatementContext.class);
 
         when(context.expression()).thenReturn(predicateContext);
         when(predicateContext.accept(any(ParseTreeVisitor.class))).thenReturn(mock(ExpressionNode.class));
-        when(context.controlExpression()).thenReturn(bodyContext);
+        when(context.controlStatement()).thenReturn(bodyContext);
         when(bodyContext.accept(any(ParseTreeVisitor.class))).thenReturn(mock(StatementNode.class));
 
         ConditionalLoopNode node = subject.visitLoopStatement(context);
@@ -155,16 +146,16 @@ public class ASTStatementVisitorTest {
     }
 
     @Test
-    public void testVisitIterationNode() throws Exception {
+    public void testVisitIterationNode() {
         BaliParser.IterationStatementContext context = mockContext(BaliParser.IterationStatementContext.class);
         BaliParser.ExpressionContext targetContext = mockContext(BaliParser.ExpressionContext.class);
-        BaliParser.ControlExpressionContext statementContext = mockContext(BaliParser.ControlExpressionContext.class);
+        BaliParser.ControlStatementContext statementContext = mockContext(BaliParser.ControlStatementContext.class);
         TerminalNode identifier = mockTerminal("item");
 
         when(context.IDENTIFIER()).thenReturn(identifier);
         when(context.expression()).thenReturn(targetContext);
         when(targetContext.accept(any(ParseTreeVisitor.class))).thenReturn(mock(ExpressionNode.class));
-        when(context.controlExpression()).thenReturn(statementContext);
+        when(context.controlStatement()).thenReturn(statementContext);
         when(statementContext.accept(any(ParseTreeVisitor.class))).thenReturn(mock(StatementNode.class));
 
         IterationNode node = subject.visitIterationStatement(context);
@@ -175,7 +166,7 @@ public class ASTStatementVisitorTest {
     }
 
     @Test
-    public void testVisitCodeBlockNode() throws Exception {
+    public void testVisitCodeBlockNode() {
         BaliParser.CodeBlockContext context = mockContext(BaliParser.CodeBlockContext.class);
         BaliParser.StatementContext statementContext = mockContext(BaliParser.StatementContext.class);
         when(context.statement()).thenReturn(asList(statementContext));
@@ -187,7 +178,7 @@ public class ASTStatementVisitorTest {
     }
 
     @Test
-    public void testVisitThrowNode() throws Exception {
+    public void testVisitThrowNode() {
         BaliParser.ThrowStatementContext context = mockContext(BaliParser.ThrowStatementContext.class);
         BaliParser.ExpressionContext payloadContext = mockContext(BaliParser.ExpressionContext.class);
 
@@ -197,6 +188,35 @@ public class ASTStatementVisitorTest {
         ThrowNode node = subject.visitThrowStatement(context);
         assertThat(node, notNullValue());
         assertThat(node.getPayload(), notNullValue());
+    }
+
+    @Test
+    public void testVisitCatchStatementNode() {
+        BaliParser.CatchStatementContext context = mockContext(BaliParser.CatchStatementContext.class);
+        BaliParser.CatchableStatementContext covered = mockContext(BaliParser.CatchableStatementContext.class);
+        BaliParser.ControlStatementContext catchStatement = mockContext(BaliParser.ControlStatementContext.class);
+        BaliParser.TypeContext typeContext = mockContext(BaliParser.TypeContext.class);
+
+        TerminalNode typeTerminal = mockTerminal("AType");
+        TerminalNode nameTerminal = mockTerminal("aVariable");
+
+        when(typeContext.IDENTIFIER()).thenReturn(typeTerminal);
+        when(context.IDENTIFIER()).thenReturn(nameTerminal);
+        when(context.type()).thenReturn(typeContext);
+
+        when(context.catchableStatement()).thenReturn(covered);
+        when(covered.accept(subject)).thenReturn(mock(StatementNode.class));
+
+        when(context.controlStatement()).thenReturn(catchStatement);
+        when(catchStatement.accept(subject)).thenReturn(mock(StatementNode.class));
+
+        CatchStatementNode node = subject.visitCatchStatement(context);
+
+        assertThat(node, notNullValue());
+        assertThat(node.getCoveredStatement(), notNullValue());
+        assertThat(node.getCaughtName(), equalTo("aVariable"));
+        assertThat(node.getCaughtType(), notNullValue());
+        assertThat(node.getCatchStatement(), notNullValue());
     }
 
 }

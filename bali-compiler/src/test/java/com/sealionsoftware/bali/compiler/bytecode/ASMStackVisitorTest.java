@@ -8,26 +8,9 @@ import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.assembly.FieldData;
 import com.sealionsoftware.bali.compiler.assembly.ReferenceData;
 import com.sealionsoftware.bali.compiler.assembly.VariableData;
-import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
-import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
-import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
-import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
-import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
-import com.sealionsoftware.bali.compiler.tree.ExistenceCheckNode;
-import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
-import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
-import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
-import com.sealionsoftware.bali.compiler.tree.InvocationNode;
-import com.sealionsoftware.bali.compiler.tree.IterationNode;
-import com.sealionsoftware.bali.compiler.tree.LogicLiteralNode;
-import com.sealionsoftware.bali.compiler.tree.OperationNode;
-import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
-import com.sealionsoftware.bali.compiler.tree.StatementNode;
-import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
-import com.sealionsoftware.bali.compiler.tree.ThrowNode;
-import com.sealionsoftware.bali.compiler.tree.TypeNode;
-import com.sealionsoftware.bali.compiler.tree.VariableNode;
+import com.sealionsoftware.bali.compiler.tree.*;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -411,6 +394,40 @@ public class ASMStackVisitorTest implements Opcodes {
         subject.visit(node);
         verify(payload).accept(subject);
         verify(visitor).visitInsn(ATHROW);
+
+    }
+
+    @Test
+    public void testVisitCatchStatementNode() {
+
+        CatchStatementNode node = mock(CatchStatementNode.class);
+        StatementNode covered = mock(StatementNode.class);
+        when(node.getCoveredStatement()).thenReturn(covered);
+        StatementNode catchStatement = mock(StatementNode.class);
+        when(node.getCatchStatement()).thenReturn(catchStatement);
+
+        subject.visit(node);
+
+        ArgumentCaptor<Label> label0 = ArgumentCaptor.forClass(Label.class);
+        ArgumentCaptor<Label> label1 = ArgumentCaptor.forClass(Label.class);
+        ArgumentCaptor<Label> label2 = ArgumentCaptor.forClass(Label.class);
+        ArgumentCaptor<Label> label3 = ArgumentCaptor.forClass(Label.class);
+
+        verify(visitor).visitTryCatchBlock(label0.capture(), label1.capture(), any(Label.class), eq("bali/RuntimeException"));
+        verify(visitor).visitLabel(label0.getValue());
+
+        verify(covered).accept(subject);
+
+        verify(visitor).visitLabel(label1.getValue());
+
+        verify(visitor).visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[]{"bali/RuntimeException"});
+        verify(visitor).visitVarInsn(ASTORE, 1);
+        verify(visitor).visitLabel(label2.capture());
+
+        verify(catchStatement).accept(subject);
+
+        verify(visitor).visitLabel(label3.capture());
+        verify(visitor).visitLocalVariable("e", "Lbali/RuntimeException;", null, label2.getValue(), label3.getValue(), 1);
 
     }
 

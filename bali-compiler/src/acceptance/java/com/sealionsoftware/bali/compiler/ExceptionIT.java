@@ -32,8 +32,6 @@ public class ExceptionIT {
         interpreter.run(
                 "{" +
                         "throw \"Ouch!\"" +
-                "} catch {" +
-                        "console << error + \" That hurt!\"" +
                 "}"
         );
 

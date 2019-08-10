@@ -3,17 +3,7 @@ package com.sealionsoftware.bali.compiler.parser;
 import bali.compiler.parser.BaliBaseVisitor;
 import bali.compiler.parser.BaliParser;
 import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
-import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
-import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
-import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
-import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
-import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
-import com.sealionsoftware.bali.compiler.tree.IterationNode;
-import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
-import com.sealionsoftware.bali.compiler.tree.StatementNode;
-import com.sealionsoftware.bali.compiler.tree.ThrowNode;
-import com.sealionsoftware.bali.compiler.tree.TypeNode;
-import com.sealionsoftware.bali.compiler.tree.VariableNode;
+import com.sealionsoftware.bali.compiler.tree.*;
 import org.antlr.v4.runtime.Token;
 
 import java.util.Iterator;
@@ -89,7 +79,7 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
         ASTExpressionVisitor expressionVisitor = new ASTExpressionVisitor(monitor);
         ConditionalStatementNode conditionalStatementNode = new ConditionalStatementNode(start.getLine(), start.getCharPositionInLine());
 
-        Iterator<BaliParser.ControlExpressionContext> controlExpressions = ctx.controlExpression().iterator();
+        Iterator<BaliParser.ControlStatementContext> controlExpressions = ctx.controlStatement().iterator();
 
         conditionalStatementNode.setCondition(ctx.expression().accept(expressionVisitor));
         conditionalStatementNode.setConditional(controlExpressions.next().accept(this));
@@ -106,7 +96,7 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
         ConditionalLoopNode loopNode = new ConditionalLoopNode(start.getLine(), start.getCharPositionInLine());
 
         loopNode.setCondition(ctx.expression().accept(expressionVisitor));
-        loopNode.setConditional(ctx.controlExpression().accept(this));
+        loopNode.setConditional(ctx.controlStatement().accept(this));
 
         return loopNode;
     }
@@ -118,7 +108,7 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
 
         loopNode.setIdentifier(ctx.IDENTIFIER().getText());
         loopNode.setTarget(ctx.expression().accept(expressionVisitor));
-        loopNode.setStatement(ctx.controlExpression().accept(this));
+        loopNode.setStatement(ctx.controlStatement().accept(this));
 
         return loopNode;
     }
@@ -129,6 +119,18 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
         ThrowNode node = new ThrowNode(start.getLine(), start.getCharPositionInLine());
 
         node.setPayload(ctx.expression().accept(expressionVisitor));
+
+        return node;
+    }
+
+    public CatchStatementNode visitCatchStatement(BaliParser.CatchStatementContext ctx){
+        Token start = ctx.start;
+
+        CatchStatementNode node = new CatchStatementNode(start.getLine(), start.getCharPositionInLine());
+        node.setCoveredStatement(ctx.catchableStatement().accept(this));
+        node.setCatchStatement(ctx.controlStatement().accept(this));
+        node.setCaughtType(buildType(ctx.type()));
+        node.setCaughtName(ctx.IDENTIFIER().getText());
 
         return node;
     }

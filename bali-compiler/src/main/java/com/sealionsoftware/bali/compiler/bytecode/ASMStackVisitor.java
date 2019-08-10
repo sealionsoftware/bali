@@ -7,25 +7,7 @@ import com.sealionsoftware.bali.compiler.assembly.DescendingVisitor;
 import com.sealionsoftware.bali.compiler.assembly.FieldData;
 import com.sealionsoftware.bali.compiler.assembly.ReferenceData;
 import com.sealionsoftware.bali.compiler.assembly.VariableData;
-import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
-import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
-import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
-import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
-import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
-import com.sealionsoftware.bali.compiler.tree.ExistenceCheckNode;
-import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
-import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
-import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
-import com.sealionsoftware.bali.compiler.tree.InvocationNode;
-import com.sealionsoftware.bali.compiler.tree.IterationNode;
-import com.sealionsoftware.bali.compiler.tree.LogicLiteralNode;
-import com.sealionsoftware.bali.compiler.tree.OperationNode;
-import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
-import com.sealionsoftware.bali.compiler.tree.StatementNode;
-import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
-import com.sealionsoftware.bali.compiler.tree.ThrowNode;
-import com.sealionsoftware.bali.compiler.tree.TypeNode;
-import com.sealionsoftware.bali.compiler.tree.VariableNode;
+import com.sealionsoftware.bali.compiler.tree.*;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -285,6 +267,10 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
         node.getPayload().accept(this);
         methodVisitor.visitMethodInsn(INVOKESPECIAL, "bali/RuntimeException", "<init>", "(Ljava/lang/Object;)V", false);
         methodVisitor.visitInsn(ATHROW);
+    }
+
+    public void visit(CatchStatementNode node) {
+        node.getCoveredStatement().accept(this);
     }
 
     public List<VariableInfo> getVariables(){
