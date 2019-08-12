@@ -8,25 +8,7 @@ import com.sealionsoftware.bali.compiler.assembly.CompilationThreadManager;
 import com.sealionsoftware.bali.compiler.assembly.FieldData;
 import com.sealionsoftware.bali.compiler.assembly.ReferenceData;
 import com.sealionsoftware.bali.compiler.assembly.VariableData;
-import com.sealionsoftware.bali.compiler.tree.ArrayLiteralNode;
-import com.sealionsoftware.bali.compiler.tree.AssignmentNode;
-import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
-import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
-import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
-import com.sealionsoftware.bali.compiler.tree.ExistenceCheckNode;
-import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
-import com.sealionsoftware.bali.compiler.tree.ExpressionStatementNode;
-import com.sealionsoftware.bali.compiler.tree.IntegerLiteralNode;
-import com.sealionsoftware.bali.compiler.tree.InvocationNode;
-import com.sealionsoftware.bali.compiler.tree.IterationNode;
-import com.sealionsoftware.bali.compiler.tree.LogicLiteralNode;
-import com.sealionsoftware.bali.compiler.tree.OperationNode;
-import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
-import com.sealionsoftware.bali.compiler.tree.StatementNode;
-import com.sealionsoftware.bali.compiler.tree.TextLiteralNode;
-import com.sealionsoftware.bali.compiler.tree.ThrowNode;
-import com.sealionsoftware.bali.compiler.tree.TypeNode;
-import com.sealionsoftware.bali.compiler.tree.VariableNode;
+import com.sealionsoftware.bali.compiler.tree.*;
 import org.junit.Test;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -412,6 +394,33 @@ public class ASMStackVisitorTest implements Opcodes {
         verify(payload).accept(subject);
         verify(visitor).visitInsn(ATHROW);
 
+    }
+
+    @Test
+    public void testVisitCatchStatementNode() {
+
+        TryStatementNode node = mock(TryStatementNode.class);
+        StatementNode covered = mock(StatementNode.class);
+        StatementNode catchStatement = mock(StatementNode.class);
+        TypeNode typeNode = mock(TypeNode.class);
+        Type type = mock(Type.class);
+
+        when(node.getCoveredStatement()).thenReturn(covered);
+        when(node.getCatchBlock()).thenReturn(catchStatement);
+        when(node.getCaughtType()).thenReturn(typeNode);
+        when(typeNode.getResolvedType()).thenReturn(new Site(type));
+        when(type.getClassName()).thenReturn("foo.Bar");
+
+        subject.visit(node);
+
+        verify(visitor).visitTryCatchBlock(any(Label.class), any(Label.class), any(Label.class), eq("bali/RuntimeException"));
+        verify(covered).accept(subject);
+        verify(visitor).visitVarInsn(ASTORE, 1);
+        verify(visitor).visitTypeInsn(INSTANCEOF, "foo/Bar");
+        verify(catchStatement).accept(subject);
+        verify(visitor, times(4)).visitLabel(any(Label.class));
+
+        verify(catchStatement).accept(subject);
     }
 
     private IntegerLiteralNode setupMock(int i) {

@@ -5,16 +5,7 @@ import com.sealionsoftware.bali.compiler.ErrorCode;
 import com.sealionsoftware.bali.compiler.Parameter;
 import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.Type;
-import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
-import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
-import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
-import com.sealionsoftware.bali.compiler.tree.ExistenceCheckNode;
-import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
-import com.sealionsoftware.bali.compiler.tree.IterationNode;
-import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
-import com.sealionsoftware.bali.compiler.tree.StatementNode;
-import com.sealionsoftware.bali.compiler.tree.TypeNode;
-import com.sealionsoftware.bali.compiler.tree.VariableNode;
+import com.sealionsoftware.bali.compiler.tree.*;
 import com.sealionsoftware.bali.compiler.type.InferredType;
 import org.junit.Test;
 
@@ -25,15 +16,14 @@ import static com.sealionsoftware.bali.compiler.Matchers.containsOneFailure;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class ReferenceMatchingVisitorTest {
 
     private ReferenceMatchingVisitor subject = new ReferenceMatchingVisitor();
 
     @Test
-    public void testVisitCodeBlockNode() throws Exception {
+    public void testVisitCodeBlockNode(){
 
         CodeBlockNode node = new CodeBlockNode(2, 3);
 
@@ -43,7 +33,7 @@ public class ReferenceMatchingVisitorTest {
     }
 
     @Test
-    public void testVisitVariableNode() throws Exception {
+    public void testVisitVariableNode(){
 
         VariableNode node = new VariableNode(2, 3);
 
@@ -53,7 +43,7 @@ public class ReferenceMatchingVisitorTest {
     }
 
     @Test
-    public void testVisitVariableNodeWithAlreadyUsedName() throws Exception {
+    public void testVisitVariableNodeWithAlreadyUsedName(){
 
         VariableNode node = new VariableNode(2, 3);
         node.setName("aName");
@@ -65,7 +55,7 @@ public class ReferenceMatchingVisitorTest {
     }
 
     @Test
-    public void testVisitResolvedReferenceNode() throws Exception {
+    public void testVisitResolvedReferenceNode(){
 
         CompilationThreadManager mockMonitor = mock(CompilationThreadManager.class);
         TypeNode typeNode = mock(TypeNode.class);
@@ -84,7 +74,7 @@ public class ReferenceMatchingVisitorTest {
     }
 
     @Test
-    public void testVisitUnresolvedReferenceNode() throws Exception {
+    public void testVisitUnresolvedReferenceNode(){
 
         CompilationThreadManager mockMonitor = mock(CompilationThreadManager.class);
         ReferenceNode node = new ReferenceNode(2, 3, mockMonitor);
@@ -96,7 +86,7 @@ public class ReferenceMatchingVisitorTest {
     }
 
     @Test
-    public void testVisitFlowTypingConditionalStatementNode() throws Exception {
+    public void testVisitFlowTypingConditionalStatementNode(){
 
         ConditionalStatementNode conditionalNode = mock(ConditionalStatementNode.class);
         ExistenceCheckNode expressionNode = mock(ExistenceCheckNode.class);
@@ -115,7 +105,7 @@ public class ReferenceMatchingVisitorTest {
     }
 
     @Test
-    public void testVisitFlowTypingFieldConditionalStatementNode() throws Exception {
+    public void testVisitFlowTypingFieldConditionalStatementNode(){
 
         ConditionalStatementNode conditionalNode = mock(ConditionalStatementNode.class);
         ExistenceCheckNode expressionNode = mock(ExistenceCheckNode.class);
@@ -134,7 +124,7 @@ public class ReferenceMatchingVisitorTest {
     }
 
     @Test(expected = RuntimeException.class)
-    public void testVisitFlowTypingOtherReferenceConditionalStatementNode() throws Exception {
+    public void testVisitFlowTypingOtherReferenceConditionalStatementNode(){
 
         ConditionalStatementNode conditionalNode = mock(ConditionalStatementNode.class);
         ExistenceCheckNode expressionNode = mock(ExistenceCheckNode.class);
@@ -151,7 +141,7 @@ public class ReferenceMatchingVisitorTest {
     }
 
     @Test
-    public void testVisitNonFlowTypingConditionalStatementNode() throws Exception {
+    public void testVisitNonFlowTypingConditionalStatementNode(){
 
         ConditionalStatementNode conditionalNode = mock(ConditionalStatementNode.class);
         ExpressionNode condition = mock(ExpressionNode.class);
@@ -168,7 +158,7 @@ public class ReferenceMatchingVisitorTest {
     }
 
     @Test
-    public void testVisitFlowTypingConditionalLoopNode() throws Exception {
+    public void testVisitFlowTypingConditionalLoopNode(){
 
         ConditionalLoopNode conditionalNode = mock(ConditionalLoopNode.class);
         ExpressionNode condition = mock(ExpressionNode.class);
@@ -183,7 +173,7 @@ public class ReferenceMatchingVisitorTest {
     }
 
     @Test
-    public void testVisitIterationNodeOverExpressionWithNoTypedArgument() throws Exception {
+    public void testVisitIterationNodeOverExpressionWithNoTypedArgument(){
 
         IterationNode iterationNode = mock(IterationNode.class);
         ExpressionNode target = mock(ExpressionNode.class);
@@ -201,7 +191,7 @@ public class ReferenceMatchingVisitorTest {
     }
 
     @Test
-    public void testVisitIterationNodeOverExpressionWithTypedArgument() throws Exception {
+    public void testVisitIterationNodeOverExpressionWithTypedArgument(){
 
         IterationNode iterationNode = mock(IterationNode.class);
         ExpressionNode target = mock(ExpressionNode.class);
@@ -221,7 +211,7 @@ public class ReferenceMatchingVisitorTest {
     }
 
     @Test
-    public void testVisitIterationNodeOverSubTypeOfIterable() throws Exception {
+    public void testVisitIterationNodeOverSubTypeOfIterable(){
 
         IterationNode iterationNode = mock(IterationNode.class);
         ExpressionNode target = mock(ExpressionNode.class);
@@ -245,7 +235,7 @@ public class ReferenceMatchingVisitorTest {
     }
 
     @Test
-    public void testVisitIterationNodeOverNonIterable() throws Exception {
+    public void testVisitIterationNodeOverNonIterable(){
 
         IterationNode iterationNode = mock(IterationNode.class);
         ExpressionNode target = mock(ExpressionNode.class);
@@ -264,7 +254,7 @@ public class ReferenceMatchingVisitorTest {
     }
 
     @Test
-    public void testVisitIterationNodeOverInferredIterable() throws Exception {
+    public void testVisitIterationNodeOverInferredIterable(){
 
         IterationNode iterationNode = mock(IterationNode.class);
         ExpressionNode target = mock(ExpressionNode.class);
@@ -281,7 +271,7 @@ public class ReferenceMatchingVisitorTest {
     }
 
     @Test
-    public void testVisitIterationNodeWithAlreadyUsedName() throws Exception {
+    public void testVisitIterationNodeWithAlreadyUsedName(){
 
         VariableNode aVariable = new VariableNode(0, 0);
         aVariable.setName("aVariable");
@@ -294,5 +284,38 @@ public class ReferenceMatchingVisitorTest {
 
         assertThat(subject, containsOneFailure(ErrorCode.NAME_ALREADY_USED));
     }
+
+
+    @Test
+    public void testVisitTryStatement(){
+
+        TryStatementNode tryStatementNode = mock(TryStatementNode.class);
+
+        when(tryStatementNode.getCoveredStatement()).thenReturn(mock(StatementNode.class));
+        when(tryStatementNode.getCatchBlock()).thenReturn(mock(StatementNode.class));
+        when(tryStatementNode.getCaughtType()).thenReturn(mock(TypeNode.class));
+        when(tryStatementNode.getCaughtName()).thenReturn("aVariable");
+
+        subject.visit(tryStatementNode);
+
+        assertThat(subject, containsNoFailures());
+    }
+
+    @Test
+    public void testVisitTryStatementWithAlreadyUsedName(){
+
+        VariableNode aVariable = new VariableNode(0, 0);
+        aVariable.setName("aVariable");
+        subject.visit(aVariable);
+
+        TryStatementNode tryStatementNode = mock(TryStatementNode.class);
+        when(tryStatementNode.getCaughtName()).thenReturn("aVariable");
+
+        subject.visit(tryStatementNode);
+
+        assertThat(subject, containsOneFailure(ErrorCode.NAME_ALREADY_USED));
+    }
+
+
 
 }

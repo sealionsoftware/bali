@@ -39,4 +39,9 @@ public class ReferenceNode extends ExpressionNode {
     public Site getSite() {
         return referenceData.get().type;
     }
+
+    public String toString(){
+        return name;
+    }
+
 }

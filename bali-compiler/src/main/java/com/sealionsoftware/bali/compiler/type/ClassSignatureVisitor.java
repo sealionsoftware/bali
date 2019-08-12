@@ -25,7 +25,7 @@ public class ClassSignatureVisitor extends SignatureVisitor implements Opcodes {
 
 
     public ClassSignatureVisitor(ClasspathClassFactory library, Map<String, Site> typeVariableBounds) {
-        super(ASM5);
+        super(ASM7);
         this.library = library;
         this.typeVariableBounds = typeVariableBounds;
     }

@@ -21,4 +21,9 @@ public class OperationNode extends InvocationNode {
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }
+
+    public String toString(){
+        return getTarget() + " " + operatorName + " " + getArguments().get(0);
+    }
+
 }

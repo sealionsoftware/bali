@@ -25,21 +25,25 @@ codeBlock:                  '{' statement* '}' ;
 
 statement:                  lineStatement | controlStatement ;
 
-controlExpression:          codeBlock | controlStatement ;
+conditionalStatement:       'if' '(' expression ')' controlStatement ('else' controlStatement )? ;
 
-conditionalStatement:       'if' '(' expression ')' controlExpression ('else' controlExpression )? ;
+loopStatement:              'while' '(' expression ')' controlStatement ;
 
-loopStatement:              'while' '(' expression ')' controlExpression ;
-
-iterationStatement:         'for' '(' IDENTIFIER ':' expression ')' controlExpression ;
+iterationStatement:         'for' '(' IDENTIFIER ':' expression ')' controlStatement ;
 
 throwStatement:             'throw' expression ;
+
+tryStatement:               tryableStatement catchBlock* ;
+
+catchBlock:                 'catch' '(' type IDENTIFIER ')' controlStatement;
 
 lineStatement:              expression
 							 | variableDeclaration
 							 | assignment ;
 
-controlStatement:           conditionalStatement | loopStatement | iterationStatement | throwStatement;
+tryableStatement:           codeBlock | conditionalStatement | loopStatement | iterationStatement | throwStatement;
+
+controlStatement:           tryableStatement | tryStatement;
 
 variableDeclaration:        'var' type? IDENTIFIER ('=' expression)? ;
 

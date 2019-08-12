@@ -33,9 +33,7 @@ public class ReflectiveExecutor implements Executor {
     public Object executeExpression(GeneratedPackage generated) {
         return execute(generated,
                 Interpreter.EVALUATION_CLASS_NAME,
-                (clazz) -> {
-                    return ((Evaluation) clazz.newInstance()).evaluate();
-                });
+                (clazz) -> ((Evaluation) clazz.newInstance()).evaluate());
     }
 
     public <I extends Class, O> O execute(GeneratedPackage generated, String className, F<I, O> payload) {
