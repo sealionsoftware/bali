@@ -191,34 +191,47 @@ public class ASTStatementVisitorTest {
     }
 
     @Test
-    public void testVisitCatchStatementNode() {
+    public void testVisitTryStatementNode() {
         BaliParser.TryStatementContext tryStatement = mockContext(BaliParser.TryStatementContext.class);
-        BaliParser.TryableStatementContext covered = mockContext(BaliParser.TryableStatementContext.class);
-        BaliParser.CatchBlockContext catchBlock = mockContext(BaliParser.CatchBlockContext.class);
-        BaliParser.TypeContext typeContext = mockContext(BaliParser.TypeContext.class);
+        BaliParser.TryableStatementContext coveredContext = mockContext(BaliParser.TryableStatementContext.class);
+        BaliParser.CatchBlockContext catchBlock1 = mockContext(BaliParser.CatchBlockContext.class);
+        BaliParser.CatchBlockContext catchBlock2 = mockContext(BaliParser.CatchBlockContext.class);
+        BaliParser.TypeContext typeContext1 = mockContext(BaliParser.TypeContext.class);
+        BaliParser.TypeContext typeContext2 = mockContext(BaliParser.TypeContext.class);
 
-        TerminalNode typeTerminal = mockTerminal("AType");
-        TerminalNode nameTerminal = mockTerminal("aVariable");
+        when(tryStatement.tryableStatement()).thenReturn(coveredContext);
+        when(coveredContext.accept(subject)).thenReturn(mock(StatementNode.class));
 
-        when(typeContext.IDENTIFIER()).thenReturn(typeTerminal);
+        TerminalNode type1Terminal = mockTerminal("AType");
+        TerminalNode name1Terminal = mockTerminal("aVariable");
+        when(typeContext1.IDENTIFIER()).thenReturn(type1Terminal);
+        when(catchBlock1.IDENTIFIER()).thenReturn(name1Terminal);
+        when(catchBlock1.type()).thenReturn(typeContext1);
+        when(catchBlock1.accept(subject)).thenReturn(mock(StatementNode.class));
 
-        when(tryStatement.catchBlock()).thenReturn(asList(catchBlock));
+        TerminalNode type2Terminal = mockTerminal("AnotherType");
+        TerminalNode name2Terminal = mockTerminal("anotherVariable");
+        when(typeContext2.IDENTIFIER()).thenReturn(type2Terminal);
+        when(catchBlock2.IDENTIFIER()).thenReturn(name2Terminal);
+        when(catchBlock2.type()).thenReturn(typeContext2);
+        when(catchBlock2.accept(subject)).thenReturn(mock(StatementNode.class));
 
-
-        when(catchBlock.IDENTIFIER()).thenReturn(nameTerminal);
-        when(catchBlock.type()).thenReturn(typeContext);
-
-        when(tryStatement.tryableStatement()).thenReturn(covered);
-        when(covered.accept(subject)).thenReturn(mock(StatementNode.class));
-        when(catchBlock.accept(subject)).thenReturn(mock(StatementNode.class));
+        when(tryStatement.catchBlock()).thenReturn(asList(catchBlock1, catchBlock2));
 
         TryStatementNode node = subject.visitTryStatement(tryStatement);
 
         assertThat(node, notNullValue());
-        assertThat(node.getCoveredStatement(), notNullValue());
-        assertThat(node.getCaughtName(), equalTo("aVariable"));
+        assertThat(node.getCoveredStatement(), instanceOf(TryStatementNode.class));
+
+        TryStatementNode coveredNode = (TryStatementNode) node.getCoveredStatement();
+
+        assertThat(node.getCaughtName(), equalTo("anotherVariable"));
         assertThat(node.getCaughtType(), notNullValue());
         assertThat(node.getCatchBlock(), notNullValue());
+
+        assertThat(coveredNode.getCaughtName(), equalTo("aVariable"));
+        assertThat(coveredNode.getCaughtType(), notNullValue());
+        assertThat(coveredNode.getCatchBlock(), notNullValue());
     }
 
 }

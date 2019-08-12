@@ -28,28 +28,28 @@ public class BaliInterpreterServerTest {
     private BaliInterpreterServer subject;
 
     @Test
-    public void testInitialise() throws Exception {
+    public void testInitialise() {
         subject.initialise();
         verify(mapper).registerModule(any(Module.class));
     }
 
     @Test
-    public void testExecutor() throws Exception {
+    public void testExecutor() {
         assertThat(subject.executor(), instanceOf(AsyncTaskExecutor.class));
     }
 
     @Test
-    public void testConsole() throws Exception {
+    public void testConsole() {
         assertThat(subject.console(), instanceOf(TextBuffer.class));
     }
 
     @Test
-    public void testInterpreter() throws Exception {
+    public void testInterpreter() {
         assertThat(subject.interpreter(mock(Writer.class)), instanceOf(Interpreter.class));
     }
 
     @Test
-    public void testMain() throws Exception {
+    public void testMain() {
         BaliInterpreterServer.main();
     }
 }
