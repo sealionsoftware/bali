@@ -11,9 +11,9 @@ import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class CatchStatementNodeTest {
+public class TryStatementNodeTest {
 
-    private CatchStatementNode subject = new CatchStatementNode(2, 3);
+    private TryStatementNode subject = new TryStatementNode(2, 3);
 
     @Test
     public void testGetCoveredStatement() {
@@ -25,8 +25,8 @@ public class CatchStatementNodeTest {
     @Test
     public void testGetCatchStatement() {
         StatementNode statementNode = mock(StatementNode.class);
-        subject.setCatchStatement(statementNode);
-        assertThat(subject.getCatchStatement(), Matchers.is(statementNode));
+        subject.setCatchBlock(statementNode);
+        assertThat(subject.getCatchBlock(), Matchers.is(statementNode));
     }
 
     @Test

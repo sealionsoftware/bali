@@ -25,4 +25,8 @@ public class TextLiteralNode extends LiteralNode<String> {
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }
+
+    public String toString(){
+        return "\"" + getValue() + "\"";
+    }
 }

@@ -123,14 +123,28 @@ public class ASTStatementVisitor extends BaliBaseVisitor<StatementNode> {
         return node;
     }
 
-    public CatchStatementNode visitCatchStatement(BaliParser.CatchStatementContext ctx){
+    public TryStatementNode visitTryStatement(BaliParser.TryStatementContext ctx){
         Token start = ctx.start;
 
-        CatchStatementNode node = new CatchStatementNode(start.getLine(), start.getCharPositionInLine());
-        node.setCoveredStatement(ctx.catchableStatement().accept(this));
-        node.setCatchStatement(ctx.controlStatement().accept(this));
-        node.setCaughtType(buildType(ctx.type()));
-        node.setCaughtName(ctx.IDENTIFIER().getText());
+        TryStatementNode node = new TryStatementNode(start.getLine(), start.getCharPositionInLine());
+        node.setCoveredStatement(ctx.tryableStatement().accept(this));
+
+
+        Iterator<BaliParser.CatchBlockContext> i = ctx.catchBlock().iterator();
+        BaliParser.CatchBlockContext firstBlock = i.next();
+        node.setCaughtType(buildType(firstBlock.type()));
+        node.setCaughtName(firstBlock.IDENTIFIER().getText());
+        node.setCatchBlock(firstBlock.accept(this));
+
+        while(i.hasNext()){
+            TryStatementNode inner = node;
+            node = new TryStatementNode(start.getLine(), start.getCharPositionInLine());
+            node.setCoveredStatement(inner);
+            BaliParser.CatchBlockContext subsequentBlock = i.next();
+            node.setCaughtType(buildType(subsequentBlock.type()));
+            node.setCaughtName(subsequentBlock.IDENTIFIER().getText());
+            node.setCatchBlock(subsequentBlock.accept(this));
+        }
 
         return node;
     }

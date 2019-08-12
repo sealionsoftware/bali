@@ -21,14 +21,14 @@ public class ReferenceNodeTest {
 	private ReferenceNode subject = new ReferenceNode(2, 3, mockMonitor);
 	
 	@Test
-	public void testGetName() throws Exception {
+	public void testGetName() {
 		String referenceName = "aVariable";
 		subject.setName(referenceName);
 		assertThat(subject.getName(), equalTo(referenceName));
 	}
 
 	@Test
-	public void testGetVariableData() throws Exception {
+	public void testGetVariableData() {
 		VariableData variableData = new VariableData(
 				"aVariable", mock(Site.class), UUID.randomUUID()
 		);
@@ -37,22 +37,22 @@ public class ReferenceNodeTest {
 	}
 
 	@Test
-	public void testGetLine() throws Exception {
+	public void testGetLine() {
 		assertThat(subject.getLine(), equalTo(2));
 	}
 
 	@Test
-	public void testGetCharacter() throws Exception {
+	public void testGetCharacter() {
 		assertThat(subject.getCharacter(), equalTo(3));
 	}
 
 	@Test
-	public void testGetChildren() throws Exception {
+	public void testGetChildren() {
 		assertThat(subject.getChildren(), is(empty()));
 	}
 
     @Test
-    public void testGetType() throws Exception {
+    public void testGetType() {
         Site mockType = mock(Site.class);
         VariableData variableData = new VariableData(
                 "aVariable", mockType, UUID.randomUUID()
@@ -62,7 +62,7 @@ public class ReferenceNodeTest {
     }
 
 	@Test
-	public void testAccept() throws Exception {
+	public void testAccept() {
 		Visitor visitor = mock(Visitor.class);
 		subject.accept(visitor);
 		verify(visitor).visit(same(subject));

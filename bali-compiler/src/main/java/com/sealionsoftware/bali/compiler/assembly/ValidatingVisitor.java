@@ -76,7 +76,7 @@ public abstract class ValidatingVisitor extends DescendingVisitor {
 
     public void visit(ThrowNode node) { visitChildren(node); }
 
-    public void visit(CatchStatementNode node) { visitChildren(node); }
+    public void visit(TryStatementNode node) { visitChildren(node); }
 
     public List<CompileError> getFailures() {
         return failures;

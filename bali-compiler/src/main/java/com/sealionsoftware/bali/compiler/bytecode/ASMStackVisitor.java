@@ -269,8 +269,39 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
         methodVisitor.visitInsn(ATHROW);
     }
 
-    public void visit(CatchStatementNode node) {
+    public void visit(TryStatementNode node) {
+
+        Label tryStart = new Label();
+        Label tryEnd = new Label();
+        Label catchStart = new Label();
+        Label catchEnd = new Label();
+
+        methodVisitor.visitTryCatchBlock(tryStart, tryEnd, tryEnd, "bali/RuntimeException");
+        methodVisitor.visitLabel(tryStart);
+
         node.getCoveredStatement().accept(this);
+        methodVisitor.visitJumpInsn(GOTO, catchEnd);
+        scopeHorizonStack.push(catchEnd);
+        methodVisitor.visitLabel(tryEnd);
+
+        methodVisitor.visitInsn(DUP);
+        methodVisitor.visitFieldInsn(GETFIELD, "bali/RuntimeException", "payload", "Ljava/lang/Object;");
+        methodVisitor.visitInsn(DUP);
+        addToVariables(node.getId(), node.getCaughtName(), tryEnd);
+
+        methodVisitor.visitTypeInsn(INSTANCEOF, toLocalName(node.getCaughtType().getResolvedType()));
+        methodVisitor.visitJumpInsn(IFNE, catchStart);
+
+        methodVisitor.visitInsn(ATHROW);
+
+        methodVisitor.visitLabel(catchStart);
+        methodVisitor.visitInsn(POP);
+
+        node.getCatchBlock().accept(this);
+        methodVisitor.visitJumpInsn(GOTO, catchEnd);
+
+        methodVisitor.visitLabel(catchEnd);
+        scopeHorizonStack.pop();
     }
 
     public List<VariableInfo> getVariables(){

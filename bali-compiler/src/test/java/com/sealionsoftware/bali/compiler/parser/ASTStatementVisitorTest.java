@@ -192,31 +192,33 @@ public class ASTStatementVisitorTest {
 
     @Test
     public void testVisitCatchStatementNode() {
-        BaliParser.CatchStatementContext context = mockContext(BaliParser.CatchStatementContext.class);
-        BaliParser.CatchableStatementContext covered = mockContext(BaliParser.CatchableStatementContext.class);
-        BaliParser.ControlStatementContext catchStatement = mockContext(BaliParser.ControlStatementContext.class);
+        BaliParser.TryStatementContext tryStatement = mockContext(BaliParser.TryStatementContext.class);
+        BaliParser.TryableStatementContext covered = mockContext(BaliParser.TryableStatementContext.class);
+        BaliParser.CatchBlockContext catchBlock = mockContext(BaliParser.CatchBlockContext.class);
         BaliParser.TypeContext typeContext = mockContext(BaliParser.TypeContext.class);
 
         TerminalNode typeTerminal = mockTerminal("AType");
         TerminalNode nameTerminal = mockTerminal("aVariable");
 
         when(typeContext.IDENTIFIER()).thenReturn(typeTerminal);
-        when(context.IDENTIFIER()).thenReturn(nameTerminal);
-        when(context.type()).thenReturn(typeContext);
 
-        when(context.catchableStatement()).thenReturn(covered);
+        when(tryStatement.catchBlock()).thenReturn(asList(catchBlock));
+
+
+        when(catchBlock.IDENTIFIER()).thenReturn(nameTerminal);
+        when(catchBlock.type()).thenReturn(typeContext);
+
+        when(tryStatement.tryableStatement()).thenReturn(covered);
         when(covered.accept(subject)).thenReturn(mock(StatementNode.class));
+        when(catchBlock.accept(subject)).thenReturn(mock(StatementNode.class));
 
-        when(context.controlStatement()).thenReturn(catchStatement);
-        when(catchStatement.accept(subject)).thenReturn(mock(StatementNode.class));
-
-        CatchStatementNode node = subject.visitCatchStatement(context);
+        TryStatementNode node = subject.visitTryStatement(tryStatement);
 
         assertThat(node, notNullValue());
         assertThat(node.getCoveredStatement(), notNullValue());
         assertThat(node.getCaughtName(), equalTo("aVariable"));
         assertThat(node.getCaughtType(), notNullValue());
-        assertThat(node.getCatchStatement(), notNullValue());
+        assertThat(node.getCatchBlock(), notNullValue());
     }
 
 }

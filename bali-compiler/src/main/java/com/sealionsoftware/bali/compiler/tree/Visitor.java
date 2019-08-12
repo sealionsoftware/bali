@@ -37,6 +37,6 @@ public interface Visitor {
 
     void visit(ThrowNode node);
 
-    void visit(CatchStatementNode node);
+    void visit(TryStatementNode node);
 
 }

@@ -98,7 +98,7 @@ public class ValidatingVisitorTest {
 
     @Test
     public void testVisitCatchStatementNode() throws Exception {
-        subject.visit(mock(CatchStatementNode.class));
+        subject.visit(mock(TryStatementNode.class));
     }
 
     @Test

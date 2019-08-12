@@ -10,7 +10,6 @@ import com.sealionsoftware.bali.compiler.assembly.ReferenceData;
 import com.sealionsoftware.bali.compiler.assembly.VariableData;
 import com.sealionsoftware.bali.compiler.tree.*;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -400,35 +399,28 @@ public class ASMStackVisitorTest implements Opcodes {
     @Test
     public void testVisitCatchStatementNode() {
 
-        CatchStatementNode node = mock(CatchStatementNode.class);
+        TryStatementNode node = mock(TryStatementNode.class);
         StatementNode covered = mock(StatementNode.class);
-        when(node.getCoveredStatement()).thenReturn(covered);
         StatementNode catchStatement = mock(StatementNode.class);
-        when(node.getCatchStatement()).thenReturn(catchStatement);
+        TypeNode typeNode = mock(TypeNode.class);
+        Type type = mock(Type.class);
+
+        when(node.getCoveredStatement()).thenReturn(covered);
+        when(node.getCatchBlock()).thenReturn(catchStatement);
+        when(node.getCaughtType()).thenReturn(typeNode);
+        when(typeNode.getResolvedType()).thenReturn(new Site(type));
+        when(type.getClassName()).thenReturn("foo.Bar");
 
         subject.visit(node);
 
-        ArgumentCaptor<Label> label0 = ArgumentCaptor.forClass(Label.class);
-        ArgumentCaptor<Label> label1 = ArgumentCaptor.forClass(Label.class);
-        ArgumentCaptor<Label> label2 = ArgumentCaptor.forClass(Label.class);
-        ArgumentCaptor<Label> label3 = ArgumentCaptor.forClass(Label.class);
-
-        verify(visitor).visitTryCatchBlock(label0.capture(), label1.capture(), any(Label.class), eq("bali/RuntimeException"));
-        verify(visitor).visitLabel(label0.getValue());
-
+        verify(visitor).visitTryCatchBlock(any(Label.class), any(Label.class), any(Label.class), eq("bali/RuntimeException"));
         verify(covered).accept(subject);
-
-        verify(visitor).visitLabel(label1.getValue());
-
-        verify(visitor).visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[]{"bali/RuntimeException"});
         verify(visitor).visitVarInsn(ASTORE, 1);
-        verify(visitor).visitLabel(label2.capture());
+        verify(visitor).visitTypeInsn(INSTANCEOF, "foo/Bar");
+        verify(catchStatement).accept(subject);
+        verify(visitor, times(3)).visitLabel(any(Label.class));
 
         verify(catchStatement).accept(subject);
-
-        verify(visitor).visitLabel(label3.capture());
-        verify(visitor).visitLocalVariable("e", "Lbali/RuntimeException;", null, label2.getValue(), label3.getValue(), 1);
-
     }
 
     private IntegerLiteralNode setupMock(int i) {

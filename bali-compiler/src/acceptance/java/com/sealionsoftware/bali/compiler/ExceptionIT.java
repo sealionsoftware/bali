@@ -32,10 +32,42 @@ public class ExceptionIT {
         interpreter.run(
                 "{" +
                         "throw \"Ouch!\"" +
+                "} catch (Text error) {" +
+                    "console << error + \" That hurt\"" +
                 "}"
         );
 
-        assertThat(console, wrote("Ouch! That hurt!"));
+        assertThat(console, wrote("Ouch! That hurt"));
+    }
+
+    @Test
+    public void testCatchPassesOnTypeException() {
+
+        Runnable invocation = () -> interpreter.run(
+                "{" +
+                            "throw \"Ouch!\"" +
+                        "} catch (Logic error) {" +
+                            "console << \"Fail\"" +
+                        "}"
+        );
+
+        assertThat(invocation, throwsException(withPayload(equalTo(convert("Ouch!")))));
+    }
+
+    @Test
+    public void testCatchExceptionMultiple() {
+
+        interpreter.run(
+                "{" +
+                            "throw \"Ouch!\"" +
+                        "} catch (Logic logicalError) {" +
+                            "console <<  \"Fail\"" +
+                        "} catch (Text textError) {" +
+                            "console << textError + \" That hurt\"" +
+                        "}"
+        );
+
+        assertThat(console, wrote("Ouch! That hurt"));
     }
 
 }

@@ -1,13 +1,16 @@
 package com.sealionsoftware.bali.compiler.tree;
 
-public class CatchStatementNode extends StatementNode {
+import java.util.UUID;
+
+public class TryStatementNode extends StatementNode {
 
     private String caughtName;
     private TypeNode caughtType;
     private StatementNode coveredStatement;
-    private StatementNode catchStatement;
+    private StatementNode catchBlock;
+    private UUID id = UUID.randomUUID();
 
-    public CatchStatementNode(Integer line, Integer character) {
+    public TryStatementNode(Integer line, Integer character) {
 		super(line, character);
 	}
 
@@ -20,13 +23,13 @@ public class CatchStatementNode extends StatementNode {
         this.coveredStatement = covered;
     }
 
-    public void setCatchStatement(StatementNode catchStatement) {
-        children.add(catchStatement);
-        this.catchStatement = catchStatement;
+    public void setCatchBlock(StatementNode catchBlock) {
+        children.add(catchBlock);
+        this.catchBlock = catchBlock;
     }
 
-    public StatementNode getCatchStatement() {
-        return catchStatement;
+    public StatementNode getCatchBlock() {
+        return catchBlock;
     }
 
     public String getCaughtName() {
@@ -51,4 +54,7 @@ public class CatchStatementNode extends StatementNode {
     }
 
 
+    public UUID getId() {
+        return id;
+    }
 }

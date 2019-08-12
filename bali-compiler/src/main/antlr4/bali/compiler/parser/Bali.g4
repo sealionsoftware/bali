@@ -33,15 +33,17 @@ iterationStatement:         'for' '(' IDENTIFIER ':' expression ')' controlState
 
 throwStatement:             'throw' expression ;
 
-catchStatement:             catchableStatement 'catch' '(' type IDENTIFIER ')' controlStatement ;
+tryStatement:               tryableStatement catchBlock* ;
+
+catchBlock:                 'catch' '(' type IDENTIFIER ')' controlStatement;
 
 lineStatement:              expression
 							 | variableDeclaration
 							 | assignment ;
 
-catchableStatement:         codeBlock | conditionalStatement | loopStatement | iterationStatement | throwStatement;
+tryableStatement:           codeBlock | conditionalStatement | loopStatement | iterationStatement | throwStatement;
 
-controlStatement:           catchableStatement | catchStatement;
+controlStatement:           tryableStatement | tryStatement;
 
 variableDeclaration:        'var' type? IDENTIFIER ('=' expression)? ;
 
