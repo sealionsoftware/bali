@@ -1,6 +1,7 @@
 package bali.number;
 
 import bali.Integer;
+import bali.NotImplementedException;
 
 public final class Primitive {
 

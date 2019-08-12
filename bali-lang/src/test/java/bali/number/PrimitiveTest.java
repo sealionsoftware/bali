@@ -1,5 +1,6 @@
 package bali.number;
 
+import bali.NotImplementedException;
 import org.junit.Test;
 
 import static bali.number.Primitive.convert;

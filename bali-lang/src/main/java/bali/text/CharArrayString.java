@@ -1,10 +1,8 @@
 package bali.text;
 
+import bali.*;
 import bali.Character;
 import bali.Integer;
-import bali.Iterator;
-import bali.Logic;
-import bali.Text;
 
 import java.util.Arrays;
 
@@ -73,7 +71,17 @@ public final class CharArrayString implements Text {
         return i > 0 && i <= characters.length ? convert(characters[i - 1]) : null;
 	}
 
-	public Iterator<Character> iterator() {
+    @Override
+    public Group<Character> head(Integer number) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public Group<Character> tail(Integer number) {
+        throw new NotImplementedException();
+    }
+
+    public Iterator<Character> iterator() {
 		return new Iterator<Character>() {
 
 			int i = 0;
