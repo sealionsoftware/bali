@@ -418,7 +418,7 @@ public class ASMStackVisitorTest implements Opcodes {
         verify(visitor).visitVarInsn(ASTORE, 1);
         verify(visitor).visitTypeInsn(INSTANCEOF, "foo/Bar");
         verify(catchStatement).accept(subject);
-        verify(visitor, times(3)).visitLabel(any(Label.class));
+        verify(visitor, times(4)).visitLabel(any(Label.class));
 
         verify(catchStatement).accept(subject);
     }

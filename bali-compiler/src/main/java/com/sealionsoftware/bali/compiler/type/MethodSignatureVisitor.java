@@ -19,7 +19,7 @@ public class MethodSignatureVisitor extends SignatureVisitor {
     private Map<String, Site> typeVariableBounds;
 
     public MethodSignatureVisitor(ClasspathClassFactory library, Map<String, Site> typeVariableBounds) {
-        super(Opcodes.ASM5);
+        super(Opcodes.ASM7);
         this.library = library;
         this.typeVariableBounds = typeVariableBounds;
     }
