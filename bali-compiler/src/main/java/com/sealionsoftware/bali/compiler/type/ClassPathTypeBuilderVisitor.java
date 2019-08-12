@@ -38,7 +38,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor implements Opcodes
     private Map<String, Site> typeVariableBounds = new HashMap<>();
 
     public ClassPathTypeBuilderVisitor(ClasspathClassFactory library, String name) {
-        super(ASM5);
+        super(ASM7);
         this.library = library;
         classpathClass = new Class(name);
     }
@@ -91,7 +91,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor implements Opcodes
             parameters = stream(methodType.getArgumentTypes()).map((type) -> new Parameter(null, new Site(new ClassBasedType(library.get(type.getClassName())), false))).collect(Collectors.toList());
         }
 
-        return new MethodVisitor(Opcodes.ASM4, super.visitMethod(access, name, desc, signature, exceptions)) {
+        return new MethodVisitor(Opcodes.ASM7, super.visitMethod(access, name, desc, signature, exceptions)) {
 
             private boolean isOperator;
             private String operatorName;
@@ -100,7 +100,7 @@ public class ClassPathTypeBuilderVisitor extends ClassVisitor implements Opcodes
 
                 if (OPERATOR_ANNOTATION_DESC.equals(desc)) {
                     isOperator = true;
-                    return new AnnotationVisitor(Opcodes.ASM4, super.visitAnnotation(desc, visible)) {
+                    return new AnnotationVisitor(Opcodes.ASM7, super.visitAnnotation(desc, visible)) {
                         public void visit(String name, Object value) {
                             super.visit(name, value);
                             operatorName = (String) value;

@@ -14,37 +14,42 @@ public class CharCharacterTest {
     private Character subject = CharCharacter.CHARS['d'];
 
     @Test
-    public void testToUpperCase() throws Exception {
+    public void testToUpperCase() {
         assertThat(subject.toUpperCase(), equalTo(convert('D')));
     }
 
     @Test
-    public void testToLowerCase() throws Exception {
+    public void testToLowerCase() {
         assertThat(subject.toLowerCase(), equalTo(convert('d')));
     }
 
     @Test
-    public void testEqualTo() throws Exception {
+    public void testEqualTo() {
         assertThat(subject.equalTo(convert('d')), equalTo(convert(true)));
     }
 
     @Test
-    public void testEqualToOtherCharacterImplementation() throws Exception {
+    public void testEqualToOtherCharacterImplementation() {
         assertThat(subject.equalTo(mock(Character.class)), equalTo(convert(false)));
     }
 
     @Test
-    public void testNotEqualTo() throws Exception {
+    public void testNotEqualTo() {
         assertThat(subject.notEqualTo(convert('d')), equalTo(convert(false)));
     }
 
     @Test
-    public void testToString() throws Exception {
+    public void testToString() {
         assertThat(subject.toString(), equalTo("d"));
     }
 
     @Test
-    public void testHashCode() throws Exception {
+    public void testHashCode() {
         assertThat(subject.hashCode(), equalTo((int) 'd'));
+    }
+
+    @Test
+    public void testGetNewLine() {
+        assertThat(subject.NEW_LINE.equalTo(convert('\n')), equalTo(convert(true)));
     }
 }

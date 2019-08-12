@@ -16,7 +16,7 @@
 
     <properties>
         <antlr.version>4.5.1</antlr.version>
-        <asm.version>5.0.3</asm.version>
+        <asm.version>7.1</asm.version>
     </properties>
 
 	<dependencies>
@@ -72,17 +72,17 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>bali/compiler/parser/*</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <id>post-unit-test</id>
                         <goals>
                             <goal>check</goal>
                         </goals>
-                        <configuration>
-                            <excludes>
-                                <exclude>bali/compiler/parser/*</exclude>
-                            </excludes>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
