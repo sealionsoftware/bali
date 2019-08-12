@@ -1,0 +1,76 @@
+div, code, p {
+    box-sizing: border-box;
+}
+
+pre {
+    margin: 0;
+}
+
+.baliClient {
+    margin: 0 0 15px 0;
+}
+
+.interpreted {
+
+    margin: 0;
+    border: 3px outset black;
+    border-radius: 5px;
+    display: inline-block;
+    width: 100%;
+    min-height: 70px;
+}
+
+.interpreted code {
+    padding:0;
+    font-family: consolas,"courier new",monospace;
+    font-size: 15px;
+    font-weight: bold;
+    border: none;
+    background: none;
+    color: dimgray;
+    tab-size: 4;
+}
+
+.interpreted:focus {
+    outline: none;
+}
+
+.playAnchor {
+    position: relative;
+}
+
+.play {
+    height: 40px;
+    width: 40px;
+    bottom: 15px;
+    right: 15px;
+    background-image: url("../images/play-icon-inactive.png");
+    z-index: 1;
+    position: absolute;
+    cursor: none;
+}
+
+.play:hover {
+    background-image: url("../images/play-icon.png");
+    cursor: pointer;
+}
+
+.compiledOK {
+    border-color: lightgreen;
+}
+
+.compilationFailed{
+    border-color: lightcoral;
+}
+
+.results {
+
+    border: 3px inset lightgrey;
+    border-radius: 5px;
+    margin-top: 5px;
+    width: 100%;
+    display: none;
+    padding: 8px;
+    overflow-x: auto;
+
+}

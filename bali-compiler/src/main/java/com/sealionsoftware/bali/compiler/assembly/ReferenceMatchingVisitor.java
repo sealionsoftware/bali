@@ -5,18 +5,7 @@ import com.sealionsoftware.bali.compiler.ErrorCode;
 import com.sealionsoftware.bali.compiler.Parameter;
 import com.sealionsoftware.bali.compiler.Site;
 import com.sealionsoftware.bali.compiler.Type;
-import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
-import com.sealionsoftware.bali.compiler.tree.ConditionalLoopNode;
-import com.sealionsoftware.bali.compiler.tree.ConditionalNode;
-import com.sealionsoftware.bali.compiler.tree.ConditionalStatementNode;
-import com.sealionsoftware.bali.compiler.tree.ExistenceCheckNode;
-import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
-import com.sealionsoftware.bali.compiler.tree.IterationNode;
-import com.sealionsoftware.bali.compiler.tree.Node;
-import com.sealionsoftware.bali.compiler.tree.ReferenceNode;
-import com.sealionsoftware.bali.compiler.tree.StatementNode;
-import com.sealionsoftware.bali.compiler.tree.TypeNode;
-import com.sealionsoftware.bali.compiler.tree.VariableNode;
+import com.sealionsoftware.bali.compiler.tree.*;
 import com.sealionsoftware.bali.compiler.type.InferredType;
 
 import java.util.ArrayDeque;
@@ -60,6 +49,27 @@ public class ReferenceMatchingVisitor extends ValidatingVisitor {
         if (contraCondition != null){
             contraCondition.accept(this);
         }
+    }
+
+    public void visit(TryStatementNode tryStatementNode) {
+        ReferenceData existing = getDeclaration(tryStatementNode.getCaughtName());
+        if (existing != null){
+            failures.add(new CompileError(ErrorCode.NAME_ALREADY_USED, tryStatementNode));
+            visitChildren(tryStatementNode);
+            return;
+        }
+
+        tryStatementNode.getCoveredStatement().accept(this);
+
+        VariableData itemDeclaration = new VariableData(
+                tryStatementNode.getCaughtName(),
+                tryStatementNode.getCaughtType().getResolvedType(),
+                tryStatementNode.getId()
+        );
+
+        Scope catchScope = new Scope();
+        catchScope.add(itemDeclaration);
+        pushAndWalkChild(tryStatementNode.getCatchBlock(), catchScope);
     }
 
     public void visit(ConditionalLoopNode conditionalLoopNode) {
