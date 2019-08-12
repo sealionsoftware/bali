@@ -20,7 +20,7 @@ public class TypeSignatureVisitor extends SignatureVisitor {
 	private List<TypeSignatureVisitor> typeArgumentVisitors = new ArrayList<>();
 
 	public TypeSignatureVisitor(ClasspathClassFactory library, Map<String, Site> typeVariableBounds) {
-		super(Opcodes.ASM5);
+		super(Opcodes.ASM7);
 		this.library = library;
 		this.typeVariableBounds = typeVariableBounds;
 	}
