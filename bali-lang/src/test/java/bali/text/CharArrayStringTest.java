@@ -20,37 +20,37 @@ public class CharArrayStringTest {
     private Text subject = new CharArrayString("Hello World".toCharArray());
 
     @Test
-    public void testUppercase() throws Exception {
+    public void testUppercase() {
         assertThat(subject.uppercase(), equalTo(convert("HELLO WORLD")));
     }
 
     @Test
-    public void testContains() throws Exception {
+    public void testContains() {
         assertThat(subject.contains(convert('W')), equalTo(convert(true)));
     }
 
     @Test
-    public void testContainsNegative() throws Exception {
+    public void testContainsNegative() {
         assertThat(subject.contains(convert('u')), equalTo(convert(false)));
     }
 
     @Test
-    public void testSize() throws Exception {
+    public void testSize() {
         assertThat(subject.size(), equalTo(convert(11)));
     }
 
     @Test
-    public void testIsEmpty() throws Exception {
+    public void testIsEmpty() {
         assertThat(subject.isEmpty(), equalTo(convert(false)));
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         assertThat(subject.get(convert(7)), equalTo(convert('W')));
     }
 
     @Test
-    public void testIterator() throws Exception {
+    public void testIterator() {
         Iterator<bali.Character> i = subject.iterator();
         assertThat(i, notNullValue());
         char[] expectation = "Hello World".toCharArray();
@@ -60,12 +60,12 @@ public class CharArrayStringTest {
     }
 
     @Test
-    public void testEqualTo() throws Exception {
+    public void testEqualTo() {
         assertThat(subject.equalTo(convert("Hello World")), equalTo(convert(true)));
     }
 
     @Test
-    public void testEqualToOtherImplementationDifferentSize() throws Exception {
+    public void testEqualToOtherImplementationDifferentSize() {
 
         Text other = mock(Text.class);
         when(other.size()).thenReturn(convert(1));
@@ -74,7 +74,7 @@ public class CharArrayStringTest {
     }
 
     @Test
-    public void testEqualToOtherImplementationDifferentChars() throws Exception {
+    public void testEqualToOtherImplementationDifferentChars() {
 
         Text other = mock(Text.class);
         @SuppressWarnings("unchecked")
@@ -87,7 +87,7 @@ public class CharArrayStringTest {
     }
 
     @Test
-    public void testEqualToOtherImplementation() throws Exception {
+    public void testEqualToOtherImplementation() {
 
         Text other = mock(Text.class);
         @SuppressWarnings("unchecked")
@@ -103,7 +103,7 @@ public class CharArrayStringTest {
     }
 
     @Test
-    public void testNotEqualToOtherImplementationDifferentSize() throws Exception {
+    public void testNotEqualToOtherImplementationDifferentSize() {
 
         Text other = mock(Text.class);
         when(other.size()).thenReturn(convert(1));
@@ -112,7 +112,7 @@ public class CharArrayStringTest {
     }
 
     @Test
-    public void testNotEqualToOtherImplementationDifferentChars() throws Exception {
+    public void testNotEqualToOtherImplementationDifferentChars() {
 
         Text other = mock(Text.class);
         @SuppressWarnings("unchecked")
@@ -125,7 +125,7 @@ public class CharArrayStringTest {
     }
 
     @Test
-    public void testNotEqualToOtherImplementation() throws Exception {
+    public void testNotEqualToOtherImplementation() {
 
         Text other = mock(Text.class);
         @SuppressWarnings("unchecked")
@@ -141,32 +141,32 @@ public class CharArrayStringTest {
     }
 
     @Test
-    public void testNotEqualTo() throws Exception {
+    public void testNotEqualTo() {
         assertThat(subject.notEqualTo(convert("Goodbye World")), equalTo(convert(true)));
     }
 
     @Test
-    public void testToString() throws Exception {
+    public void testToString() {
         assertThat(subject.toString(), equalTo("Hello World"));
     }
 
     @Test
-    public void testEquals() throws Exception {
+    public void testEquals() {
         assertThat(subject, equalTo(convert("Hello World")));
     }
 
     @Test
-    public void testHashCode() throws Exception {
+    public void testHashCode() {
         assertThat(subject.hashCode(), not(equalTo(convert("Goodbye World").hashCode())));
     }
 
     @Test
-    public void testConcatenate() throws Exception {
+    public void testConcatenate() {
         assertThat(subject.concatenate(convert("!")), equalTo(convert("Hello World!")));
     }
 
     @Test
-    public void testConcatenateOtherImplementation() throws Exception {
+    public void testConcatenateOtherImplementation() {
         Text operand = mock(Text.class);
         @SuppressWarnings("unchecked")
         Iterator<Character> iterator = mock(Iterator.class);
@@ -174,6 +174,26 @@ public class CharArrayStringTest {
         when(operand.iterator()).thenReturn(iterator);
         when(iterator.next()).thenReturn(convert('!'));
         assertThat(subject.concatenate(operand), equalTo(convert("Hello World!")));
+    }
+
+    @Test
+    public void testHead() {
+        assertThat(subject.head(convert(5)), equalTo(convert("Hello")));
+    }
+
+    @Test
+    public void testHeadTakeTooMany() {
+        assertThat(subject.head(convert(15)), equalTo(convert("Hello World")));
+    }
+
+    @Test
+    public void testTail() {
+        assertThat(subject.tail(convert(5)), equalTo(convert("World")));
+    }
+
+    @Test
+    public void testTailTakeTooMany() {
+        assertThat(subject.tail(convert(15)), equalTo(convert("Hello World")));
     }
 
 }

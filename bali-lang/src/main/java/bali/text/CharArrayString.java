@@ -1,8 +1,8 @@
 package bali.text;
 
-import bali.*;
 import bali.Character;
 import bali.Integer;
+import bali.*;
 
 import java.util.Arrays;
 
@@ -72,14 +72,27 @@ public final class CharArrayString implements Text {
 	}
 
     @Override
-    public Group<Character> head(Integer number) {
-        throw new NotImplementedException();
+    public CharArrayString head(Integer number) {
+
+		int numberOfItems = characters.length;
+		int take = convert(number);
+		if (take > numberOfItems){
+			take = numberOfItems;
+		}
+
+		return new CharArrayString(Arrays.copyOf(characters, take));
     }
 
     @Override
-    public Group<Character> tail(Integer number) {
-        throw new NotImplementedException();
-    }
+    public CharArrayString tail(Integer number) {
+		int numberOfItems = characters.length;
+		int take = convert(number);
+		if (take > numberOfItems){
+			take = numberOfItems;
+		}
+
+		return new CharArrayString(Arrays.copyOfRange(characters, numberOfItems - take, numberOfItems));
+	}
 
     public Iterator<Character> iterator() {
 		return new Iterator<Character>() {
