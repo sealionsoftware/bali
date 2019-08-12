@@ -4,7 +4,11 @@ bali
 
 A simple imperative JVM dialect with compile time checking of null and concurrent safety.
 
-Comparison with Java:
+#### Tutorial
+
+http://sealionsoftware.github.io/bali
+
+#### Comparison with Java:
 
 (out)
 - Statics
@@ -28,3 +32,4 @@ Comparison with Java:
 - Record types
 - Runtime type parameters
 - Flow typing
+

@@ -15,7 +15,3 @@ console << "Hello World"
 1 + 1
 ```
 {: .evaluable}
-
-#### Tutorial
-
-http://sealionsoftware.github.io/bali
