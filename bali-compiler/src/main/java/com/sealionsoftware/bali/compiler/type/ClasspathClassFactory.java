@@ -27,12 +27,9 @@ public class ClasspathClassFactory {
             return ret;
         }
 
+        InputStream classFileStream = loader.getResourceAsStream(className.replace('.','/').concat(".class"));
         ClassReader reader;
         try {
-            InputStream classFileStream = loader.getResourceAsStream(className.replace('.','/').concat(".class"));
-            if (classFileStream == null){
-                throw new RuntimeException("Cannot find bytecode for class " + className);
-            }
             reader = new ClassReader(classFileStream);
         } catch (IOException e) {
             throw new RuntimeException("Cannot read bytecode for class " + className, e);

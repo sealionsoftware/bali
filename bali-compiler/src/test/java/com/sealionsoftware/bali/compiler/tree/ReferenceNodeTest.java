@@ -67,4 +67,11 @@ public class ReferenceNodeTest {
 		subject.accept(visitor);
 		verify(visitor).visit(same(subject));
 	}
+
+	@Test
+	public void testToString() {
+		String referenceName = "aVariable";
+		subject.setName(referenceName);
+		assertThat(subject.toString(), equalTo(referenceName));
+	}
 }

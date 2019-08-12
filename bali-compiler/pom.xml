@@ -72,17 +72,17 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>bali/compiler/parser/*</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <id>post-unit-test</id>
                         <goals>
                             <goal>check</goal>
                         </goals>
-                        <configuration>
-                            <excludes>
-                                <exclude>bali/compiler/parser/*</exclude>
-                            </excludes>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

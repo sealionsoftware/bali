@@ -155,16 +155,15 @@ public class ClasspathClassFactoryTest {
     }
 
     @Test(expected = RuntimeException.class)
-    @SuppressWarnings("unchecked")
     public void testAddNotFoundClassToLibrary(){
 
         class A {}
         java.lang.Class<A> a = A.class;
 
-        loader = mock(ClassLoader.class);
-        subject = new ClasspathClassFactory(library, loader);
+        ClassLoader loader = mock(ClassLoader.class);
+        when(loader.getResourceAsStream(anyString())).thenReturn(null);
 
-        when(loader.getResourceAsStream(anyString())).thenThrow(IOException.class);
+        subject = new ClasspathClassFactory(library, loader);
 
         subject.addToLibrary(a);
     }

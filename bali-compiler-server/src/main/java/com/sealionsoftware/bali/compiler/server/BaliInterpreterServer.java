@@ -66,7 +66,7 @@ public class BaliInterpreterServer {
         );
     }
 
-    public static void main(String... args) throws Exception {
+    public static void main(String... args) {
         SpringApplication.run(new Class[]{BaliInterpreterServer.class}, args);
     }
 
