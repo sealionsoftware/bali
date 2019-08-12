@@ -27,7 +27,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 @Controller
-@CrossOrigin({"http://sealionsoftware.github.io", "http://localhost"})
+@CrossOrigin({"https://sealionsoftware.github.io", "http://localhost"})
 @Scope("request")
 public class CompileController {
 
