@@ -32,6 +32,28 @@ public class Array<T> implements Group<T> {
         return i > 0 && i <= items.length ? items[i - 1] : null;
     }
 
+    public Array<T> head(Integer number) {
+
+        int numberOfItems = items.length;
+        int take = convert(number);
+        if (take > numberOfItems){
+            take = numberOfItems;
+        }
+
+        return new Array<T>(Arrays.copyOf(items, take));
+    }
+
+    public Array<T> tail(Integer number) {
+
+        int numberOfItems = items.length;
+        int take = convert(number);
+        if (take > numberOfItems){
+            take = numberOfItems;
+        }
+
+        return new Array<T>(Arrays.copyOfRange(items, numberOfItems - take, numberOfItems));
+    }
+
     public Iterator<T> iterator() {
         return new Iterator<T>() {
 

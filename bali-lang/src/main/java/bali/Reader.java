@@ -4,7 +4,7 @@ import bali.annotation.Operator;
 
 public interface Reader {
 
-	@Operator("<")
+	@Operator("<<")
 	Character read();
 
 	@Operator("<<")

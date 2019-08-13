@@ -2,6 +2,7 @@ package bali.number;
 
 import bali.Integer;
 import bali.Logic;
+import bali.NotImplementedException;
 import bali.Number;
 
 import static bali.logic.Primitive.convert;

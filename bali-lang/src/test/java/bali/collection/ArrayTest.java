@@ -54,4 +54,24 @@ public class ArrayTest {
         assertThat(subject.equals(new Array<>(convert("Hello"), convert("World"))), equalTo(true));
     }
 
+    @Test
+    public void testHead() {
+        assertThat(subject.head(convert(1)), equalTo(new Array<>(convert("Hello"))));
+    }
+
+    @Test
+    public void testHeadTakeTooMany() {
+        assertThat(subject.head(convert(3)), equalTo(subject));
+    }
+
+    @Test
+    public void testTail() {
+        assertThat(subject.tail(convert(1)), equalTo(new Array<>(convert("World"))));
+    }
+
+    @Test
+    public void testTailTakeTooMany() {
+        assertThat(subject.tail(convert(3)), equalTo(subject));
+    }
+
 }

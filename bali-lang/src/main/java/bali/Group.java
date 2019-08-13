@@ -11,4 +11,9 @@ public interface Group<T> extends Iterable<T> {
     @Operator("#")
 	T get(Integer index);
 
+	Group<T> head(Integer number);
+
+	Group<T> tail(Integer number);
+
+
 }
