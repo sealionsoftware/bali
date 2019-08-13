@@ -22,8 +22,8 @@ to uppercase and returns the new Text;
 Methods can also be called on variables that reference an object.
 
 ```
-var greeting = "Hello World";
-greeting.uppercase()
+var Text greeting = "Hello World"
+console << greeting.uppercase()
 ```
 {: .executable}
 
@@ -35,7 +35,7 @@ following statement, the method 'head' is invoked on the Text "Hello World", wit
 The head method will return the first 5 characters as a new Text object.
 
 ```
-"Hello World".head(5);
+"Hello World".head(5)
 ```
 {: .evaluable}
 
@@ -46,7 +46,7 @@ In the following statement, the methods tail and uppercase are chained together.
 
 ```
 "Hello World"
+    .uppercase()
     .head(5)
-    .uppercase();
 ```
 {: .evaluable}

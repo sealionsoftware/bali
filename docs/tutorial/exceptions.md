@@ -64,9 +64,10 @@ And subsequent catch blocks will catch objects thrown in previous blocks.
 {
     throw true;
 } catch (Logic logicalError) {
+    console << "A logical error was caught"
     throw "An error occurred while handling the error";
 } catch (Text textError) {
-    console << "A text error was thrown"
+    console << "A text error was caught"
 }
 ```
 {: .executable}
