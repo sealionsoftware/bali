@@ -18,7 +18,7 @@ public class ChainUnitTest {
 	@Test
 	public void testIsEmpty(){
 		assertFalse(convert(list.isEmpty()));
-		assertTrue(convert(new Chain<>(null).isEmpty()));
+		assertTrue(convert(new Chain<>().isEmpty()));
 	}
 
 	@Test
@@ -72,12 +72,23 @@ public class ChainUnitTest {
 		assertEquals(2, convert(list.size()));
 		assertEquals("TEST3", convert(list.get(convert(2))));
 
-		list.remove(convert(1));
+		list.remove(convert(2));
 		assertEquals(1, convert(list.size()));
-		assertEquals("TEST3", convert(list.get(convert(1))));
+		assertEquals("TEST1", convert(list.get(convert(1))));
 
 		list.remove(convert(1));
 		assertTrue(convert(list.isEmpty()));
+	}
+
+	@Test
+	public void testInsert(){
+		list.insert(convert(1), convert("TEST0.5"));
+		list.insert(convert(3), convert("TEST1.5"));
+		assertEquals(5, convert(list.size()));
+		assertEquals("TEST0.5", convert(list.get(convert(1))));
+		assertEquals("TEST1", convert(list.get(convert(2))));
+		assertEquals("TEST1.5", convert(list.get(convert(3))));
+		assertEquals("TEST2", convert(list.get(convert(4))));
 	}
 
 	@Test

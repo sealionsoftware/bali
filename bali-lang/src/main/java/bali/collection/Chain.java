@@ -83,16 +83,17 @@ public final class Chain<T> implements List<T> {
 
     public Chain<T> insert(Integer index, T item) {
         int i = convert(index);
+        Link<T> newLink = new Link<>();
+        newLink.item = item;
         if (i == 1){
-            first = first.next;
-        } else if (i == size){
-            getLink(i - 1).next = null;
+            newLink.next = first;
+            first = newLink;
         } else {
-            Link before = getLink(i - 1);
-            if (before != null){
-                before.next = before.next.next;
-            }
+            Link<T> before = getLink(i - 1);
+            newLink.next = before.next;
+            before.next = newLink;
         }
+        size++;
         return this;
     }
 
