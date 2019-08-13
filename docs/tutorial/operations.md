@@ -5,7 +5,7 @@ layout: default
 ### Operations
 
 An operation is an expression composed of a target object and a symbol (the "operator") that runs a method of the target
-and yeilds a result. In this respect they are like an invocation, except the use of a symbol as a name makes
+and yields a result. In this respect they are like a method call, except the use of a symbol as a name makes
 them more concise, so they are usually used for very frequently called methods.
 
 #### Unary Operators
