@@ -18,15 +18,14 @@ import java.util.List;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class ASMStackVisitorTest implements Opcodes {
 
@@ -35,7 +34,7 @@ public class ASMStackVisitorTest implements Opcodes {
     private ASMStackVisitor subject = new ASMStackVisitor(visitor, "AType");
 
     @Test
-    public void testVisitLiteralTrue() throws Exception {
+    public void testVisitLiteralTrue() {
 
         LogicLiteralNode node = new LogicLiteralNode(0, 0, monitor);
         node.setValue(true);
@@ -46,7 +45,7 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
-    public void testVisitLiteralFalse() throws Exception {
+    public void testVisitLiteralFalse() {
 
         LogicLiteralNode node = new LogicLiteralNode(0, 0, monitor);
         node.setValue(false);
@@ -57,7 +56,7 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
-    public void testVisitTextLiteral() throws Exception {
+    public void testVisitTextLiteral() {
         TextLiteralNode node = mock(TextLiteralNode.class);
         subject.visit(node);
         verify(visitor).visitLdcInsn(node.getValue());
@@ -65,7 +64,7 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
-    public void testVisitIntegerLiteral() throws Exception {
+    public void testVisitIntegerLiteral() {
         IntegerLiteralNode node = mock(IntegerLiteralNode.class);
         when(node.getValue()).thenReturn(5);
         subject.visit(node);
@@ -74,7 +73,7 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
-    public void testVisitVariableDeclaration() throws Exception {
+    public void testVisitVariableDeclaration() {
 
         ExpressionNode expressionNode = mock(ExpressionNode.class);
 
@@ -95,7 +94,7 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
-    public void testVisitOptionalVariableDeclaration() throws Exception {
+    public void testVisitOptionalVariableDeclaration() {
 
         VariableNode node = new VariableNode(0, 0);
         node.setName("aVariable");
@@ -114,7 +113,7 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
-    public void testVisitAssignment() throws Exception {
+    public void testVisitAssignment() {
 
         ExpressionNode expressionNode = mock(ExpressionNode.class);
         ReferenceNode referenceNode = mock(ReferenceNode.class);
@@ -143,7 +142,7 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
-    public void testVisitFieldAssignment() throws Exception {
+    public void testVisitFieldAssignment() {
 
         ExpressionNode expressionNode = mock(ExpressionNode.class);
         ReferenceNode referenceNode = mock(ReferenceNode.class);
@@ -163,7 +162,7 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test(expected = RuntimeException.class)
-    public void testVisitUnknownReferenceAssignment() throws Exception {
+    public void testVisitUnknownReferenceAssignment() {
 
         ExpressionNode expressionNode = mock(ExpressionNode.class);
         ReferenceNode referenceNode = mock(ReferenceNode.class);
@@ -181,19 +180,19 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
-     public void testVisitCodeBlock() throws Exception {
+     public void testVisitCodeBlock() {
         CodeBlockNode mockNode = mock(CodeBlockNode.class);
         subject.visit(mockNode);
     }
 
     @Test
-    public void testVisitTypeNode() throws Exception {
+    public void testVisitTypeNode() {
         TypeNode mockNode = mock(TypeNode.class);
         subject.visit(mockNode);
     }
 
     @Test
-    public void testVisitVariableReferenceNode() throws Exception {
+    public void testVisitVariableReferenceNode() {
         UUID id = UUID.randomUUID();
         VariableNode mockTarget = mock(VariableNode.class);
         when(mockTarget.getId()).thenReturn(id);
@@ -208,7 +207,7 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
-    public void testVisitFieldReferenceNode() throws Exception {
+    public void testVisitFieldReferenceNode() {
 
         FieldData variableData = new FieldData("name", null);
         ReferenceNode mockNode = mock(ReferenceNode.class);
@@ -219,7 +218,7 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test(expected = RuntimeException.class)
-    public void testVisitUnknownReferenceNode() throws Exception {
+    public void testVisitUnknownReferenceNode() {
         ReferenceData referenceData = mock(ReferenceData.class);
         ReferenceNode mockNode = mock(ReferenceNode.class);
         when(mockNode.getReferenceData()).thenReturn(referenceData);
@@ -229,7 +228,7 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
-    public void testVisitConditionalStatementNode() throws Exception {
+    public void testVisitConditionalStatementNode() {
         ConditionalStatementNode mockNode = mock(ConditionalStatementNode.class);
         when(mockNode.getCondition()).thenReturn(mock(ExpressionNode.class));
         when(mockNode.getConditional()).thenReturn(mock(StatementNode.class));
@@ -237,7 +236,7 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
-    public void testVisitConditionalNodeWithContraBlock() throws Exception {
+    public void testVisitConditionalNodeWithContraBlock() {
         ConditionalStatementNode mockNode = mock(ConditionalStatementNode.class);
         when(mockNode.getCondition()).thenReturn(mock(ExpressionNode.class));
         when(mockNode.getConditional()).thenReturn(mock(StatementNode.class));
@@ -246,7 +245,7 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
-    public void testVisitConditionalLoop() throws Exception {
+    public void testVisitConditionalLoop() {
         ConditionalLoopNode mockNode = mock(ConditionalLoopNode.class);
         when(mockNode.getCondition()).thenReturn(mock(ExpressionNode.class));
         when(mockNode.getConditional()).thenReturn(mock(StatementNode.class));
@@ -254,7 +253,7 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
-    public void testVisitExpressionStatement() throws Exception {
+    public void testVisitExpressionStatement() {
         ExpressionStatementNode mockNode = mock(ExpressionStatementNode.class);
         ExpressionNode mockExpressionNode = mock(ExpressionNode.class);
         Site returnType = mock(Site.class);
@@ -268,7 +267,7 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
-    public void testVisitInvocation() throws Exception {
+    public void testVisitInvocation() {
 
         InvocationNode node = mock(InvocationNode.class);
         ExpressionNode target = mock(ExpressionNode.class);
@@ -303,7 +302,7 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
-    public void testVisitOperation() throws Exception {
+    public void testVisitOperation() {
 
         OperationNode node = mock(OperationNode.class);
         ExpressionNode target = mock(ExpressionNode.class);
@@ -335,7 +334,7 @@ public class ASMStackVisitorTest implements Opcodes {
     }
 
     @Test
-    public void testVisitIteration() throws Exception {
+    public void testVisitIteration() {
 
         IterationNode node = mock(IterationNode.class);
         ExpressionNode target = mock(ExpressionNode.class);
@@ -393,11 +392,10 @@ public class ASMStackVisitorTest implements Opcodes {
         subject.visit(node);
         verify(payload).accept(subject);
         verify(visitor).visitInsn(ATHROW);
-
     }
 
     @Test
-    public void testVisitCatchStatementNode() {
+    public void testVisitTryStatementNode() {
 
         TryStatementNode node = mock(TryStatementNode.class);
         StatementNode covered = mock(StatementNode.class);
@@ -413,7 +411,6 @@ public class ASMStackVisitorTest implements Opcodes {
 
         subject.visit(node);
 
-        verify(visitor).visitTryCatchBlock(any(Label.class), any(Label.class), any(Label.class), eq("bali/RuntimeException"));
         verify(covered).accept(subject);
         verify(visitor).visitVarInsn(ASTORE, 1);
         verify(visitor).visitTypeInsn(INSTANCEOF, "foo/Bar");
@@ -421,6 +418,12 @@ public class ASMStackVisitorTest implements Opcodes {
         verify(visitor, times(4)).visitLabel(any(Label.class));
 
         verify(catchStatement).accept(subject);
+
+        List<CatchInfo> catchInfos = subject.getCatchBlocks();
+        assertThat(catchInfos, hasSize(1));
+        CatchInfo catchInfo = catchInfos.get(0);
+        assertThat(catchInfo.start, instanceOf(Label.class));
+        assertThat(catchInfo.end, instanceOf(Label.class));
     }
 
     private IntegerLiteralNode setupMock(int i) {

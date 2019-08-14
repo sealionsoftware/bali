@@ -54,7 +54,7 @@ public class StandardInterpreter implements Interpreter {
         return executor.executeExpression(generatedPackage);
     }
 
-    public static void main(String... args) throws Exception {
+    public static void main(String... args) {
 
         Interpreter interpreter = new StandardInterpreter();
 
