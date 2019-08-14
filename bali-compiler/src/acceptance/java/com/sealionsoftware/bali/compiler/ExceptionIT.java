@@ -70,4 +70,20 @@ public class ExceptionIT {
         assertThat(console, wrote("Ouch! That hurt"));
     }
 
+    @Test
+    public void testCatchExceptionThrownInCatchBlock(){
+
+        interpreter.run(
+                "{" +
+                "    throw true" +
+                "} catch (Logic logicalError) {" +
+                "    throw \"An error occurred while handling the error\"" +
+                "} catch (Text textError) {" +
+                "    console << \"A text error was caught\"" +
+                "}");
+
+        assertThat(console, wrote("A text error was caught"));
+        
+    }
+
 }

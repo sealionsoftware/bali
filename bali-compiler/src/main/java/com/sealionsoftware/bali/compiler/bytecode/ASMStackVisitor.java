@@ -12,12 +12,7 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.joining;
@@ -27,6 +22,7 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
     private String targetLocalName;
     private MethodVisitor methodVisitor;
     private Deque<Label> scopeHorizonStack = new LinkedList<>();
+    private List<CatchInfo> catchBlocks = new LinkedList<>();
     private List<VariableInfo> variables = new LinkedList<>();
     private Map<UUID, Integer> variablesIndex = new HashMap<>();
 
@@ -276,7 +272,7 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
         Label catchStart = new Label();
         Label catchEnd = new Label();
 
-        methodVisitor.visitTryCatchBlock(tryStart, tryEnd, tryEnd, "bali/RuntimeException");
+        catchBlocks.add(new CatchInfo(tryStart, tryEnd));
         methodVisitor.visitLabel(tryStart);
 
         node.getCoveredStatement().accept(this);
@@ -305,7 +301,11 @@ public class ASMStackVisitor extends DescendingVisitor implements Opcodes {
     }
 
     public List<VariableInfo> getVariables(){
-        return variables;
+        return Collections.unmodifiableList(variables);
+    }
+
+    public List<CatchInfo> getCatchBlocks(){
+        return Collections.unmodifiableList(catchBlocks);
     }
 
     private static String toLocalName(Site site){

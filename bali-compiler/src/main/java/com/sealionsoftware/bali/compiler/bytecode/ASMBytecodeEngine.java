@@ -5,11 +5,11 @@ import com.sealionsoftware.bali.compiler.GeneratedClass;
 import com.sealionsoftware.bali.compiler.GeneratedPackage;
 import com.sealionsoftware.bali.compiler.tree.CodeBlockNode;
 import com.sealionsoftware.bali.compiler.tree.ExpressionNode;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static com.sealionsoftware.bali.compiler.Interpreter.EVALUATION_CLASS_NAME;
 import static com.sealionsoftware.bali.compiler.Interpreter.FRAGMENT_CLASS_NAME;
@@ -114,6 +114,22 @@ public class ASMBytecodeEngine implements BytecodeEngine, Opcodes {
         methodVisitor.visitInsn(RETURN);
         methodVisitor.visitLabel(endLabel);
 
+        buildCatchTable(methodVisitor, visitor);
+        buildVariablesTable(methodVisitor, visitor, startLabel, endLabel);
+
+        methodVisitor.visitMaxs(0, 0);
+        methodVisitor.visitEnd();
+    }
+
+    private void buildCatchTable(MethodVisitor methodVisitor, ASMStackVisitor visitor){
+        List<CatchInfo> catchBlocks = new ArrayList<>(visitor.getCatchBlocks());
+        Collections.reverse(catchBlocks);
+        for (CatchInfo catchInfo: catchBlocks){
+            methodVisitor.visitTryCatchBlock(catchInfo.start, catchInfo.end, catchInfo.end, "bali/RuntimeException");
+        }
+    }
+
+    private void buildVariablesTable(MethodVisitor methodVisitor, ASMStackVisitor visitor, Label startLabel, Label endLabel){
         int i = 0;
         methodVisitor.visitLocalVariable("this", "L" + FRAGMENT_CLASS_NAME + ";", null, startLabel, endLabel, i++);
 
@@ -124,9 +140,6 @@ public class ASMBytecodeEngine implements BytecodeEngine, Opcodes {
             }
             methodVisitor.visitLocalVariable(variable.name, "Ljava/lang/Object;", null, variable.start, to, i++);
         }
-
-        methodVisitor.visitMaxs(0, 0);
-        methodVisitor.visitEnd();
     }
 
     private void buildExpressionMethod(ClassWriter cw, ExpressionNode expression) {
